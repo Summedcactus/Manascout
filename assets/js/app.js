@@ -251,8 +251,8 @@ const buildRows = (printings) => printings.map(print => `
              loading="lazy">`
         : "—"}
     </td>
-        <td><span class="set-name">${escapeHtml(print.set_name || "—")}</span><br><span class="muted">${escapeHtml(print.set || "").toUpperCase())}</span></td>
-        <td>${escapeHtml(print.released_at || "—")}</td>
+<td><span class="set-name">${escapeHtml(print.set_name || "—")}</span><br><span class="muted">${escapeHtml((print.set || "").toUpperCase())}</span></td>
+<td>${escapeHtml(print.released_at || "—")}</td>
         <td>${escapeHtml(print.collector_number || "—")}</td>
         <td>${escapeHtml(print.rarity || "—")}</td>
         <td>${escapeHtml(finishText(print))}</td>
