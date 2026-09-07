@@ -231,9 +231,27 @@ try {
   ? `${all.length} printing${all.length === 1 ? "" : "s"} found · GBP estimates`
   : `${all.length} printing${all.length === 1 ? "" : "s"} found`;
 
+    function printingImage(print) {
+      return (
+        print.image_uris?.small ||
+        print.image_uris?.normal ||
+        print.card_faces?.[0]?.image_uris?.small ||
+        print.card_faces?.[0]?.image_uris?.normal ||
+        ""
+      );
+    }
+
     const rows = all.map(print => `
       <tr>
-        <td><span class="set-name">${escapeHtml(print.set_name || "—")}</span><br><span class="muted">${escapeHtml(print.set || "")}</span></td>
+          <td class="printing-image-cell">
+      ${printingImage(print)
+        ? `<img class="printing-card-image"
+             src="${escapeHtml(printingImage(print))}"
+             alt="${escapeHtml(print.name || "Magic card")} printing"
+             loading="lazy">`
+        : "—"}
+    </td>
+        <td><span class="set-name">${escapeHtml(print.set_name || "—")}</span><br><span class="muted">${escapeHtml(print.set || "").toUpperCase())}</span></td>
         <td>${escapeHtml(print.released_at || "—")}</td>
         <td>${escapeHtml(print.collector_number || "—")}</td>
         <td>${escapeHtml(print.rarity || "—")}</td>
@@ -261,13 +279,13 @@ try {
         <table class="printings-table">
           <thead>
             <tr>
-              <th>Set</th><th>Released</th><th>Collector #</th><th>Rarity</th><th>Finishes</th>
+             <th>Card</th><th>Set</th><th>Released</th><th>Collector #</th><th>Rarity</th><th>Finishes</th>
              <th>Price</th>
 <th>Foil</th>
 <th>Etched</th>
             </tr>
           </thead>
-          <tbody>${rows || '<tr><td colspan="10">No printings returned.</td></tr>'}</tbody>
+          <tbody>${rows || '<tr><td colspan="11">No printings returned.</td></tr>'}</tbody>
         </table>
       </div>`;
   }
