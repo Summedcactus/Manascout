@@ -2,6 +2,7 @@
   "use strict";
 
   const API = "https://api.scryfall.com";
+  const FX_API = "https://api.frankfurter.dev/v2/rate";
   const els = {
     form: document.getElementById("search-form"),
     input: document.getElementById("search-input"),
@@ -119,7 +120,45 @@
     if (!value) return '<span class="muted">—</span>';
     return `<span class="price"><strong>${escapeHtml(symbol + value)}</strong></span>`;
   }
+let fxRatesPromise = null;
 
+async function fetchFxRate(base) {
+  const response = await fetch(`${FX_API}/${base}/GBP`, {
+    headers: { "Accept": "application/json" }
+  });
+
+  if (!response.ok) {
+    throw new Error(`FX HTTP ${response.status}`);
+  }
+
+  const data = await response.json();
+  return Number(data.rate);
+}
+
+async function getFxRates() {
+  if (!fxRatesPromise) {
+    fxRatesPromise = Promise.all([
+      fetchFxRate("EUR"),
+      fetchFxRate("USD")
+    ]).then(([eurToGbp, usdToGbp]) => ({
+      eurToGbp,
+      usdToGbp
+    }));
+  }
+
+  return fxRatesPromise;
+}
+
+function convertToGbp(value, rate) {
+  const amount = Number.parseFloat(value);
+
+  if (!Number.isFinite(amount) || !Number.isFinite(rate)) {
+    return null;
+  }
+
+  return (amount * rate).toFixed(2);
+}
+  
   function finishText(card) {
     return Array.isArray(card.finishes) && card.finishes.length ? card.finishes.join(", ") : "—";
   }
@@ -180,8 +219,17 @@
     }
 
     all.sort((a, b) => String(b.released_at || "").localeCompare(String(a.released_at || "")));
+    let rates = null;
 
-    els.status.textContent = `${all.length} printing${all.length === 1 ? "" : "s"} found`;
+try {
+  rates = await getFxRates();
+} catch (error) {
+  console.warn("GBP conversion unavailable", error);
+}
+
+  els.status.textContent = rates
+  ? `${all.length} printing${all.length === 1 ? "" : "s"} found · GBP estimates`
+  : `${all.length} printing${all.length === 1 ? "" : "s"} found`;
 
     const rows = all.map(print => `
       <tr>
@@ -190,11 +238,22 @@
         <td>${escapeHtml(print.collector_number || "—")}</td>
         <td>${escapeHtml(print.rarity || "—")}</td>
         <td>${escapeHtml(finishText(print))}</td>
-        <td>${priceCell(print.prices?.usd, "$")}</td>
-        <td>${priceCell(print.prices?.usd_foil, "$")}</td>
-        <td>${priceCell(print.prices?.usd_etched, "$")}</td>
-        <td>${priceCell(print.prices?.eur, "€")}</td>
-        <td>${priceCell(print.prices?.eur_foil, "€")}</td>
+<td>${priceCell(
+  print.prices?.eur
+    ? convertToGbp(print.prices.eur, rates?.eurToGbp)
+    : convertToGbp(print.prices?.usd, rates?.usdToGbp),
+  "£"
+)}</td>
+<td>${priceCell(
+  print.prices?.eur_foil
+    ? convertToGbp(print.prices.eur_foil, rates?.eurToGbp)
+    : convertToGbp(print.prices?.usd_foil, rates?.usdToGbp),
+  "£"
+)}</td>
+<td>${priceCell(
+  convertToGbp(print.prices?.usd_etched, rates?.usdToGbp),
+  "£"
+)}</td>
       </tr>`).join("");
 
     els.printings.innerHTML = `
@@ -203,7 +262,9 @@
           <thead>
             <tr>
               <th>Set</th><th>Released</th><th>Collector #</th><th>Rarity</th><th>Finishes</th>
-              <th>USD</th><th>USD foil</th><th>USD etched</th><th>EUR</th><th>EUR foil</th>
+             <th>Price</th>
+<th>Foil</th>
+<th>Etched</th>
             </tr>
           </thead>
           <tbody>${rows || '<tr><td colspan="10">No printings returned.</td></tr>'}</tbody>
