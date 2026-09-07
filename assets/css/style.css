@@ -174,11 +174,31 @@ button,input{font:inherit}
 
 @media (hover: hover) {
   .printing-card-image:hover {
-    transform: scale(2.2);
-    position: relative;
-    z-index: 20;
-    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.55);
+    transform: scale(1.12);
   }
+}
+
+.printing-select-button {
+  appearance: none;
+  border: 0;
+  background: none;
+  color: inherit;
+  font: inherit;
+  padding: 0;
+  cursor: pointer;
+}
+
+.printing-image-button {
+  display: block;
+  margin: 0 auto;
+}
+
+.printing-name-button {
+  text-align: left;
+}
+
+.printing-name-button:hover .set-name {
+  text-decoration: underline;
 }
 
 /* Smaller printing thumbnails on phones */

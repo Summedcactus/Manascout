@@ -244,14 +244,29 @@ try {
 const buildRows = (printings) => printings.map(print => `
 <tr>
           <td class="printing-image-cell">
-      ${printingImage(print)
-        ? `<img class="printing-card-image"
-             src="${escapeHtml(printingImage(print))}"
-             alt="${escapeHtml(print.name || "Magic card")} printing"
-             loading="lazy">`
-        : "—"}
-    </td>
-<td><span class="set-name">${escapeHtml(print.set_name || "—")}</span><br><span class="muted">${escapeHtml((print.set || "").toUpperCase())}</span></td>
+  ${printingImage(print)
+    ? `<button
+         class="printing-select-button printing-image-button"
+         type="button"
+         data-print-id="${escapeHtml(print.id || "")}"
+         title="Select this printing">
+         <img class="printing-card-image"
+              src="${escapeHtml(printingImage(print))}"
+              alt="${escapeHtml(print.name || "Magic card")} printing"
+              loading="lazy">
+       </button>`
+    : "—"}
+</td>
+<td>
+  <button
+    class="printing-select-button printing-name-button"
+    type="button"
+    data-print-id="${escapeHtml(print.id || "")}">
+    <span class="set-name">${escapeHtml(print.set_name || "—")}</span>
+  </button>
+  <br>
+  <span class="muted">${escapeHtml((print.set || "").toUpperCase())}</span>
+</td>
 <td>${escapeHtml(print.released_at || "—")}</td>
         <td>${escapeHtml(print.collector_number || "—")}</td>
         <td>${escapeHtml(print.rarity || "—")}</td>
@@ -373,8 +388,25 @@ const rows = buildRows(all);
   }
 
   finishFilter.addEventListener("change", updatePrintings);
-  sortSelect.addEventListener("change", updatePrintings);
+sortSelect.addEventListener("change", updatePrintings);
 }
+
+els.printings.addEventListener("click", event => {
+  const trigger = event.target.closest("[data-print-id]");
+  if (!trigger) return;
+
+  const selected = all.find(print => print.id === trigger.dataset.printId);
+  if (!selected) return;
+
+  renderCard(selected);
+
+  if (els.details) {
+    els.details.scrollIntoView({
+      behavior: "smooth",
+      block: "start"
+    });
+  }
+});
   }
 
   async function loadCard(name, options = {}) {
