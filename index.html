@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>ManaScout — MTG Card & Printing Explorer</title>
+  <meta name="description" content="Find Magic: The Gathering cards, explore printings and compare available Scryfall price data in a fast, clean card discovery tool.">
+  <meta name="theme-color" content="#0b0d0f">
+  <link rel="canonical" href="https://manascout.co.uk/">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="ManaScout — MTG Card & Printing Explorer">
+  <meta property="og:description" content="Find the card. Find the version. Find the best one.">
+  <meta property="og:url" content="https://manascout.co.uk/">
+  <meta name="twitter:card" content="summary">
+  <link rel="stylesheet" href="/assets/css/style.css">
+  <script type="application/ld+json">
+  {
+    "@context":"https://schema.org",
+    "@type":"WebSite",
+    "name":"ManaScout",
+    "url":"https://manascout.co.uk/",
+    "potentialAction":{
+      "@type":"SearchAction",
+      "target":"https://manascout.co.uk/?q={search_term_string}",
+      "query-input":"required name=search_term_string"
+    }
+  }
+  </script>
+</head>
+<body>
+<header class="site-header">
+  <div class="container header-inner">
+    <a class="brand" href="/" aria-label="ManaScout home">Mana<span>Scout</span></a>
+    <nav class="nav" aria-label="Primary navigation">
+      <a class="active" href="/">Search</a>
+      <a href="/card/sol-ring/">Sol Ring</a>
+      <a href="/card/rhystic-study/">Rhystic Study</a>
+      <a href="/card/black-lotus/">Black Lotus</a>
+    </nav>
+  </div>
+</header>
+
+<main class="container">
+  <section class="hero">
+    <p class="eyebrow">MTG CARD DISCOVERY</p>
+    <h1>Find the card.<br><span>Find the version.</span><br>Find the best one.</h1>
+    <p class="hero-copy">Search Magic: The Gathering cards, explore every available printing, and compare the information that matters before you buy.</p>
+
+    <form id="search-form" class="search-form" role="search" autocomplete="off">
+      <label class="sr-only" for="search-input">Search Magic: The Gathering card name</label>
+      <div class="search-box">
+        <input id="search-input" name="q" type="search" placeholder="Search a card — e.g. Sol Ring" spellcheck="false" aria-autocomplete="list" aria-controls="autocomplete-list" aria-expanded="false">
+        <button type="submit">Search</button>
+        <div id="autocomplete-list" class="autocomplete" role="listbox" hidden></div>
+      </div>
+    </form>
+    <p class="search-hint">No account. No clutter. Just the card.</p>
+  </section>
+
+  <section id="card-details-section" class="results" aria-live="polite">
+    <div id="card-details" class="card-details">
+      <div class="empty-state">
+        <div class="empty-mark">⌁</div>
+        <h2>Search any MTG card</h2>
+        <p>See oracle text, card images, finishes, printings and available Scryfall price data.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="printings-section" aria-labelledby="printings-heading">
+    <div class="section-heading">
+      <div>
+        <p class="eyebrow">PRINTINGS</p>
+        <h2 id="printings-heading">Every available version</h2>
+      </div>
+      <p id="printings-status" class="status"></p>
+    </div>
+    <div id="printings-container"></div>
+  </section>
+</main>
+
+<footer class="footer">
+  <div class="container footer-inner">
+    <p>ManaScout is an independent MTG discovery tool. Card data, images and price fields are supplied by <a href="https://scryfall.com/" target="_blank" rel="noopener noreferrer">Scryfall</a>. Magic: The Gathering is a trademark of Wizards of the Coast LLC. ManaScout is not affiliated with or endorsed by Wizards of the Coast or Scryfall.</p>
+    <div><a href="/privacy/">Privacy</a><a href="/terms/">Terms</a></div>
+  </div>
+</footer>
+<script src="/assets/js/app.js"></script>
+</body>
+</html>

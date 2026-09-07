@@ -1,0 +1,15 @@
+ManaScout V1 validation
+========================
+No Markdown URL contamination: True
+Sitemap XML valid: True
+Internal static links resolve: True
+
+Additional build checks:
+- JavaScript syntax: PASS
+- All required HTML documents complete: PASS
+- CNAME exactly manascout.co.uk: PASS
+- No manascout.com references: PASS
+- Public window.ManaScout.loadCard interface: PASS
+- Featured static routes call public interface: PASS
+- No hardcoded fake card prices: PASS
+- All 12 required production files present: PASS

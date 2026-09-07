@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://manascout.co.uk/sitemap.xml
