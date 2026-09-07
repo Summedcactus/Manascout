@@ -241,8 +241,8 @@ try {
       );
     }
 
-    const rows = all.map(print => `
-      <tr>
+const buildRows = (printings) => printings.map(print => `
+<tr>
           <td class="printing-image-cell">
       ${printingImage(print)
         ? `<img class="printing-card-image"
@@ -273,8 +273,36 @@ try {
   "£"
 )}</td>
       </tr>`).join("");
+    const showFilters = all.length >= 8;
+
+const filterControls = showFilters ? `
+  <div class="printing-controls">
+    <label>
+      Finish
+      <select id="printing-finish-filter">
+        <option value="all">All</option>
+        <option value="nonfoil">Nonfoil</option>
+        <option value="foil">Foil</option>
+        <option value="etched">Etched</option>
+      </select>
+    </label>
+
+    <label>
+      Sort
+      <select id="printing-sort">
+        <option value="newest">Newest</option>
+        <option value="oldest">Oldest</option>
+        <option value="price-asc">£ Low → High</option>
+        <option value="price-desc">£ High → Low</option>
+      </select>
+    </label>
+  </div>
+` : "";
+
+const rows = buildRows(all);
 
     els.printings.innerHTML = `
+      ${filterControls}
       <div class="table-wrap">
         <table class="printings-table">
           <thead>
@@ -285,9 +313,68 @@ try {
 <th>Etched</th>
             </tr>
           </thead>
-          <tbody>${rows || '<tr><td colspan="11">No printings returned.</td></tr>'}</tbody>
+          <tbody>${rows || '<tr><td colspan="9">No printings returned.</td></tr>'}</tbody>
         </table>
       </div>`;
+    if (showFilters) {
+  const finishFilter = els.printings.querySelector("#printing-finish-filter");
+  const sortSelect = els.printings.querySelector("#printing-sort");
+  const tbody = els.printings.querySelector("tbody");
+
+  function regularGbpValue(print) {
+    const eur = Number(print.prices?.eur);
+    const usd = Number(print.prices?.usd);
+
+    if (eur && rates?.eurToGbp) {
+      return eur * rates.eurToGbp;
+    }
+
+    if (usd && rates?.usdToGbp) {
+      return usd * rates.usdToGbp;
+    }
+
+    return null;
+  }
+
+  function updatePrintings() {
+    const finish = finishFilter.value;
+    const sort = sortSelect.value;
+
+    let displayed = finish === "all"
+      ? [...all]
+      : all.filter(print =>
+          Array.isArray(print.finishes) &&
+          print.finishes.includes(finish)
+        );
+
+    displayed.sort((a, b) => {
+      if (sort === "oldest") {
+        return String(a.released_at || "").localeCompare(String(b.released_at || ""));
+      }
+
+      if (sort === "price-asc" || sort === "price-desc") {
+        const aPrice = regularGbpValue(a);
+        const bPrice = regularGbpValue(b);
+
+        if (aPrice === null && bPrice === null) return 0;
+        if (aPrice === null) return 1;
+        if (bPrice === null) return -1;
+
+        return sort === "price-asc"
+          ? aPrice - bPrice
+          : bPrice - aPrice;
+      }
+
+      return String(b.released_at || "").localeCompare(String(a.released_at || ""));
+    });
+
+    tbody.innerHTML = buildRows(displayed) ||
+      '<tr><td colspan="9">No printings match these filters.</td></tr>';
+  }
+
+  finishFilter.addEventListener("change", updatePrintings);
+  sortSelect.addEventListener("change", updatePrintings);
+}
   }
 
   async function loadCard(name, options = {}) {
