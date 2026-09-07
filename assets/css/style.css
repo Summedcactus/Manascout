@@ -155,3 +155,42 @@ button,input{font:inherit}
   .footer-inner>div{margin-top:14px}
   .footer a{margin-left:0;margin-right:16px}
 }
+
+/* Printing card thumbnails */
+.printing-image-cell {
+  width: 90px;
+  min-width: 90px;
+  text-align: center;
+}
+
+.printing-card-image {
+  width: 70px;
+  height: auto;
+  border-radius: 5px;
+  display: block;
+  margin: 0 auto;
+  transition: transform 0.18s ease, box-shadow 0.18s ease;
+}
+
+@media (hover: hover) {
+  .printing-card-image:hover {
+    transform: scale(2.2);
+    position: relative;
+    z-index: 20;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.55);
+  }
+}
+
+/* Smaller printing thumbnails on phones */
+@media (max-width: 720px) {
+  .printing-image-cell {
+    width: 62px;
+    min-width: 62px;
+    padding-left: 6px;
+    padding-right: 6px;
+  }
+
+  .printing-card-image {
+    width: 50px;
+  }
+}
