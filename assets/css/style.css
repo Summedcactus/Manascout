@@ -270,3 +270,282 @@ button,input{font:inherit}
     min-width: 0;
   }
 }
+
+
+/* ========================================
+   MANASCOUT — MODERN ARCANE
+   Homepage visual refresh
+   ======================================== */
+
+:root {
+  --bg: #09090b;
+  --panel: #101012;
+  --panel2: #151518;
+  --text: #f1eee9;
+  --muted: #99979a;
+  --line: #29272b;
+  --accent: #b32635;
+  --accent-bright: #d33b4c;
+  --accent-dark: #711722;
+  --gold: #c9a76b;
+}
+
+body {
+  background:
+    radial-gradient(circle at 50% -15%, rgba(179, 38, 53, .10) 0, transparent 32%),
+    linear-gradient(180deg, #09090b 0%, #0b0b0d 100%);
+  color: var(--text);
+}
+
+.site-header {
+  background: rgba(9, 9, 11, .90);
+  border-bottom-color: rgba(255,255,255,.07);
+}
+
+.brand {
+  color: #f1eee9;
+  font-size: 22px;
+}
+
+.brand span {
+  color: var(--accent-bright);
+}
+
+.nav a {
+  color: #817f83;
+}
+
+.nav a:hover,
+.nav a.active {
+  color: #f1eee9;
+}
+
+/* Hero */
+
+.hero {
+  max-width: 920px;
+  margin: 0 auto;
+  padding: 110px 0 90px;
+  text-align: center;
+}
+
+.hero .eyebrow {
+  color: var(--accent-bright);
+  margin-bottom: 18px;
+}
+
+.hero h1 {
+  margin: 0 auto 24px;
+  font-size: clamp(48px, 7vw, 82px);
+  line-height: .98;
+  letter-spacing: -.055em;
+  color: #f1eee9;
+}
+
+.hero h1 span {
+  color: var(--accent-bright);
+}
+
+.hero-copy {
+  max-width: 620px;
+  margin: 0 auto 34px;
+  color: #99979a;
+  font-size: 17px;
+}
+
+/* Search */
+
+.search-form {
+  max-width: 820px;
+  margin: 0 auto;
+}
+
+.search-box {
+  border: 1px solid #363237;
+  background: #111114;
+  border-radius: 14px;
+  padding: 7px;
+  box-shadow:
+    0 22px 70px rgba(0,0,0,.35),
+    0 0 0 1px rgba(255,255,255,.015);
+  transition:
+    border-color .18s ease,
+    box-shadow .18s ease,
+    transform .18s ease;
+}
+
+.search-box:focus-within {
+  border-color: rgba(211,59,76,.75);
+  box-shadow:
+    0 22px 70px rgba(0,0,0,.42),
+    0 0 0 3px rgba(179,38,53,.10);
+}
+
+.search-box input {
+  padding: 17px 18px;
+  font-size: 17px;
+}
+
+.search-box input::placeholder {
+  color: #666469;
+}
+
+.search-box button,
+.button-link {
+  background: var(--accent);
+  color: #fff;
+  border-radius: 9px;
+  padding-left: 26px;
+  padding-right: 26px;
+}
+
+.search-box button:hover,
+.button-link:hover {
+  background: var(--accent-bright);
+  filter: none;
+}
+
+/* Suggested searches */
+
+.try-row {
+  margin-top: 16px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  font-size: 12px;
+}
+
+.try-row > span {
+  color: #666469;
+  text-transform: uppercase;
+  letter-spacing: .12em;
+  font-size: 10px;
+  font-weight: 800;
+  margin-right: 3px;
+}
+
+.try-row a {
+  color: #a7a4a8;
+  text-decoration: none;
+  border: 1px solid #29272b;
+  background: #101012;
+  padding: 6px 10px;
+  border-radius: 999px;
+  transition:
+    color .15s ease,
+    border-color .15s ease,
+    background .15s ease,
+    transform .15s ease;
+}
+
+.try-row a:hover {
+  color: #fff;
+  border-color: rgba(211,59,76,.55);
+  background: rgba(179,38,53,.08);
+  transform: translateY(-1px);
+}
+
+/* Arcane divider treatment */
+
+.hero::after {
+  content: "◇";
+  display: block;
+  margin: 64px auto 0;
+  color: rgba(211,59,76,.40);
+  font-size: 13px;
+  letter-spacing: .4em;
+}
+
+/* Existing results, recoloured */
+
+.empty-state,
+.error-state,
+.loading-state {
+  background: linear-gradient(135deg, #111114, #0d0d0f);
+  border-color: var(--line);
+}
+
+.empty-mark,
+.price strong {
+  color: var(--accent-bright);
+}
+
+.card-display {
+  background: linear-gradient(135deg, #121215, #0d0d0f);
+  border-color: var(--line);
+}
+
+.marketplace-links a:hover {
+  border-color: var(--accent);
+}
+
+.printings-table th {
+  background: #0f0f11;
+}
+
+.printing-controls {
+  background: #0f0f11;
+}
+
+.printing-controls select:focus {
+  outline-color: var(--accent);
+}
+
+/* Card image polish */
+
+.card-image {
+  box-shadow:
+    0 22px 55px rgba(0,0,0,.52),
+    0 0 0 1px rgba(255,255,255,.04);
+}
+
+.printing-card-image {
+  box-shadow: 0 7px 18px rgba(0,0,0,.28);
+}
+
+/* Mobile */
+
+@media (max-width: 720px) {
+  .hero {
+    padding: 72px 0 56px;
+  }
+
+  .hero h1 {
+    font-size: clamp(43px, 13vw, 60px);
+  }
+
+  .hero-copy {
+    font-size: 15px;
+    margin-bottom: 26px;
+  }
+
+  .search-box {
+    display: block;
+  }
+
+  .search-box input {
+    padding: 15px 14px;
+  }
+
+  .search-box button {
+    height: 48px;
+    width: 100%;
+    margin-top: 4px;
+  }
+
+  .try-row {
+    margin-top: 14px;
+    gap: 6px;
+  }
+
+  .try-row > span {
+    width: 100%;
+    margin: 0 0 2px;
+  }
+
+  .hero::after {
+    margin-top: 46px;
+  }
+}
