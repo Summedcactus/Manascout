@@ -6,7 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>ManaScout — MTG Card & Printing Explorer</title>
   <meta name="description" content="Find Magic: The Gathering cards, explore printings and compare available Scryfall price data in a fast, clean card discovery tool.">
-  <meta name="theme-color" content="#0b0d0f">
+  <meta name="theme-color" content="#09090b">
   <link rel="canonical" href="https://manascout.co.uk/">
   <meta property="og:type" content="website">
   <meta property="og:title" content="ManaScout — MTG Card & Printing Explorer">
@@ -41,22 +41,48 @@
   </div>
 </header>
 
-<main class="container">
-  <section class="hero">
-    <p class="eyebrow">MTG CARD DISCOVERY</p>
-    <h1>Find the card.<br><span>Find the version.</span><br>Find the best one.</h1>
-    <p class="hero-copy">Search Magic: The Gathering cards, explore every available printing, and compare the information that matters before you buy.</p>
+<section class="hero">
+  <p class="eyebrow">MTG CARD DISCOVERY</p>
 
-    <form id="search-form" class="search-form" role="search" autocomplete="off">
-      <label class="sr-only" for="search-input">Search Magic: The Gathering card name</label>
-      <div class="search-box">
-        <input id="search-input" name="q" type="search" placeholder="Search a card — e.g. Sol Ring" spellcheck="false" aria-autocomplete="list" aria-controls="autocomplete-list" aria-expanded="false">
-        <button type="submit">Search</button>
-        <div id="autocomplete-list" class="autocomplete" role="listbox" hidden></div>
-      </div>
-    </form>
-    <p class="search-hint">No account. No clutter. Just the card.</p>
-  </section>
+  <h1>
+    Find the card.<br>
+    Find the version.<br>
+    <span>Find the one.</span>
+  </h1>
+
+  <p class="hero-copy">
+    Explore every printing, artwork, finish and price — and find the version you actually want.
+  </p>
+
+  <form id="search-form" class="search-form" role="search" autocomplete="off">
+    <label class="sr-only" for="search-input">Search Magic: The Gathering card name</label>
+
+    <div class="search-box">
+      <input
+        id="search-input"
+        name="q"
+        type="search"
+        placeholder="Search any Magic card..."
+        spellcheck="false"
+        aria-autocomplete="list"
+        aria-controls="autocomplete-list"
+        aria-expanded="false"
+      >
+
+      <button type="submit">Search</button>
+
+      <div id="autocomplete-list" class="autocomplete" role="listbox" hidden></div>
+    </div>
+  </form>
+
+  <div class="try-row">
+    <span>Try</span>
+    <a href="/?q=The%20One%20Ring">The One Ring</a>
+    <a href="/?q=Smaug%2C%20Wicked%20Worm">Smaug</a>
+    <a href="/?q=Sol%20Ring">Sol Ring</a>
+    <a href="/?q=Rhystic%20Study">Rhystic Study</a>
+  </div>
+</section>
 
   <section id="card-details-section" class="results" aria-live="polite">
     <div id="card-details" class="card-details">
