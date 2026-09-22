@@ -549,3 +549,167 @@ body {
     margin-top: 46px;
   }
 }
+
+
+/* ========================================
+   MANASCOUT SNAPSHOT
+   ======================================== */
+
+.snapshot {
+  position: relative;
+  margin: 0 0 18px;
+  padding: 22px;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  background:
+    radial-gradient(
+      circle at 0 0,
+      rgba(179, 38, 53, .12),
+      transparent 34%
+    ),
+    linear-gradient(
+      135deg,
+      #121215,
+      #0e0e10
+    );
+  box-shadow: 0 16px 45px rgba(0, 0, 0, .20);
+}
+
+.snapshot::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 22px;
+  width: 54px;
+  height: 2px;
+  background: var(--accent-bright);
+}
+
+.snapshot-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  margin-bottom: 18px;
+}
+
+.snapshot-heading .eyebrow {
+  margin: 0 0 4px;
+  color: var(--accent-bright);
+}
+
+.snapshot-heading h3 {
+  margin: 0;
+  color: var(--text);
+  font-size: 20px;
+  line-height: 1.2;
+  letter-spacing: -.025em;
+}
+
+.snapshot-mark {
+  color: rgba(211, 59, 76, .55);
+  font-size: 24px;
+  line-height: 1;
+}
+
+.snapshot-grid {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.snapshot-stat {
+  min-width: 0;
+  padding: 14px 12px;
+  border: 1px solid rgba(255, 255, 255, .055);
+  border-radius: 10px;
+  background: rgba(255, 255, 255, .022);
+}
+
+.snapshot-stat strong {
+  display: block;
+  overflow: hidden;
+  color: var(--text);
+  font-size: 19px;
+  line-height: 1.2;
+  letter-spacing: -.02em;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.snapshot-stat span {
+  display: block;
+  margin-top: 6px;
+  color: var(--muted);
+  font-size: 9px;
+  font-weight: 700;
+  line-height: 1.3;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+
+.snapshot-note {
+  margin: 13px 0 0;
+  color: #706e73;
+  font-size: 10px;
+  line-height: 1.4;
+}
+
+
+/* Snapshot tablet */
+
+@media (max-width: 900px) {
+  .snapshot-grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+
+
+/* Snapshot mobile */
+
+@media (max-width: 720px) {
+  .snapshot {
+    padding: 18px 14px 14px;
+    border-radius: 12px;
+  }
+
+  .snapshot::before {
+    left: 14px;
+    width: 42px;
+  }
+
+  .snapshot-heading {
+    margin-bottom: 14px;
+  }
+
+  .snapshot-heading h3 {
+    font-size: 18px;
+  }
+
+  .snapshot-mark {
+    font-size: 20px;
+  }
+
+  .snapshot-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 7px;
+  }
+
+  .snapshot-stat {
+    padding: 12px 10px;
+  }
+
+  .snapshot-stat strong {
+    font-size: 18px;
+  }
+
+  .snapshot-stat span {
+    margin-top: 5px;
+    font-size: 9px;
+  }
+
+  .snapshot-note {
+    margin-top: 11px;
+  }
+}
