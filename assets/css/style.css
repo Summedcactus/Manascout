@@ -136,11 +136,13 @@ button,input{font:inherit}
 .footer p{max-width:760px;margin:0}
 .footer a{color:#8b9793;text-decoration:none;margin-left:16px}
 .footer a:hover{color:var(--text)}
+
 @media(max-width:720px){
   .container{width:min(100% - 24px,1120px)}
   .header-inner{min-height:60px}
   .nav{display:none}
   .hero{padding:58px 0 40px}
+  .hero.compact{min-height:0}
   .hero h1{font-size:clamp(40px,12vw,62px)}
   .hero-copy{font-size:16px}
   .search-box{display:block;padding:6px}
@@ -157,6 +159,7 @@ button,input{font:inherit}
 }
 
 /* Printing card thumbnails */
+
 .printing-image-cell {
   width: 90px;
   min-width: 90px;
@@ -169,7 +172,7 @@ button,input{font:inherit}
   border-radius: 5px;
   display: block;
   margin: 0 auto;
-  transition: transform 0.18s ease, box-shadow 0.18s ease;
+  transition: transform .18s ease, box-shadow .18s ease;
 }
 
 @media (hover: hover) {
@@ -201,7 +204,6 @@ button,input{font:inherit}
   text-decoration: underline;
 }
 
-/* Smaller printing thumbnails on phones */
 @media (max-width: 720px) {
   .printing-image-cell {
     width: 62px;
@@ -216,6 +218,7 @@ button,input{font:inherit}
 }
 
 /* Printing filters and sorting */
+
 .printing-controls {
   display: flex;
   align-items: end;
@@ -274,7 +277,6 @@ button,input{font:inherit}
 
 /* ========================================
    MANASCOUT — MODERN ARCANE
-   Homepage visual refresh
    ======================================== */
 
 :root {
@@ -320,6 +322,7 @@ body {
   color: #f1eee9;
 }
 
+
 /* Hero */
 
 .hero {
@@ -352,6 +355,7 @@ body {
   color: #99979a;
   font-size: 17px;
 }
+
 
 /* Search */
 
@@ -405,6 +409,7 @@ body {
   filter: none;
 }
 
+
 /* Suggested searches */
 
 .try-row {
@@ -447,6 +452,7 @@ body {
   transform: translateY(-1px);
 }
 
+
 /* Arcane divider treatment */
 
 .hero::after {
@@ -457,6 +463,7 @@ body {
   font-size: 13px;
   letter-spacing: .4em;
 }
+
 
 /* Existing results, recoloured */
 
@@ -493,6 +500,7 @@ body {
   outline-color: var(--accent);
 }
 
+
 /* Card image polish */
 
 .card-image {
@@ -505,11 +513,20 @@ body {
   box-shadow: 0 7px 18px rgba(0,0,0,.28);
 }
 
+
 /* Mobile */
 
 @media (max-width: 720px) {
+  /*
+   * Remove the old compact-hero viewport height.
+   * This was the main source of the large empty mobile gap.
+   */
+  .hero.compact {
+    min-height: 0;
+  }
+
   .hero {
-    padding: 72px 0 56px;
+    padding: 48px 0 28px;
   }
 
   .hero h1 {
@@ -546,7 +563,15 @@ body {
   }
 
   .hero::after {
-    margin-top: 46px;
+    margin-top: 28px;
+  }
+
+  .card-details {
+    margin-bottom: 42px;
+  }
+
+  .printings-section {
+    padding-bottom: 56px;
   }
 }
 
@@ -619,12 +644,78 @@ body {
   gap: 8px;
 }
 
+
+/* Interactive Snapshot tiles */
+
 .snapshot-stat {
+  appearance: none;
+  width: 100%;
   min-width: 0;
   padding: 14px 12px;
   border: 1px solid rgba(255, 255, 255, .055);
   border-radius: 10px;
   background: rgba(255, 255, 255, .022);
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  position: relative;
+  transition:
+    border-color .16s ease,
+    background .16s ease,
+    transform .16s ease,
+    box-shadow .16s ease;
+}
+
+.snapshot-stat::after {
+  content: "";
+  position: absolute;
+  left: 12px;
+  right: 12px;
+  bottom: 0;
+  height: 2px;
+  border-radius: 999px;
+  background: var(--accent-bright);
+  opacity: 0;
+  transform: scaleX(.45);
+  transition:
+    opacity .16s ease,
+    transform .16s ease;
+}
+
+.snapshot-stat:hover:not(:disabled) {
+  border-color: rgba(211, 59, 76, .42);
+  background: rgba(179, 38, 53, .07);
+  transform: translateY(-1px);
+}
+
+.snapshot-stat:focus-visible {
+  outline: 2px solid var(--accent-bright);
+  outline-offset: 2px;
+}
+
+.snapshot-stat.is-active {
+  border-color: rgba(211, 59, 76, .62);
+  background:
+    linear-gradient(
+      135deg,
+      rgba(179, 38, 53, .16),
+      rgba(179, 38, 53, .055)
+    );
+  box-shadow:
+    inset 0 0 0 1px rgba(211, 59, 76, .06),
+    0 8px 24px rgba(0, 0, 0, .16);
+}
+
+.snapshot-stat.is-active::after {
+  opacity: 1;
+  transform: scaleX(1);
+}
+
+.snapshot-stat:disabled {
+  cursor: not-allowed;
+  opacity: .34;
+  filter: saturate(.5);
 }
 
 .snapshot-stat strong {
@@ -638,6 +729,10 @@ body {
   white-space: nowrap;
 }
 
+.snapshot-stat.is-active strong {
+  color: #fff;
+}
+
 .snapshot-stat span {
   display: block;
   margin-top: 6px;
@@ -647,6 +742,10 @@ body {
   line-height: 1.3;
   letter-spacing: .08em;
   text-transform: uppercase;
+}
+
+.snapshot-stat.is-active span {
+  color: #d5c7ca;
 }
 
 .snapshot-note {
@@ -697,7 +796,18 @@ body {
   }
 
   .snapshot-stat {
+    min-height: 68px;
     padding: 12px 10px;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .snapshot-stat::after {
+    left: 10px;
+    right: 10px;
+  }
+
+  .snapshot-stat:hover:not(:disabled) {
+    transform: none;
   }
 
   .snapshot-stat strong {

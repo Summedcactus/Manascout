@@ -349,51 +349,123 @@
     );
   }
 
+  function hasFinish(print, finish) {
+    return (
+      Array.isArray(print.finishes) &&
+      print.finishes.includes(finish)
+    );
+  }
+
+  function oldestYear(printings) {
+    const years = printings
+      .map(print => String(print.released_at || "").slice(0, 4))
+      .filter(year => /^\d{4}$/.test(year));
+
+    return years.length
+      ? years.sort()[0]
+      : null;
+  }
+
+  function newestYear(printings) {
+    const years = printings
+      .map(print => String(print.released_at || "").slice(0, 4))
+      .filter(year => /^\d{4}$/.test(year));
+
+    return years.length
+      ? years.sort().reverse()[0]
+      : null;
+  }
+
+  function cheapestPrinting(printings, rates, priceGetter) {
+    let winner = null;
+    let winnerPrice = Infinity;
+
+    printings.forEach(print => {
+      const price = priceGetter(print, rates);
+
+      if (
+        Number.isFinite(price) &&
+        price > 0 &&
+        price < winnerPrice
+      ) {
+        winner = print;
+        winnerPrice = price;
+      }
+    });
+
+    return winner
+      ? {
+          print: winner,
+          price: winnerPrice
+        }
+      : null;
+  }
+
 
   /* ------------------------------
      MANASCOUT SNAPSHOT
      ------------------------------ */
+
+  function getSnapshotData(printings, rates) {
+    const oldest = oldestYear(printings);
+    const newest = newestYear(printings);
+
+    const foilPrintings = printings.filter(print =>
+      hasFinish(print, "foil")
+    );
+
+    const etchedPrintings = printings.filter(print =>
+      hasFinish(print, "etched")
+    );
+
+    const cheapest = cheapestPrinting(
+      printings,
+      rates,
+      regularGbpValue
+    );
+
+    const cheapestFoil = cheapestPrinting(
+      printings,
+      rates,
+      foilGbpValue
+    );
+
+    return {
+      oldest,
+      newest,
+      foilPrintings,
+      etchedPrintings,
+      cheapest,
+      cheapestFoil
+    };
+  }
+
+  function snapshotButton({
+    action,
+    value,
+    label,
+    disabled = false
+  }) {
+    return `
+      <button
+        class="snapshot-stat"
+        type="button"
+        data-snapshot-action="${escapeHtml(action)}"
+        ${disabled ? "disabled" : ""}
+        aria-pressed="false"
+      >
+        <strong>${escapeHtml(value)}</strong>
+        <span>${escapeHtml(label)}</span>
+      </button>
+    `;
+  }
 
   function buildSnapshot(printings, rates) {
     if (!Array.isArray(printings) || !printings.length) {
       return "";
     }
 
-    const regularPrices = printings
-      .map(print => regularGbpValue(print, rates))
-      .filter(value => Number.isFinite(value) && value > 0);
-
-    const foilPrices = printings
-      .map(print => foilGbpValue(print, rates))
-      .filter(value => Number.isFinite(value) && value > 0);
-
-    const datedPrintings = printings
-      .filter(print => print.released_at)
-      .slice()
-      .sort((a, b) =>
-        String(a.released_at).localeCompare(String(b.released_at))
-      );
-
-    const oldest = datedPrintings[0] || null;
-    const newest = datedPrintings[datedPrintings.length - 1] || null;
-
-    const foilCount = printings.filter(print =>
-      Array.isArray(print.finishes) &&
-      print.finishes.includes("foil")
-    ).length;
-
-    const etchedCount = printings.filter(print =>
-      Array.isArray(print.finishes) &&
-      print.finishes.includes("etched")
-    ).length;
-
-    const cheapest = regularPrices.length
-      ? Math.min(...regularPrices)
-      : null;
-
-    const cheapestFoil = foilPrices.length
-      ? Math.min(...foilPrices)
-      : null;
+    const data = getSnapshotData(printings, rates);
 
     return `
       <section class="snapshot">
@@ -409,53 +481,62 @@
 
         <div class="snapshot-grid">
 
-          <div class="snapshot-stat">
-            <strong>${printings.length}</strong>
-            <span>Printings</span>
-          </div>
+          ${snapshotButton({
+            action: "all",
+            value: printings.length,
+            label: "Printings"
+          })}
 
-          <div class="snapshot-stat">
-            <strong>
-              ${cheapest !== null ? `£${cheapest.toFixed(2)}` : "—"}
-            </strong>
-            <span>Cheapest</span>
-          </div>
+          ${snapshotButton({
+            action: "cheapest",
+            value: data.cheapest
+              ? `£${data.cheapest.price.toFixed(2)}`
+              : "—",
+            label: "Cheapest",
+            disabled: !data.cheapest
+          })}
 
-          <div class="snapshot-stat">
-            <strong>
-              ${cheapestFoil !== null ? `£${cheapestFoil.toFixed(2)}` : "—"}
-            </strong>
-            <span>Cheapest foil</span>
-          </div>
+          ${snapshotButton({
+            action: "cheapest-foil",
+            value: data.cheapestFoil
+              ? `£${data.cheapestFoil.price.toFixed(2)}`
+              : "—",
+            label: "Cheapest foil",
+            disabled: !data.cheapestFoil
+          })}
 
-          <div class="snapshot-stat">
-            <strong>
-              ${escapeHtml(oldest?.released_at?.slice(0, 4) || "—")}
-            </strong>
-            <span>Oldest</span>
-          </div>
+          ${snapshotButton({
+            action: "oldest",
+            value: data.oldest || "—",
+            label: "Oldest",
+            disabled: !data.oldest
+          })}
 
-          <div class="snapshot-stat">
-            <strong>
-              ${escapeHtml(newest?.released_at?.slice(0, 4) || "—")}
-            </strong>
-            <span>Newest</span>
-          </div>
+          ${snapshotButton({
+            action: "newest",
+            value: data.newest || "—",
+            label: "Newest",
+            disabled: !data.newest
+          })}
 
-          <div class="snapshot-stat">
-            <strong>${foilCount}</strong>
-            <span>Foil versions</span>
-          </div>
+          ${snapshotButton({
+            action: "foil",
+            value: data.foilPrintings.length,
+            label: "Foil versions",
+            disabled: !data.foilPrintings.length
+          })}
 
-          <div class="snapshot-stat">
-            <strong>${etchedCount}</strong>
-            <span>Etched versions</span>
-          </div>
+          ${snapshotButton({
+            action: "etched",
+            value: data.etchedPrintings.length,
+            label: "Etched versions",
+            disabled: !data.etchedPrintings.length
+          })}
 
         </div>
 
         <p class="snapshot-note">
-          Prices are approximate GBP conversions from available Scryfall price data.
+          Tap a Snapshot tile to explore matching printings. Prices are approximate GBP conversions from available Scryfall price data.
         </p>
 
       </section>
@@ -570,6 +651,8 @@
     els.status.textContent = rates
       ? `${all.length} printing${all.length === 1 ? "" : "s"} found · GBP estimates`
       : `${all.length} printing${all.length === 1 ? "" : "s"} found`;
+
+    const snapshotData = getSnapshotData(all, rates);
 
 
     /* BUILD PRINTING ROWS */
@@ -712,17 +795,13 @@
       `
       : "";
 
-    const rows = buildRows(all);
-
     const snapshot = buildSnapshot(all, rates);
 
 
     /* RENDER SNAPSHOT + PRINTINGS */
 
     els.printings.innerHTML = `
-
       ${snapshot}
-
       ${filterControls}
 
       <div class="table-wrap">
@@ -745,7 +824,7 @@
 
           <tbody>
             ${
-              rows ||
+              buildRows(all) ||
               '<tr><td colspan="9">No printings returned.</td></tr>'
             }
           </tbody>
@@ -756,76 +835,183 @@
     `;
 
 
-    /* FILTER + SORT BEHAVIOUR */
+    /* INTERACTIVE TABLE STATE */
 
-    if (showFilters) {
-      const finishFilter =
-        els.printings.querySelector("#printing-finish-filter");
+    const tbody =
+      els.printings.querySelector("tbody");
 
-      const sortSelect =
-        els.printings.querySelector("#printing-sort");
+    const finishFilter =
+      els.printings.querySelector("#printing-finish-filter");
 
-      const tbody =
-        els.printings.querySelector("tbody");
+    const sortSelect =
+      els.printings.querySelector("#printing-sort");
 
-      function updatePrintings() {
-        const finish = finishFilter.value;
-        const sort = sortSelect.value;
+    let snapshotMode = "all";
 
-        let displayed = finish === "all"
-          ? [...all]
-          : all.filter(print =>
-              Array.isArray(print.finishes) &&
-              print.finishes.includes(finish)
-            );
-
-        displayed.sort((a, b) => {
-          if (sort === "oldest") {
-            return String(a.released_at || "")
-              .localeCompare(String(b.released_at || ""));
-          }
-
-          if (
-            sort === "price-asc" ||
-            sort === "price-desc"
-          ) {
-            const aPrice =
-              regularGbpValue(a, rates);
-
-            const bPrice =
-              regularGbpValue(b, rates);
-
-            if (aPrice === null && bPrice === null) {
-              return 0;
-            }
-
-            if (aPrice === null) {
-              return 1;
-            }
-
-            if (bPrice === null) {
-              return -1;
-            }
-
-            return sort === "price-asc"
-              ? aPrice - bPrice
-              : bPrice - aPrice;
-          }
-
-          return String(b.released_at || "")
-            .localeCompare(String(a.released_at || ""));
-        });
-
-        tbody.innerHTML =
-          buildRows(displayed) ||
-          '<tr><td colspan="9">No printings match these filters.</td></tr>';
+    function snapshotResults() {
+      if (snapshotMode === "cheapest") {
+        return snapshotData.cheapest
+          ? [snapshotData.cheapest.print]
+          : [];
       }
 
+      if (snapshotMode === "cheapest-foil") {
+        return snapshotData.cheapestFoil
+          ? [snapshotData.cheapestFoil.print]
+          : [];
+      }
+
+      if (snapshotMode === "oldest") {
+        return all.filter(print =>
+          String(print.released_at || "").startsWith(
+            snapshotData.oldest || "----"
+          )
+        );
+      }
+
+      if (snapshotMode === "newest") {
+        return all.filter(print =>
+          String(print.released_at || "").startsWith(
+            snapshotData.newest || "----"
+          )
+        );
+      }
+
+      if (snapshotMode === "foil") {
+        return all.filter(print =>
+          hasFinish(print, "foil")
+        );
+      }
+
+      if (snapshotMode === "etched") {
+        return all.filter(print =>
+          hasFinish(print, "etched")
+        );
+      }
+
+      return [...all];
+    }
+
+    function updateActiveSnapshotButton() {
+      const buttons =
+        els.printings.querySelectorAll("[data-snapshot-action]");
+
+      buttons.forEach(button => {
+        const active =
+          button.dataset.snapshotAction === snapshotMode;
+
+        button.classList.toggle(
+          "is-active",
+          active
+        );
+
+        button.setAttribute(
+          "aria-pressed",
+          active ? "true" : "false"
+        );
+      });
+    }
+
+    function updateStatus(displayed) {
+      if (!els.status) return;
+
+      if (snapshotMode === "all") {
+        els.status.textContent = rates
+          ? `${all.length} printing${all.length === 1 ? "" : "s"} found · GBP estimates`
+          : `${all.length} printing${all.length === 1 ? "" : "s"} found`;
+
+        return;
+      }
+
+      const labels = {
+        cheapest: "cheapest printing",
+        "cheapest-foil": "cheapest foil printing",
+        oldest: "oldest printings",
+        newest: "newest printings",
+        foil: "foil printings",
+        etched: "etched printings"
+      };
+
+      els.status.textContent =
+        `${displayed.length} ${labels[snapshotMode] || "printing"} shown`;
+    }
+
+    function updatePrintings() {
+      let displayed = snapshotResults();
+
+      const finish =
+        finishFilter?.value || "all";
+
+      const sort =
+        sortSelect?.value || "newest";
+
+      /*
+       * Snapshot provides the first filter.
+       * Existing finish dropdown can then narrow those
+       * results further when it is present.
+       */
+      if (finish !== "all") {
+        displayed = displayed.filter(print =>
+          hasFinish(print, finish)
+        );
+      }
+
+      displayed.sort((a, b) => {
+        if (sort === "oldest") {
+          return String(a.released_at || "")
+            .localeCompare(String(b.released_at || ""));
+        }
+
+        if (
+          sort === "price-asc" ||
+          sort === "price-desc"
+        ) {
+          const aPrice =
+            regularGbpValue(a, rates);
+
+          const bPrice =
+            regularGbpValue(b, rates);
+
+          if (aPrice === null && bPrice === null) {
+            return 0;
+          }
+
+          if (aPrice === null) {
+            return 1;
+          }
+
+          if (bPrice === null) {
+            return -1;
+          }
+
+          return sort === "price-asc"
+            ? aPrice - bPrice
+            : bPrice - aPrice;
+        }
+
+        return String(b.released_at || "")
+          .localeCompare(String(a.released_at || ""));
+      });
+
+      tbody.innerHTML =
+        buildRows(displayed) ||
+        '<tr><td colspan="9">No printings match these filters.</td></tr>';
+
+      updateActiveSnapshotButton();
+      updateStatus(displayed);
+    }
+
+
+    /* EXISTING FILTER + SORT BEHAVIOUR */
+
+    if (finishFilter) {
       finishFilter.addEventListener(
         "change",
         updatePrintings
       );
+    }
 
+    if (sortSelect) {
       sortSelect.addEventListener(
         "change",
         updatePrintings
@@ -833,33 +1019,120 @@
     }
 
 
-    /* SELECT EXACT PRINTING */
+    /* SNAPSHOT BEHAVIOUR */
 
-    els.printings.onclick = event => {
-      const trigger =
-        event.target.closest("[data-print-id]");
-
-      if (!trigger) {
-        return;
-      }
-
-      const selected = all.find(
-        print => print.id === trigger.dataset.printId
+    const initialAllButton =
+      els.printings.querySelector(
+        '[data-snapshot-action="all"]'
       );
 
-      if (!selected) {
-        return;
-      }
+    if (initialAllButton) {
+      initialAllButton.classList.add("is-active");
+      initialAllButton.setAttribute("aria-pressed", "true");
+    }
 
-      renderCard(selected);
+    els.printings.addEventListener(
+      "click",
+      event => {
+        const snapshotButton =
+          event.target.closest("[data-snapshot-action]");
 
-      if (els.details) {
-        els.details.scrollIntoView({
-          behavior: "smooth",
-          block: "start"
-        });
+        if (!snapshotButton) {
+          return;
+        }
+
+        if (snapshotButton.disabled) {
+          return;
+        }
+
+        snapshotMode =
+          snapshotButton.dataset.snapshotAction || "all";
+
+        /*
+         * Snapshot selections should be understandable on
+         * their own, so reset the old finish filter when
+         * choosing a Snapshot tile.
+         */
+        if (finishFilter) {
+          finishFilter.value = "all";
+        }
+
+        updatePrintings();
+
+        /*
+         * Cheapest tiles represent one exact printing.
+         * Update the large card display to that version.
+         */
+        if (
+          snapshotMode === "cheapest" &&
+          snapshotData.cheapest?.print
+        ) {
+          renderCard(snapshotData.cheapest.print);
+        }
+
+        if (
+          snapshotMode === "cheapest-foil" &&
+          snapshotData.cheapestFoil?.print
+        ) {
+          renderCard(snapshotData.cheapestFoil.print);
+        }
+
+        /*
+         * If a Snapshot category contains exactly one
+         * printing, show that exact printing above too.
+         */
+        const matches = snapshotResults();
+
+        if (
+          !["cheapest", "cheapest-foil", "all"].includes(snapshotMode) &&
+          matches.length === 1
+        ) {
+          renderCard(matches[0]);
+        }
+
+        const tableWrap =
+          els.printings.querySelector(".table-wrap");
+
+        if (tableWrap) {
+          tableWrap.scrollIntoView({
+            behavior: "smooth",
+            block: "start"
+          });
+        }
       }
-    };
+    );
+
+
+    /* SELECT EXACT PRINTING */
+
+    els.printings.addEventListener(
+      "click",
+      event => {
+        const trigger =
+          event.target.closest("[data-print-id]");
+
+        if (!trigger) {
+          return;
+        }
+
+        const selected = all.find(
+          print => print.id === trigger.dataset.printId
+        );
+
+        if (!selected) {
+          return;
+        }
+
+        renderCard(selected);
+
+        if (els.details) {
+          els.details.scrollIntoView({
+            behavior: "smooth",
+            block: "start"
+          });
+        }
+      }
+    );
   }
 
 
