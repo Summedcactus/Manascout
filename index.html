@@ -152,6 +152,46 @@
 
       </div>
 
+
+      <!-- DISCOVER -->
+      <div
+        class="discover-card"
+        style="
+          margin-top: 1.35rem;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+        "
+      >
+
+        <button
+          id="discover-card-button"
+          type="button"
+          style="
+            appearance: none;
+            border: 1px solid rgba(179, 38, 53, 0.55);
+            border-radius: 999px;
+            background: rgba(179, 38, 53, 0.08);
+            color: #f5f5f5;
+            padding: 0.8rem 1.15rem;
+            font: inherit;
+            font-size: 0.82rem;
+            font-weight: 700;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition:
+              background 160ms ease,
+              border-color 160ms ease,
+              transform 160ms ease,
+              opacity 160ms ease;
+          "
+        >
+          ◇ Discover a Card
+        </button>
+
+      </div>
+
     </section>
 
 
@@ -696,11 +736,6 @@
       let touchStartX = null;
       let artworkLoaded = false;
 
-      /*
-       * These preferences deliberately create a mixture of classic,
-       * alternate and premium-looking printings rather than simply
-       * displaying Scryfall's default card image.
-       */
       const preferences = {
         "Rhystic Study": "premium",
         "Sol Ring": "alternate",
@@ -855,13 +890,6 @@
       }
 
 
-      /*
-       * Give visually distinctive treatments a higher score.
-       *
-       * This is intentionally NOT a price ranking.
-       * The carousel is supposed to demonstrate the variety of Magic
-       * printings, not merely show whichever printing costs the most.
-       */
       function scorePrinting(printing, preference) {
         let score = 0;
 
@@ -1015,11 +1043,6 @@
         }
 
 
-        /*
-         * Black Lotus deliberately goes the opposite direction:
-         * show an old/classic printing rather than forcing a modern
-         * treatment onto one of Magic's most historic cards.
-         */
         if (
           preference === "classic"
         ) {
@@ -1157,12 +1180,6 @@
       }
 
 
-      /*
-       * Load actual printings for the card rather than Scryfall's
-       * single default named-card result.
-       *
-       * Requests are performed sequentially and lightly staggered.
-       */
       async function fetchPrintings(name) {
         const query =
           encodeURIComponent(
@@ -1300,10 +1317,6 @@
             art.appendChild(img);
 
 
-            /*
-             * Replace the generic carousel label with useful information
-             * about the exact printing ManaScout selected.
-             */
             if (label) {
               label.textContent =
                 printingLabel(
@@ -1319,9 +1332,6 @@
           }
 
 
-          /*
-           * Small delay before moving to the next featured card.
-           */
           await sleep(120);
         }
       }
@@ -1443,11 +1453,6 @@
       );
 
 
-      /*
-       * app.js changes the URL using history.pushState rather than
-       * reloading the page. Hide Featured immediately when a search
-       * is submitted so it cannot sit between the result and printings.
-       */
       searchForm?.addEventListener(
         "submit",
         () => {
@@ -1462,10 +1467,6 @@
       );
 
 
-      /*
-       * Autocomplete selections also trigger searches without requiring
-       * a full page reload.
-       */
       autocomplete?.addEventListener(
         "click",
         event => {
@@ -1482,10 +1483,6 @@
       );
 
 
-      /*
-       * Browser back/forward navigation should restore or hide the
-       * homepage discovery carousel as appropriate.
-       */
       window.addEventListener(
         "popstate",
         () => {
@@ -1497,10 +1494,6 @@
       );
 
 
-      /*
-       * Keep the homepage discovery state in sync with URL changes
-       * performed by app.js.
-       */
       const originalPushState =
         history.pushState.bind(
           history
@@ -1531,17 +1524,189 @@
         };
 
 
-      /*
-       * The old homepage used an empty-state card inside #card-details.
-       * Homepage V2 intentionally leaves this area empty until a real
-       * card is searched.
-       */
       if (
         cardDetails &&
         !hasSearchQuery()
       ) {
         cardDetails.innerHTML = "";
       }
+
+    })();
+  </script>
+
+
+  <!-- DISCOVER A CARD -->
+  <script>
+    (() => {
+      "use strict";
+
+      const button =
+        document.getElementById("discover-card-button");
+
+      if (!button) {
+        return;
+      }
+
+      const originalText =
+        button.textContent.trim();
+
+      function resetButton() {
+        button.textContent =
+          originalText;
+
+        button.disabled =
+          false;
+
+        button.style.opacity =
+          "1";
+
+        button.style.cursor =
+          "pointer";
+      }
+
+
+      button.addEventListener(
+        "mouseenter",
+        () => {
+          if (!button.disabled) {
+            button.style.background =
+              "rgba(179, 38, 53, 0.18)";
+
+            button.style.borderColor =
+              "rgba(179, 38, 53, 0.9)";
+
+            button.style.transform =
+              "translateY(-1px)";
+          }
+        }
+      );
+
+
+      button.addEventListener(
+        "mouseleave",
+        () => {
+          button.style.background =
+            "rgba(179, 38, 53, 0.08)";
+
+          button.style.borderColor =
+            "rgba(179, 38, 53, 0.55)";
+
+          button.style.transform =
+            "translateY(0)";
+        }
+      );
+
+
+      button.addEventListener(
+        "click",
+        async () => {
+          if (
+            button.disabled ||
+            !window.ManaScout?.loadCard
+          ) {
+            return;
+          }
+
+
+          button.disabled =
+            true;
+
+          button.style.opacity =
+            "0.7";
+
+          button.style.cursor =
+            "wait";
+
+          button.textContent =
+            "◇ Scouting…";
+
+
+          try {
+            const response =
+              await fetch(
+                "https://api.scryfall.com/cards/random?q=game%3Apaper",
+                {
+                  headers: {
+                    "Accept":
+                      "application/json"
+                  }
+                }
+              );
+
+
+            if (!response.ok) {
+              throw new Error(
+                `Scryfall returned ${response.status}`
+              );
+            }
+
+
+            const card =
+              await response.json();
+
+
+            if (!card?.name) {
+              throw new Error(
+                "Random card had no name."
+              );
+            }
+
+
+            /*
+             * Feed the random card straight back through
+             * ManaScout's existing search system.
+             *
+             * This means Discover automatically inherits:
+             * card details, Snapshot, every printing,
+             * filters, sorting, GBP estimates and URL state.
+             */
+            await window.ManaScout.loadCard(
+              card.name
+            );
+
+
+            /*
+             * Bring the newly discovered card into view.
+             */
+            const details =
+              document.getElementById(
+                "card-details-section"
+              );
+
+            if (details) {
+              details.scrollIntoView({
+                behavior: "smooth",
+                block: "start"
+              });
+            }
+
+
+            resetButton();
+
+          } catch (error) {
+            console.error(
+              "ManaScout Discover failed:",
+              error
+            );
+
+
+            button.textContent =
+              "◇ Try Again";
+
+            button.style.opacity =
+              "1";
+
+            button.style.cursor =
+              "pointer";
+
+
+            window.setTimeout(
+              resetButton,
+              1800
+            );
+          }
+        }
+      );
 
     })();
   </script>
