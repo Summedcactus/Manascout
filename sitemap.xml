@@ -1,18 +1,72 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <url><loc>https://manascout.co.uk/</loc></url>
 
-  <url><loc>https://manascout.co.uk/card/sol-ring/</loc></url>
-  <url><loc>https://manascout.co.uk/card/rhystic-study/</loc></url>
-  <url><loc>https://manascout.co.uk/card/black-lotus/</loc></url>
-  <url><loc>https://manascout.co.uk/card/the-one-ring/</loc></url>
-  <url><loc>https://manascout.co.uk/card/smaug-wicked-worm/</loc></url>
+  <url>
+    <loc>https://manascout.co.uk/</loc>
+  </url>
 
-  <url><loc>https://manascout.co.uk/card/jace-the-mind-sculptor/</loc></url>
-  <url><loc>https://manascout.co.uk/card/demonic-tutor/</loc></url>
-  <url><loc>https://manascout.co.uk/card/mana-crypt/</loc></url>
-  <url><loc>https://manascout.co.uk/card/the-theorist-jace-beleren/</loc></url>
+  <url>
+    <loc>https://manascout.co.uk/card/sol-ring/</loc>
+  </url>
 
-  <url><loc>https://manascout.co.uk/privacy/</loc></url>
-  <url><loc>https://manascout.co.uk/terms/</loc></url>
+  <url>
+    <loc>https://manascout.co.uk/card/rhystic-study/</loc>
+  </url>
+
+  <url>
+    <loc>https://manascout.co.uk/card/black-lotus/</loc>
+  </url>
+
+  <url>
+    <loc>https://manascout.co.uk/card/the-one-ring/</loc>
+  </url>
+
+  <url>
+    <loc>https://manascout.co.uk/card/smaug-wicked-worm/</loc>
+  </url>
+
+  <url>
+    <loc>https://manascout.co.uk/card/jace-the-mind-sculptor/</loc>
+  </url>
+
+  <url>
+    <loc>https://manascout.co.uk/card/demonic-tutor/</loc>
+  </url>
+
+  <url>
+    <loc>https://manascout.co.uk/card/mana-crypt/</loc>
+  </url>
+
+  <url>
+    <loc>https://manascout.co.uk/card/the-theorist-jace-beleren/</loc>
+  </url>
+
+  <url>
+    <loc>https://manascout.co.uk/card/lightning-greaves/</loc>
+  </url>
+
+  <url>
+    <loc>https://manascout.co.uk/card/cyclonic-rift/</loc>
+  </url>
+
+  <url>
+    <loc>https://manascout.co.uk/card/smothering-tithe/</loc>
+  </url>
+
+  <url>
+    <loc>https://manascout.co.uk/card/force-of-will/</loc>
+  </url>
+
+  <url>
+    <loc>https://manascout.co.uk/card/vampiric-tutor/</loc>
+  </url>
+
+  <url>
+    <loc>https://manascout.co.uk/privacy/</loc>
+  </url>
+
+  <url>
+    <loc>https://manascout.co.uk/terms/</loc>
+  </url>
+
 </urlset>
