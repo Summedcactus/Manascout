@@ -79,7 +79,7 @@ button,input{font:inherit}
 .autocomplete-item img{width:34px;height:48px;object-fit:cover;border-radius:4px;background:#202628}
 .autocomplete-item small{display:block;color:var(--muted);font-size:11px;margin-top:2px}
 .results{min-height:10px}
-.card-details{margin-bottom:70px}
+.card-details{margin-bottom:52px}
 .empty-state,.error-state,.loading-state{
   border:1px solid var(--line);background:linear-gradient(135deg,var(--panel),#0f1315);
   border-radius:16px;padding:38px
@@ -89,21 +89,40 @@ button,input{font:inherit}
 .empty-state p,.error-state p{margin:0;color:var(--muted)}
 .loading-state{color:var(--muted)}
 .card-display{
-  display:grid;grid-template-columns:280px 1fr;gap:36px;align-items:start;
+  display:grid;grid-template-columns:280px 1fr;gap:32px;align-items:start;
   border:1px solid var(--line);background:linear-gradient(135deg,#121719,#0f1315);
-  border-radius:18px;padding:26px
+  border-radius:18px;padding:24px
 }
 .card-image-wrap{display:flex;justify-content:center}
 .card-image{display:block;width:100%;max-width:280px;border-radius:14px;box-shadow:0 18px 45px rgba(0,0,0,.4)}
+.card-text-details{min-width:0}
 .card-text-details h2{font-size:34px;line-height:1.1;margin:0 0 8px;letter-spacing:-.035em}
-.card-subtitle{color:var(--muted);margin:0 0 24px}
+.card-subtitle{color:var(--muted);margin:0 0 18px}
 .mana-cost{color:var(--gold);font-weight:800}
-.detail-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin:0 0 22px}
-.detail{background:var(--panel2);border:1px solid var(--line);padding:12px;border-radius:9px}
+.detail-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px;margin:0 0 16px}
+.detail{background:var(--panel2);border:1px solid var(--line);padding:11px 12px;border-radius:9px}
 .detail strong{display:block;font-size:11px;color:#687471;text-transform:uppercase;letter-spacing:.08em;margin-bottom:3px}
-.oracle{border-top:1px solid var(--line);padding-top:20px;white-space:pre-wrap}
-.oracle p{margin:0 0 14px}
-.marketplace-links{display:flex;gap:10px;flex-wrap:wrap;margin-top:22px}
+.oracle{
+  border-top:1px solid var(--line);
+  padding-top:16px;
+}
+.oracle p{
+  margin:0;
+  white-space:pre-wrap;
+}
+.oracle p + p{
+  margin-top:10px;
+}
+.oracle-face + .oracle-face{
+  margin-top:16px;
+  padding-top:16px;
+  border-top:1px solid rgba(255,255,255,.06);
+}
+.oracle-face-name{
+  display:block;
+  margin-bottom:8px;
+}
+.marketplace-links{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px}
 .marketplace-links a{
   border:1px solid var(--line);border-radius:8px;padding:9px 12px;text-decoration:none;
   color:var(--muted);font-size:13px
@@ -148,9 +167,14 @@ button,input{font:inherit}
   .search-box{display:block;padding:6px}
   .search-box input{width:100%}
   .search-box button{width:100%;height:48px;margin-top:4px}
-  .card-display{grid-template-columns:1fr;padding:18px;gap:22px}
+  .card-display{grid-template-columns:1fr;padding:14px;gap:16px}
   .card-image{max-width:310px}
-  .detail-grid{grid-template-columns:1fr}
+  .card-subtitle{margin-bottom:14px}
+  .detail-grid{grid-template-columns:1fr;gap:7px;margin-bottom:14px}
+  .detail{padding:10px 11px}
+  .oracle{padding-top:14px}
+  .oracle p + p{margin-top:9px}
+  .marketplace-links{margin-top:14px}
   .section-heading{display:block}
   .status{margin-top:8px}
   .footer-inner{display:block}
@@ -824,7 +848,7 @@ body {
   }
 
   .card-details {
-    margin-bottom: 38px;
+    margin-bottom: 32px;
   }
 
   .featured-section {
@@ -983,7 +1007,7 @@ body {
 
 .snapshot-grid {
   display: grid;
-  grid-template-columns: repeat(7, minmax(0, 1fr));
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 8px;
 }
 
@@ -1103,7 +1127,7 @@ body {
 
 @media (max-width: 900px) {
   .snapshot-grid {
-    grid-template-columns: repeat(4, minmax(0, 1fr));
+    grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 }
 
@@ -1142,6 +1166,10 @@ body {
     min-height: 68px;
     padding: 12px 10px;
     -webkit-tap-highlight-color: transparent;
+  }
+
+  .snapshot-stat:last-child:nth-child(odd) {
+    grid-column: 1 / -1;
   }
 
   .snapshot-stat::after {
