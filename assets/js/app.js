@@ -59,6 +59,42 @@
     history[replace ? "replaceState" : "pushState"]({}, "", url);
   }
 
+  function titleCase(value) {
+    const text = String(value || "");
+
+    if (!text) {
+      return "";
+    }
+
+    return text.charAt(0).toUpperCase() + text.slice(1).toLowerCase();
+  }
+
+  function formatLegalFormat(format) {
+    const specialFormats = {
+      predh: "PreDH",
+      paupercommander: "Pauper Commander"
+    };
+
+    if (specialFormats[format]) {
+      return specialFormats[format];
+    }
+
+    return String(format || "")
+      .replace(/_/g, " ")
+      .replace(/\b\w/g, character => character.toUpperCase());
+  }
+
+  function oracleTextHtml(text) {
+    const value = String(text || "No oracle text supplied.");
+
+    return value
+      .split("\n")
+      .map(line => line.trim())
+      .filter(Boolean)
+      .map(line => `<p>${escapeHtml(line)}</p>`)
+      .join("");
+  }
+
 
   /* ------------------------------
      SEARCH STATES
@@ -107,7 +143,7 @@
     if (!Array.isArray(card.card_faces) || card.card_faces.length < 2) {
       return `
         <div class="oracle">
-          <p>${escapeHtml(card.oracle_text || "No oracle text supplied.")}</p>
+          ${oracleTextHtml(card.oracle_text)}
         </div>
       `;
     }
@@ -115,10 +151,12 @@
     return `
       <div class="oracle">
         ${card.card_faces.map(face => `
-          <p>
-            <strong>${escapeHtml(face.name || "")}</strong><br>
-            ${escapeHtml(face.oracle_text || "")}
-          </p>
+          <div class="oracle-face">
+            <strong class="oracle-face-name">
+              ${escapeHtml(face.name || "")}
+            </strong>
+            ${oracleTextHtml(face.oracle_text || "")}
+          </div>
         `).join("")}
       </div>
     `;
@@ -182,7 +220,7 @@
     const legalities = card.legalities
       ? Object.entries(card.legalities)
           .filter(([, value]) => value === "legal")
-          .map(([key]) => key.toUpperCase())
+          .map(([key]) => formatLegalFormat(key))
           .join(", ")
       : "Not available";
 
@@ -222,7 +260,7 @@
 
             <div class="detail">
               <strong>Rarity</strong>
-              ${escapeHtml(card.rarity || "—")}
+              ${escapeHtml(titleCase(card.rarity || "—"))}
             </div>
 
             <div class="detail">
@@ -335,7 +373,7 @@
 
   function finishText(card) {
     return Array.isArray(card.finishes) && card.finishes.length
-      ? card.finishes.join(", ")
+      ? card.finishes.map(finish => titleCase(finish)).join(", ")
       : "—";
   }
 
@@ -376,18 +414,32 @@
       : null;
   }
 
-  function cheapestPrinting(printings, rates, priceGetter) {
+  function extremePrinting(
+    printings,
+    rates,
+    priceGetter,
+    direction = "cheapest"
+  ) {
     let winner = null;
-    let winnerPrice = Infinity;
+
+    let winnerPrice =
+      direction === "most-expensive"
+        ? -Infinity
+        : Infinity;
 
     printings.forEach(print => {
       const price = priceGetter(print, rates);
 
-      if (
-        Number.isFinite(price) &&
-        price > 0 &&
-        price < winnerPrice
-      ) {
+      if (!Number.isFinite(price) || price <= 0) {
+        return;
+      }
+
+      const better =
+        direction === "most-expensive"
+          ? price > winnerPrice
+          : price < winnerPrice;
+
+      if (better) {
         winner = print;
         winnerPrice = price;
       }
@@ -418,16 +470,32 @@
       hasFinish(print, "etched")
     );
 
-    const cheapest = cheapestPrinting(
+    const cheapest = extremePrinting(
       printings,
       rates,
-      regularGbpValue
+      regularGbpValue,
+      "cheapest"
     );
 
-    const cheapestFoil = cheapestPrinting(
+    const mostExpensive = extremePrinting(
       printings,
       rates,
-      foilGbpValue
+      regularGbpValue,
+      "most-expensive"
+    );
+
+    const cheapestFoil = extremePrinting(
+      printings,
+      rates,
+      foilGbpValue,
+      "cheapest"
+    );
+
+    const mostExpensiveFoil = extremePrinting(
+      printings,
+      rates,
+      foilGbpValue,
+      "most-expensive"
     );
 
     return {
@@ -436,7 +504,9 @@
       foilPrintings,
       etchedPrintings,
       cheapest,
-      cheapestFoil
+      mostExpensive,
+      cheapestFoil,
+      mostExpensiveFoil
     };
   }
 
@@ -497,12 +567,30 @@
           })}
 
           ${snapshotButton({
+            action: "most-expensive",
+            value: data.mostExpensive
+              ? `£${data.mostExpensive.price.toFixed(2)}`
+              : "—",
+            label: "Most expensive",
+            disabled: !data.mostExpensive
+          })}
+
+          ${snapshotButton({
             action: "cheapest-foil",
             value: data.cheapestFoil
               ? `£${data.cheapestFoil.price.toFixed(2)}`
               : "—",
             label: "Cheapest foil",
             disabled: !data.cheapestFoil
+          })}
+
+          ${snapshotButton({
+            action: "most-expensive-foil",
+            value: data.mostExpensiveFoil
+              ? `£${data.mostExpensiveFoil.price.toFixed(2)}`
+              : "—",
+            label: "Most expensive foil",
+            disabled: !data.mostExpensiveFoil
           })}
 
           ${snapshotButton({
@@ -710,7 +798,7 @@
           </td>
 
           <td>
-            ${escapeHtml(print.rarity || "—")}
+            ${escapeHtml(titleCase(print.rarity || "—"))}
           </td>
 
           <td>
@@ -855,9 +943,21 @@
           : [];
       }
 
+      if (snapshotMode === "most-expensive") {
+        return snapshotData.mostExpensive
+          ? [snapshotData.mostExpensive.print]
+          : [];
+      }
+
       if (snapshotMode === "cheapest-foil") {
         return snapshotData.cheapestFoil
           ? [snapshotData.cheapestFoil.print]
+          : [];
+      }
+
+      if (snapshotMode === "most-expensive-foil") {
+        return snapshotData.mostExpensiveFoil
+          ? [snapshotData.mostExpensiveFoil.print]
           : [];
       }
 
@@ -925,7 +1025,9 @@
 
       const labels = {
         cheapest: "cheapest printing",
+        "most-expensive": "most expensive printing",
         "cheapest-foil": "cheapest foil printing",
+        "most-expensive-foil": "most expensive foil printing",
         oldest: "oldest printings",
         newest: "newest printings",
         foil: "foil printings",
@@ -1060,21 +1162,21 @@
         updatePrintings();
 
         /*
-         * Cheapest tiles represent one exact printing.
+         * Price Snapshot tiles represent one exact printing.
          * Update the large card display to that version.
          */
-        if (
-          snapshotMode === "cheapest" &&
-          snapshotData.cheapest?.print
-        ) {
-          renderCard(snapshotData.cheapest.print);
-        }
+        const exactPricePrintings = {
+          cheapest: snapshotData.cheapest?.print,
+          "most-expensive": snapshotData.mostExpensive?.print,
+          "cheapest-foil": snapshotData.cheapestFoil?.print,
+          "most-expensive-foil": snapshotData.mostExpensiveFoil?.print
+        };
 
-        if (
-          snapshotMode === "cheapest-foil" &&
-          snapshotData.cheapestFoil?.print
-        ) {
-          renderCard(snapshotData.cheapestFoil.print);
+        const exactPrinting =
+          exactPricePrintings[snapshotMode];
+
+        if (exactPrinting) {
+          renderCard(exactPrinting);
         }
 
         /*
@@ -1084,7 +1186,13 @@
         const matches = snapshotResults();
 
         if (
-          !["cheapest", "cheapest-foil", "all"].includes(snapshotMode) &&
+          ![
+            "cheapest",
+            "most-expensive",
+            "cheapest-foil",
+            "most-expensive-foil",
+            "all"
+          ].includes(snapshotMode) &&
           matches.length === 1
         ) {
           renderCard(matches[0]);
