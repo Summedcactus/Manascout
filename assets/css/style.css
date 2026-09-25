@@ -182,6 +182,7 @@ button,input{font:inherit}
   .footer a{margin-left:0;margin-right:16px}
 }
 
+
 /* Printing card thumbnails */
 
 .printing-image-cell {
@@ -240,6 +241,7 @@ button,input{font:inherit}
     width: 50px;
   }
 }
+
 
 /* Printing filters and sorting */
 
@@ -1196,10 +1198,829 @@ body {
 }
 
 
-/* Respect reduced-motion preference */
+/* ========================================
+   CARD OF THE WEEK
+   ======================================== */
+
+.card-week-section {
+  margin: 0 0 82px;
+}
+
+.card-week-heading {
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  gap: 28px;
+  margin-bottom: 20px;
+}
+
+.card-week-heading .eyebrow {
+  margin-bottom: 7px;
+  color: var(--accent-bright);
+}
+
+.card-week-heading h2 {
+  margin: 0;
+  color: var(--text);
+  font-size: clamp(27px, 4vw, 38px);
+  line-height: 1.05;
+  letter-spacing: -.04em;
+}
+
+.card-week-heading > div > p:not(.eyebrow) {
+  max-width: 620px;
+  margin: 10px 0 0;
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.card-week-edition {
+  flex: 0 0 auto;
+  padding: 7px 10px;
+  border: 1px solid rgba(211, 59, 76, .24);
+  border-radius: 999px;
+  background: rgba(179, 38, 53, .055);
+  color: #8d878b;
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: .13em;
+}
+
+
+/* Main weekly panel */
+
+.card-week-feature {
+  position: relative;
+  isolation: isolate;
+  display: grid;
+  grid-template-columns: minmax(310px, .82fr) minmax(0, 1.18fr);
+  min-height: 540px;
+  overflow: hidden;
+  border: 1px solid #302d32;
+  border-radius: 20px;
+  background:
+    radial-gradient(
+      circle at 17% 50%,
+      rgba(38, 83, 112, .15),
+      transparent 30%
+    ),
+    radial-gradient(
+      circle at 73% 18%,
+      rgba(179, 38, 53, .09),
+      transparent 32%
+    ),
+    linear-gradient(
+      135deg,
+      #111116 0%,
+      #0c0c0f 48%,
+      #101014 100%
+    );
+  box-shadow:
+    0 28px 80px rgba(0, 0, 0, .30),
+    inset 0 1px 0 rgba(255,255,255,.025);
+}
+
+.card-week-feature::before {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  inset: 0;
+  pointer-events: none;
+  background:
+    linear-gradient(
+      120deg,
+      transparent 0 38%,
+      rgba(255,255,255,.015) 49%,
+      transparent 60%
+    );
+}
+
+.card-week-feature::after {
+  content: "◇";
+  position: absolute;
+  z-index: -1;
+  right: -25px;
+  bottom: -96px;
+  color: rgba(211, 59, 76, .035);
+  font-size: 310px;
+  font-weight: 300;
+  line-height: 1;
+  transform: rotate(12deg);
+  pointer-events: none;
+}
+
+
+/* Left visual area */
+
+.card-week-visual {
+  position: relative;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  padding: 44px 40px 34px;
+  border-right: 1px solid rgba(255,255,255,.055);
+  background:
+    radial-gradient(
+      ellipse at 50% 48%,
+      rgba(58, 116, 150, .13),
+      transparent 52%
+    ),
+    rgba(255,255,255,.006);
+}
+
+
+/*
+  Ambient "water" behind the card.
+
+  This is intentionally outside the actual card artwork.
+  Tonight we can add an artwork-specific mask without
+  having to rebuild the weekly section.
+*/
+
+.card-week-water {
+  position: absolute;
+  z-index: -1;
+  width: 470px;
+  height: 470px;
+  left: 50%;
+  top: 50%;
+  border-radius: 42% 58% 63% 37% / 48% 39% 61% 52%;
+  opacity: .36;
+  filter: blur(32px);
+  background:
+    radial-gradient(
+      ellipse at 28% 32%,
+      rgba(87, 165, 201, .34),
+      transparent 32%
+    ),
+    radial-gradient(
+      ellipse at 70% 63%,
+      rgba(44, 96, 139, .30),
+      transparent 38%
+    ),
+    radial-gradient(
+      ellipse at 50% 78%,
+      rgba(179, 38, 53, .12),
+      transparent 35%
+    );
+  transform:
+    translate(-50%, -50%)
+    rotate(0deg)
+    scale(1);
+  animation:
+    mana-water-drift 11s ease-in-out infinite alternate;
+}
+
+.card-week-water::before,
+.card-week-water::after {
+  content: "";
+  position: absolute;
+  inset: 13%;
+  border: 1px solid rgba(125, 190, 218, .09);
+  border-radius: 48% 52% 42% 58% / 53% 41% 59% 47%;
+}
+
+.card-week-water::before {
+  animation:
+    mana-water-ring 8s ease-in-out infinite alternate;
+}
+
+.card-week-water::after {
+  inset: 26%;
+  opacity: .65;
+  animation:
+    mana-water-ring 10s ease-in-out infinite alternate-reverse;
+}
+
+
+/* Card perspective */
+
+.card-week-card-shell {
+  position: relative;
+  z-index: 2;
+  width: min(100%, 285px);
+  perspective: 1100px;
+}
+
+.card-week-card {
+  --week-rx: 0deg;
+  --week-ry: 0deg;
+  --week-x: 50%;
+  --week-y: 50%;
+
+  position: relative;
+  width: 100%;
+  aspect-ratio: 488 / 680;
+  overflow: hidden;
+  border-radius: 15px;
+  background: #0c0d10;
+  transform:
+    rotateX(var(--week-rx))
+    rotateY(var(--week-ry))
+    translateZ(0);
+  transform-style: preserve-3d;
+  transition:
+    transform .16s ease-out,
+    box-shadow .25s ease,
+    opacity .35s ease;
+  box-shadow:
+    0 30px 65px rgba(0,0,0,.58),
+    0 8px 18px rgba(0,0,0,.35),
+    0 0 0 1px rgba(255,255,255,.055),
+    0 0 42px rgba(66, 128, 162, .05);
+}
+
+.card-week-card.is-loaded {
+  box-shadow:
+    0 34px 75px rgba(0,0,0,.62),
+    0 10px 22px rgba(0,0,0,.38),
+    0 0 0 1px rgba(255,255,255,.065),
+    0 0 48px rgba(68, 135, 171, .08);
+}
+
+.card-week-card:hover {
+  box-shadow:
+    0 38px 85px rgba(0,0,0,.68),
+    0 12px 25px rgba(0,0,0,.40),
+    0 0 0 1px rgba(255,255,255,.08),
+    0 0 55px rgba(69, 137, 174, .11);
+}
+
+
+/* Loading placeholder */
+
+.card-week-card-placeholder {
+  position: absolute;
+  z-index: 1;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  background:
+    radial-gradient(
+      circle at 50% 40%,
+      rgba(55, 116, 151, .12),
+      transparent 38%
+    ),
+    linear-gradient(
+      145deg,
+      #14151a,
+      #0d0d10
+    );
+  color: rgba(211,59,76,.50);
+}
+
+.card-week-card-placeholder[hidden] {
+  display: none;
+}
+
+.card-week-card-placeholder span {
+  font-size: 32px;
+  line-height: 1;
+  animation:
+    mana-week-scout 2.3s ease-in-out infinite;
+}
+
+.card-week-card-placeholder small {
+  color: #77777d;
+  font-size: 8px;
+  font-weight: 800;
+  letter-spacing: .15em;
+}
+
+
+/* Actual Scryfall card */
+
+.card-week-image {
+  position: relative;
+  z-index: 2;
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0;
+  transform: scale(.985);
+  transition:
+    opacity .55s ease,
+    transform .7s cubic-bezier(.22,.75,.25,1);
+}
+
+.card-week-image[hidden] {
+  display: none;
+}
+
+.card-week-card.is-loaded .card-week-image {
+  opacity: 1;
+  transform: scale(1);
+}
+
+
+/* Foil surface */
+
+.card-week-foil {
+  position: absolute;
+  z-index: 3;
+  inset: -25%;
+  pointer-events: none;
+  opacity: 0;
+  mix-blend-mode: screen;
+  background:
+    linear-gradient(
+      115deg,
+      transparent 26%,
+      rgba(126, 196, 225, .04) 36%,
+      rgba(255, 255, 255, .14) 43%,
+      rgba(149, 104, 190, .07) 48%,
+      rgba(82, 166, 192, .09) 54%,
+      rgba(255, 255, 255, .03) 60%,
+      transparent 70%
+    );
+  background-size: 190% 190%;
+  transform: translateX(-26%) rotate(5deg);
+  transition: opacity .35s ease;
+}
+
+.card-week-card.is-loaded .card-week-foil {
+  opacity: .52;
+  animation:
+    mana-week-foil 7.5s ease-in-out infinite;
+}
+
+
+/* Pointer-position glint */
+
+.card-week-glint {
+  position: absolute;
+  z-index: 4;
+  inset: 0;
+  pointer-events: none;
+  opacity: .35;
+  mix-blend-mode: screen;
+  background:
+    radial-gradient(
+      circle at var(--week-x) var(--week-y),
+      rgba(255,255,255,.16) 0,
+      rgba(130,190,216,.07) 17%,
+      transparent 43%
+    );
+  transition: opacity .18s ease;
+}
+
+.card-week-card:hover .card-week-glint {
+  opacity: .62;
+}
+
+
+/* Printing caption */
+
+.card-week-printing {
+  position: relative;
+  z-index: 2;
+  max-width: 320px;
+  margin: 20px 0 0;
+  color: #66666c;
+  font-size: 9px;
+  font-weight: 800;
+  line-height: 1.45;
+  letter-spacing: .12em;
+  text-align: center;
+}
+
+
+/* Editorial side */
+
+.card-week-story {
+  position: relative;
+  z-index: 2;
+  align-self: center;
+  max-width: 650px;
+  padding: 58px 64px 58px 58px;
+}
+
+.card-week-kicker {
+  margin: 0 0 12px;
+  color: #718e9d;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: .15em;
+}
+
+.card-week-story h3 {
+  max-width: 620px;
+  margin: 0 0 20px;
+  color: #f3f0eb;
+  font-size: clamp(40px, 5.2vw, 64px);
+  line-height: .96;
+  letter-spacing: -.05em;
+}
+
+.card-week-intro {
+  max-width: 590px;
+  margin: 0;
+  color: #aaa7ab;
+  font-size: 15px;
+  line-height: 1.72;
+}
+
+
+/* Fact panel */
+
+.card-week-fact {
+  display: grid;
+  grid-template-columns: 30px minmax(0,1fr);
+  gap: 14px;
+  max-width: 590px;
+  margin-top: 28px;
+  padding: 18px 20px 18px 17px;
+  border: 1px solid rgba(255,255,255,.065);
+  border-left-color: rgba(85, 151, 184, .46);
+  border-radius: 11px;
+  background:
+    linear-gradient(
+      120deg,
+      rgba(60, 116, 145, .07),
+      rgba(255,255,255,.018)
+    );
+}
+
+.card-week-fact-mark {
+  padding-top: 1px;
+  color: rgba(104, 172, 204, .75);
+  font-size: 19px;
+  line-height: 1;
+}
+
+.card-week-fact-label {
+  margin: 0 0 6px;
+  color: #769bad;
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: .15em;
+}
+
+.card-week-fact p:last-child {
+  margin: 0;
+  color: #a9a6aa;
+  font-size: 13px;
+  line-height: 1.62;
+}
+
+.card-week-fact strong {
+  color: #e3e0dc;
+  font-weight: 750;
+}
+
+
+/* CTA */
+
+.card-week-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 28px;
+  padding: 12px 16px;
+  border: 1px solid rgba(211,59,76,.42);
+  border-radius: 9px;
+  background:
+    linear-gradient(
+      135deg,
+      rgba(179,38,53,.13),
+      rgba(179,38,53,.055)
+    );
+  color: #f0e9eb;
+  font-size: 12px;
+  font-weight: 800;
+  text-decoration: none;
+  transition:
+    border-color .16s ease,
+    background .16s ease,
+    transform .16s ease,
+    box-shadow .16s ease;
+}
+
+.card-week-link span {
+  color: var(--accent-bright);
+  font-size: 16px;
+  line-height: 1;
+  transition: transform .16s ease;
+}
+
+.card-week-link:hover {
+  border-color: rgba(211,59,76,.78);
+  background:
+    linear-gradient(
+      135deg,
+      rgba(179,38,53,.21),
+      rgba(179,38,53,.08)
+    );
+  transform: translateY(-1px);
+  box-shadow: 0 10px 28px rgba(0,0,0,.18);
+}
+
+.card-week-link:hover span {
+  transform: translateX(2px);
+}
+
+.card-week-link:focus-visible {
+  outline: 2px solid var(--accent-bright);
+  outline-offset: 3px;
+}
+
+.card-week-source {
+  margin: 15px 0 0;
+  color: #55545a;
+  font-size: 9px;
+}
+
+
+/* ========================================
+   CARD OF THE WEEK ANIMATIONS
+   ======================================== */
+
+@keyframes mana-water-drift {
+  0% {
+    transform:
+      translate(-52%, -49%)
+      rotate(-7deg)
+      scale(.94);
+  }
+
+  45% {
+    transform:
+      translate(-48%, -52%)
+      rotate(5deg)
+      scale(1.06);
+  }
+
+  100% {
+    transform:
+      translate(-51%, -48%)
+      rotate(11deg)
+      scale(.98);
+  }
+}
+
+@keyframes mana-water-ring {
+  0% {
+    transform:
+      rotate(-10deg)
+      scale(.88);
+    opacity: .25;
+  }
+
+  50% {
+    transform:
+      rotate(5deg)
+      scale(1.05);
+    opacity: .7;
+  }
+
+  100% {
+    transform:
+      rotate(14deg)
+      scale(.94);
+    opacity: .32;
+  }
+}
+
+@keyframes mana-week-foil {
+  0% {
+    background-position: 10% 50%;
+    transform:
+      translateX(-29%)
+      rotate(5deg);
+  }
+
+  45% {
+    background-position: 75% 46%;
+    transform:
+      translateX(15%)
+      rotate(5deg);
+  }
+
+  55% {
+    background-position: 92% 52%;
+    transform:
+      translateX(24%)
+      rotate(5deg);
+  }
+
+  100% {
+    background-position: 10% 50%;
+    transform:
+      translateX(-29%)
+      rotate(5deg);
+  }
+}
+
+@keyframes mana-week-scout {
+  0%,
+  100% {
+    opacity: .32;
+    transform: scale(.92) rotate(0deg);
+  }
+
+  50% {
+    opacity: .8;
+    transform: scale(1.08) rotate(45deg);
+  }
+}
+
+
+/* ========================================
+   CARD OF THE WEEK — TABLET
+   ======================================== */
+
+@media (max-width: 900px) {
+  .card-week-feature {
+    grid-template-columns: 300px minmax(0,1fr);
+  }
+
+  .card-week-visual {
+    padding:
+      38px
+      28px
+      30px;
+  }
+
+  .card-week-card-shell {
+    width: min(100%, 245px);
+  }
+
+  .card-week-story {
+    padding:
+      44px
+      38px
+      44px
+      36px;
+  }
+
+  .card-week-story h3 {
+    font-size: clamp(38px, 6vw, 52px);
+  }
+}
+
+
+/* ========================================
+   CARD OF THE WEEK — MOBILE
+   ======================================== */
+
+@media (max-width: 720px) {
+  .card-week-section {
+    margin-bottom: 58px;
+  }
+
+  .card-week-heading {
+    display: block;
+    margin-bottom: 15px;
+  }
+
+  .card-week-heading h2 {
+    font-size: 28px;
+  }
+
+  .card-week-heading > div > p:not(.eyebrow) {
+    margin-top: 8px;
+    font-size: 12px;
+  }
+
+  .card-week-edition {
+    display: inline-flex;
+    margin-top: 11px;
+  }
+
+  .card-week-feature {
+    display: block;
+    min-height: 0;
+    border-radius: 16px;
+  }
+
+  .card-week-feature::after {
+    right: -35px;
+    bottom: -45px;
+    font-size: 190px;
+  }
+
+  .card-week-visual {
+    min-height: 0;
+    padding:
+      30px
+      22px
+      25px;
+    border-right: 0;
+    border-bottom: 1px solid rgba(255,255,255,.055);
+  }
+
+  .card-week-water {
+    width: 370px;
+    height: 370px;
+    opacity: .31;
+  }
+
+  .card-week-card-shell {
+    width: min(78vw, 235px);
+  }
+
+  .card-week-card {
+    border-radius: 12px;
+  }
+
+  .card-week-printing {
+    margin-top: 16px;
+    font-size: 8px;
+  }
+
+  .card-week-story {
+    max-width: none;
+    padding:
+      30px
+      22px
+      32px;
+  }
+
+  .card-week-kicker {
+    margin-bottom: 9px;
+    font-size: 9px;
+  }
+
+  .card-week-story h3 {
+    margin-bottom: 16px;
+    font-size: clamp(36px, 11vw, 47px);
+    line-height: .98;
+  }
+
+  .card-week-intro {
+    font-size: 13px;
+    line-height: 1.65;
+  }
+
+  .card-week-fact {
+    grid-template-columns: 24px minmax(0,1fr);
+    gap: 10px;
+    margin-top: 22px;
+    padding: 15px 14px;
+  }
+
+  .card-week-fact-mark {
+    font-size: 16px;
+  }
+
+  .card-week-fact p:last-child {
+    font-size: 12px;
+    line-height: 1.58;
+  }
+
+  .card-week-link {
+    width: 100%;
+    justify-content: center;
+    margin-top: 22px;
+    padding: 13px 15px;
+  }
+
+  .card-week-source {
+    margin-top: 12px;
+    text-align: center;
+  }
+}
+
+
+/* ========================================
+   REDUCED MOTION
+   ======================================== */
 
 @media (prefers-reduced-motion: reduce) {
   .featured-track {
     transition: none;
+  }
+
+  .card-week-water,
+  .card-week-water::before,
+  .card-week-water::after,
+  .card-week-foil,
+  .card-week-card-placeholder span {
+    animation: none !important;
+  }
+
+  .card-week-card {
+    transform: none !important;
+    transition: none;
+  }
+
+  .card-week-image {
+    transition: none;
+  }
+
+  .card-week-foil {
+    opacity: .16;
+    transform: none;
+  }
+
+  .card-week-glint {
+    display: none;
   }
 }
