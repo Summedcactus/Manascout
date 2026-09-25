@@ -609,7 +609,6 @@
 
             </article>
 
-
           </div>
 
         </div>
@@ -632,6 +631,160 @@
         id="featured-dots"
         aria-label="Choose featured card"
       ></div>
+
+    </section>
+
+
+    <!-- CARD OF THE WEEK -->
+    <section
+      class="card-week-section"
+      id="card-of-the-week"
+      aria-labelledby="card-week-heading"
+    >
+
+      <div class="card-week-heading">
+
+        <div>
+
+          <p class="eyebrow">
+            ◇ CARD OF THE WEEK
+          </p>
+
+          <h2 id="card-week-heading">
+            Beyond the search
+          </h2>
+
+          <p>
+            One card. One story. A different corner of Magic every week.
+          </p>
+
+        </div>
+
+        <span class="card-week-edition">
+          WEEKLY DISCOVERY
+        </span>
+
+      </div>
+
+
+      <article
+        class="card-week-feature"
+        data-weekly-card="Thassa, Deep-Dwelling"
+      >
+
+        <div class="card-week-visual">
+
+          <div
+            class="card-week-water"
+            aria-hidden="true"
+          ></div>
+
+          <div class="card-week-card-shell">
+
+            <div
+              class="card-week-card"
+              id="card-week-card"
+            >
+
+              <div
+                class="card-week-card-placeholder"
+                id="card-week-placeholder"
+              >
+                <span>◇</span>
+                <small>SCOUTING THE DEEP…</small>
+              </div>
+
+              <img
+                id="card-week-image"
+                class="card-week-image"
+                alt="Thassa, Deep-Dwelling"
+                hidden
+              >
+
+              <div
+                class="card-week-foil"
+                aria-hidden="true"
+              ></div>
+
+              <div
+                class="card-week-glint"
+                aria-hidden="true"
+              ></div>
+
+            </div>
+
+          </div>
+
+          <p
+            class="card-week-printing"
+            id="card-week-printing"
+          >
+            THEROS BEYOND DEATH
+          </p>
+
+        </div>
+
+
+        <div class="card-week-story">
+
+          <p class="card-week-kicker">
+            GOD OF THE SEA · THEROS
+          </p>
+
+          <h3>
+            Thassa, Deep-Dwelling
+          </h3>
+
+          <p class="card-week-intro">
+            Thassa rules the seas of Theros and the creatures that inhabit
+            their depths. Her domain also encompasses ancient knowledge,
+            distant voyages, gradual change and the inexorable movement
+            of the tides.
+          </p>
+
+
+          <div class="card-week-fact">
+
+            <div
+              class="card-week-fact-mark"
+              aria-hidden="true"
+            >
+              ◇
+            </div>
+
+            <div>
+
+              <p class="card-week-fact-label">
+                DID YOU KNOW?
+              </p>
+
+              <p>
+                Thassa's divine weapon is <strong>Dekella</strong>,
+                a two-pronged spear through which she can control the tides
+                and create whirlpools.
+              </p>
+
+            </div>
+
+          </div>
+
+
+          <a
+            class="card-week-link"
+            href="/?q=Thassa%2C%20Deep-Dwelling"
+          >
+            Explore Thassa
+            <span aria-hidden="true">→</span>
+          </a>
+
+
+          <p class="card-week-source">
+            Lore based on official Magic: The Gathering material.
+          </p>
+
+        </div>
+
+      </article>
 
     </section>
 
@@ -709,6 +862,7 @@
       "use strict";
 
       const featuredSection = document.querySelector(".featured-section");
+      const cardWeekSection = document.querySelector(".card-week-section");
       const cardDetails = document.getElementById("card-details");
       const searchForm = document.getElementById("search-form");
       const searchInput = document.getElementById("search-input");
@@ -754,8 +908,12 @@
       }
 
 
-      function setFeaturedVisible(visible) {
+      function setDiscoverySectionsVisible(visible) {
         featuredSection.hidden = !visible;
+
+        if (cardWeekSection) {
+          cardWeekSection.hidden = !visible;
+        }
 
         if (!visible) {
           pauseAutoplay();
@@ -772,7 +930,7 @@
 
 
       function syncFeaturedVisibility() {
-        setFeaturedVisible(!hasSearchQuery());
+        setDiscoverySectionsVisible(!hasSearchQuery());
       }
 
 
@@ -1459,7 +1617,7 @@
           if (
             searchInput?.value.trim()
           ) {
-            setFeaturedVisible(
+            setDiscoverySectionsVisible(
               false
             );
           }
@@ -1475,7 +1633,7 @@
               "[data-name]"
             )
           ) {
-            setFeaturedVisible(
+            setDiscoverySectionsVisible(
               false
             );
           }
@@ -1530,6 +1688,332 @@
       ) {
         cardDetails.innerHTML = "";
       }
+
+    })();
+  </script>
+
+
+  <!-- CARD OF THE WEEK -->
+  <script>
+    (() => {
+      "use strict";
+
+      const section =
+        document.getElementById(
+          "card-of-the-week"
+        );
+
+      const card =
+        document.getElementById(
+          "card-week-card"
+        );
+
+      const image =
+        document.getElementById(
+          "card-week-image"
+        );
+
+      const placeholder =
+        document.getElementById(
+          "card-week-placeholder"
+        );
+
+      const printing =
+        document.getElementById(
+          "card-week-printing"
+        );
+
+      if (
+        !section ||
+        !card ||
+        !image
+      ) {
+        return;
+      }
+
+
+      const cardName =
+        section.querySelector(
+          "[data-weekly-card]"
+        )?.dataset.weeklyCard ||
+        "Thassa, Deep-Dwelling";
+
+
+      function imageFor(cardData) {
+        return (
+          cardData.image_uris?.normal ||
+          cardData.card_faces?.[0]
+            ?.image_uris?.normal ||
+          ""
+        );
+      }
+
+
+      function preferredPrinting(
+        printings
+      ) {
+        const usable =
+          printings.filter(
+            item => imageFor(item)
+          );
+
+        if (!usable.length) {
+          return null;
+        }
+
+        const scored =
+          usable.map(item => {
+            let score = 0;
+
+            const effects =
+              item.frame_effects || [];
+
+            const finishes =
+              item.finishes || [];
+
+            if (
+              item.set === "thb"
+            ) {
+              score += 60;
+            }
+
+            if (
+              item.border_color ===
+              "borderless"
+            ) {
+              score += 35;
+            }
+
+            if (
+              effects.includes(
+                "showcase"
+              )
+            ) {
+              score += 30;
+            }
+
+            if (item.full_art) {
+              score += 25;
+            }
+
+            if (
+              finishes.includes(
+                "foil"
+              )
+            ) {
+              score += 8;
+            }
+
+            return {
+              item,
+              score
+            };
+          });
+
+        scored.sort(
+          (a, b) =>
+            b.score - a.score
+        );
+
+        return scored[0].item;
+      }
+
+
+      async function loadWeeklyCard() {
+        try {
+          const query =
+            encodeURIComponent(
+              `!"${cardName}"`
+            );
+
+          const response =
+            await fetch(
+              `https://api.scryfall.com/cards/search?q=${query}&unique=prints&order=released&dir=asc`,
+              {
+                headers: {
+                  "Accept":
+                    "application/json"
+                }
+              }
+            );
+
+          if (!response.ok) {
+            throw new Error(
+              `Scryfall returned ${response.status}`
+            );
+          }
+
+          const data =
+            await response.json();
+
+          const selected =
+            preferredPrinting(
+              data.data || []
+            );
+
+          const imageUrl =
+            selected
+              ? imageFor(selected)
+              : "";
+
+          if (!selected || !imageUrl) {
+            throw new Error(
+              "No usable weekly-card printing found."
+            );
+          }
+
+          image.addEventListener(
+            "load",
+            () => {
+              image.hidden = false;
+
+              placeholder?.setAttribute(
+                "hidden",
+                ""
+              );
+
+              window.requestAnimationFrame(
+                () => {
+                  card.classList.add(
+                    "is-loaded"
+                  );
+                }
+              );
+            },
+            {
+              once: true
+            }
+          );
+
+          image.src = imageUrl;
+
+          image.alt =
+            `${cardName} — ${
+              selected.set_name ||
+              "Magic printing"
+            }`;
+
+          if (printing) {
+            const collector =
+              selected.collector_number
+                ? ` · #${selected.collector_number}`
+                : "";
+
+            printing.textContent =
+              `${
+                selected.set_name ||
+                "Magic printing"
+              }${collector}`.toUpperCase();
+          }
+
+        } catch (error) {
+          console.warn(
+            "Card of the Week artwork unavailable:",
+            error
+          );
+
+          if (placeholder) {
+            const small =
+              placeholder.querySelector(
+                "small"
+              );
+
+            if (small) {
+              small.textContent =
+                "THASSA, DEEP-DWELLING";
+            }
+          }
+        }
+      }
+
+
+      const reducedMotion =
+        window.matchMedia(
+          "(prefers-reduced-motion: reduce)"
+        );
+
+
+      if (!reducedMotion.matches) {
+        card.addEventListener(
+          "pointermove",
+          event => {
+            if (
+              event.pointerType ===
+              "touch"
+            ) {
+              return;
+            }
+
+            const rect =
+              card.getBoundingClientRect();
+
+            const x =
+              (event.clientX -
+                rect.left) /
+              rect.width;
+
+            const y =
+              (event.clientY -
+                rect.top) /
+              rect.height;
+
+            const rotateY =
+              (x - .5) * 5;
+
+            const rotateX =
+              (.5 - y) * 5;
+
+            card.style.setProperty(
+              "--week-rx",
+              `${rotateX}deg`
+            );
+
+            card.style.setProperty(
+              "--week-ry",
+              `${rotateY}deg`
+            );
+
+            card.style.setProperty(
+              "--week-x",
+              `${x * 100}%`
+            );
+
+            card.style.setProperty(
+              "--week-y",
+              `${y * 100}%`
+            );
+          }
+        );
+
+
+        card.addEventListener(
+          "pointerleave",
+          () => {
+            card.style.setProperty(
+              "--week-rx",
+              "0deg"
+            );
+
+            card.style.setProperty(
+              "--week-ry",
+              "0deg"
+            );
+
+            card.style.setProperty(
+              "--week-x",
+              "50%"
+            );
+
+            card.style.setProperty(
+              "--week-y",
+              "50%"
+            );
+          }
+        );
+      }
+
+
+      loadWeeklyCard();
 
     })();
   </script>
@@ -1652,22 +2136,11 @@
             }
 
 
-            /*
-             * Feed the random card straight back through
-             * ManaScout's existing search system.
-             *
-             * This means Discover automatically inherits:
-             * card details, Snapshot, every printing,
-             * filters, sorting, GBP estimates and URL state.
-             */
             await window.ManaScout.loadCard(
               card.name
             );
 
 
-            /*
-             * Bring the newly discovered card into view.
-             */
             const details =
               document.getElementById(
                 "card-details-section"
