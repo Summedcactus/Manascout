@@ -599,6 +599,335 @@
     );
   }
 
+
+  /* ------------------------------
+     PREFERRED PRINTING
+     ------------------------------ */
+
+  function preferredPrintingScore(
+    print
+  ) {
+    if (!printingImage(print)) {
+      return -Infinity;
+    }
+
+    let score = 0;
+
+    const frameEffects =
+      Array.isArray(
+        print.frame_effects
+      )
+        ? print.frame_effects
+        : [];
+
+    const promoTypes =
+      Array.isArray(
+        print.promo_types
+      )
+        ? print.promo_types
+        : [];
+
+    const finishes =
+      Array.isArray(
+        print.finishes
+      )
+        ? print.finishes
+        : [];
+
+    const games =
+      Array.isArray(
+        print.games
+      )
+        ? print.games
+        : [];
+
+
+    /*
+     * Prefer physical tabletop printings.
+     */
+
+    if (
+      games.includes("paper")
+    ) {
+      score += 20;
+    } else {
+      score -= 80;
+    }
+
+
+    /*
+     * Avoid non-standard curiosities becoming
+     * the default hero simply because they are
+     * unusual.
+     */
+
+    if (
+      print.layout === "art_series"
+    ) {
+      score -= 100;
+    }
+
+    if (
+      print.layout === "token" ||
+      print.layout === "emblem"
+    ) {
+      score -= 100;
+    }
+
+    if (
+      print.oversized
+    ) {
+      score -= 35;
+    }
+
+
+    /*
+     * Premium visual treatments.
+     */
+
+    if (
+      frameEffects.includes(
+        "showcase"
+      )
+    ) {
+      score += 60;
+    }
+
+    if (
+      print.border_color ===
+      "borderless"
+    ) {
+      score += 48;
+    }
+
+    if (
+      print.full_art
+    ) {
+      score += 42;
+    }
+
+    if (
+      frameEffects.includes(
+        "extendedart"
+      )
+    ) {
+      score += 38;
+    }
+
+    if (
+      frameEffects.includes(
+        "inverted"
+      )
+    ) {
+      score += 28;
+    }
+
+    if (
+      frameEffects.includes(
+        "etched"
+      )
+    ) {
+      score += 20;
+    }
+
+    if (
+      frameEffects.includes(
+        "legendary"
+      )
+    ) {
+      score += 5;
+    }
+
+
+    /*
+     * Booster-fun / unusual treatments.
+     */
+
+    if (
+      promoTypes.includes(
+        "boosterfun"
+      )
+    ) {
+      score += 30;
+    }
+
+    if (
+      promoTypes.includes(
+        "textured"
+      )
+    ) {
+      score += 28;
+    }
+
+    if (
+      promoTypes.includes(
+        "galaxyfoil"
+      )
+    ) {
+      score += 20;
+    }
+
+    if (
+      promoTypes.includes(
+        "surgefoil"
+      )
+    ) {
+      score += 18;
+    }
+
+    if (
+      promoTypes.includes(
+        "rainbowfoil"
+      )
+    ) {
+      score += 18;
+    }
+
+    if (
+      promoTypes.includes(
+        "stepandcompleat"
+      )
+    ) {
+      score += 18;
+    }
+
+    if (
+      promoTypes.includes(
+        "halofoil"
+      )
+    ) {
+      score += 18;
+    }
+
+
+    /*
+     * Finishes are useful signals, but should
+     * never overpower the artwork/frame itself.
+     */
+
+    if (
+      finishes.includes(
+        "etched"
+      )
+    ) {
+      score += 12;
+    }
+
+    if (
+      finishes.includes(
+        "foil"
+      )
+    ) {
+      score += 6;
+    }
+
+
+    /*
+     * Promo gets only a small bonus.
+     * Being scarce does not automatically mean
+     * it is the nicest-looking version.
+     */
+
+    if (
+      print.promo
+    ) {
+      score += 5;
+    }
+
+
+    /*
+     * Serialized cards should NOT automatically
+     * become the hero simply because they are
+     * rare or expensive.
+     */
+
+    if (
+      promoTypes.includes(
+        "serialized"
+      )
+    ) {
+      score -= 8;
+    }
+
+
+    /*
+     * Prefer English where possible for the
+     * default search result, while still allowing
+     * exact non-English printing links to work.
+     */
+
+    if (
+      print.lang === "en"
+    ) {
+      score += 12;
+    } else {
+      score -= 20;
+    }
+
+    return score;
+  }
+
+
+  function preferredPrinting(
+    printings
+  ) {
+    const usable =
+      printings.filter(
+        print =>
+          printingImage(print)
+      );
+
+    if (!usable.length) {
+      return null;
+    }
+
+    return [...usable]
+      .sort(
+        (a, b) => {
+          const scoreDifference =
+            preferredPrintingScore(b) -
+            preferredPrintingScore(a);
+
+          if (
+            scoreDifference !== 0
+          ) {
+            return scoreDifference;
+          }
+
+          /*
+           * If two treatments score equally,
+           * favour the newer one.
+           */
+
+          const dateDifference =
+            String(
+              b.released_at || ""
+            ).localeCompare(
+              String(
+                a.released_at || ""
+              )
+            );
+
+          if (
+            dateDifference !== 0
+          ) {
+            return dateDifference;
+          }
+
+          return String(
+            a.collector_number ||
+            ""
+          ).localeCompare(
+            String(
+              b.collector_number ||
+              ""
+            )
+          );
+        }
+      )[0];
+  }
+
+
   function oldestYear(printings) {
     const years =
       printings
@@ -1034,7 +1363,8 @@
   async function renderPrintings(
     card,
     token,
-    signal
+    signal,
+    options = {}
   ) {
     if (
       !els.status ||
@@ -1126,6 +1456,41 @@
           )
         )
     );
+
+
+    /*
+     * NORMAL SEARCH:
+     * choose ManaScout's preferred visual printing.
+     *
+     * Exact printing links never enter this block.
+     */
+
+    if (
+      options.choosePreferred
+    ) {
+      const preferred =
+        preferredPrinting(all);
+
+      if (preferred) {
+        card = preferred;
+
+        renderCard(card);
+
+        /*
+         * The normal search has already created
+         * the history entry. Replace that entry
+         * with the exact preferred printing so
+         * refresh/share/back preserves it.
+         */
+
+        setQuery(
+          card.name,
+          true,
+          card.id
+        );
+      }
+    }
+
 
     let rates = null;
 
@@ -2016,9 +2381,8 @@
 
           /*
            * Guard against a stale or incorrect printing ID.
-           * If the supplied ID does not represent the card
-           * we expected, fall back to normal name loading.
            */
+
           if (
             card?.name &&
             card.name.toLowerCase() !==
@@ -2060,13 +2424,26 @@
       }
 
 
+      /*
+       * Show the initial result immediately.
+       * On a normal search renderPrintings()
+       * will replace this with ManaScout's
+       * preferred printing once the printing
+       * list has loaded.
+       */
+
       renderCard(card);
 
 
       await renderPrintings(
         card,
         token,
-        searchController.signal
+        searchController.signal,
+        {
+          choosePreferred:
+            !requestedPrintingId &&
+            !options.fromHistory
+        }
       );
 
     } catch (error) {
@@ -2270,10 +2647,6 @@
           els.input.value.trim();
 
         if (value) {
-          /*
-           * A normal typed search intentionally
-           * discards any old printing ID.
-           */
           loadCard(value);
         }
       }
