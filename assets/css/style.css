@@ -1605,217 +1605,195 @@ body {
   position: absolute;
   z-index: 5;
   inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
   overflow: hidden;
   border-radius: inherit;
   pointer-events: none;
+  opacity: 0;
+  transition: opacity .5s ease;
 }
 
+.card-week-card.is-loaded .card-week-constellation {
+  opacity: 1;
+}
+
+
 /*
-  The overlay covers the ENTIRE card image.
+  Permanent painted-line reinforcement.
 
-  These positions therefore use the complete
-  Thassa THB #261 card as the coordinate space,
-  including the name bar, artwork, rules box
-  and lower card frame.
-
-  Each animated point sits on an existing
-  bright constellation node in the artwork.
+  This is intentionally extremely faint:
+  the constellation should still look like
+  part of the original Thassa artwork rather
+  than a bright diagram sitting over the card.
 */
 
-.constellation-star {
-  position: absolute;
-  width: 3px;
-  height: 3px;
-  border-radius: 50%;
-  background:
-    radial-gradient(
-      circle,
-      rgba(255,255,255,1) 0 22%,
-      rgba(224,245,255,.98) 23% 42%,
-      rgba(128,202,255,.48) 43% 62%,
-      transparent 64%
-    );
-  opacity: .16;
-  box-shadow:
-    0 0 2px rgba(255,255,255,1),
-    0 0 5px rgba(193,232,255,.95),
-    0 0 10px rgba(99,183,255,.72),
-    0 0 16px rgba(91,145,255,.32);
-  transform: translate(-50%, -50%);
-  transform-origin: center;
+.constellation-line {
+  fill: none;
+  stroke: rgba(186, 229, 255, .42);
+  stroke-width: .72;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  vector-effect: non-scaling-stroke;
+  opacity: .055;
+  filter: url(#thassa-line-glow);
+}
+
+
+/*
+  Travelling light.
+
+  Every path has its own strength.
+  Routes beginning at / travelling between
+  larger stars carry a slightly stronger pulse,
+  but even the strongest line remains much
+  fainter than the star itself.
+*/
+
+.constellation-pulse {
+  --pulse-strength: .12;
+
+  fill: none;
+  stroke: rgba(222, 247, 255, .96);
+  stroke-width: 1.15;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  vector-effect: non-scaling-stroke;
+  stroke-dasharray: 9 91;
+  stroke-dashoffset: 100;
+  opacity: 0;
+  filter: url(#thassa-line-glow);
   animation:
-    mana-star-twinkle 2.8s ease-in-out infinite;
-}
-
-/*
-  Cross-shaped flare which briefly makes
-  the printed constellation point appear
-  to shine from inside the artwork.
-*/
-
-.constellation-star::before,
-.constellation-star::after {
-  content: "";
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  pointer-events: none;
-  transform: translate(-50%, -50%);
-}
-
-.constellation-star::before {
-  width: 1px;
-  height: 10px;
-  background:
-    linear-gradient(
-      to bottom,
-      transparent,
-      rgba(225,246,255,.25),
-      rgba(255,255,255,.95),
-      rgba(225,246,255,.25),
-      transparent
-    );
-}
-
-.constellation-star::after {
-  width: 10px;
-  height: 1px;
-  background:
-    linear-gradient(
-      to right,
-      transparent,
-      rgba(225,246,255,.22),
-      rgba(255,255,255,.90),
-      rgba(225,246,255,.22),
-      transparent
-    );
+    mana-constellation-travel 12s linear infinite;
 }
 
 
 /*
-  STAR 1
-  Highest constellation node above Thassa's head.
+  Branch timing.
+
+  Positive delays mean the first cycle begins
+  deliberately instead of loading halfway
+  through an arbitrary negative-delay cycle.
 */
 
-.constellation-star.star-1 {
-  left: 49.6%;
-  top: 12.0%;
-  width: 3px;
-  height: 3px;
-  animation-delay: -.25s;
+.constellation-pulse.pulse-a {
+  --pulse-strength: .10;
+  animation-delay: .25s;
+}
+
+.constellation-pulse.pulse-b {
+  --pulse-strength: .15;
+  animation-delay: 1.15s;
+}
+
+.constellation-pulse.pulse-c {
+  --pulse-strength: .18;
+  animation-delay: 2.45s;
+}
+
+.constellation-pulse.pulse-d {
+  --pulse-strength: .16;
+  animation-delay: 2.85s;
+}
+
+.constellation-pulse.pulse-e {
+  --pulse-strength: .14;
+  animation-delay: 4.10s;
+}
+
+.constellation-pulse.pulse-f {
+  --pulse-strength: .10;
+  animation-delay: 5.55s;
+}
+
+.constellation-pulse.pulse-g {
+  --pulse-strength: .14;
+  animation-delay: 3.15s;
+}
+
+.constellation-pulse.pulse-h {
+  --pulse-strength: .17;
+  animation-delay: 4.75s;
+}
+
+.constellation-pulse.pulse-i {
+  --pulse-strength: .15;
+  animation-delay: 5.05s;
 }
 
 
 /*
-  STAR 2
-  Bright crown / upper-right head node.
+  Actual constellation nodes.
+
+  SVG circles are locked to the same viewBox
+  as the full Thassa card, so their positions
+  scale with the card instead of relying on
+  separate percentage-positioned HTML stars.
 */
 
-.constellation-star.star-2 {
-  left: 56.6%;
-  top: 21.0%;
-  width: 4px;
-  height: 4px;
-  animation-delay: -1.35s;
+.constellation-node {
+  --node-rest: .14;
+  --node-peak: .72;
+  --node-scale: 1.42;
+
+  fill: rgba(240, 251, 255, .98);
+  opacity: var(--node-rest);
+  transform-box: fill-box;
+  transform-origin: center;
+  filter: url(#thassa-star-glow);
+  animation:
+    mana-constellation-star 12s ease-in-out infinite;
+}
+
+.constellation-node.node-major {
+  --node-rest: .20;
+  --node-peak: 1;
+  --node-scale: 1.82;
+}
+
+.constellation-node.node-medium {
+  --node-rest: .15;
+  --node-peak: .84;
+  --node-scale: 1.55;
+}
+
+.constellation-node.node-minor {
+  --node-rest: .09;
+  --node-peak: .58;
+  --node-scale: 1.30;
 }
 
 
 /*
-  STAR 3
-  Left shoulder / upper torso node.
+  Star timing follows the branching paths:
+  source star → faint line travel → next star.
 */
 
-.constellation-star.star-3 {
-  left: 43.1%;
-  top: 30.3%;
-  width: 4px;
-  height: 4px;
-  animation-delay: -.8s;
-}
+.constellation-node.node-1  { animation-delay: .00s; }
+.constellation-node.node-2  { animation-delay: .65s; }
+.constellation-node.node-3  { animation-delay: 1.35s; }
 
+.constellation-node.node-4  { animation-delay: 1.90s; }
+.constellation-node.node-5  { animation-delay: 2.45s; }
+.constellation-node.node-6  { animation-delay: 2.95s; }
+.constellation-node.node-7  { animation-delay: 3.35s; }
 
-/*
-  STAR 4
-  Right chest / arm-line node.
-*/
+.constellation-node.node-8  { animation-delay: 2.80s; }
+.constellation-node.node-14 { animation-delay: 3.75s; }
 
-.constellation-star.star-4 {
-  left: 54.4%;
-  top: 30.4%;
-  width: 3px;
-  height: 3px;
-  animation-delay: -1.9s;
-}
+.constellation-node.node-9  { animation-delay: 3.55s; }
+.constellation-node.node-10 { animation-delay: 4.35s; }
+.constellation-node.node-11 { animation-delay: 5.05s; }
+.constellation-node.node-12 { animation-delay: 5.75s; }
+.constellation-node.node-13 { animation-delay: 6.45s; }
 
+.constellation-node.node-15 { animation-delay: 4.25s; }
+.constellation-node.node-16 { animation-delay: 4.95s; }
 
-/*
-  STAR 5
-  Right-side constellation node near the weapon.
-*/
-
-.constellation-star.star-5 {
-  left: 62.8%;
-  top: 39.3%;
-  width: 3px;
-  height: 3px;
-  animation-delay: -1.1s;
-}
-
-
-/*
-  STAR 6
-  Bright central/lower torso node.
-*/
-
-.constellation-star.star-6 {
-  left: 49.5%;
-  top: 44.0%;
-  width: 4px;
-  height: 4px;
-  animation-delay: -.45s;
-}
-
-
-/*
-  STAR 7
-  Left-middle body constellation node.
-*/
-
-.constellation-star.star-7 {
-  left: 36.5%;
-  top: 37.5%;
-  width: 3px;
-  height: 3px;
-  animation-delay: -1.65s;
-}
-
-
-/*
-  STAR 8
-  Lower-left constellation node.
-*/
-
-.constellation-star.star-8 {
-  left: 28.4%;
-  top: 42.1%;
-  width: 3px;
-  height: 3px;
-  animation-delay: -.95s;
-}
-
-
-/*
-  STAR 9
-  Furthest lower-left visible constellation node.
-*/
-
-.constellation-star.star-9 {
-  left: 17.3%;
-  top: 52.9%;
-  width: 3px;
-  height: 3px;
-  animation-delay: -2.1s;
-}
+.constellation-node.node-17 { animation-delay: 5.15s; }
+.constellation-node.node-18 { animation-delay: 5.90s; }
+.constellation-node.node-19 { animation-delay: 6.30s; }
 
 
 /* Printing caption */
@@ -2105,30 +2083,88 @@ body {
   }
 }
 
-@keyframes mana-star-twinkle {
+
+/*
+  One travelling pulse occupies only the first
+  portion of each 12-second route cycle.
+
+  That leaves deliberate darkness between
+  branches rather than making every line glow
+  at once.
+*/
+
+@keyframes mana-constellation-travel {
+  0% {
+    stroke-dashoffset: 100;
+    opacity: 0;
+  }
+
+  2% {
+    opacity: 0;
+  }
+
+  4% {
+    opacity: calc(var(--pulse-strength) * .45);
+  }
+
+  9% {
+    opacity: var(--pulse-strength);
+  }
+
+  15% {
+    opacity: calc(var(--pulse-strength) * .65);
+  }
+
+  20% {
+    stroke-dashoffset: 0;
+    opacity: 0;
+  }
+
+  100% {
+    stroke-dashoffset: 0;
+    opacity: 0;
+  }
+}
+
+
+/*
+  Stars remain almost invisible until their
+  individual moment in the route.
+
+  Larger printed stars get a larger, brighter
+  response. Smaller stars answer more softly.
+*/
+
+@keyframes mana-constellation-star {
   0%,
   100% {
-    opacity: .12;
-    transform:
-      translate(-50%, -50%)
-      scale(.65);
-    filter: brightness(.9);
+    opacity: var(--node-rest);
+    transform: scale(.78);
   }
 
-  45% {
-    opacity: .95;
-    transform:
-      translate(-50%, -50%)
-      scale(1.45);
-    filter: brightness(1.35);
+  2% {
+    opacity: var(--node-rest);
+    transform: scale(.82);
   }
 
-  58% {
-    opacity: .5;
-    transform:
-      translate(-50%, -50%)
-      scale(.9);
-    filter: brightness(1.08);
+  4.5% {
+    opacity: var(--node-peak);
+    transform: scale(var(--node-scale));
+  }
+
+  6.5% {
+    opacity: calc(var(--node-peak) * .52);
+    transform: scale(1.08);
+  }
+
+  9% {
+    opacity: var(--node-rest);
+    transform: scale(.82);
+  }
+
+  96% {
+    opacity: var(--node-rest);
+    transform: scale(.78);
   }
 }
 
@@ -2235,7 +2271,8 @@ body {
 
   /*
     Mobile stays stationary.
-    Foil/twinkle provide the movement rather than card tilt.
+    Foil/constellation provide the movement
+    rather than card tilt.
   */
 
   .card-week-card {
@@ -2281,11 +2318,38 @@ body {
   }
 
   /*
-    Constellation remains automatic on mobile.
+    SVG constellation remains automatic on mobile.
+
+    The permanent lines stay extremely faint.
+    Nodes get a little more visibility because
+    the displayed card is physically smaller.
   */
 
-  .constellation-star {
-    animation-duration: 2.1s;
+  .constellation-line {
+    stroke-width: .68;
+    opacity: .06;
+  }
+
+  .constellation-pulse {
+    stroke-width: 1.05;
+  }
+
+  .constellation-node.node-major {
+    --node-rest: .22;
+    --node-peak: 1;
+    --node-scale: 1.9;
+  }
+
+  .constellation-node.node-medium {
+    --node-rest: .17;
+    --node-peak: .90;
+    --node-scale: 1.62;
+  }
+
+  .constellation-node.node-minor {
+    --node-rest: .10;
+    --node-peak: .64;
+    --node-scale: 1.35;
   }
 
   .card-week-printing {
@@ -2361,7 +2425,8 @@ body {
   .card-week-water::after,
   .card-week-foil,
   .card-week-card-placeholder span,
-  .constellation-star {
+  .constellation-node,
+  .constellation-pulse {
     animation: none !important;
   }
 
@@ -2383,9 +2448,28 @@ body {
     display: none;
   }
 
-  .constellation-star {
-    opacity: .34;
-    transform: translate(-50%, -50%);
+  /*
+    Reduced motion keeps the constellation
+    present as a subtle static part of the art,
+    but removes all travelling pulses.
+  */
+
+  .constellation-line {
+    opacity: .045;
     filter: none;
   }
+
+  .constellation-pulse {
+    display: none;
   }
+
+  .constellation-node {
+    opacity: .24;
+    transform: none;
+    filter: none;
+  }
+
+  .card-week-constellation {
+    transition: none;
+  }
+    }
