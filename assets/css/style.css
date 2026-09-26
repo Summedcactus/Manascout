@@ -6,7 +6,7 @@
   --text:#edf2ef;
   --muted:#98a29f;
   --line:#263034;
-  --accent:#63d2b3;
+  --accent:#861c2b;
   --gold:#d8b46a;
 }
 html{scroll-behavior:smooth}
@@ -54,13 +54,13 @@ button,input{font:inherit}
   padding:6px;
   box-shadow:0 18px 50px rgba(0,0,0,.25)
 }
-.search-box:focus-within{border-color:#4f8879}
+.search-box:focus-within{border-color:#861c2b}
 .search-box input{
   flex:1;min-width:0;border:0;background:transparent;color:var(--text);
   font-size:16px;padding:14px;outline:0
 }
 .search-box button,.button-link{
-  border:0;background:var(--accent);color:#07110e;font-weight:800;
+  border:0;background:var(--accent);color:#fff;font-weight:800;
   border-radius:8px;padding:0 22px;cursor:pointer;text-decoration:none;
   display:inline-flex;align-items:center;justify-content:center
 }
@@ -127,7 +127,7 @@ button,input{font:inherit}
   border:1px solid var(--line);border-radius:8px;padding:9px 12px;text-decoration:none;
   color:var(--muted);font-size:13px
 }
-.marketplace-links a:hover{border-color:#4f8879;color:var(--text)}
+.marketplace-links a:hover{border-color:#861c2b;color:var(--text)}
 .section-heading{
   display:flex;justify-content:space-between;align-items:end;gap:20px;
   border-bottom:1px solid var(--line);padding-bottom:16px;margin-bottom:18px
@@ -312,15 +312,15 @@ button,input{font:inherit}
   --text: #f1eee9;
   --muted: #99979a;
   --line: #29272b;
-  --accent: #b32635;
-  --accent-bright: #d33b4c;
-  --accent-dark: #711722;
+  --accent: #861c2b;
+  --accent-bright: #b82c3e;
+  --accent-dark: #4f0e18;
   --gold: #c9a76b;
 }
 
 body {
   background:
-    radial-gradient(circle at 50% -15%, rgba(179, 38, 53, .10) 0, transparent 32%),
+    radial-gradient(circle at 50% -15%, rgba(134, 28, 43, .10) 0, transparent 32%),
     linear-gradient(180deg, #09090b 0%, #0b0b0d 100%);
   color: var(--text);
 }
@@ -405,10 +405,10 @@ body {
 }
 
 .search-box:focus-within {
-  border-color: rgba(211,59,76,.75);
+  border-color: rgba(184,44,62,.75);
   box-shadow:
     0 22px 70px rgba(0,0,0,.42),
-    0 0 0 3px rgba(179,38,53,.10);
+    0 0 0 3px rgba(134,28,43,.10);
 }
 
 .search-box input {
@@ -473,8 +473,8 @@ body {
 
 .try-row a:hover {
   color: #fff;
-  border-color: rgba(211,59,76,.55);
-  background: rgba(179,38,53,.08);
+  border-color: rgba(184,44,62,.55);
+  background: rgba(134,28,43,.08);
   transform: translateY(-1px);
 }
 
@@ -485,7 +485,7 @@ body {
   content: "◇";
   display: block;
   margin: 30px auto 0;
-  color: rgba(211,59,76,.40);
+  color: rgba(184,44,62,.40);
   font-size: 13px;
   letter-spacing: .4em;
 }
@@ -603,7 +603,7 @@ body {
   background:
     radial-gradient(
       circle at 15% 20%,
-      rgba(179, 38, 53, .10),
+      rgba(134, 28, 43, .10),
       transparent 32%
     ),
     linear-gradient(
@@ -662,7 +662,7 @@ body {
   border: 1px solid #29272b;
   border-radius: 12px;
   background: #101012;
-  color: rgba(211,59,76,.42);
+  color: rgba(184,44,62,.42);
   font-size: 28px;
 }
 
@@ -698,10 +698,10 @@ body {
   display: inline-flex;
   align-items: center;
   gap: 9px;
-  border: 1px solid rgba(211,59,76,.40);
+  border: 1px solid rgba(184,44,62,.40);
   border-radius: 9px;
   padding: 11px 15px;
-  background: rgba(179,38,53,.08);
+  background: rgba(134,28,43,.08);
   color: #eee8e9;
   font-size: 12px;
   font-weight: 800;
@@ -713,8 +713,8 @@ body {
 }
 
 .featured-content > a:hover {
-  border-color: rgba(211,59,76,.75);
-  background: rgba(179,38,53,.16);
+  border-color: rgba(184,44,62,.75);
+  background: rgba(134,28,43,.16);
   transform: translateY(-1px);
 }
 
@@ -749,7 +749,7 @@ body {
 }
 
 .featured-arrow:hover {
-  border-color: rgba(211,59,76,.65);
+  border-color: rgba(184,44,62,.65);
   background: #171215;
   color: #fff;
 }
@@ -959,7 +959,7 @@ body {
   background:
     radial-gradient(
       circle at 0 0,
-      rgba(179, 38, 53, .12),
+      rgba(134, 28, 43, .12),
       transparent 34%
     ),
     linear-gradient(
@@ -1002,7 +1002,7 @@ body {
 }
 
 .snapshot-mark {
-  color: rgba(211, 59, 76, .55);
+  color: rgba(184, 44, 62, .55);
   font-size: 24px;
   line-height: 1;
 }
@@ -1053,8 +1053,8 @@ body {
 }
 
 .snapshot-stat:hover:not(:disabled) {
-  border-color: rgba(211, 59, 76, .42);
-  background: rgba(179, 38, 53, .07);
+  border-color: rgba(184, 44, 62, .42);
+  background: rgba(134, 28, 43, .07);
   transform: translateY(-1px);
 }
 
@@ -1064,15 +1064,15 @@ body {
 }
 
 .snapshot-stat.is-active {
-  border-color: rgba(211, 59, 76, .62);
+  border-color: rgba(184, 44, 62, .62);
   background:
     linear-gradient(
       135deg,
-      rgba(179, 38, 53, .16),
-      rgba(179, 38, 53, .055)
+      rgba(134, 28, 43, .16),
+      rgba(134, 28, 43, .055)
     );
   box-shadow:
-    inset 0 0 0 1px rgba(211, 59, 76, .06),
+    inset 0 0 0 1px rgba(184, 44, 62, .06),
     0 8px 24px rgba(0, 0, 0, .16);
 }
 
@@ -1237,9 +1237,9 @@ body {
 .card-week-edition {
   flex: 0 0 auto;
   padding: 7px 10px;
-  border: 1px solid rgba(211, 59, 76, .24);
+  border: 1px solid rgba(184, 44, 62, .24);
   border-radius: 999px;
-  background: rgba(179, 38, 53, .055);
+  background: rgba(134, 28, 43, .055);
   color: #8d878b;
   font-size: 9px;
   font-weight: 800;
@@ -1266,7 +1266,7 @@ body {
     ),
     radial-gradient(
       circle at 73% 18%,
-      rgba(179, 38, 53, .09),
+      rgba(134, 28, 43, .09),
       transparent 32%
     ),
     linear-gradient(
@@ -1301,7 +1301,7 @@ body {
   z-index: -1;
   right: -25px;
   bottom: -96px;
-  color: rgba(211, 59, 76, .035);
+  color: rgba(184, 44, 62, .035);
   font-size: 310px;
   font-weight: 300;
   line-height: 1;
@@ -1336,8 +1336,8 @@ body {
   Ambient "water" behind the card.
 
   This is intentionally outside the actual card artwork.
-  Tonight we can add an artwork-specific mask without
-  having to rebuild the weekly section.
+  The blue palette here is intentionally card-specific rather
+  than part of the global ManaScout crimson identity.
 */
 
 .card-week-water {
@@ -1363,7 +1363,7 @@ body {
     ),
     radial-gradient(
       ellipse at 50% 78%,
-      rgba(179, 38, 53, .12),
+      rgba(134, 28, 43, .12),
       transparent 35%
     );
   transform:
@@ -1472,7 +1472,7 @@ body {
       #14151a,
       #0d0d10
     );
-  color: rgba(211,59,76,.50);
+  color: rgba(184,44,62,.50);
 }
 
 .card-week-card-placeholder[hidden] {
@@ -1684,13 +1684,13 @@ body {
   gap: 10px;
   margin-top: 28px;
   padding: 12px 16px;
-  border: 1px solid rgba(211,59,76,.42);
+  border: 1px solid rgba(184,44,62,.42);
   border-radius: 9px;
   background:
     linear-gradient(
       135deg,
-      rgba(179,38,53,.13),
-      rgba(179,38,53,.055)
+      rgba(134,28,43,.13),
+      rgba(134,28,43,.055)
     );
   color: #f0e9eb;
   font-size: 12px;
@@ -1711,12 +1711,12 @@ body {
 }
 
 .card-week-link:hover {
-  border-color: rgba(211,59,76,.78);
+  border-color: rgba(184,44,62,.78);
   background:
     linear-gradient(
       135deg,
-      rgba(179,38,53,.21),
-      rgba(179,38,53,.08)
+      rgba(134,28,43,.21),
+      rgba(134,28,43,.08)
     );
   transform: translateY(-1px);
   box-shadow: 0 10px 28px rgba(0,0,0,.18);
