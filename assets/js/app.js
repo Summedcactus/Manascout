@@ -44,11 +44,24 @@
   }
 
   function getQueryName() {
-    return new URLSearchParams(window.location.search).get("q")?.trim() || "";
+    return new URLSearchParams(window.location.search)
+      .get("q")
+      ?.trim() || "";
   }
 
-  function setQuery(name, replace = false) {
-    const url = new URL(window.location.href);
+  function getPrintingId() {
+    return new URLSearchParams(window.location.search)
+      .get("printing")
+      ?.trim() || "";
+  }
+
+  function setQuery(
+    name,
+    replace = false,
+    printingId = ""
+  ) {
+    const url =
+      new URL(window.location.href);
 
     if (name) {
       url.searchParams.set("q", name);
@@ -56,23 +69,45 @@
       url.searchParams.delete("q");
     }
 
-    history[replace ? "replaceState" : "pushState"]({}, "", url);
+    if (printingId) {
+      url.searchParams.set(
+        "printing",
+        printingId
+      );
+    } else {
+      url.searchParams.delete(
+        "printing"
+      );
+    }
+
+    history[
+      replace
+        ? "replaceState"
+        : "pushState"
+    ]({}, "", url);
   }
 
   function titleCase(value) {
-    const text = String(value || "");
+    const text =
+      String(value || "");
 
     if (!text) {
       return "";
     }
 
-    return text.charAt(0).toUpperCase() + text.slice(1).toLowerCase();
+    return (
+      text.charAt(0).toUpperCase() +
+      text.slice(1).toLowerCase()
+    );
   }
 
   function formatLegalFormat(format) {
     const specialFormats = {
       predh: "PreDH",
-      paupercommander: "Pauper Commander"
+      paupercommander: "Pauper Commander",
+      standardbrawl: "Standard Brawl",
+      oldschool: "Old School",
+      penny: "Penny Dreadful"
     };
 
     if (specialFormats[format]) {
@@ -81,17 +116,28 @@
 
     return String(format || "")
       .replace(/_/g, " ")
-      .replace(/\b\w/g, character => character.toUpperCase());
+      .replace(
+        /\b\w/g,
+        character =>
+          character.toUpperCase()
+      );
   }
 
   function oracleTextHtml(text) {
-    const value = String(text || "No oracle text supplied.");
+    const value =
+      String(
+        text ||
+        "No oracle text supplied."
+      );
 
     return value
       .split("\n")
       .map(line => line.trim())
       .filter(Boolean)
-      .map(line => `<p>${escapeHtml(line)}</p>`)
+      .map(
+        line =>
+          `<p>${escapeHtml(line)}</p>`
+      )
       .join("");
   }
 
@@ -101,7 +147,9 @@
      ------------------------------ */
 
   function setLoading() {
-    if (!els.details) return;
+    if (!els.details) {
+      return;
+    }
 
     els.details.innerHTML =
       '<div class="loading-state">Searching Scryfall…</div>';
@@ -116,7 +164,9 @@
   }
 
   function setError(message) {
-    if (!els.details) return;
+    if (!els.details) {
+      return;
+    }
 
     els.details.innerHTML = `
       <div class="error-state">
@@ -140,24 +190,38 @@
      ------------------------------ */
 
   function renderFaces(card) {
-    if (!Array.isArray(card.card_faces) || card.card_faces.length < 2) {
+    if (
+      !Array.isArray(card.card_faces) ||
+      card.card_faces.length < 2
+    ) {
       return `
         <div class="oracle">
-          ${oracleTextHtml(card.oracle_text)}
+          ${oracleTextHtml(
+            card.oracle_text
+          )}
         </div>
       `;
     }
 
     return `
       <div class="oracle">
-        ${card.card_faces.map(face => `
-          <div class="oracle-face">
-            <strong class="oracle-face-name">
-              ${escapeHtml(face.name || "")}
-            </strong>
-            ${oracleTextHtml(face.oracle_text || "")}
-          </div>
-        `).join("")}
+        ${card.card_faces
+          .map(
+            face => `
+              <div class="oracle-face">
+                <strong class="oracle-face-name">
+                  ${escapeHtml(
+                    face.name || ""
+                  )}
+                </strong>
+
+                ${oracleTextHtml(
+                  face.oracle_text || ""
+                )}
+              </div>
+            `
+          )
+          .join("")}
       </div>
     `;
   }
@@ -165,13 +229,17 @@
   function primaryImage(card) {
     return safeUrl(
       card.image_uris?.normal ||
-      card.card_faces?.[0]?.image_uris?.normal ||
+      card.card_faces?.[0]
+        ?.image_uris?.normal ||
       ""
     );
   }
 
   function marketplaceLinks(card) {
-    const name = encodeURIComponent(card.name || "");
+    const name =
+      encodeURIComponent(
+        card.name || ""
+      );
 
     return `
       <div class="marketplace-links">
@@ -195,34 +263,50 @@
   }
 
   function renderCard(card) {
-    if (!els.details) return;
+    if (!els.details) {
+      return;
+    }
 
-    const image = primaryImage(card);
+    const image =
+      primaryImage(card);
 
-    const imageHtml = image
-      ? `
-        <div class="card-image-wrap">
-          <img
-            class="card-image"
-            src="${escapeHtml(image)}"
-            alt="${escapeHtml(card.name || "Magic card")}"
-          >
-        </div>
-      `
-      : `
-        <div class="card-image-wrap">
-          <div class="empty-state">
-            No card image supplied.
+    const imageHtml =
+      image
+        ? `
+          <div class="card-image-wrap">
+            <img
+              class="card-image"
+              src="${escapeHtml(image)}"
+              alt="${escapeHtml(
+                card.name ||
+                "Magic card"
+              )}"
+            >
           </div>
-        </div>
-      `;
+        `
+        : `
+          <div class="card-image-wrap">
+            <div class="empty-state">
+              No card image supplied.
+            </div>
+          </div>
+        `;
 
-    const legalities = card.legalities
-      ? Object.entries(card.legalities)
-          .filter(([, value]) => value === "legal")
-          .map(([key]) => formatLegalFormat(key))
-          .join(", ")
-      : "Not available";
+    const legalities =
+      card.legalities
+        ? Object.entries(
+            card.legalities
+          )
+            .filter(
+              ([, value]) =>
+                value === "legal"
+            )
+            .map(
+              ([key]) =>
+                formatLegalFormat(key)
+            )
+            .join(", ")
+        : "Not available";
 
     els.details.innerHTML = `
       <article class="card-display">
@@ -234,14 +318,22 @@
           <p class="eyebrow">CARD</p>
 
           <h2>
-            ${escapeHtml(card.name || "Unknown card")}
+            ${escapeHtml(
+              card.name ||
+              "Unknown card"
+            )}
           </h2>
 
           <p class="card-subtitle">
-            ${escapeHtml(card.type_line || "")}
+            ${escapeHtml(
+              card.type_line || ""
+            )}
+
             ${
               card.mana_cost
-                ? ` · <span class="mana-cost">${escapeHtml(card.mana_cost)}</span>`
+                ? ` · <span class="mana-cost">${escapeHtml(
+                    card.mana_cost
+                  )}</span>`
                 : ""
             }
           </p>
@@ -250,22 +342,35 @@
 
             <div class="detail">
               <strong>Set</strong>
-              ${escapeHtml(card.set_name || "—")}
+              ${escapeHtml(
+                card.set_name || "—"
+              )}
             </div>
 
             <div class="detail">
-              <strong>Collector number</strong>
-              ${escapeHtml(card.collector_number || "—")}
+              <strong>
+                Collector number
+              </strong>
+              ${escapeHtml(
+                card.collector_number ||
+                "—"
+              )}
             </div>
 
             <div class="detail">
               <strong>Rarity</strong>
-              ${escapeHtml(titleCase(card.rarity || "—"))}
+              ${escapeHtml(
+                titleCase(
+                  card.rarity || "—"
+                )
+              )}
             </div>
 
             <div class="detail">
               <strong>Legal in</strong>
-              ${escapeHtml(legalities || "—")}
+              ${escapeHtml(
+                legalities || "—"
+              )}
             </div>
 
           </div>
@@ -275,6 +380,7 @@
           ${marketplaceLinks(card)}
 
         </div>
+
       </article>
     `;
   }
@@ -284,83 +390,163 @@
      PRICES + FX
      ------------------------------ */
 
-  function priceCell(value, symbol = "") {
+  function priceCell(
+    value,
+    symbol = ""
+  ) {
     if (!value) {
-      return '<span class="muted">—</span>';
+      return (
+        '<span class="muted">—</span>'
+      );
     }
 
     return `
       <span class="price">
-        <strong>${escapeHtml(symbol + value)}</strong>
+        <strong>
+          ${escapeHtml(
+            symbol + value
+          )}
+        </strong>
       </span>
     `;
   }
 
   async function fetchFxRate(base) {
-    const response = await fetch(`${FX_API}/${base}/GBP`, {
-      headers: {
-        "Accept": "application/json"
-      }
-    });
+    const response =
+      await fetch(
+        `${FX_API}/${base}/GBP`,
+        {
+          headers: {
+            "Accept":
+              "application/json"
+          }
+        }
+      );
 
     if (!response.ok) {
-      throw new Error(`FX HTTP ${response.status}`);
+      throw new Error(
+        `FX HTTP ${response.status}`
+      );
     }
 
-    const data = await response.json();
+    const data =
+      await response.json();
 
     return Number(data.rate);
   }
 
   async function getFxRates() {
     if (!fxRatesPromise) {
-      fxRatesPromise = Promise.all([
-        fetchFxRate("EUR"),
-        fetchFxRate("USD")
-      ]).then(([eurToGbp, usdToGbp]) => ({
-        eurToGbp,
-        usdToGbp
-      }));
+      fxRatesPromise =
+        Promise.all([
+          fetchFxRate("EUR"),
+          fetchFxRate("USD")
+        ]).then(
+          ([
+            eurToGbp,
+            usdToGbp
+          ]) => ({
+            eurToGbp,
+            usdToGbp
+          })
+        );
     }
 
     return fxRatesPromise;
   }
 
-  function convertToGbp(value, rate) {
-    const amount = Number.parseFloat(value);
+  function convertToGbp(
+    value,
+    rate
+  ) {
+    const amount =
+      Number.parseFloat(value);
 
-    if (!Number.isFinite(amount) || !Number.isFinite(rate)) {
+    if (
+      !Number.isFinite(amount) ||
+      !Number.isFinite(rate)
+    ) {
       return null;
     }
 
-    return (amount * rate).toFixed(2);
+    return (
+      amount * rate
+    ).toFixed(2);
   }
 
-  function regularGbpValue(print, rates) {
-    const eur = Number.parseFloat(print.prices?.eur);
-    const usd = Number.parseFloat(print.prices?.usd);
+  function regularGbpValue(
+    print,
+    rates
+  ) {
+    const eur =
+      Number.parseFloat(
+        print.prices?.eur
+      );
 
-    if (Number.isFinite(eur) && eur > 0 && rates?.eurToGbp) {
-      return eur * rates.eurToGbp;
+    const usd =
+      Number.parseFloat(
+        print.prices?.usd
+      );
+
+    if (
+      Number.isFinite(eur) &&
+      eur > 0 &&
+      rates?.eurToGbp
+    ) {
+      return (
+        eur *
+        rates.eurToGbp
+      );
     }
 
-    if (Number.isFinite(usd) && usd > 0 && rates?.usdToGbp) {
-      return usd * rates.usdToGbp;
+    if (
+      Number.isFinite(usd) &&
+      usd > 0 &&
+      rates?.usdToGbp
+    ) {
+      return (
+        usd *
+        rates.usdToGbp
+      );
     }
 
     return null;
   }
 
-  function foilGbpValue(print, rates) {
-    const eur = Number.parseFloat(print.prices?.eur_foil);
-    const usd = Number.parseFloat(print.prices?.usd_foil);
+  function foilGbpValue(
+    print,
+    rates
+  ) {
+    const eur =
+      Number.parseFloat(
+        print.prices?.eur_foil
+      );
 
-    if (Number.isFinite(eur) && eur > 0 && rates?.eurToGbp) {
-      return eur * rates.eurToGbp;
+    const usd =
+      Number.parseFloat(
+        print.prices?.usd_foil
+      );
+
+    if (
+      Number.isFinite(eur) &&
+      eur > 0 &&
+      rates?.eurToGbp
+    ) {
+      return (
+        eur *
+        rates.eurToGbp
+      );
     }
 
-    if (Number.isFinite(usd) && usd > 0 && rates?.usdToGbp) {
-      return usd * rates.usdToGbp;
+    if (
+      Number.isFinite(usd) &&
+      usd > 0 &&
+      rates?.usdToGbp
+    ) {
+      return (
+        usd *
+        rates.usdToGbp
+      );
     }
 
     return null;
@@ -372,8 +558,18 @@
      ------------------------------ */
 
   function finishText(card) {
-    return Array.isArray(card.finishes) && card.finishes.length
-      ? card.finishes.map(finish => titleCase(finish)).join(", ")
+    return (
+      Array.isArray(
+        card.finishes
+      ) &&
+      card.finishes.length
+    )
+      ? card.finishes
+          .map(
+            finish =>
+              titleCase(finish)
+          )
+          .join(", ")
       : "—";
   }
 
@@ -381,23 +577,42 @@
     return (
       print.image_uris?.small ||
       print.image_uris?.normal ||
-      print.card_faces?.[0]?.image_uris?.small ||
-      print.card_faces?.[0]?.image_uris?.normal ||
+      print.card_faces?.[0]
+        ?.image_uris?.small ||
+      print.card_faces?.[0]
+        ?.image_uris?.normal ||
       ""
     );
   }
 
-  function hasFinish(print, finish) {
+  function hasFinish(
+    print,
+    finish
+  ) {
     return (
-      Array.isArray(print.finishes) &&
-      print.finishes.includes(finish)
+      Array.isArray(
+        print.finishes
+      ) &&
+      print.finishes.includes(
+        finish
+      )
     );
   }
 
   function oldestYear(printings) {
-    const years = printings
-      .map(print => String(print.released_at || "").slice(0, 4))
-      .filter(year => /^\d{4}$/.test(year));
+    const years =
+      printings
+        .map(
+          print =>
+            String(
+              print.released_at ||
+              ""
+            ).slice(0, 4)
+        )
+        .filter(
+          year =>
+            /^\d{4}$/.test(year)
+        );
 
     return years.length
       ? years.sort()[0]
@@ -405,12 +620,24 @@
   }
 
   function newestYear(printings) {
-    const years = printings
-      .map(print => String(print.released_at || "").slice(0, 4))
-      .filter(year => /^\d{4}$/.test(year));
+    const years =
+      printings
+        .map(
+          print =>
+            String(
+              print.released_at ||
+              ""
+            ).slice(0, 4)
+        )
+        .filter(
+          year =>
+            /^\d{4}$/.test(year)
+        );
 
     return years.length
-      ? years.sort().reverse()[0]
+      ? years
+          .sort()
+          .reverse()[0]
       : null;
   }
 
@@ -423,27 +650,38 @@
     let winner = null;
 
     let winnerPrice =
-      direction === "most-expensive"
+      direction ===
+      "most-expensive"
         ? -Infinity
         : Infinity;
 
-    printings.forEach(print => {
-      const price = priceGetter(print, rates);
+    printings.forEach(
+      print => {
+        const price =
+          priceGetter(
+            print,
+            rates
+          );
 
-      if (!Number.isFinite(price) || price <= 0) {
-        return;
+        if (
+          !Number.isFinite(price) ||
+          price <= 0
+        ) {
+          return;
+        }
+
+        const better =
+          direction ===
+          "most-expensive"
+            ? price > winnerPrice
+            : price < winnerPrice;
+
+        if (better) {
+          winner = print;
+          winnerPrice = price;
+        }
       }
-
-      const better =
-        direction === "most-expensive"
-          ? price > winnerPrice
-          : price < winnerPrice;
-
-      if (better) {
-        winner = print;
-        winnerPrice = price;
-      }
-    });
+    );
 
     return winner
       ? {
@@ -458,45 +696,65 @@
      MANASCOUT SNAPSHOT
      ------------------------------ */
 
-  function getSnapshotData(printings, rates) {
-    const oldest = oldestYear(printings);
-    const newest = newestYear(printings);
+  function getSnapshotData(
+    printings,
+    rates
+  ) {
+    const oldest =
+      oldestYear(printings);
 
-    const foilPrintings = printings.filter(print =>
-      hasFinish(print, "foil")
-    );
+    const newest =
+      newestYear(printings);
 
-    const etchedPrintings = printings.filter(print =>
-      hasFinish(print, "etched")
-    );
+    const foilPrintings =
+      printings.filter(
+        print =>
+          hasFinish(
+            print,
+            "foil"
+          )
+      );
 
-    const cheapest = extremePrinting(
-      printings,
-      rates,
-      regularGbpValue,
-      "cheapest"
-    );
+    const etchedPrintings =
+      printings.filter(
+        print =>
+          hasFinish(
+            print,
+            "etched"
+          )
+      );
 
-    const mostExpensive = extremePrinting(
-      printings,
-      rates,
-      regularGbpValue,
-      "most-expensive"
-    );
+    const cheapest =
+      extremePrinting(
+        printings,
+        rates,
+        regularGbpValue,
+        "cheapest"
+      );
 
-    const cheapestFoil = extremePrinting(
-      printings,
-      rates,
-      foilGbpValue,
-      "cheapest"
-    );
+    const mostExpensive =
+      extremePrinting(
+        printings,
+        rates,
+        regularGbpValue,
+        "most-expensive"
+      );
 
-    const mostExpensiveFoil = extremePrinting(
-      printings,
-      rates,
-      foilGbpValue,
-      "most-expensive"
-    );
+    const cheapestFoil =
+      extremePrinting(
+        printings,
+        rates,
+        foilGbpValue,
+        "cheapest"
+      );
+
+    const mostExpensiveFoil =
+      extremePrinting(
+        printings,
+        rates,
+        foilGbpValue,
+        "most-expensive"
+      );
 
     return {
       oldest,
@@ -520,105 +778,159 @@
       <button
         class="snapshot-stat"
         type="button"
-        data-snapshot-action="${escapeHtml(action)}"
-        ${disabled ? "disabled" : ""}
+        data-snapshot-action="${escapeHtml(
+          action
+        )}"
+        ${
+          disabled
+            ? "disabled"
+            : ""
+        }
         aria-pressed="false"
       >
-        <strong>${escapeHtml(value)}</strong>
-        <span>${escapeHtml(label)}</span>
+        <strong>
+          ${escapeHtml(value)}
+        </strong>
+
+        <span>
+          ${escapeHtml(label)}
+        </span>
       </button>
     `;
   }
 
-  function buildSnapshot(printings, rates) {
-    if (!Array.isArray(printings) || !printings.length) {
+  function buildSnapshot(
+    printings,
+    rates
+  ) {
+    if (
+      !Array.isArray(printings) ||
+      !printings.length
+    ) {
       return "";
     }
 
-    const data = getSnapshotData(printings, rates);
+    const data =
+      getSnapshotData(
+        printings,
+        rates
+      );
 
     return `
       <section class="snapshot">
 
         <div class="snapshot-heading">
           <div>
-            <p class="eyebrow">MANASCOUT SNAPSHOT</p>
+            <p class="eyebrow">
+              MANASCOUT SNAPSHOT
+            </p>
+
             <h3>At a glance</h3>
           </div>
 
-          <span class="snapshot-mark" aria-hidden="true">◇</span>
+          <span
+            class="snapshot-mark"
+            aria-hidden="true"
+          >
+            ◇
+          </span>
         </div>
 
         <div class="snapshot-grid">
 
           ${snapshotButton({
             action: "all",
-            value: printings.length,
+            value:
+              printings.length,
             label: "Printings"
           })}
 
           ${snapshotButton({
             action: "cheapest",
-            value: data.cheapest
-              ? `£${data.cheapest.price.toFixed(2)}`
-              : "—",
+            value:
+              data.cheapest
+                ? `£${data.cheapest.price.toFixed(2)}`
+                : "—",
             label: "Cheapest",
-            disabled: !data.cheapest
+            disabled:
+              !data.cheapest
           })}
 
           ${snapshotButton({
-            action: "most-expensive",
-            value: data.mostExpensive
-              ? `£${data.mostExpensive.price.toFixed(2)}`
-              : "—",
-            label: "Most expensive",
-            disabled: !data.mostExpensive
+            action:
+              "most-expensive",
+            value:
+              data.mostExpensive
+                ? `£${data.mostExpensive.price.toFixed(2)}`
+                : "—",
+            label:
+              "Most expensive",
+            disabled:
+              !data.mostExpensive
           })}
 
           ${snapshotButton({
-            action: "cheapest-foil",
-            value: data.cheapestFoil
-              ? `£${data.cheapestFoil.price.toFixed(2)}`
-              : "—",
-            label: "Cheapest foil",
-            disabled: !data.cheapestFoil
+            action:
+              "cheapest-foil",
+            value:
+              data.cheapestFoil
+                ? `£${data.cheapestFoil.price.toFixed(2)}`
+                : "—",
+            label:
+              "Cheapest foil",
+            disabled:
+              !data.cheapestFoil
           })}
 
           ${snapshotButton({
-            action: "most-expensive-foil",
-            value: data.mostExpensiveFoil
-              ? `£${data.mostExpensiveFoil.price.toFixed(2)}`
-              : "—",
-            label: "Most expensive foil",
-            disabled: !data.mostExpensiveFoil
+            action:
+              "most-expensive-foil",
+            value:
+              data.mostExpensiveFoil
+                ? `£${data.mostExpensiveFoil.price.toFixed(2)}`
+                : "—",
+            label:
+              "Most expensive foil",
+            disabled:
+              !data.mostExpensiveFoil
           })}
 
           ${snapshotButton({
             action: "oldest",
-            value: data.oldest || "—",
+            value:
+              data.oldest || "—",
             label: "Oldest",
-            disabled: !data.oldest
+            disabled:
+              !data.oldest
           })}
 
           ${snapshotButton({
             action: "newest",
-            value: data.newest || "—",
+            value:
+              data.newest || "—",
             label: "Newest",
-            disabled: !data.newest
+            disabled:
+              !data.newest
           })}
 
           ${snapshotButton({
             action: "foil",
-            value: data.foilPrintings.length,
-            label: "Foil versions",
-            disabled: !data.foilPrintings.length
+            value:
+              data.foilPrintings.length,
+            label:
+              "Foil versions",
+            disabled:
+              !data.foilPrintings.length
           })}
 
           ${snapshotButton({
             action: "etched",
-            value: data.etchedPrintings.length,
-            label: "Etched versions",
-            disabled: !data.etchedPrintings.length
+            value:
+              data.etchedPrintings.length,
+            label:
+              "Etched versions",
+            disabled:
+              !data.etchedPrintings.length
           })}
 
         </div>
@@ -636,39 +948,82 @@
      API
      ------------------------------ */
 
-  async function fetchJson(url, signal) {
-    const response = await fetch(url, {
-      signal,
-      headers: {
-        "Accept": "application/json"
-      }
-    });
+  async function fetchJson(
+    url,
+    signal
+  ) {
+    const response =
+      await fetch(
+        url,
+        {
+          signal,
+          headers: {
+            "Accept":
+              "application/json"
+          }
+        }
+      );
 
     if (!response.ok) {
-      const error = new Error(`HTTP ${response.status}`);
-      error.status = response.status;
+      const error =
+        new Error(
+          `HTTP ${response.status}`
+        );
+
+      error.status =
+        response.status;
+
       throw error;
     }
 
     return response.json();
   }
 
-  async function namedCard(name, signal) {
+  async function namedCard(
+    name,
+    signal
+  ) {
     const exact =
-      `${API}/cards/named?exact=${encodeURIComponent(name)}`;
+      `${API}/cards/named?exact=${encodeURIComponent(
+        name
+      )}`;
 
     try {
-      return await fetchJson(exact, signal);
+      return await fetchJson(
+        exact,
+        signal
+      );
     } catch (error) {
-      if (error.name === "AbortError" || error.status !== 404) {
+      if (
+        error.name ===
+          "AbortError" ||
+        error.status !== 404
+      ) {
         throw error;
       }
 
       const fuzzy =
-        `${API}/cards/named?fuzzy=${encodeURIComponent(name)}`;
+        `${API}/cards/named?fuzzy=${encodeURIComponent(
+          name
+        )}`;
 
-      return fetchJson(fuzzy, signal);
+      return fetchJson(
+        fuzzy,
+        signal
+      );
     }
+  }
+
+  async function cardById(
+    printingId,
+    signal
+  ) {
+    return fetchJson(
+      `${API}/cards/${encodeURIComponent(
+        printingId
+      )}`,
+      signal
+    );
   }
 
 
@@ -676,18 +1031,32 @@
      PRINTINGS
      ------------------------------ */
 
-  async function renderPrintings(card, token, signal) {
-    if (!els.status || !els.printings) return;
+  async function renderPrintings(
+    card,
+    token,
+    signal
+  ) {
+    if (
+      !els.status ||
+      !els.printings
+    ) {
+      return;
+    }
 
-    const uri = safeUrl(card.prints_search_uri);
+    const uri =
+      safeUrl(
+        card.prints_search_uri
+      );
 
     if (!uri) {
       els.status.textContent =
         "Printing information is not available for this card.";
+
       return;
     }
 
-    els.status.textContent = "Loading printings…";
+    els.status.textContent =
+      "Loading printings…";
 
     const all = [];
 
@@ -695,195 +1064,304 @@
     let pages = 0;
 
     try {
-      while (next && pages < 40) {
-        const page = await fetchJson(next, signal);
+      while (
+        next &&
+        pages < 40
+      ) {
+        const page =
+          await fetchJson(
+            next,
+            signal
+          );
 
-        if (token !== searchToken) {
+        if (
+          token !== searchToken
+        ) {
           return;
         }
 
-        if (Array.isArray(page.data)) {
-          all.push(...page.data);
+        if (
+          Array.isArray(
+            page.data
+          )
+        ) {
+          all.push(
+            ...page.data
+          );
         }
 
-        next = safeUrl(page.next_page || "");
+        next =
+          safeUrl(
+            page.next_page ||
+            ""
+          );
+
         pages += 1;
       }
     } catch (error) {
-      if (error.name === "AbortError") {
+      if (
+        error.name ===
+        "AbortError"
+      ) {
         return;
       }
 
-      els.status.textContent = all.length
-        ? `Showing ${all.length} printings. Some additional results could not be loaded.`
-        : "Printing data could not be loaded.";
+      els.status.textContent =
+        all.length
+          ? `Showing ${all.length} printings. Some additional results could not be loaded.`
+          : "Printing data could not be loaded.";
 
       if (!all.length) {
         return;
       }
     }
 
-    all.sort((a, b) =>
-      String(b.released_at || "")
-        .localeCompare(String(a.released_at || ""))
+    all.sort(
+      (a, b) =>
+        String(
+          b.released_at || ""
+        ).localeCompare(
+          String(
+            a.released_at || ""
+          )
+        )
     );
 
     let rates = null;
 
     try {
-      rates = await getFxRates();
+      rates =
+        await getFxRates();
     } catch (error) {
-      console.warn("GBP conversion unavailable", error);
+      console.warn(
+        "GBP conversion unavailable",
+        error
+      );
     }
 
-    els.status.textContent = rates
-      ? `${all.length} printing${all.length === 1 ? "" : "s"} found · GBP estimates`
-      : `${all.length} printing${all.length === 1 ? "" : "s"} found`;
+    els.status.textContent =
+      rates
+        ? `${all.length} printing${all.length === 1 ? "" : "s"} found · GBP estimates`
+        : `${all.length} printing${all.length === 1 ? "" : "s"} found`;
 
-    const snapshotData = getSnapshotData(all, rates);
+    const snapshotData =
+      getSnapshotData(
+        all,
+        rates
+      );
 
 
     /* BUILD PRINTING ROWS */
 
-    const buildRows = printings =>
-      printings.map(print => `
-        <tr>
+    const buildRows =
+      printings =>
+        printings
+          .map(
+            print => `
+              <tr
+                ${
+                  print.id === card.id
+                    ? 'class="is-selected-printing"'
+                    : ""
+                }
+              >
 
-          <td class="printing-image-cell">
-            ${
-              printingImage(print)
-                ? `
+                <td class="printing-image-cell">
+                  ${
+                    printingImage(print)
+                      ? `
+                        <button
+                          class="printing-select-button printing-image-button"
+                          type="button"
+                          data-print-id="${escapeHtml(
+                            print.id || ""
+                          )}"
+                          title="Select this printing"
+                        >
+                          <img
+                            class="printing-card-image"
+                            src="${escapeHtml(
+                              printingImage(
+                                print
+                              )
+                            )}"
+                            alt="${escapeHtml(
+                              print.name ||
+                              "Magic card"
+                            )} printing"
+                            loading="lazy"
+                          >
+                        </button>
+                      `
+                      : "—"
+                  }
+                </td>
+
+                <td>
                   <button
-                    class="printing-select-button printing-image-button"
+                    class="printing-select-button printing-name-button"
                     type="button"
-                    data-print-id="${escapeHtml(print.id || "")}"
-                    title="Select this printing"
+                    data-print-id="${escapeHtml(
+                      print.id || ""
+                    )}"
                   >
-                    <img
-                      class="printing-card-image"
-                      src="${escapeHtml(printingImage(print))}"
-                      alt="${escapeHtml(print.name || "Magic card")} printing"
-                      loading="lazy"
-                    >
+                    <span class="set-name">
+                      ${escapeHtml(
+                        print.set_name ||
+                        "—"
+                      )}
+                    </span>
                   </button>
-                `
-                : "—"
-            }
-          </td>
 
-          <td>
-            <button
-              class="printing-select-button printing-name-button"
-              type="button"
-              data-print-id="${escapeHtml(print.id || "")}"
-            >
-              <span class="set-name">
-                ${escapeHtml(print.set_name || "—")}
-              </span>
-            </button>
+                  <br>
 
-            <br>
+                  <span class="muted">
+                    ${escapeHtml(
+                      (
+                        print.set || ""
+                      ).toUpperCase()
+                    )}
+                  </span>
+                </td>
 
-            <span class="muted">
-              ${escapeHtml((print.set || "").toUpperCase())}
-            </span>
-          </td>
+                <td>
+                  ${escapeHtml(
+                    print.released_at ||
+                    "—"
+                  )}
+                </td>
 
-          <td>
-            ${escapeHtml(print.released_at || "—")}
-          </td>
+                <td>
+                  ${escapeHtml(
+                    print.collector_number ||
+                    "—"
+                  )}
+                </td>
 
-          <td>
-            ${escapeHtml(print.collector_number || "—")}
-          </td>
+                <td>
+                  ${escapeHtml(
+                    titleCase(
+                      print.rarity ||
+                      "—"
+                    )
+                  )}
+                </td>
 
-          <td>
-            ${escapeHtml(titleCase(print.rarity || "—"))}
-          </td>
+                <td>
+                  ${escapeHtml(
+                    finishText(print)
+                  )}
+                </td>
 
-          <td>
-            ${escapeHtml(finishText(print))}
-          </td>
+                <td>
+                  ${priceCell(
+                    print.prices?.eur
+                      ? convertToGbp(
+                          print.prices.eur,
+                          rates?.eurToGbp
+                        )
+                      : convertToGbp(
+                          print.prices?.usd,
+                          rates?.usdToGbp
+                        ),
+                    "£"
+                  )}
+                </td>
 
-          <td>
-            ${priceCell(
-              print.prices?.eur
-                ? convertToGbp(
-                    print.prices.eur,
-                    rates?.eurToGbp
-                  )
-                : convertToGbp(
-                    print.prices?.usd,
-                    rates?.usdToGbp
-                  ),
-              "£"
-            )}
-          </td>
+                <td>
+                  ${priceCell(
+                    print.prices?.eur_foil
+                      ? convertToGbp(
+                          print.prices.eur_foil,
+                          rates?.eurToGbp
+                        )
+                      : convertToGbp(
+                          print.prices?.usd_foil,
+                          rates?.usdToGbp
+                        ),
+                    "£"
+                  )}
+                </td>
 
-          <td>
-            ${priceCell(
-              print.prices?.eur_foil
-                ? convertToGbp(
-                    print.prices.eur_foil,
-                    rates?.eurToGbp
-                  )
-                : convertToGbp(
-                    print.prices?.usd_foil,
-                    rates?.usdToGbp
-                  ),
-              "£"
-            )}
-          </td>
+                <td>
+                  ${priceCell(
+                    convertToGbp(
+                      print.prices?.usd_etched,
+                      rates?.usdToGbp
+                    ),
+                    "£"
+                  )}
+                </td>
 
-          <td>
-            ${priceCell(
-              convertToGbp(
-                print.prices?.usd_etched,
-                rates?.usdToGbp
-              ),
-              "£"
-            )}
-          </td>
-
-        </tr>
-      `).join("");
+              </tr>
+            `
+          )
+          .join("");
 
 
     /* FILTERS */
 
-    const showFilters = all.length >= 8;
+    const showFilters =
+      all.length >= 8;
 
-    const filterControls = showFilters
-      ? `
-        <div class="printing-controls">
+    const filterControls =
+      showFilters
+        ? `
+          <div class="printing-controls">
 
-          <label>
-            Finish
+            <label>
+              Finish
 
-            <select id="printing-finish-filter">
-              <option value="all">All</option>
-              <option value="nonfoil">Nonfoil</option>
-              <option value="foil">Foil</option>
-              <option value="etched">Etched</option>
-            </select>
-          </label>
+              <select id="printing-finish-filter">
+                <option value="all">
+                  All
+                </option>
 
-          <label>
-            Sort
+                <option value="nonfoil">
+                  Nonfoil
+                </option>
 
-            <select id="printing-sort">
-              <option value="newest">Newest</option>
-              <option value="oldest">Oldest</option>
-              <option value="price-asc">£ Low → High</option>
-              <option value="price-desc">£ High → Low</option>
-            </select>
-          </label>
+                <option value="foil">
+                  Foil
+                </option>
 
-        </div>
-      `
-      : "";
+                <option value="etched">
+                  Etched
+                </option>
+              </select>
+            </label>
 
-    const snapshot = buildSnapshot(all, rates);
+            <label>
+              Sort
+
+              <select id="printing-sort">
+                <option value="newest">
+                  Newest
+                </option>
+
+                <option value="oldest">
+                  Oldest
+                </option>
+
+                <option value="price-asc">
+                  £ Low → High
+                </option>
+
+                <option value="price-desc">
+                  £ High → Low
+                </option>
+              </select>
+            </label>
+
+          </div>
+        `
+        : "";
+
+    const snapshot =
+      buildSnapshot(
+        all,
+        rates
+      );
 
 
     /* RENDER SNAPSHOT + PRINTINGS */
@@ -926,174 +1404,325 @@
     /* INTERACTIVE TABLE STATE */
 
     const tbody =
-      els.printings.querySelector("tbody");
+      els.printings.querySelector(
+        "tbody"
+      );
 
     const finishFilter =
-      els.printings.querySelector("#printing-finish-filter");
+      els.printings.querySelector(
+        "#printing-finish-filter"
+      );
 
     const sortSelect =
-      els.printings.querySelector("#printing-sort");
+      els.printings.querySelector(
+        "#printing-sort"
+      );
 
-    let snapshotMode = "all";
+    let snapshotMode =
+      "all";
+
 
     function snapshotResults() {
-      if (snapshotMode === "cheapest") {
+      if (
+        snapshotMode ===
+        "cheapest"
+      ) {
         return snapshotData.cheapest
-          ? [snapshotData.cheapest.print]
+          ? [
+              snapshotData
+                .cheapest
+                .print
+            ]
           : [];
       }
 
-      if (snapshotMode === "most-expensive") {
-        return snapshotData.mostExpensive
-          ? [snapshotData.mostExpensive.print]
+      if (
+        snapshotMode ===
+        "most-expensive"
+      ) {
+        return snapshotData
+          .mostExpensive
+          ? [
+              snapshotData
+                .mostExpensive
+                .print
+            ]
           : [];
       }
 
-      if (snapshotMode === "cheapest-foil") {
-        return snapshotData.cheapestFoil
-          ? [snapshotData.cheapestFoil.print]
+      if (
+        snapshotMode ===
+        "cheapest-foil"
+      ) {
+        return snapshotData
+          .cheapestFoil
+          ? [
+              snapshotData
+                .cheapestFoil
+                .print
+            ]
           : [];
       }
 
-      if (snapshotMode === "most-expensive-foil") {
-        return snapshotData.mostExpensiveFoil
-          ? [snapshotData.mostExpensiveFoil.print]
+      if (
+        snapshotMode ===
+        "most-expensive-foil"
+      ) {
+        return snapshotData
+          .mostExpensiveFoil
+          ? [
+              snapshotData
+                .mostExpensiveFoil
+                .print
+            ]
           : [];
       }
 
-      if (snapshotMode === "oldest") {
-        return all.filter(print =>
-          String(print.released_at || "").startsWith(
-            snapshotData.oldest || "----"
-          )
+      if (
+        snapshotMode ===
+        "oldest"
+      ) {
+        return all.filter(
+          print =>
+            String(
+              print.released_at ||
+              ""
+            ).startsWith(
+              snapshotData.oldest ||
+              "----"
+            )
         );
       }
 
-      if (snapshotMode === "newest") {
-        return all.filter(print =>
-          String(print.released_at || "").startsWith(
-            snapshotData.newest || "----"
-          )
+      if (
+        snapshotMode ===
+        "newest"
+      ) {
+        return all.filter(
+          print =>
+            String(
+              print.released_at ||
+              ""
+            ).startsWith(
+              snapshotData.newest ||
+              "----"
+            )
         );
       }
 
-      if (snapshotMode === "foil") {
-        return all.filter(print =>
-          hasFinish(print, "foil")
+      if (
+        snapshotMode ===
+        "foil"
+      ) {
+        return all.filter(
+          print =>
+            hasFinish(
+              print,
+              "foil"
+            )
         );
       }
 
-      if (snapshotMode === "etched") {
-        return all.filter(print =>
-          hasFinish(print, "etched")
+      if (
+        snapshotMode ===
+        "etched"
+      ) {
+        return all.filter(
+          print =>
+            hasFinish(
+              print,
+              "etched"
+            )
         );
       }
 
       return [...all];
     }
 
+
     function updateActiveSnapshotButton() {
       const buttons =
-        els.printings.querySelectorAll("[data-snapshot-action]");
+        els.printings
+          .querySelectorAll(
+            "[data-snapshot-action]"
+          );
 
-      buttons.forEach(button => {
-        const active =
-          button.dataset.snapshotAction === snapshotMode;
+      buttons.forEach(
+        button => {
+          const active =
+            button.dataset
+              .snapshotAction ===
+            snapshotMode;
 
-        button.classList.toggle(
-          "is-active",
-          active
-        );
+          button.classList.toggle(
+            "is-active",
+            active
+          );
 
-        button.setAttribute(
-          "aria-pressed",
-          active ? "true" : "false"
-        );
-      });
+          button.setAttribute(
+            "aria-pressed",
+            active
+              ? "true"
+              : "false"
+          );
+        }
+      );
     }
 
-    function updateStatus(displayed) {
-      if (!els.status) return;
 
-      if (snapshotMode === "all") {
-        els.status.textContent = rates
-          ? `${all.length} printing${all.length === 1 ? "" : "s"} found · GBP estimates`
-          : `${all.length} printing${all.length === 1 ? "" : "s"} found`;
+    function updateStatus(
+      displayed
+    ) {
+      if (!els.status) {
+        return;
+      }
+
+      if (
+        snapshotMode ===
+        "all"
+      ) {
+        els.status.textContent =
+          rates
+            ? `${all.length} printing${all.length === 1 ? "" : "s"} found · GBP estimates`
+            : `${all.length} printing${all.length === 1 ? "" : "s"} found`;
 
         return;
       }
 
       const labels = {
-        cheapest: "cheapest printing",
-        "most-expensive": "most expensive printing",
-        "cheapest-foil": "cheapest foil printing",
-        "most-expensive-foil": "most expensive foil printing",
-        oldest: "oldest printings",
-        newest: "newest printings",
-        foil: "foil printings",
-        etched: "etched printings"
+        cheapest:
+          "cheapest printing",
+
+        "most-expensive":
+          "most expensive printing",
+
+        "cheapest-foil":
+          "cheapest foil printing",
+
+        "most-expensive-foil":
+          "most expensive foil printing",
+
+        oldest:
+          "oldest printings",
+
+        newest:
+          "newest printings",
+
+        foil:
+          "foil printings",
+
+        etched:
+          "etched printings"
       };
 
       els.status.textContent =
-        `${displayed.length} ${labels[snapshotMode] || "printing"} shown`;
+        `${displayed.length} ${
+          labels[snapshotMode] ||
+          "printing"
+        } shown`;
     }
 
+
     function updatePrintings() {
-      let displayed = snapshotResults();
+      let displayed =
+        snapshotResults();
 
       const finish =
-        finishFilter?.value || "all";
+        finishFilter?.value ||
+        "all";
 
       const sort =
-        sortSelect?.value || "newest";
+        sortSelect?.value ||
+        "newest";
 
-      /*
-       * Snapshot provides the first filter.
-       * Existing finish dropdown can then narrow those
-       * results further when it is present.
-       */
+
       if (finish !== "all") {
-        displayed = displayed.filter(print =>
-          hasFinish(print, finish)
-        );
+        displayed =
+          displayed.filter(
+            print =>
+              hasFinish(
+                print,
+                finish
+              )
+          );
       }
 
-      displayed.sort((a, b) => {
-        if (sort === "oldest") {
-          return String(a.released_at || "")
-            .localeCompare(String(b.released_at || ""));
+
+      displayed.sort(
+        (a, b) => {
+          if (
+            sort === "oldest"
+          ) {
+            return String(
+              a.released_at ||
+              ""
+            ).localeCompare(
+              String(
+                b.released_at ||
+                ""
+              )
+            );
+          }
+
+          if (
+            sort ===
+              "price-asc" ||
+            sort ===
+              "price-desc"
+          ) {
+            const aPrice =
+              regularGbpValue(
+                a,
+                rates
+              );
+
+            const bPrice =
+              regularGbpValue(
+                b,
+                rates
+              );
+
+            if (
+              aPrice === null &&
+              bPrice === null
+            ) {
+              return 0;
+            }
+
+            if (
+              aPrice === null
+            ) {
+              return 1;
+            }
+
+            if (
+              bPrice === null
+            ) {
+              return -1;
+            }
+
+            return (
+              sort ===
+              "price-asc"
+                ? aPrice -
+                  bPrice
+                : bPrice -
+                  aPrice
+            );
+          }
+
+          return String(
+            b.released_at ||
+            ""
+          ).localeCompare(
+            String(
+              a.released_at ||
+              ""
+            )
+          );
         }
+      );
 
-        if (
-          sort === "price-asc" ||
-          sort === "price-desc"
-        ) {
-          const aPrice =
-            regularGbpValue(a, rates);
-
-          const bPrice =
-            regularGbpValue(b, rates);
-
-          if (aPrice === null && bPrice === null) {
-            return 0;
-          }
-
-          if (aPrice === null) {
-            return 1;
-          }
-
-          if (bPrice === null) {
-            return -1;
-          }
-
-          return sort === "price-asc"
-            ? aPrice - bPrice
-            : bPrice - aPrice;
-        }
-
-        return String(b.released_at || "")
-          .localeCompare(String(a.released_at || ""));
-      });
 
       tbody.innerHTML =
         buildRows(displayed) ||
@@ -1124,66 +1753,99 @@
     /* SNAPSHOT BEHAVIOUR */
 
     const initialAllButton =
-      els.printings.querySelector(
-        '[data-snapshot-action="all"]'
-      );
+      els.printings
+        .querySelector(
+          '[data-snapshot-action="all"]'
+        );
 
     if (initialAllButton) {
-      initialAllButton.classList.add("is-active");
-      initialAllButton.setAttribute("aria-pressed", "true");
+      initialAllButton
+        .classList
+        .add("is-active");
+
+      initialAllButton
+        .setAttribute(
+          "aria-pressed",
+          "true"
+        );
     }
+
 
     els.printings.addEventListener(
       "click",
       event => {
-        const snapshotButton =
-          event.target.closest("[data-snapshot-action]");
+        const snapshotTrigger =
+          event.target.closest(
+            "[data-snapshot-action]"
+          );
 
-        if (!snapshotButton) {
+        if (!snapshotTrigger) {
           return;
         }
 
-        if (snapshotButton.disabled) {
+        if (
+          snapshotTrigger.disabled
+        ) {
           return;
         }
 
         snapshotMode =
-          snapshotButton.dataset.snapshotAction || "all";
+          snapshotTrigger.dataset
+            .snapshotAction ||
+          "all";
 
-        /*
-         * Snapshot selections should be understandable on
-         * their own, so reset the old finish filter when
-         * choosing a Snapshot tile.
-         */
+
         if (finishFilter) {
-          finishFilter.value = "all";
+          finishFilter.value =
+            "all";
         }
 
         updatePrintings();
 
-        /*
-         * Price Snapshot tiles represent one exact printing.
-         * Update the large card display to that version.
-         */
+
         const exactPricePrintings = {
-          cheapest: snapshotData.cheapest?.print,
-          "most-expensive": snapshotData.mostExpensive?.print,
-          "cheapest-foil": snapshotData.cheapestFoil?.print,
-          "most-expensive-foil": snapshotData.mostExpensiveFoil?.print
+          cheapest:
+            snapshotData
+              .cheapest
+              ?.print,
+
+          "most-expensive":
+            snapshotData
+              .mostExpensive
+              ?.print,
+
+          "cheapest-foil":
+            snapshotData
+              .cheapestFoil
+              ?.print,
+
+          "most-expensive-foil":
+            snapshotData
+              .mostExpensiveFoil
+              ?.print
         };
 
+
         const exactPrinting =
-          exactPricePrintings[snapshotMode];
+          exactPricePrintings[
+            snapshotMode
+          ];
 
         if (exactPrinting) {
-          renderCard(exactPrinting);
+          renderCard(
+            exactPrinting
+          );
+
+          setQuery(
+            exactPrinting.name,
+            true,
+            exactPrinting.id
+          );
         }
 
-        /*
-         * If a Snapshot category contains exactly one
-         * printing, show that exact printing above too.
-         */
-        const matches = snapshotResults();
+
+        const matches =
+          snapshotResults();
 
         if (
           ![
@@ -1192,14 +1854,28 @@
             "cheapest-foil",
             "most-expensive-foil",
             "all"
-          ].includes(snapshotMode) &&
+          ].includes(
+            snapshotMode
+          ) &&
           matches.length === 1
         ) {
-          renderCard(matches[0]);
+          renderCard(
+            matches[0]
+          );
+
+          setQuery(
+            matches[0].name,
+            true,
+            matches[0].id
+          );
         }
 
+
         const tableWrap =
-          els.printings.querySelector(".table-wrap");
+          els.printings
+            .querySelector(
+              ".table-wrap"
+            );
 
         if (tableWrap) {
           tableWrap.scrollIntoView({
@@ -1217,21 +1893,33 @@
       "click",
       event => {
         const trigger =
-          event.target.closest("[data-print-id]");
+          event.target.closest(
+            "[data-print-id]"
+          );
 
         if (!trigger) {
           return;
         }
 
-        const selected = all.find(
-          print => print.id === trigger.dataset.printId
-        );
+        const selected =
+          all.find(
+            print =>
+              print.id ===
+              trigger.dataset
+                .printId
+          );
 
         if (!selected) {
           return;
         }
 
         renderCard(selected);
+
+        setQuery(
+          selected.name,
+          true,
+          selected.id
+        );
 
         if (els.details) {
           els.details.scrollIntoView({
@@ -1248,54 +1936,138 @@
      LOAD CARD
      ------------------------------ */
 
-  async function loadCard(name, options = {}) {
-    const query = String(name || "").trim();
+  async function loadCard(
+    name,
+    options = {}
+  ) {
+    const query =
+      String(
+        name || ""
+      ).trim();
 
     if (!query) {
       return;
     }
 
-    const token = ++searchToken;
+
+    const requestedPrintingId =
+      String(
+        options.printingId ||
+        ""
+      ).trim();
+
+
+    const token =
+      ++searchToken;
+
 
     if (searchController) {
       searchController.abort();
     }
 
-    if (autocompleteController) {
+    if (
+      autocompleteController
+    ) {
       autocompleteController.abort();
     }
 
-    searchController = new AbortController();
+
+    searchController =
+      new AbortController();
+
 
     if (!options.fromHistory) {
-      setQuery(query, Boolean(options.replace));
+      setQuery(
+        query,
+        Boolean(
+          options.replace
+        ),
+        requestedPrintingId
+      );
     }
 
+
     if (els.input) {
-      els.input.value = query;
+      els.input.value =
+        query;
     }
+
 
     clearAutocomplete();
     setLoading();
 
-    try {
-      const card =
-        await namedCard(query, searchController.signal);
 
-      if (token !== searchToken) {
+    try {
+      let card;
+
+
+      if (requestedPrintingId) {
+        try {
+          card =
+            await cardById(
+              requestedPrintingId,
+              searchController.signal
+            );
+
+          /*
+           * Guard against a stale or incorrect printing ID.
+           * If the supplied ID does not represent the card
+           * we expected, fall back to normal name loading.
+           */
+          if (
+            card?.name &&
+            card.name.toLowerCase() !==
+              query.toLowerCase()
+          ) {
+            card =
+              await namedCard(
+                query,
+                searchController.signal
+              );
+          }
+        } catch (error) {
+          if (
+            error.name ===
+            "AbortError"
+          ) {
+            throw error;
+          }
+
+          card =
+            await namedCard(
+              query,
+              searchController.signal
+            );
+        }
+      } else {
+        card =
+          await namedCard(
+            query,
+            searchController.signal
+          );
+      }
+
+
+      if (
+        token !== searchToken
+      ) {
         return;
       }
 
+
       renderCard(card);
+
 
       await renderPrintings(
         card,
         token,
         searchController.signal
       );
+
     } catch (error) {
       if (
-        error.name === "AbortError" ||
+        error.name ===
+          "AbortError" ||
         token !== searchToken
       ) {
         return;
@@ -1315,19 +2087,26 @@
      ------------------------------ */
 
   function clearAutocomplete() {
-    if (!els.autocomplete || !els.input) {
+    if (
+      !els.autocomplete ||
+      !els.input
+    ) {
       return;
     }
 
-    els.autocomplete.hidden = true;
-    els.autocomplete.innerHTML = "";
+    els.autocomplete.hidden =
+      true;
+
+    els.autocomplete.innerHTML =
+      "";
 
     els.input.setAttribute(
       "aria-expanded",
       "false"
     );
 
-    activeAutocompleteIndex = -1;
+    activeAutocompleteIndex =
+      -1;
   }
 
   function autocompleteItems() {
@@ -1336,43 +2115,61 @@
     }
 
     return [
-      ...els.autocomplete.querySelectorAll(
-        ".autocomplete-item"
-      )
+      ...els.autocomplete
+        .querySelectorAll(
+          ".autocomplete-item"
+        )
     ];
   }
 
-  function setActiveAutocomplete(index) {
-    const items = autocompleteItems();
+  function setActiveAutocomplete(
+    index
+  ) {
+    const items =
+      autocompleteItems();
 
     if (!items.length) {
       return;
     }
 
     if (index < 0) {
-      index = items.length - 1;
+      index =
+        items.length - 1;
     }
 
-    if (index >= items.length) {
+    if (
+      index >= items.length
+    ) {
       index = 0;
     }
 
-    activeAutocompleteIndex = index;
+    activeAutocompleteIndex =
+      index;
 
-    items.forEach((item, i) => {
-      item.setAttribute(
-        "aria-selected",
-        i === index ? "true" : "false"
-      );
-    });
+    items.forEach(
+      (item, i) => {
+        item.setAttribute(
+          "aria-selected",
+          i === index
+            ? "true"
+            : "false"
+        );
+      }
+    );
 
-    items[index].scrollIntoView({
-      block: "nearest"
-    });
+    items[index]
+      .scrollIntoView({
+        block: "nearest"
+      });
   }
 
-  function renderAutocomplete(names) {
-    if (!els.autocomplete || !els.input) {
+  function renderAutocomplete(
+    names
+  ) {
+    if (
+      !els.autocomplete ||
+      !els.input
+    ) {
       return;
     }
 
@@ -1381,21 +2178,29 @@
       return;
     }
 
-    els.autocomplete.innerHTML = names
-      .map(name => `
-        <button
-          class="autocomplete-item"
-          type="button"
-          role="option"
-          aria-selected="false"
-          data-name="${escapeHtml(name)}"
-        >
-          <span>${escapeHtml(name)}</span>
-        </button>
-      `)
-      .join("");
+    els.autocomplete.innerHTML =
+      names
+        .map(
+          name => `
+            <button
+              class="autocomplete-item"
+              type="button"
+              role="option"
+              aria-selected="false"
+              data-name="${escapeHtml(
+                name
+              )}"
+            >
+              <span>
+                ${escapeHtml(name)}
+              </span>
+            </button>
+          `
+        )
+        .join("");
 
-    els.autocomplete.hidden = false;
+    els.autocomplete.hidden =
+      false;
 
     els.input.setAttribute(
       "aria-expanded",
@@ -1403,8 +2208,12 @@
     );
   }
 
-  async function autocomplete(query) {
-    if (autocompleteController) {
+  async function autocomplete(
+    query
+  ) {
+    if (
+      autocompleteController
+    ) {
       autocompleteController.abort();
     }
 
@@ -1413,7 +2222,9 @@
 
     try {
       const url =
-        `${API}/cards/autocomplete?q=${encodeURIComponent(query)}`;
+        `${API}/cards/autocomplete?q=${encodeURIComponent(
+          query
+        )}`;
 
       const data =
         await fetchJson(
@@ -1427,7 +2238,10 @@
           : []
       );
     } catch (error) {
-      if (error.name !== "AbortError") {
+      if (
+        error.name !==
+        "AbortError"
+      ) {
         clearAutocomplete();
       }
     }
@@ -1438,7 +2252,10 @@
      SEARCH EVENTS
      ------------------------------ */
 
-  if (els.form && els.input) {
+  if (
+    els.form &&
+    els.input
+  ) {
     els.form.addEventListener(
       "submit",
       event => {
@@ -1448,10 +2265,15 @@
           els.input.value.trim();
 
         if (value) {
+          /*
+           * A normal typed search intentionally
+           * discards any old printing ID.
+           */
           loadCard(value);
         }
       }
     );
+
 
     els.input.addEventListener(
       "input",
@@ -1459,20 +2281,28 @@
         const query =
           els.input.value.trim();
 
-        clearTimeout(autocompleteTimer);
+        clearTimeout(
+          autocompleteTimer
+        );
 
-        if (query.length < 2) {
+        if (
+          query.length < 2
+        ) {
           clearAutocomplete();
           return;
         }
 
         autocompleteTimer =
           setTimeout(
-            () => autocomplete(query),
+            () =>
+              autocomplete(
+                query
+              ),
             180
           );
       }
     );
+
 
     els.input.addEventListener(
       "keydown",
@@ -1481,36 +2311,49 @@
           autocompleteItems();
 
         if (
-          event.key === "ArrowDown" &&
+          event.key ===
+            "ArrowDown" &&
           items.length
         ) {
           event.preventDefault();
 
           setActiveAutocomplete(
-            activeAutocompleteIndex + 1
+            activeAutocompleteIndex +
+            1
           );
+
         } else if (
-          event.key === "ArrowUp" &&
+          event.key ===
+            "ArrowUp" &&
           items.length
         ) {
           event.preventDefault();
 
           setActiveAutocomplete(
-            activeAutocompleteIndex - 1
+            activeAutocompleteIndex -
+            1
           );
+
         } else if (
-          event.key === "Enter" &&
-          activeAutocompleteIndex >= 0 &&
-          items[activeAutocompleteIndex]
+          event.key ===
+            "Enter" &&
+          activeAutocompleteIndex >=
+            0 &&
+          items[
+            activeAutocompleteIndex
+          ]
         ) {
           event.preventDefault();
 
           loadCard(
-            items[activeAutocompleteIndex]
-              .dataset.name
+            items[
+              activeAutocompleteIndex
+            ].dataset.name
           );
+
         } else if (
-          event.key === "Escape"
+          event.key ===
+          "Escape"
         ) {
           clearAutocomplete();
         }
@@ -1518,26 +2361,34 @@
     );
   }
 
+
   if (els.autocomplete) {
     els.autocomplete.addEventListener(
       "click",
       event => {
         const item =
-          event.target.closest("[data-name]");
+          event.target.closest(
+            "[data-name]"
+          );
 
         if (item) {
-          loadCard(item.dataset.name);
+          loadCard(
+            item.dataset.name
+          );
         }
       }
     );
   }
+
 
   document.addEventListener(
     "click",
     event => {
       if (
         els.form &&
-        !els.form.contains(event.target)
+        !els.form.contains(
+          event.target
+        )
       ) {
         clearAutocomplete();
       }
@@ -1552,12 +2403,19 @@
   window.addEventListener(
     "popstate",
     () => {
-      const query = getQueryName();
+      const query =
+        getQueryName();
+
+      const printingId =
+        getPrintingId();
 
       if (query) {
         loadCard(
           query,
-          { fromHistory: true }
+          {
+            fromHistory: true,
+            printingId
+          }
         );
       } else if (els.details) {
         if (els.input) {
@@ -1566,8 +2424,14 @@
 
         els.details.innerHTML = `
           <div class="empty-state">
-            <div class="empty-mark">◇</div>
-            <h2>Search any MTG card</h2>
+            <div class="empty-mark">
+              ◇
+            </div>
+
+            <h2>
+              Search any MTG card
+            </h2>
+
             <p>
               Explore artwork, finishes, printings and available Scryfall price data.
             </p>
@@ -1575,11 +2439,13 @@
         `;
 
         if (els.status) {
-          els.status.textContent = "";
+          els.status.textContent =
+            "";
         }
 
         if (els.printings) {
-          els.printings.innerHTML = "";
+          els.printings.innerHTML =
+            "";
         }
       }
     }
@@ -1591,14 +2457,26 @@
      ------------------------------ */
 
   window.ManaScout =
-    Object.freeze({ loadCard });
+    Object.freeze({
+      loadCard
+    });
 
-  const initial = getQueryName();
+
+  const initial =
+    getQueryName();
+
+  const initialPrintingId =
+    getPrintingId();
+
 
   if (initial) {
     loadCard(
       initial,
-      { fromHistory: true }
+      {
+        fromHistory: true,
+        printingId:
+          initialPrintingId
+      }
     );
   }
 
