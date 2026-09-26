@@ -658,13 +658,12 @@
               <!--
                 THASSA #261 CONSTELLATION
 
-                IMPORTANT:
-                This SVG uses the same 1102 × 1536 coordinate space as
-                the supplied THB #261 reference image.
+                SVG coordinate space exactly matches the supplied
+                THB #261 card image: 1102 × 1536.
 
-                It covers the ENTIRE card image rather than only the
-                illustration box, so every node and line scales together
-                with the Scryfall card image on desktop and mobile.
+                Constellation coordinates have been re-measured against
+                that source image rather than using the earlier generic
+                positions.
               -->
               <svg
                 class="card-week-constellation"
@@ -713,78 +712,67 @@
                 </defs>
 
 
-                <!--
-                  FAINT TRACED CONNECTIONS
-
-                  These sit directly over the constellation lines already
-                  painted into the THB #261 artwork. Their base opacity is
-                  intentionally extremely low.
-                -->
+                <!-- BASE CONSTELLATION NETWORK -->
                 <g class="thassa-constellation-lines">
 
-                  <!-- Left / shoulder route -->
+                  <!-- Left sky -> shoulder -> upper torso -->
                   <path
                     class="constellation-line line-a"
-                    d="M164 303 L307 397 L500 452"
+                    d="M172 313 L307 412 L479 362 L502 470"
                   />
 
-                  <!-- Crown / upper route -->
+                  <!-- Crown / head network -->
                   <path
                     class="constellation-line line-b"
-                    d="M500 452 L523 353 L548 181 L600 306 L630 317"
+                    d="M479 362 L545 187 L626 318 L679 292 L667 374 L502 470"
                   />
 
-                  <!-- Chest route -->
+                  <!-- Chest -> right chest -> hand -->
                   <path
                     class="constellation-line line-c"
-                    d="M500 452 L600 455 L688 581"
+                    d="M502 470 L599 469 L688 601"
                   />
 
-                  <!-- Central downward route -->
+                  <!-- Central body -->
                   <path
                     class="constellation-line line-d"
-                    d="M500 452 L548 649"
+                    d="M502 470 L551 674"
                   />
 
-                  <!-- Left lower branch -->
+                  <!-- Lower-left body network -->
                   <path
                     class="constellation-line line-e"
-                    d="M548 649 L384 557 L302 639 L187 621"
+                    d="M551 674 L401 579 L316 663 L193 646"
                   />
 
+                  <!-- Lower-left continuation -->
                   <path
                     class="constellation-line line-f"
-                    d="M302 639 L190 783"
+                    d="M316 663 L215 789"
                   />
 
-                  <!-- Right body / arm branch -->
+                  <!-- Right arm / weapon-side route -->
                   <path
                     class="constellation-line line-g"
-                    d="M600 455 L688 581 L746 471 L810 267"
+                    d="M599 469 L688 601 L748 487 L789 324 L846 279"
                   />
 
-                  <!-- Right constellation branch -->
+                  <!-- Right-side constellation branch -->
                   <path
                     class="constellation-line line-h"
-                    d="M688 581 L870 512 L916 622 L695 750"
+                    d="M688 601 L861 530 L915 652 L691 789"
                   />
 
-                  <!-- Lower crossing route -->
+                  <!-- Lower crossing -->
                   <path
                     class="constellation-line line-i"
-                    d="M548 649 L695 750"
+                    d="M551 674 L691 789"
                   />
 
                 </g>
 
 
-                <!--
-                  TRAVELLING ENERGY
-
-                  These paths follow the same geometry as the painted
-                  constellation, but only a short dash becomes visible
-                  at a time. CSS controls the travel timing.
-                -->
+                <!-- TRAVELLING CONSTELLATION ENERGY -->
                 <g
                   class="thassa-constellation-pulses"
                   filter="url(#thassa-line-glow)"
@@ -793,222 +781,231 @@
                   <path
                     class="constellation-pulse pulse-a"
                     pathLength="100"
-                    d="M164 303 L307 397 L500 452"
+                    d="M172 313 L307 412 L479 362 L502 470"
                   />
 
                   <path
                     class="constellation-pulse pulse-b"
                     pathLength="100"
-                    d="M500 452 L523 353 L548 181 L600 306 L630 317"
+                    d="M479 362 L545 187 L626 318 L679 292 L667 374 L502 470"
                   />
 
                   <path
                     class="constellation-pulse pulse-c"
                     pathLength="100"
-                    d="M500 452 L600 455 L688 581"
+                    d="M502 470 L599 469 L688 601"
                   />
 
                   <path
                     class="constellation-pulse pulse-d"
                     pathLength="100"
-                    d="M500 452 L548 649"
+                    d="M502 470 L551 674"
                   />
 
                   <path
                     class="constellation-pulse pulse-e"
                     pathLength="100"
-                    d="M548 649 L384 557 L302 639 L187 621"
+                    d="M551 674 L401 579 L316 663 L193 646"
                   />
 
                   <path
                     class="constellation-pulse pulse-f"
                     pathLength="100"
-                    d="M302 639 L190 783"
+                    d="M316 663 L215 789"
                   />
 
                   <path
                     class="constellation-pulse pulse-g"
                     pathLength="100"
-                    d="M600 455 L688 581 L746 471 L810 267"
+                    d="M599 469 L688 601 L748 487 L789 324 L846 279"
                   />
 
                   <path
                     class="constellation-pulse pulse-h"
                     pathLength="100"
-                    d="M688 581 L870 512 L916 622 L695 750"
+                    d="M688 601 L861 530 L915 652 L691 789"
                   />
 
                   <path
                     class="constellation-pulse pulse-i"
                     pathLength="100"
-                    d="M548 649 L695 750"
+                    d="M551 674 L691 789"
                   />
 
                 </g>
 
 
-                <!--
-                  CONSTELLATION NODES
-
-                  Three strength classes:
-                  major  = strongest junctions
-                  medium = normal bright stars
-                  minor  = small pinpricks
-                -->
+                <!-- CONSTELLATION STARS -->
                 <g
                   class="thassa-constellation-stars"
                   filter="url(#thassa-star-glow)"
                 >
 
-                  <!-- Far-left upper star -->
+                  <!-- Far-left upper -->
                   <circle
                     class="constellation-node node-minor node-1"
-                    cx="164"
-                    cy="303"
+                    cx="172"
+                    cy="313"
                     r="3.2"
                   />
 
-                  <!-- Left shoulder / arm -->
+                  <!-- Left shoulder -->
                   <circle
                     class="constellation-node node-medium node-2"
                     cx="307"
-                    cy="397"
+                    cy="412"
                     r="4.5"
+                  />
+
+                  <!-- Upper torso / neck -->
+                  <circle
+                    class="constellation-node node-medium node-3"
+                    cx="479"
+                    cy="362"
+                    r="4.1"
+                  />
+
+                  <!-- Crown apex -->
+                  <circle
+                    class="constellation-node node-medium node-4"
+                    cx="545"
+                    cy="187"
+                    r="4.3"
+                  />
+
+                  <!-- Crown right -->
+                  <circle
+                    class="constellation-node node-medium node-5"
+                    cx="626"
+                    cy="318"
+                    r="4.4"
+                  />
+
+                  <!-- Outer crown -->
+                  <circle
+                    class="constellation-node node-minor node-6"
+                    cx="679"
+                    cy="292"
+                    r="3.2"
+                  />
+
+                  <!-- Lower crown -->
+                  <circle
+                    class="constellation-node node-medium node-7"
+                    cx="667"
+                    cy="374"
+                    r="4"
                   />
 
                   <!-- Main chest junction -->
                   <circle
-                    class="constellation-node node-major node-3"
-                    cx="500"
-                    cy="452"
+                    class="constellation-node node-major node-8"
+                    cx="502"
+                    cy="470"
                     r="7"
-                  />
-
-                  <!-- Upper crown connection -->
-                  <circle
-                    class="constellation-node node-minor node-4"
-                    cx="523"
-                    cy="353"
-                    r="3"
-                  />
-
-                  <!-- Highest crown star -->
-                  <circle
-                    class="constellation-node node-medium node-5"
-                    cx="548"
-                    cy="181"
-                    r="4.2"
-                  />
-
-                  <!-- Crown-right -->
-                  <circle
-                    class="constellation-node node-medium node-6"
-                    cx="600"
-                    cy="306"
-                    r="4.3"
-                  />
-
-                  <!-- Small crown tip -->
-                  <circle
-                    class="constellation-node node-minor node-7"
-                    cx="630"
-                    cy="317"
-                    r="2.8"
                   />
 
                   <!-- Right chest -->
                   <circle
-                    class="constellation-node node-medium node-8"
-                    cx="600"
-                    cy="455"
+                    class="constellation-node node-medium node-9"
+                    cx="599"
+                    cy="469"
                     r="4.7"
+                  />
+
+                  <!-- Right hand / arm junction -->
+                  <circle
+                    class="constellation-node node-major node-10"
+                    cx="688"
+                    cy="601"
+                    r="6.4"
                   />
 
                   <!-- Lower central body -->
                   <circle
-                    class="constellation-node node-major node-9"
-                    cx="548"
-                    cy="649"
+                    class="constellation-node node-major node-11"
+                    cx="551"
+                    cy="674"
                     r="6.2"
                   />
 
                   <!-- Left torso -->
                   <circle
-                    class="constellation-node node-medium node-10"
-                    cx="384"
-                    cy="557"
+                    class="constellation-node node-medium node-12"
+                    cx="401"
+                    cy="579"
                     r="4.2"
                   />
 
-                  <!-- Left lower junction -->
+                  <!-- Lower-left junction -->
                   <circle
-                    class="constellation-node node-medium node-11"
-                    cx="302"
-                    cy="639"
+                    class="constellation-node node-medium node-13"
+                    cx="316"
+                    cy="663"
                     r="4.5"
                   />
 
                   <!-- Far-left middle -->
                   <circle
-                    class="constellation-node node-minor node-12"
-                    cx="187"
-                    cy="621"
+                    class="constellation-node node-minor node-14"
+                    cx="193"
+                    cy="646"
                     r="3.2"
                   />
 
                   <!-- Far-left lower -->
                   <circle
-                    class="constellation-node node-medium node-13"
-                    cx="190"
-                    cy="783"
+                    class="constellation-node node-medium node-15"
+                    cx="215"
+                    cy="789"
                     r="4.2"
                   />
 
-                  <!-- Right hand / junction -->
+                  <!-- Right arm route -->
                   <circle
-                    class="constellation-node node-major node-14"
-                    cx="688"
-                    cy="581"
-                    r="6.4"
+                    class="constellation-node node-minor node-16"
+                    cx="748"
+                    cy="487"
+                    r="3.1"
                   />
 
                   <!-- Upper weapon route -->
                   <circle
-                    class="constellation-node node-minor node-15"
-                    cx="746"
-                    cy="471"
-                    r="3.1"
+                    class="constellation-node node-medium node-17"
+                    cx="789"
+                    cy="324"
+                    r="4"
                   />
 
-                  <!-- Upper weapon star -->
+                  <!-- Upper-right -->
                   <circle
-                    class="constellation-node node-medium node-16"
-                    cx="810"
-                    cy="267"
+                    class="constellation-node node-medium node-18"
+                    cx="846"
+                    cy="279"
                     r="4.5"
                   />
 
                   <!-- Right-side branch -->
                   <circle
-                    class="constellation-node node-medium node-17"
-                    cx="870"
-                    cy="512"
+                    class="constellation-node node-medium node-19"
+                    cx="861"
+                    cy="530"
                     r="4.4"
                   />
 
-                  <!-- Far-right junction -->
+                  <!-- Far-right -->
                   <circle
-                    class="constellation-node node-medium node-18"
-                    cx="916"
-                    cy="622"
+                    class="constellation-node node-medium node-20"
+                    cx="915"
+                    cy="652"
                     r="4.8"
                   />
 
                   <!-- Lower-right -->
                   <circle
-                    class="constellation-node node-minor node-19"
-                    cx="695"
-                    cy="750"
+                    class="constellation-node node-minor node-21"
+                    cx="691"
+                    cy="789"
                     r="3.5"
                   />
 
@@ -2649,4 +2646,4 @@
   </script>
 
 </body>
-</html>
+  </html>
