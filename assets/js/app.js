@@ -87,6 +87,43 @@
     ]({}, "", url);
   }
 
+  /*
+   * When ManaScout automatically chooses a preferred
+   * printing, preserve the current page structure.
+   *
+   * Homepage/search URLs keep their q parameter.
+   * Permanent /card/.../ pages do NOT suddenly gain one.
+   */
+
+  function replacePreferredPrintingInUrl(card) {
+    if (!card?.id) {
+      return;
+    }
+
+    const url =
+      new URL(window.location.href);
+
+    if (
+      url.searchParams.has("q")
+    ) {
+      url.searchParams.set(
+        "q",
+        card.name || ""
+      );
+    }
+
+    url.searchParams.set(
+      "printing",
+      card.id
+    );
+
+    history.replaceState(
+      {},
+      "",
+      url
+    );
+  }
+
   function titleCase(value) {
     const text =
       String(value || "");
@@ -824,8 +861,6 @@
 
     /*
      * Promo gets only a small bonus.
-     * Being scarce does not automatically mean
-     * it is the nicest-looking version.
      */
 
     if (
@@ -851,9 +886,7 @@
 
 
     /*
-     * Prefer English where possible for the
-     * default search result, while still allowing
-     * exact non-English printing links to work.
+     * Prefer English where possible.
      */
 
     if (
@@ -893,11 +926,6 @@
           ) {
             return scoreDifference;
           }
-
-          /*
-           * If two treatments score equally,
-           * favour the newer one.
-           */
 
           const dateDifference =
             String(
@@ -1459,10 +1487,23 @@
 
 
     /*
-     * NORMAL SEARCH:
-     * choose ManaScout's preferred visual printing.
+     * NORMAL / NON-EXACT SEARCH:
      *
-     * Exact printing links never enter this block.
+     * If no valid exact printing was resolved,
+     * ManaScout chooses its preferred visual
+     * printing from the complete printings list.
+     *
+     * This now works for:
+     * - typed searches
+     * - autocomplete
+     * - Try links
+     * - initial ?q= links
+     * - permanent card pages
+     * - stale/invalid printing IDs
+     *
+     * A valid exact printing supplied by
+     * Featured, COTW, Discover or the URL
+     * bypasses this block.
      */
 
     if (
@@ -1477,16 +1518,12 @@
         renderCard(card);
 
         /*
-         * The normal search has already created
-         * the history entry. Replace that entry
-         * with the exact preferred printing so
-         * refresh/share/back preserves it.
+         * Preserve the current page structure
+         * while storing the chosen exact printing.
          */
 
-        setQuery(
-          card.name,
-          true,
-          card.id
+        replacePreferredPrintingInUrl(
+          card
         );
       }
     }
@@ -2370,6 +2407,24 @@
     try {
       let card;
 
+      /*
+       * IMPORTANT:
+       *
+       * This tracks whether the requested exact
+       * printing genuinely resolved to the card
+       * being requested.
+       *
+       * Previously the code only checked whether
+       * a printing ID STRING existed and whether
+       * fromHistory was true. That prevented the
+       * preferred-printing system from running on
+       * Try links, permanent pages and initial
+       * ?q= searches.
+       */
+
+      let exactPrintingResolved =
+        false;
+
 
       if (requestedPrintingId) {
         try {
@@ -2380,11 +2435,12 @@
             );
 
           /*
-           * Guard against a stale or incorrect printing ID.
+           * Guard against a stale or incorrect
+           * printing ID.
            */
 
           if (
-            card?.name &&
+            !card?.name ||
             card.name.toLowerCase() !==
               query.toLowerCase()
           ) {
@@ -2393,7 +2449,17 @@
                 query,
                 searchController.signal
               );
+          } else {
+            /*
+             * The exact requested printing is
+             * valid. It must NOT be replaced by
+             * ManaScout's automatic preference.
+             */
+
+            exactPrintingResolved =
+              true;
           }
+
         } catch (error) {
           if (
             error.name ===
@@ -2401,6 +2467,12 @@
           ) {
             throw error;
           }
+
+          /*
+           * Invalid/stale printing ID:
+           * recover the named card and allow
+           * preferred-printing selection below.
+           */
 
           card =
             await namedCard(
@@ -2426,10 +2498,11 @@
 
       /*
        * Show the initial result immediately.
-       * On a normal search renderPrintings()
-       * will replace this with ManaScout's
-       * preferred printing once the printing
-       * list has loaded.
+       *
+       * If this was not a valid exact-printing
+       * request, renderPrintings() will replace
+       * it with ManaScout's preferred visual
+       * printing after all printings have loaded.
        */
 
       renderCard(card);
@@ -2441,8 +2514,7 @@
         searchController.signal,
         {
           choosePreferred:
-            !requestedPrintingId &&
-            !options.fromHistory
+            !exactPrintingResolved
         }
       );
 
