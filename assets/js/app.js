@@ -1953,6 +1953,11 @@
     const requestedPrintingId =
       String(
         options.printingId ||
+        (
+          options.fromHistory
+            ? getPrintingId()
+            : ""
+        ) ||
         ""
       ).trim();
 
@@ -2353,7 +2358,7 @@
 
         } else if (
           event.key ===
-          "Escape"
+            "Escape"
         ) {
           clearAutocomplete();
         }
