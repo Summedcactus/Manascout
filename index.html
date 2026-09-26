@@ -654,24 +654,367 @@
                 aria-hidden="true"
               ></div>
 
+
               <!--
-                Thassa-specific constellation effect.
-                These sit over the upper artwork area only.
+                THASSA #261 CONSTELLATION
+
+                IMPORTANT:
+                This SVG uses the same 1102 × 1536 coordinate space as
+                the supplied THB #261 reference image.
+
+                It covers the ENTIRE card image rather than only the
+                illustration box, so every node and line scales together
+                with the Scryfall card image on desktop and mobile.
               -->
-              <div
+              <svg
                 class="card-week-constellation"
+                viewBox="0 0 1102 1536"
+                preserveAspectRatio="none"
                 aria-hidden="true"
+                focusable="false"
               >
-                <i class="constellation-star star-1"></i>
-                <i class="constellation-star star-2"></i>
-                <i class="constellation-star star-3"></i>
-                <i class="constellation-star star-4"></i>
-                <i class="constellation-star star-5"></i>
-                <i class="constellation-star star-6"></i>
-                <i class="constellation-star star-7"></i>
-                <i class="constellation-star star-8"></i>
-                <i class="constellation-star star-9"></i>
-              </div>
+
+                <defs>
+
+                  <filter
+                    id="thassa-star-glow"
+                    x="-300%"
+                    y="-300%"
+                    width="700%"
+                    height="700%"
+                  >
+                    <feGaussianBlur
+                      stdDeviation="5"
+                      result="blur"
+                    />
+                    <feMerge>
+                      <feMergeNode in="blur"/>
+                      <feMergeNode in="SourceGraphic"/>
+                    </feMerge>
+                  </filter>
+
+                  <filter
+                    id="thassa-line-glow"
+                    x="-100%"
+                    y="-100%"
+                    width="300%"
+                    height="300%"
+                  >
+                    <feGaussianBlur
+                      stdDeviation="2.4"
+                      result="blur"
+                    />
+                    <feMerge>
+                      <feMergeNode in="blur"/>
+                      <feMergeNode in="SourceGraphic"/>
+                    </feMerge>
+                  </filter>
+
+                </defs>
+
+
+                <!--
+                  FAINT TRACED CONNECTIONS
+
+                  These sit directly over the constellation lines already
+                  painted into the THB #261 artwork. Their base opacity is
+                  intentionally extremely low.
+                -->
+                <g class="thassa-constellation-lines">
+
+                  <!-- Left / shoulder route -->
+                  <path
+                    class="constellation-line line-a"
+                    d="M164 303 L307 397 L500 452"
+                  />
+
+                  <!-- Crown / upper route -->
+                  <path
+                    class="constellation-line line-b"
+                    d="M500 452 L523 353 L548 181 L600 306 L630 317"
+                  />
+
+                  <!-- Chest route -->
+                  <path
+                    class="constellation-line line-c"
+                    d="M500 452 L600 455 L688 581"
+                  />
+
+                  <!-- Central downward route -->
+                  <path
+                    class="constellation-line line-d"
+                    d="M500 452 L548 649"
+                  />
+
+                  <!-- Left lower branch -->
+                  <path
+                    class="constellation-line line-e"
+                    d="M548 649 L384 557 L302 639 L187 621"
+                  />
+
+                  <path
+                    class="constellation-line line-f"
+                    d="M302 639 L190 783"
+                  />
+
+                  <!-- Right body / arm branch -->
+                  <path
+                    class="constellation-line line-g"
+                    d="M600 455 L688 581 L746 471 L810 267"
+                  />
+
+                  <!-- Right constellation branch -->
+                  <path
+                    class="constellation-line line-h"
+                    d="M688 581 L870 512 L916 622 L695 750"
+                  />
+
+                  <!-- Lower crossing route -->
+                  <path
+                    class="constellation-line line-i"
+                    d="M548 649 L695 750"
+                  />
+
+                </g>
+
+
+                <!--
+                  TRAVELLING ENERGY
+
+                  These paths follow the same geometry as the painted
+                  constellation, but only a short dash becomes visible
+                  at a time. CSS controls the travel timing.
+                -->
+                <g
+                  class="thassa-constellation-pulses"
+                  filter="url(#thassa-line-glow)"
+                >
+
+                  <path
+                    class="constellation-pulse pulse-a"
+                    pathLength="100"
+                    d="M164 303 L307 397 L500 452"
+                  />
+
+                  <path
+                    class="constellation-pulse pulse-b"
+                    pathLength="100"
+                    d="M500 452 L523 353 L548 181 L600 306 L630 317"
+                  />
+
+                  <path
+                    class="constellation-pulse pulse-c"
+                    pathLength="100"
+                    d="M500 452 L600 455 L688 581"
+                  />
+
+                  <path
+                    class="constellation-pulse pulse-d"
+                    pathLength="100"
+                    d="M500 452 L548 649"
+                  />
+
+                  <path
+                    class="constellation-pulse pulse-e"
+                    pathLength="100"
+                    d="M548 649 L384 557 L302 639 L187 621"
+                  />
+
+                  <path
+                    class="constellation-pulse pulse-f"
+                    pathLength="100"
+                    d="M302 639 L190 783"
+                  />
+
+                  <path
+                    class="constellation-pulse pulse-g"
+                    pathLength="100"
+                    d="M600 455 L688 581 L746 471 L810 267"
+                  />
+
+                  <path
+                    class="constellation-pulse pulse-h"
+                    pathLength="100"
+                    d="M688 581 L870 512 L916 622 L695 750"
+                  />
+
+                  <path
+                    class="constellation-pulse pulse-i"
+                    pathLength="100"
+                    d="M548 649 L695 750"
+                  />
+
+                </g>
+
+
+                <!--
+                  CONSTELLATION NODES
+
+                  Three strength classes:
+                  major  = strongest junctions
+                  medium = normal bright stars
+                  minor  = small pinpricks
+                -->
+                <g
+                  class="thassa-constellation-stars"
+                  filter="url(#thassa-star-glow)"
+                >
+
+                  <!-- Far-left upper star -->
+                  <circle
+                    class="constellation-node node-minor node-1"
+                    cx="164"
+                    cy="303"
+                    r="3.2"
+                  />
+
+                  <!-- Left shoulder / arm -->
+                  <circle
+                    class="constellation-node node-medium node-2"
+                    cx="307"
+                    cy="397"
+                    r="4.5"
+                  />
+
+                  <!-- Main chest junction -->
+                  <circle
+                    class="constellation-node node-major node-3"
+                    cx="500"
+                    cy="452"
+                    r="7"
+                  />
+
+                  <!-- Upper crown connection -->
+                  <circle
+                    class="constellation-node node-minor node-4"
+                    cx="523"
+                    cy="353"
+                    r="3"
+                  />
+
+                  <!-- Highest crown star -->
+                  <circle
+                    class="constellation-node node-medium node-5"
+                    cx="548"
+                    cy="181"
+                    r="4.2"
+                  />
+
+                  <!-- Crown-right -->
+                  <circle
+                    class="constellation-node node-medium node-6"
+                    cx="600"
+                    cy="306"
+                    r="4.3"
+                  />
+
+                  <!-- Small crown tip -->
+                  <circle
+                    class="constellation-node node-minor node-7"
+                    cx="630"
+                    cy="317"
+                    r="2.8"
+                  />
+
+                  <!-- Right chest -->
+                  <circle
+                    class="constellation-node node-medium node-8"
+                    cx="600"
+                    cy="455"
+                    r="4.7"
+                  />
+
+                  <!-- Lower central body -->
+                  <circle
+                    class="constellation-node node-major node-9"
+                    cx="548"
+                    cy="649"
+                    r="6.2"
+                  />
+
+                  <!-- Left torso -->
+                  <circle
+                    class="constellation-node node-medium node-10"
+                    cx="384"
+                    cy="557"
+                    r="4.2"
+                  />
+
+                  <!-- Left lower junction -->
+                  <circle
+                    class="constellation-node node-medium node-11"
+                    cx="302"
+                    cy="639"
+                    r="4.5"
+                  />
+
+                  <!-- Far-left middle -->
+                  <circle
+                    class="constellation-node node-minor node-12"
+                    cx="187"
+                    cy="621"
+                    r="3.2"
+                  />
+
+                  <!-- Far-left lower -->
+                  <circle
+                    class="constellation-node node-medium node-13"
+                    cx="190"
+                    cy="783"
+                    r="4.2"
+                  />
+
+                  <!-- Right hand / junction -->
+                  <circle
+                    class="constellation-node node-major node-14"
+                    cx="688"
+                    cy="581"
+                    r="6.4"
+                  />
+
+                  <!-- Upper weapon route -->
+                  <circle
+                    class="constellation-node node-minor node-15"
+                    cx="746"
+                    cy="471"
+                    r="3.1"
+                  />
+
+                  <!-- Upper weapon star -->
+                  <circle
+                    class="constellation-node node-medium node-16"
+                    cx="810"
+                    cy="267"
+                    r="4.5"
+                  />
+
+                  <!-- Right-side branch -->
+                  <circle
+                    class="constellation-node node-medium node-17"
+                    cx="870"
+                    cy="512"
+                    r="4.4"
+                  />
+
+                  <!-- Far-right junction -->
+                  <circle
+                    class="constellation-node node-medium node-18"
+                    cx="916"
+                    cy="622"
+                    r="4.8"
+                  />
+
+                  <!-- Lower-right -->
+                  <circle
+                    class="constellation-node node-minor node-19"
+                    cx="695"
+                    cy="750"
+                    r="3.5"
+                  />
+
+                </g>
+
+              </svg>
 
             </div>
 
@@ -1789,6 +2132,29 @@
 
         if (!usable.length) {
           return null;
+        }
+
+
+        /*
+          The constellation overlay is mapped specifically
+          to Theros Beyond Death collector #261.
+
+          Always use that exact treatment when Scryfall
+          supplies it. Existing scoring remains as fallback.
+        */
+        const exactThassa =
+          usable.find(item =>
+            String(
+              item.set || ""
+            ).toLowerCase() === "thb" &&
+            String(
+              item.collector_number || ""
+            ).toLowerCase() === "261"
+          );
+
+
+        if (exactThassa) {
+          return exactThassa;
         }
 
 
