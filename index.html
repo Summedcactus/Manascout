@@ -604,21 +604,29 @@
         </div>
 
         <span class="card-week-edition">
-          WEEKLY DISCOVERY
+          WEEK 002
         </span>
 
       </div>
 
 
       <article
-        class="card-week-feature"
-        data-weekly-card="Thassa, Deep-Dwelling"
+        class="card-week-feature card-week-rhystic"
+        data-weekly-card="Rhystic Study"
+        data-weekly-printing-id="e6a06aad-6073-465b-89d0-8c4ae4307aff"
       >
 
         <div class="card-week-visual">
 
+          <!--
+            Week 002 ambient effect.
+
+            Unlike Thassa's traced constellation, this is deliberately
+            lightweight. The movement is generated entirely in CSS and
+            does not depend on artwork-specific SVG coordinates.
+          -->
           <div
-            class="card-week-water"
+            class="card-week-arcane"
             aria-hidden="true"
           ></div>
 
@@ -634,13 +642,13 @@
                 id="card-week-placeholder"
               >
                 <span>◇</span>
-                <small>SCOUTING THE DEEP…</small>
+                <small>OPENING THE ARCHIVE…</small>
               </div>
 
               <img
                 id="card-week-image"
                 class="card-week-image"
-                alt="Thassa, Deep-Dwelling"
+                alt="Rhystic Study"
                 hidden
               >
 
@@ -650,368 +658,14 @@
               ></div>
 
               <div
-                class="card-week-glint"
+                class="card-week-arcane-wash"
                 aria-hidden="true"
               ></div>
 
-
-              <!--
-                THASSA #261 CONSTELLATION
-
-                SVG coordinate space exactly matches the supplied
-                THB #261 card image: 1102 × 1536.
-
-                Constellation coordinates have been re-measured against
-                that source image rather than using the earlier generic
-                positions.
-              -->
-              <svg
-                class="card-week-constellation"
-                viewBox="0 0 1102 1536"
-                preserveAspectRatio="none"
+              <div
+                class="card-week-glint"
                 aria-hidden="true"
-                focusable="false"
-              >
-
-                <defs>
-
-                  <filter
-                    id="thassa-star-glow"
-                    x="-300%"
-                    y="-300%"
-                    width="700%"
-                    height="700%"
-                  >
-                    <feGaussianBlur
-                      stdDeviation="5"
-                      result="blur"
-                    />
-                    <feMerge>
-                      <feMergeNode in="blur"/>
-                      <feMergeNode in="SourceGraphic"/>
-                    </feMerge>
-                  </filter>
-
-                  <filter
-                    id="thassa-line-glow"
-                    x="-100%"
-                    y="-100%"
-                    width="300%"
-                    height="300%"
-                  >
-                    <feGaussianBlur
-                      stdDeviation="2.4"
-                      result="blur"
-                    />
-                    <feMerge>
-                      <feMergeNode in="blur"/>
-                      <feMergeNode in="SourceGraphic"/>
-                    </feMerge>
-                  </filter>
-
-                </defs>
-
-
-                <!-- BASE CONSTELLATION NETWORK -->
-                <g class="thassa-constellation-lines">
-
-                  <!-- Left sky -> shoulder -> upper torso -->
-                  <path
-                    class="constellation-line line-a"
-                    d="M172 313 L307 412 L479 362 L502 470"
-                  />
-
-                  <!-- Crown / head network -->
-                  <path
-                    class="constellation-line line-b"
-                    d="M479 362 L545 187 L626 318 L679 292 L667 374 L502 470"
-                  />
-
-                  <!-- Chest -> right chest -> hand -->
-                  <path
-                    class="constellation-line line-c"
-                    d="M502 470 L599 469 L688 601"
-                  />
-
-                  <!-- Central body -->
-                  <path
-                    class="constellation-line line-d"
-                    d="M502 470 L551 674"
-                  />
-
-                  <!-- Lower-left body network -->
-                  <path
-                    class="constellation-line line-e"
-                    d="M551 674 L401 579 L316 663 L193 646"
-                  />
-
-                  <!-- Lower-left continuation -->
-                  <path
-                    class="constellation-line line-f"
-                    d="M316 663 L215 789"
-                  />
-
-                  <!-- Right arm / weapon-side route -->
-                  <path
-                    class="constellation-line line-g"
-                    d="M599 469 L688 601 L748 487 L789 324 L846 279"
-                  />
-
-                  <!-- Right-side constellation branch -->
-                  <path
-                    class="constellation-line line-h"
-                    d="M688 601 L861 530 L915 652 L691 789"
-                  />
-
-                  <!-- Lower crossing -->
-                  <path
-                    class="constellation-line line-i"
-                    d="M551 674 L691 789"
-                  />
-
-                </g>
-
-
-                <!-- TRAVELLING CONSTELLATION ENERGY -->
-                <g
-                  class="thassa-constellation-pulses"
-                  filter="url(#thassa-line-glow)"
-                >
-
-                  <path
-                    class="constellation-pulse pulse-a"
-                    pathLength="100"
-                    d="M172 313 L307 412 L479 362 L502 470"
-                  />
-
-                  <path
-                    class="constellation-pulse pulse-b"
-                    pathLength="100"
-                    d="M479 362 L545 187 L626 318 L679 292 L667 374 L502 470"
-                  />
-
-                  <path
-                    class="constellation-pulse pulse-c"
-                    pathLength="100"
-                    d="M502 470 L599 469 L688 601"
-                  />
-
-                  <path
-                    class="constellation-pulse pulse-d"
-                    pathLength="100"
-                    d="M502 470 L551 674"
-                  />
-
-                  <path
-                    class="constellation-pulse pulse-e"
-                    pathLength="100"
-                    d="M551 674 L401 579 L316 663 L193 646"
-                  />
-
-                  <path
-                    class="constellation-pulse pulse-f"
-                    pathLength="100"
-                    d="M316 663 L215 789"
-                  />
-
-                  <path
-                    class="constellation-pulse pulse-g"
-                    pathLength="100"
-                    d="M599 469 L688 601 L748 487 L789 324 L846 279"
-                  />
-
-                  <path
-                    class="constellation-pulse pulse-h"
-                    pathLength="100"
-                    d="M688 601 L861 530 L915 652 L691 789"
-                  />
-
-                  <path
-                    class="constellation-pulse pulse-i"
-                    pathLength="100"
-                    d="M551 674 L691 789"
-                  />
-
-                </g>
-
-
-                <!-- CONSTELLATION STARS -->
-                <g
-                  class="thassa-constellation-stars"
-                  filter="url(#thassa-star-glow)"
-                >
-
-                  <!-- Far-left upper -->
-                  <circle
-                    class="constellation-node node-minor node-1"
-                    cx="172"
-                    cy="313"
-                    r="3.2"
-                  />
-
-                  <!-- Left shoulder -->
-                  <circle
-                    class="constellation-node node-medium node-2"
-                    cx="307"
-                    cy="412"
-                    r="4.5"
-                  />
-
-                  <!-- Upper torso / neck -->
-                  <circle
-                    class="constellation-node node-medium node-3"
-                    cx="479"
-                    cy="362"
-                    r="4.1"
-                  />
-
-                  <!-- Crown apex -->
-                  <circle
-                    class="constellation-node node-medium node-4"
-                    cx="545"
-                    cy="187"
-                    r="4.3"
-                  />
-
-                  <!-- Crown right -->
-                  <circle
-                    class="constellation-node node-medium node-5"
-                    cx="626"
-                    cy="318"
-                    r="4.4"
-                  />
-
-                  <!-- Outer crown -->
-                  <circle
-                    class="constellation-node node-minor node-6"
-                    cx="679"
-                    cy="292"
-                    r="3.2"
-                  />
-
-                  <!-- Lower crown -->
-                  <circle
-                    class="constellation-node node-medium node-7"
-                    cx="667"
-                    cy="374"
-                    r="4"
-                  />
-
-                  <!-- Main chest junction -->
-                  <circle
-                    class="constellation-node node-major node-8"
-                    cx="502"
-                    cy="470"
-                    r="7"
-                  />
-
-                  <!-- Right chest -->
-                  <circle
-                    class="constellation-node node-medium node-9"
-                    cx="599"
-                    cy="469"
-                    r="4.7"
-                  />
-
-                  <!-- Right hand / arm junction -->
-                  <circle
-                    class="constellation-node node-major node-10"
-                    cx="688"
-                    cy="601"
-                    r="6.4"
-                  />
-
-                  <!-- Lower central body -->
-                  <circle
-                    class="constellation-node node-major node-11"
-                    cx="551"
-                    cy="674"
-                    r="6.2"
-                  />
-
-                  <!-- Left torso -->
-                  <circle
-                    class="constellation-node node-medium node-12"
-                    cx="401"
-                    cy="579"
-                    r="4.2"
-                  />
-
-                  <!-- Lower-left junction -->
-                  <circle
-                    class="constellation-node node-medium node-13"
-                    cx="316"
-                    cy="663"
-                    r="4.5"
-                  />
-
-                  <!-- Far-left middle -->
-                  <circle
-                    class="constellation-node node-minor node-14"
-                    cx="193"
-                    cy="646"
-                    r="3.2"
-                  />
-
-                  <!-- Far-left lower -->
-                  <circle
-                    class="constellation-node node-medium node-15"
-                    cx="215"
-                    cy="789"
-                    r="4.2"
-                  />
-
-                  <!-- Right arm route -->
-                  <circle
-                    class="constellation-node node-minor node-16"
-                    cx="748"
-                    cy="487"
-                    r="3.1"
-                  />
-
-                  <!-- Upper weapon route -->
-                  <circle
-                    class="constellation-node node-medium node-17"
-                    cx="789"
-                    cy="324"
-                    r="4"
-                  />
-
-                  <!-- Upper-right -->
-                  <circle
-                    class="constellation-node node-medium node-18"
-                    cx="846"
-                    cy="279"
-                    r="4.5"
-                  />
-
-                  <!-- Right-side branch -->
-                  <circle
-                    class="constellation-node node-medium node-19"
-                    cx="861"
-                    cy="530"
-                    r="4.4"
-                  />
-
-                  <!-- Far-right -->
-                  <circle
-                    class="constellation-node node-medium node-20"
-                    cx="915"
-                    cy="652"
-                    r="4.8"
-                  />
-
-                  <!-- Lower-right -->
-                  <circle
-                    class="constellation-node node-minor node-21"
-                    cx="691"
-                    cy="789"
-                    r="3.5"
-                  />
-
-                </g>
-
-              </svg>
+              ></div>
 
             </div>
 
@@ -1021,7 +675,7 @@
             class="card-week-printing"
             id="card-week-printing"
           >
-            THEROS BEYOND DEATH
+            WILDS OF ELDRAINE: ENCHANTING TALES · #71
           </p>
 
         </div>
@@ -1030,18 +684,19 @@
         <div class="card-week-story">
 
           <p class="card-week-kicker">
-            GOD OF THE SEA · THEROS
+            ENCHANTMENT · A QUESTION EVERY COMMANDER PLAYER KNOWS
           </p>
 
           <h3>
-            Thassa, Deep-Dwelling
+            Rhystic Study
           </h3>
 
           <p class="card-week-intro">
-            Thassa rules the seas of Theros and the creatures that inhabit
-            their depths. Her domain also encompasses ancient knowledge,
-            distant voyages, gradual change and the inexorable movement
-            of the tides.
+            Three words have followed Rhystic Study from table to table:
+            “Do you pay?” Whenever an opponent casts a spell, the Study
+            offers them a choice — spend one more mana, or let its
+            controller draw a card. Simple text has turned it into one
+            of Magic's most recognisable multiplayer enchantments.
           </p>
 
 
@@ -1061,9 +716,11 @@
               </p>
 
               <p>
-                Thassa's divine weapon is <strong>Dekella</strong>,
-                a two-pronged spear through which she can control the tides
-                and create whirlpools.
+                The ability triggers <strong>when the opponent casts
+                their spell</strong>. The choice to pay happens later,
+                when Rhystic Study's triggered ability resolves — and
+                that trigger can still resolve even if the original
+                spell is countered.
               </p>
 
             </div>
@@ -1074,15 +731,15 @@
           <a
             class="card-week-link"
             id="card-week-link"
-            href="/?q=Thassa%2C%20Deep-Dwelling"
+            href="/?q=Rhystic%20Study&printing=e6a06aad-6073-465b-89d0-8c4ae4307aff"
           >
-            Explore Thassa
+            Explore Rhystic Study
             <span aria-hidden="true">→</span>
           </a>
 
 
           <p class="card-week-source">
-            Lore based on official Magic: The Gathering material.
+            Rules reference: Magic: The Gathering — Wilds of Eldraine Release Notes.
           </p>
 
         </div>
@@ -1090,6 +747,46 @@
       </article>
 
     </section>
+
+
+    <!--
+      CARD OF THE WEEK ARCHIVE DATA
+
+      This does not display anything yet.
+
+      Each future week should be added here before the homepage feature
+      is changed. That means a future archive page can be built from
+      structured historical records rather than reconstructing old
+      Card of the Week features from Git history.
+    -->
+    <script
+      id="card-week-archive-data"
+      type="application/json"
+    >
+    {
+      "currentWeek": 2,
+      "entries": [
+        {
+          "week": 1,
+          "card": "Thassa, Deep-Dwelling",
+          "set": "Theros Beyond Death",
+          "collectorNumber": "261",
+          "theme": "constellation",
+          "status": "archived"
+        },
+        {
+          "week": 2,
+          "card": "Rhystic Study",
+          "set": "Wilds of Eldraine: Enchanting Tales",
+          "collectorNumber": "71",
+          "scryfallId": "e6a06aad-6073-465b-89d0-8c4ae4307aff",
+          "artist": "Fuzichoco",
+          "theme": "arcane-study",
+          "status": "current"
+        }
+      ]
+    }
+    </script>
 
 
     <!-- PRINTINGS -->
@@ -2067,6 +1764,11 @@
           "card-of-the-week"
         );
 
+      const feature =
+        section?.querySelector(
+          "[data-weekly-card]"
+        );
+
       const card =
         document.getElementById(
           "card-week-card"
@@ -2095,6 +1797,7 @@
 
       if (
         !section ||
+        !feature ||
         !card ||
         !image
       ) {
@@ -2103,10 +1806,12 @@
 
 
       const cardName =
-        section.querySelector(
-          "[data-weekly-card]"
-        )?.dataset.weeklyCard ||
-        "Thassa, Deep-Dwelling";
+        feature.dataset.weeklyCard ||
+        "Rhystic Study";
+
+      const exactPrintingId =
+        feature.dataset.weeklyPrintingId ||
+        "";
 
 
       function imageFor(cardData) {
@@ -2116,104 +1821,6 @@
             ?.image_uris?.normal ||
           ""
         );
-      }
-
-
-      function preferredPrinting(
-        printings
-      ) {
-        const usable =
-          printings.filter(
-            item => imageFor(item)
-          );
-
-        if (!usable.length) {
-          return null;
-        }
-
-
-        /*
-          The constellation overlay is mapped specifically
-          to Theros Beyond Death collector #261.
-
-          Always use that exact treatment when Scryfall
-          supplies it. Existing scoring remains as fallback.
-        */
-        const exactThassa =
-          usable.find(item =>
-            String(
-              item.set || ""
-            ).toLowerCase() === "thb" &&
-            String(
-              item.collector_number || ""
-            ).toLowerCase() === "261"
-          );
-
-
-        if (exactThassa) {
-          return exactThassa;
-        }
-
-
-        const scored =
-          usable.map(item => {
-            let score = 0;
-
-            const effects =
-              item.frame_effects || [];
-
-            const finishes =
-              item.finishes || [];
-
-
-            if (
-              item.set === "thb"
-            ) {
-              score += 60;
-            }
-
-            if (
-              item.border_color ===
-              "borderless"
-            ) {
-              score += 35;
-            }
-
-            if (
-              effects.includes(
-                "showcase"
-              )
-            ) {
-              score += 50;
-            }
-
-            if (item.full_art) {
-              score += 25;
-            }
-
-            if (
-              finishes.includes(
-                "foil"
-              )
-            ) {
-              score += 8;
-            }
-
-
-            return {
-              item,
-              score
-            };
-          });
-
-
-        scored.sort(
-          (a, b) =>
-            b.score - a.score
-        );
-
-
-        return scored[0].item;
       }
 
 
@@ -2249,16 +1856,20 @@
       }
 
 
-      async function loadWeeklyCard() {
-        try {
-          const query =
-            encodeURIComponent(
-              `!"${cardName}"`
-            );
+      async function fetchWeeklyCard() {
+        /*
+          Card of the Week now stores its exact Scryfall
+          printing ID in the HTML.
 
+          This avoids re-scoring every version each week
+          and guarantees that the editorial artwork is the
+          printing ManaScout actually intended to feature.
+        */
+
+        if (exactPrintingId) {
           const response =
             await fetch(
-              `https://api.scryfall.com/cards/search?q=${query}&unique=prints&order=released&dir=asc`,
+              `https://api.scryfall.com/cards/${encodeURIComponent(exactPrintingId)}`,
               {
                 headers: {
                   "Accept":
@@ -2275,18 +1886,48 @@
           }
 
 
-          const data =
-            await response.json();
+          return response.json();
+        }
 
+
+        /*
+          Fallback only.
+
+          If a future weekly entry is accidentally added
+          without an exact printing ID, ManaScout can still
+          display the card instead of leaving the feature
+          empty.
+        */
+        const namedResponse =
+          await fetch(
+            `https://api.scryfall.com/cards/named?exact=${encodeURIComponent(cardName)}`,
+            {
+              headers: {
+                "Accept":
+                  "application/json"
+              }
+            }
+          );
+
+
+        if (!namedResponse.ok) {
+          throw new Error(
+            `Scryfall returned ${namedResponse.status}`
+          );
+        }
+
+
+        return namedResponse.json();
+      }
+
+
+      async function loadWeeklyCard() {
+        try {
           const selected =
-            preferredPrinting(
-              data.data || []
-            );
+            await fetchWeeklyCard();
 
           const imageUrl =
-            selected
-              ? imageFor(selected)
-              : "";
+            imageFor(selected);
 
 
           if (
@@ -2368,7 +2009,7 @@
 
             if (small) {
               small.textContent =
-                "THASSA, DEEP-DWELLING";
+                cardName.toUpperCase();
             }
           }
         }
@@ -2646,4 +2287,4 @@
   </script>
 
 </body>
-  </html>
+</html>
