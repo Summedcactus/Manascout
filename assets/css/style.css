@@ -1341,12 +1341,12 @@ body {
   background:
     radial-gradient(
       circle at 17% 46%,
-      rgba(62, 126, 158, .15),
+      rgba(62, 126, 158, .18),
       transparent 31%
     ),
     radial-gradient(
       circle at 34% 18%,
-      rgba(111, 73, 145, .055),
+      rgba(111, 73, 145, .07),
       transparent 28%
     ),
     radial-gradient(
@@ -1378,7 +1378,7 @@ body {
   background:
     radial-gradient(
       ellipse at 50% 48%,
-      rgba(58, 116, 150, .11),
+      rgba(58, 116, 150, .15),
       transparent 52%
     ),
     rgba(255,255,255,.006);
@@ -1388,45 +1388,53 @@ body {
 /*
   Week 002 ambient field.
 
-  This replaces Thassa's traced constellation.
-  It is deliberately artwork-independent and cheap:
-  one soft underwater/arcane field, two rings and a
-  restrained pulse.
+  Stronger than the original version so Rhystic's
+  bespoke animation is immediately visible.
+
+  Still artwork-independent:
+  no SVG, tracing or coordinates.
 */
 
 .card-week-arcane {
   position: absolute;
   z-index: 0;
-  width: 470px;
-  height: 470px;
+  width: 500px;
+  height: 500px;
   left: 50%;
   top: 49%;
   border-radius: 47% 53% 58% 42% / 51% 44% 56% 49%;
-  opacity: .38;
-  filter: blur(28px);
+  opacity: .68;
+  filter:
+    blur(18px)
+    saturate(1.22);
   pointer-events: none;
   background:
     radial-gradient(
-      ellipse at 32% 29%,
-      rgba(91, 177, 213, .28),
-      transparent 31%
+      ellipse at 28% 27%,
+      rgba(112, 211, 245, .52),
+      transparent 36%
     ),
     radial-gradient(
-      ellipse at 68% 62%,
-      rgba(71, 107, 169, .25),
+      ellipse at 72% 59%,
+      rgba(70, 126, 211, .42),
+      transparent 45%
+    ),
+    radial-gradient(
+      ellipse at 48% 76%,
+      rgba(132, 91, 190, .27),
+      transparent 43%
+    ),
+    radial-gradient(
+      ellipse at 61% 44%,
+      rgba(134, 28, 43, .15),
       transparent 38%
-    ),
-    radial-gradient(
-      ellipse at 50% 78%,
-      rgba(134, 28, 43, .12),
-      transparent 34%
     );
   transform:
     translate(-50%, -50%)
     rotate(-5deg)
     scale(.96);
   animation:
-    mana-rhystic-ambient 9s ease-in-out infinite alternate;
+    mana-rhystic-ambient 7.2s ease-in-out infinite alternate;
 }
 
 .card-week-arcane::before,
@@ -1438,22 +1446,24 @@ body {
 }
 
 .card-week-arcane::before {
-  inset: 16%;
-  border: 1px solid rgba(151, 211, 235, .11);
+  inset: 12%;
+  border: 1px solid rgba(165, 225, 247, .24);
   box-shadow:
-    0 0 35px rgba(100, 173, 207, .05),
-    inset 0 0 35px rgba(100, 173, 207, .035);
+    0 0 24px rgba(108, 194, 229, .18),
+    0 0 65px rgba(74, 149, 192, .13),
+    inset 0 0 42px rgba(113, 199, 231, .08);
   animation:
-    mana-rhystic-ring 7.5s ease-in-out infinite;
+    mana-rhystic-ring 6.8s ease-in-out infinite;
 }
 
 .card-week-arcane::after {
-  inset: 29%;
-  border: 1px solid rgba(184, 44, 62, .09);
+  inset: 28%;
+  border: 1px solid rgba(154, 111, 207, .18);
   box-shadow:
-    0 0 28px rgba(134, 28, 43, .05);
+    0 0 25px rgba(122, 88, 183, .13),
+    inset 0 0 22px rgba(109, 170, 211, .08);
   animation:
-    mana-rhystic-ring 9.5s ease-in-out infinite reverse;
+    mana-rhystic-ring 8.4s ease-in-out infinite reverse;
 }
 
 
@@ -1491,23 +1501,25 @@ body {
     0 30px 65px rgba(0,0,0,.58),
     0 8px 18px rgba(0,0,0,.35),
     0 0 0 1px rgba(255,255,255,.055),
-    0 0 42px rgba(66, 128, 162, .05);
+    0 0 42px rgba(66, 128, 162, .09);
 }
 
 .card-week-card.is-loaded {
   box-shadow:
     0 34px 75px rgba(0,0,0,.62),
     0 10px 22px rgba(0,0,0,.38),
-    0 0 0 1px rgba(255,255,255,.065),
-    0 0 48px rgba(68, 135, 171, .08);
+    0 0 0 1px rgba(255,255,255,.075),
+    0 0 34px rgba(74, 158, 201, .16),
+    0 0 68px rgba(74, 123, 190, .09);
 }
 
 .card-week-card:hover {
   box-shadow:
     0 38px 85px rgba(0,0,0,.68),
     0 12px 25px rgba(0,0,0,.40),
-    0 0 0 1px rgba(255,255,255,.08),
-    0 0 55px rgba(69, 137, 174, .11);
+    0 0 0 1px rgba(255,255,255,.09),
+    0 0 42px rgba(86, 177, 218, .22),
+    0 0 78px rgba(81, 123, 194, .12);
 }
 
 
@@ -1616,43 +1628,43 @@ body {
 
 
 /* ========================================
-   RHYSTIC STUDY — ARCANE LIGHT WASH
+   RHYSTIC STUDY — ARCANE LIGHT WASH V2
    ======================================== */
 
 /*
-  One soft light passes over the card every cycle.
+  This is deliberately stronger than V1.
 
-  No tracing.
-  No SVG.
-  No artwork coordinates.
-  It is intentionally subtle so the card still
-  looks like the card rather than a VFX demo.
+  The wash now reads as a distinct magical blue
+  illumination moving through the Fuzichoco art,
+  rather than disappearing beneath the foil.
 */
 
 .card-week-arcane-wash {
   position: absolute;
   z-index: 4;
-  inset: -18%;
+  inset: -22%;
   pointer-events: none;
   opacity: 0;
   mix-blend-mode: screen;
+  filter: blur(2px);
   background:
     radial-gradient(
       ellipse at 50% 50%,
-      rgba(189, 232, 247, .15) 0%,
-      rgba(103, 178, 210, .09) 22%,
-      rgba(116, 82, 158, .045) 38%,
-      transparent 64%
+      rgba(220, 248, 255, .46) 0%,
+      rgba(120, 211, 244, .31) 17%,
+      rgba(75, 159, 220, .21) 31%,
+      rgba(128, 89, 190, .11) 45%,
+      transparent 68%
     );
   transform:
-    translate(-48%, 32%)
+    translate(-58%, 40%)
     rotate(-18deg)
-    scale(.72);
+    scale(.68);
 }
 
 .card-week-card.is-loaded .card-week-arcane-wash {
   animation:
-    mana-rhystic-wash 8.5s ease-in-out infinite;
+    mana-rhystic-wash 7.2s ease-in-out infinite;
 }
 
 
@@ -1848,29 +1860,52 @@ body {
    CARD OF THE WEEK ANIMATIONS
    ======================================== */
 
+/*
+  Ambient field now visibly breathes and drifts.
+
+  The movement is deliberately asymmetric so it
+  feels organic rather than like a looping spinner.
+*/
+
 @keyframes mana-rhystic-ambient {
   0% {
     transform:
-      translate(-52%, -49%)
-      rotate(-7deg)
-      scale(.93);
-    opacity: .30;
+      translate(-55%, -47%)
+      rotate(-10deg)
+      scale(.90);
+    opacity: .56;
   }
 
-  50% {
+  25% {
     transform:
-      translate(-48%, -52%)
-      rotate(5deg)
-      scale(1.05);
-    opacity: .43;
+      translate(-48%, -53%)
+      rotate(-2deg)
+      scale(1.04);
+    opacity: .72;
+  }
+
+  55% {
+    transform:
+      translate(-45%, -49%)
+      rotate(7deg)
+      scale(1.10);
+    opacity: .78;
+  }
+
+  78% {
+    transform:
+      translate(-52%, -45%)
+      rotate(12deg)
+      scale(1.01);
+    opacity: .67;
   }
 
   100% {
     transform:
-      translate(-51%, -48%)
-      rotate(10deg)
-      scale(.98);
-    opacity: .34;
+      translate(-49%, -53%)
+      rotate(4deg)
+      scale(.95);
+    opacity: .62;
   }
 }
 
@@ -1878,59 +1913,89 @@ body {
   0%,
   100% {
     transform:
-      rotate(-8deg)
-      scale(.90);
-    opacity: .18;
+      rotate(-12deg)
+      scale(.86);
+    opacity: .28;
   }
 
-  50% {
+  35% {
     transform:
-      rotate(7deg)
-      scale(1.07);
+      rotate(-2deg)
+      scale(.98);
     opacity: .62;
+  }
+
+  65% {
+    transform:
+      rotate(10deg)
+      scale(1.10);
+    opacity: .88;
   }
 }
 
+
+/*
+  The bespoke Rhystic pass.
+
+  It enters from lower-left, blooms through the
+  centre of the card, then exits upper-right.
+
+  Peak opacity is intentionally much higher than V1.
+*/
+
 @keyframes mana-rhystic-wash {
   0%,
+  10% {
+    opacity: 0;
+    transform:
+      translate(-62%, 42%)
+      rotate(-18deg)
+      scale(.66);
+  }
+
   18% {
-    opacity: 0;
+    opacity: .24;
+  }
+
+  30% {
+    opacity: .54;
     transform:
-      translate(-48%, 32%)
+      translate(-28%, 18%)
       rotate(-18deg)
-      scale(.72);
+      scale(.82);
   }
 
-  27% {
-    opacity: .12;
-  }
-
-  38% {
-    opacity: .30;
+  42% {
+    opacity: .76;
     transform:
-      translate(-8%, 2%)
+      translate(-2%, -2%)
       rotate(-18deg)
-      scale(.92);
+      scale(1.02);
   }
 
-  49% {
-    opacity: .16;
-  }
-
-  58% {
-    opacity: 0;
+  52% {
+    opacity: .58;
     transform:
-      translate(42%, -30%)
+      translate(20%, -16%)
       rotate(-18deg)
-      scale(.78);
+      scale(.96);
   }
 
+  63% {
+    opacity: .26;
+    transform:
+      translate(45%, -34%)
+      rotate(-18deg)
+      scale(.84);
+  }
+
+  72%,
   100% {
     opacity: 0;
     transform:
-      translate(42%, -30%)
+      translate(62%, -44%)
       rotate(-18deg)
-      scale(.78);
+      scale(.74);
   }
 }
 
@@ -2092,10 +2157,18 @@ body {
     border-bottom: 1px solid rgba(255,255,255,.055);
   }
 
+  /*
+    Stronger ambient field on mobile too.
+    Touch users cannot rely on hover to reveal the effect.
+  */
+
   .card-week-arcane {
-    width: 370px;
-    height: 370px;
-    opacity: .34;
+    width: 390px;
+    height: 390px;
+    opacity: .72;
+    filter:
+      blur(16px)
+      saturate(1.25);
   }
 
   .card-week-card-shell {
@@ -2131,19 +2204,19 @@ body {
   }
 
   .card-week-card.is-loaded .card-week-foil {
-    opacity: .78;
+    opacity: .72;
     animation:
       mana-week-foil-mobile 6.2s ease-in-out infinite;
   }
 
   /*
-    Slightly clearer automatic Rhystic wash on mobile,
-    since there is no pointer-driven tilt/glint.
+    Bespoke Rhystic wash remains obvious without
+    becoming a permanent blue overlay.
   */
 
   .card-week-card.is-loaded .card-week-arcane-wash {
     animation:
-      mana-rhystic-wash-mobile 7.5s ease-in-out infinite;
+      mana-rhystic-wash-mobile 6.8s ease-in-out infinite;
   }
 
   .card-week-glint {
@@ -2213,48 +2286,63 @@ body {
 }
 
 
-/* Mobile Rhystic light pass */
+/* ========================================
+   MOBILE RHYSTIC LIGHT PASS V2
+   ======================================== */
 
 @keyframes mana-rhystic-wash-mobile {
   0%,
-  16% {
+  8% {
     opacity: 0;
     transform:
-      translate(-50%, 34%)
+      translate(-64%, 44%)
       rotate(-18deg)
-      scale(.72);
+      scale(.66);
   }
 
-  27% {
-    opacity: .18;
+  18% {
+    opacity: .30;
   }
 
-  39% {
-    opacity: .42;
+  30% {
+    opacity: .62;
     transform:
-      translate(-6%, 0%)
+      translate(-28%, 18%)
       rotate(-18deg)
-      scale(.94);
+      scale(.84);
   }
 
-  51% {
-    opacity: .22;
-  }
-
-  62% {
-    opacity: 0;
+  42% {
+    opacity: .84;
     transform:
-      translate(45%, -32%)
+      translate(-2%, -2%)
       rotate(-18deg)
-      scale(.80);
+      scale(1.04);
   }
 
+  54% {
+    opacity: .62;
+    transform:
+      translate(22%, -18%)
+      rotate(-18deg)
+      scale(.96);
+  }
+
+  66% {
+    opacity: .28;
+    transform:
+      translate(48%, -35%)
+      rotate(-18deg)
+      scale(.82);
+  }
+
+  76%,
   100% {
     opacity: 0;
     transform:
-      translate(45%, -32%)
+      translate(65%, -46%)
       rotate(-18deg)
-      scale(.80);
+      scale(.72);
   }
 }
 
@@ -2287,7 +2375,7 @@ body {
   }
 
   .card-week-arcane {
-    opacity: .22;
+    opacity: .28;
     transform: translate(-50%, -50%);
   }
 
@@ -2303,4 +2391,4 @@ body {
   .card-week-glint {
     display: none;
   }
-}
+      }
