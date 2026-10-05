@@ -20,6 +20,13 @@
   let activeAutocompleteIndex = -1;
   let fxRatesPromise = null;
 
+  /*
+   * Stores ManaScout's automatically selected
+   * printing for each card during the current
+   * page session.
+   */
+  const manaScoutPickCache = new Map();
+
 
   /* ------------------------------
      BASIC HELPERS
@@ -86,14 +93,6 @@
         : "pushState"
     ]({}, "", url);
   }
-
-  /*
-   * When ManaScout automatically chooses a preferred
-   * printing, preserve the current page structure.
-   *
-   * Homepage/search URLs keep their q parameter.
-   * Permanent /card/.../ pages do NOT suddenly gain one.
-   */
 
   function replacePreferredPrintingInUrl(card) {
     if (!card?.id) {
@@ -272,6 +271,135 @@
     );
   }
 
+
+  /* ------------------------------
+     MANASCOUT GUIDES
+     ------------------------------ */
+
+  function manaScoutGuideLink(card) {
+    const guides = {
+      "ancient tomb":
+        "ancient-tomb",
+
+      "birds of paradise":
+        "birds-of-paradise",
+
+      "black lotus":
+        "black-lotus",
+
+      "counterspell":
+        "counterspell",
+
+      "cyclonic rift":
+        "cyclonic-rift",
+
+      "deflecting swat":
+        "deflecting-swat",
+
+      "demonic consultation":
+        "demonic-consultation",
+
+      "demonic tutor":
+        "demonic-tutor",
+
+      "dockside extortionist":
+        "dockside-extortionist",
+
+      "force of will":
+        "force-of-will",
+
+      "jace, the mind sculptor":
+        "jace-the-mind-sculptor",
+
+      "jeska's will":
+        "jeskas-will",
+
+      "lightning greaves":
+        "lightning-greaves",
+
+      "mana crypt":
+        "mana-crypt",
+
+      "mana drain":
+        "mana-drain",
+
+      "mystic remora":
+        "mystic-remora",
+
+      "rhystic study":
+        "rhystic-study",
+
+      "smaug, wicked worm":
+        "smaug-wicked-worm",
+
+      "smothering tithe":
+        "smothering-tithe",
+
+      "sol ring":
+        "sol-ring",
+
+      "swords to plowshares":
+        "swords-to-plowshares",
+
+      "teferi's protection":
+        "teferis-protection",
+
+      "the one ring":
+        "the-one-ring",
+
+      "the theorist, jace beleren":
+        "the-theorist-jace-beleren",
+
+      "the theorist":
+        "the-theorist-jace-beleren",
+
+      "vampiric tutor":
+        "vampiric-tutor"
+    };
+
+    const key =
+      String(
+        card?.name || ""
+      )
+        .trim()
+        .toLowerCase();
+
+    const slug =
+      guides[key];
+
+    if (!slug) {
+      return "";
+    }
+
+    const currentPath =
+      window.location.pathname
+        .replace(/\/+$/, "");
+
+    const guidePath =
+      `/card/${slug}`;
+
+    /*
+     * Don't offer a link to the guide
+     * when the user is already there.
+     */
+    if (
+      currentPath === guidePath
+    ) {
+      return "";
+    }
+
+    return `
+      <div class="manascout-guide-link">
+        <a href="/card/${escapeHtml(slug)}/">
+          <span aria-hidden="true">◇</span>
+          View ManaScout Guide
+          <span aria-hidden="true">→</span>
+        </a>
+      </div>
+    `;
+  }
+
+
   function marketplaceLinks(card) {
     const name =
       encodeURIComponent(
@@ -299,7 +427,10 @@
     `;
   }
 
-  function renderCard(card) {
+  function renderCard(
+    card,
+    options = {}
+  ) {
     if (!els.details) {
       return;
     }
@@ -345,6 +476,11 @@
             .join(", ")
         : "Not available";
 
+    const eyebrow =
+      options.manaScoutPick
+        ? "◇ MANASCOUT PICK · CARD"
+        : "CARD";
+
     els.details.innerHTML = `
       <article class="card-display">
 
@@ -352,7 +488,9 @@
 
         <div class="card-text-details">
 
-          <p class="eyebrow">CARD</p>
+          <p class="eyebrow">
+            ${eyebrow}
+          </p>
 
           <h2>
             ${escapeHtml(
@@ -413,6 +551,8 @@
           </div>
 
           ${renderFaces(card)}
+
+          ${manaScoutGuideLink(card)}
 
           ${marketplaceLinks(card)}
 
@@ -638,7 +778,7 @@
 
 
   /* ------------------------------
-     PREFERRED PRINTING
+     MANASCOUT PREFERRED PRINTING
      ------------------------------ */
 
   function preferredPrintingScore(
@@ -678,69 +818,60 @@
         ? print.games
         : [];
 
-
-    /*
-     * Prefer physical tabletop printings.
-     */
-
     if (
       games.includes("paper")
     ) {
-      score += 20;
+      score += 30;
     } else {
-      score -= 80;
+      score -= 120;
     }
 
-
-    /*
-     * Avoid non-standard curiosities becoming
-     * the default hero simply because they are
-     * unusual.
-     */
+    if (
+      print.lang === "en"
+    ) {
+      score += 15;
+    } else {
+      score -= 25;
+    }
 
     if (
       print.layout === "art_series"
     ) {
-      score -= 100;
+      score -= 150;
     }
 
     if (
       print.layout === "token" ||
       print.layout === "emblem"
     ) {
-      score -= 100;
+      score -= 150;
     }
 
     if (
       print.oversized
     ) {
-      score -= 35;
+      score -= 60;
     }
-
-
-    /*
-     * Premium visual treatments.
-     */
 
     if (
       frameEffects.includes(
         "showcase"
       )
     ) {
-      score += 60;
+      score += 70;
     }
 
     if (
       print.border_color ===
       "borderless"
     ) {
-      score += 48;
+      score += 60;
     }
 
     if (
       print.full_art
     ) {
-      score += 42;
+      score += 52;
     }
 
     if (
@@ -748,7 +879,7 @@
         "extendedart"
       )
     ) {
-      score += 38;
+      score += 45;
     }
 
     if (
@@ -756,7 +887,7 @@
         "inverted"
       )
     ) {
-      score += 28;
+      score += 32;
     }
 
     if (
@@ -764,7 +895,7 @@
         "etched"
       )
     ) {
-      score += 20;
+      score += 24;
     }
 
     if (
@@ -775,17 +906,12 @@
       score += 5;
     }
 
-
-    /*
-     * Booster-fun / unusual treatments.
-     */
-
     if (
       promoTypes.includes(
         "boosterfun"
       )
     ) {
-      score += 30;
+      score += 35;
     }
 
     if (
@@ -793,7 +919,7 @@
         "textured"
       )
     ) {
-      score += 28;
+      score += 34;
     }
 
     if (
@@ -801,7 +927,7 @@
         "galaxyfoil"
       )
     ) {
-      score += 20;
+      score += 30;
     }
 
     if (
@@ -809,7 +935,7 @@
         "surgefoil"
       )
     ) {
-      score += 18;
+      score += 28;
     }
 
     if (
@@ -817,7 +943,7 @@
         "rainbowfoil"
       )
     ) {
-      score += 18;
+      score += 28;
     }
 
     if (
@@ -825,7 +951,7 @@
         "stepandcompleat"
       )
     ) {
-      score += 18;
+      score += 26;
     }
 
     if (
@@ -833,21 +959,15 @@
         "halofoil"
       )
     ) {
-      score += 18;
+      score += 26;
     }
-
-
-    /*
-     * Finishes are useful signals, but should
-     * never overpower the artwork/frame itself.
-     */
 
     if (
       finishes.includes(
         "etched"
       )
     ) {
-      score += 12;
+      score += 16;
     }
 
     if (
@@ -855,13 +975,8 @@
         "foil"
       )
     ) {
-      score += 6;
+      score += 9;
     }
-
-
-    /*
-     * Promo gets only a small bonus.
-     */
 
     if (
       print.promo
@@ -869,57 +984,175 @@
       score += 5;
     }
 
-
-    /*
-     * Serialized cards should NOT automatically
-     * become the hero simply because they are
-     * rare or expensive.
-     */
-
     if (
       promoTypes.includes(
         "serialized"
       )
     ) {
-      score -= 8;
-    }
-
-
-    /*
-     * Prefer English where possible.
-     */
-
-    if (
-      print.lang === "en"
-    ) {
-      score += 12;
-    } else {
-      score -= 20;
+      score -= 12;
     }
 
     return score;
   }
 
 
-  function preferredPrinting(
+  function preferredPrintingPriceBonus(
+    print,
+    rates
+  ) {
+    if (!rates) {
+      return 0;
+    }
+
+    const regularPrice =
+      regularGbpValue(
+        print,
+        rates
+      );
+
+    const foilPrice =
+      foilGbpValue(
+        print,
+        rates
+      );
+
+    const availablePrices =
+      [
+        regularPrice,
+        foilPrice
+      ].filter(
+        price =>
+          Number.isFinite(price) &&
+          price > 0
+      );
+
+    if (!availablePrices.length) {
+      return 0;
+    }
+
+    const price =
+      Math.max(
+        ...availablePrices
+      );
+
+    return Math.min(
+      18,
+      Math.log10(
+        price + 1
+      ) * 7
+    );
+  }
+
+
+  function manaScoutPrintingScore(
+    print,
+    rates
+  ) {
+    return (
+      preferredPrintingScore(
+        print
+      ) +
+      preferredPrintingPriceBonus(
+        print,
+        rates
+      )
+    );
+  }
+
+
+  /*
+   * Only genuine candidate printings should
+   * determine whether a card has 1–3 or 4+
+   * meaningful versions.
+   *
+   * Prefer:
+   * English paper cards
+   * → paper cards
+   * → standard image-bearing cards
+   * → any image-bearing printing as fallback.
+   */
+
+  function preferredPrintingCandidates(
     printings
   ) {
-    const usable =
+    const imageBearing =
       printings.filter(
         print =>
           printingImage(print)
       );
 
-    if (!usable.length) {
-      return null;
+    const standard =
+      imageBearing.filter(
+        print =>
+          print.layout !==
+            "art_series" &&
+          print.layout !==
+            "token" &&
+          print.layout !==
+            "emblem" &&
+          !print.oversized
+      );
+
+    const paper =
+      standard.filter(
+        print =>
+          Array.isArray(
+            print.games
+          ) &&
+          print.games.includes(
+            "paper"
+          )
+      );
+
+    const englishPaper =
+      paper.filter(
+        print =>
+          print.lang === "en"
+      );
+
+    if (
+      englishPaper.length
+    ) {
+      return englishPaper;
     }
+
+    if (
+      paper.length
+    ) {
+      return paper;
+    }
+
+    if (
+      standard.length
+    ) {
+      return standard;
+    }
+
+    return imageBearing;
+  }
+
+
+  function rankedPreferredPrintings(
+    printings,
+    rates
+  ) {
+    const usable =
+      preferredPrintingCandidates(
+        printings
+      );
 
     return [...usable]
       .sort(
         (a, b) => {
           const scoreDifference =
-            preferredPrintingScore(b) -
-            preferredPrintingScore(a);
+            manaScoutPrintingScore(
+              b,
+              rates
+            ) -
+            manaScoutPrintingScore(
+              a,
+              rates
+            );
 
           if (
             scoreDifference !== 0
@@ -952,7 +1185,104 @@
             )
           );
         }
-      )[0];
+      );
+  }
+
+
+  function manaScoutPickKey(
+    printings
+  ) {
+    const first =
+      printings?.[0];
+
+    return (
+      first?.oracle_id ||
+      first?.name
+        ?.toLowerCase() ||
+      ""
+    );
+  }
+
+
+  function preferredPrinting(
+    printings,
+    rates
+  ) {
+    const ranked =
+      rankedPreferredPrintings(
+        printings,
+        rates
+      );
+
+    if (!ranked.length) {
+      return null;
+    }
+
+    const cacheKey =
+      manaScoutPickKey(
+        ranked
+      );
+
+    if (
+      cacheKey &&
+      manaScoutPickCache.has(
+        cacheKey
+      )
+    ) {
+      const cachedId =
+        manaScoutPickCache.get(
+          cacheKey
+        );
+
+      const cached =
+        ranked.find(
+          print =>
+            print.id === cachedId
+        );
+
+      if (cached) {
+        return cached;
+      }
+    }
+
+    let selected;
+
+    if (
+      ranked.length <= 3
+    ) {
+      selected =
+        ranked[0];
+    } else {
+      const roll =
+        Math.random();
+
+      if (
+        roll < 0.50
+      ) {
+        selected =
+          ranked[0];
+      } else if (
+        roll < 0.80
+      ) {
+        selected =
+          ranked[1];
+      } else {
+        selected =
+          ranked[2];
+      }
+    }
+
+    if (
+      cacheKey &&
+      selected?.id
+    ) {
+      manaScoutPickCache.set(
+        cacheKey,
+        selected.id
+      );
+    }
+
+    return selected;
   }
 
 
@@ -1485,50 +1815,6 @@
         )
     );
 
-
-    /*
-     * NORMAL / NON-EXACT SEARCH:
-     *
-     * If no valid exact printing was resolved,
-     * ManaScout chooses its preferred visual
-     * printing from the complete printings list.
-     *
-     * This now works for:
-     * - typed searches
-     * - autocomplete
-     * - Try links
-     * - initial ?q= links
-     * - permanent card pages
-     * - stale/invalid printing IDs
-     *
-     * A valid exact printing supplied by
-     * Featured, COTW, Discover or the URL
-     * bypasses this block.
-     */
-
-    if (
-      options.choosePreferred
-    ) {
-      const preferred =
-        preferredPrinting(all);
-
-      if (preferred) {
-        card = preferred;
-
-        renderCard(card);
-
-        /*
-         * Preserve the current page structure
-         * while storing the chosen exact printing.
-         */
-
-        replacePreferredPrintingInUrl(
-          card
-        );
-      }
-    }
-
-
     let rates = null;
 
     try {
@@ -1540,6 +1826,37 @@
         error
       );
     }
+
+
+    /*
+     * AUTOMATIC MANASCOUT PICK
+     */
+
+    if (
+      options.choosePreferred
+    ) {
+      const preferred =
+        preferredPrinting(
+          all,
+          rates
+        );
+
+      if (preferred) {
+        card = preferred;
+
+        renderCard(
+          card,
+          {
+            manaScoutPick: true
+          }
+        );
+
+        replacePreferredPrintingInUrl(
+          card
+        );
+      }
+    }
+
 
     els.status.textContent =
       rates
@@ -2135,8 +2452,6 @@
     }
 
 
-    /* EXISTING FILTER + SORT BEHAVIOUR */
-
     if (finishFilter) {
       finishFilter.addEventListener(
         "change",
@@ -2315,7 +2630,9 @@
           return;
         }
 
-        renderCard(selected);
+        renderCard(
+          selected
+        );
 
         setQuery(
           selected.name,
@@ -2407,21 +2724,6 @@
     try {
       let card;
 
-      /*
-       * IMPORTANT:
-       *
-       * This tracks whether the requested exact
-       * printing genuinely resolved to the card
-       * being requested.
-       *
-       * Previously the code only checked whether
-       * a printing ID STRING existed and whether
-       * fromHistory was true. That prevented the
-       * preferred-printing system from running on
-       * Try links, permanent pages and initial
-       * ?q= searches.
-       */
-
       let exactPrintingResolved =
         false;
 
@@ -2434,10 +2736,6 @@
               searchController.signal
             );
 
-          /*
-           * Guard against a stale or incorrect
-           * printing ID.
-           */
 
           if (
             !card?.name ||
@@ -2450,12 +2748,6 @@
                 searchController.signal
               );
           } else {
-            /*
-             * The exact requested printing is
-             * valid. It must NOT be replaced by
-             * ManaScout's automatic preference.
-             */
-
             exactPrintingResolved =
               true;
           }
@@ -2467,12 +2759,6 @@
           ) {
             throw error;
           }
-
-          /*
-           * Invalid/stale printing ID:
-           * recover the named card and allow
-           * preferred-printing selection below.
-           */
 
           card =
             await namedCard(
@@ -2496,16 +2782,9 @@
       }
 
 
-      /*
-       * Show the initial result immediately.
-       *
-       * If this was not a valid exact-printing
-       * request, renderPrintings() will replace
-       * it with ManaScout's preferred visual
-       * printing after all printings have loaded.
-       */
-
-      renderCard(card);
+      renderCard(
+        card
+      );
 
 
       await renderPrintings(
