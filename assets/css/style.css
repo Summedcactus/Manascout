@@ -2392,3 +2392,147 @@ body {
     display: none;
   }
       }
+
+/* ========================================
+   MANASCOUT GUIDE LINK
+   ======================================== */
+
+.manascout-guide-link {
+  margin: 20px 0 4px;
+}
+
+.manascout-guide-link a {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  overflow: hidden;
+  padding: 11px 15px;
+  border: 1px solid rgba(184, 44, 62, .38);
+  border-radius: 9px;
+  background:
+    linear-gradient(
+      135deg,
+      rgba(134, 28, 43, .13),
+      rgba(134, 28, 43, .045)
+    );
+  color: #eee8e9;
+  font-size: 12px;
+  font-weight: 800;
+  text-decoration: none;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, .025);
+  transition:
+    border-color .16s ease,
+    background .16s ease,
+    transform .16s ease,
+    box-shadow .16s ease;
+}
+
+.manascout-guide-link a::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0;
+  background:
+    linear-gradient(
+      110deg,
+      transparent 20%,
+      rgba(255, 255, 255, .055) 48%,
+      transparent 72%
+    );
+  transform: translateX(-55%);
+  transition:
+    opacity .2s ease,
+    transform .35s ease;
+}
+
+.manascout-guide-link a span {
+  position: relative;
+  z-index: 1;
+}
+
+.manascout-guide-link a span:first-child {
+  color: var(--accent-bright);
+  font-size: 15px;
+  line-height: 1;
+}
+
+.manascout-guide-link a span:last-child {
+  color: var(--accent-bright);
+  font-size: 15px;
+  line-height: 1;
+  transition: transform .16s ease;
+}
+
+.manascout-guide-link a:hover {
+  border-color: rgba(184, 44, 62, .75);
+  background:
+    linear-gradient(
+      135deg,
+      rgba(134, 28, 43, .21),
+      rgba(134, 28, 43, .075)
+    );
+  transform: translateY(-1px);
+  box-shadow:
+    0 10px 28px rgba(0, 0, 0, .18),
+    inset 0 1px 0 rgba(255, 255, 255, .035);
+}
+
+.manascout-guide-link a:hover::before {
+  opacity: 1;
+  transform: translateX(55%);
+}
+
+.manascout-guide-link a:hover span:last-child {
+  transform: translateX(3px);
+}
+
+.manascout-guide-link a:focus-visible {
+  outline: 2px solid var(--accent-bright);
+  outline-offset: 3px;
+}
+
+
+/* Guide CTA — mobile */
+
+@media (max-width: 720px) {
+  .manascout-guide-link {
+    margin-top: 17px;
+  }
+
+  .manascout-guide-link a {
+    width: 100%;
+    justify-content: center;
+    padding: 12px 14px;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .manascout-guide-link a:hover {
+    transform: none;
+  }
+}
+
+
+/* Guide CTA — reduced motion */
+
+@media (prefers-reduced-motion: reduce) {
+  .manascout-guide-link a,
+  .manascout-guide-link a::before,
+  .manascout-guide-link a span:last-child {
+    transition: none;
+  }
+
+  .manascout-guide-link a:hover {
+    transform: none;
+  }
+
+  .manascout-guide-link a:hover::before {
+    transform: none;
+  }
+
+  .manascout-guide-link a:hover span:last-child {
+    transform: none;
+  }
+}
