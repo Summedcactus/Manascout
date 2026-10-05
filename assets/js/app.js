@@ -20,6 +20,16 @@
   let activeAutocompleteIndex = -1;
   let fxRatesPromise = null;
 
+  /*
+   * Stores ManaScout's automatically selected
+   * printing for each card during the current
+   * page session.
+   *
+   * This prevents filters, Snapshot interactions
+   * or repeated rendering from rerolling the pick.
+   */
+  const manaScoutPickCache = new Map();
+
 
   /* ------------------------------
      BASIC HELPERS
@@ -299,7 +309,10 @@
     `;
   }
 
-  function renderCard(card) {
+  function renderCard(
+    card,
+    options = {}
+  ) {
     if (!els.details) {
       return;
     }
@@ -345,6 +358,11 @@
             .join(", ")
         : "Not available";
 
+    const eyebrow =
+      options.manaScoutPick
+        ? "◇ MANASCOUT PICK · CARD"
+        : "CARD";
+
     els.details.innerHTML = `
       <article class="card-display">
 
@@ -352,7 +370,9 @@
 
         <div class="card-text-details">
 
-          <p class="eyebrow">CARD</p>
+          <p class="eyebrow">
+            ${eyebrow}
+          </p>
 
           <h2>
             ${escapeHtml(
@@ -638,7 +658,7 @@
 
 
   /* ------------------------------
-     PREFERRED PRINTING
+     MANASCOUT PREFERRED PRINTING
      ------------------------------ */
 
   function preferredPrintingScore(
@@ -680,46 +700,63 @@
 
 
     /*
-     * Prefer physical tabletop printings.
+     * Physical tabletop cards should dominate
+     * digital-only entries.
      */
 
     if (
       games.includes("paper")
     ) {
-      score += 20;
+      score += 30;
     } else {
-      score -= 80;
+      score -= 120;
     }
 
 
     /*
-     * Avoid non-standard curiosities becoming
-     * the default hero simply because they are
-     * unusual.
+     * Prefer English where possible.
+     */
+
+    if (
+      print.lang === "en"
+    ) {
+      score += 15;
+    } else {
+      score -= 25;
+    }
+
+
+    /*
+     * Database curiosities remain available in
+     * the printing table but should almost never
+     * become ManaScout's hero printing.
      */
 
     if (
       print.layout === "art_series"
     ) {
-      score -= 100;
+      score -= 150;
     }
 
     if (
       print.layout === "token" ||
       print.layout === "emblem"
     ) {
-      score -= 100;
+      score -= 150;
     }
 
     if (
       print.oversized
     ) {
-      score -= 35;
+      score -= 60;
     }
 
 
     /*
      * Premium visual treatments.
+     *
+     * These are deliberately the strongest
+     * ManaScout ranking signals.
      */
 
     if (
@@ -727,20 +764,20 @@
         "showcase"
       )
     ) {
-      score += 60;
+      score += 70;
     }
 
     if (
       print.border_color ===
       "borderless"
     ) {
-      score += 48;
+      score += 60;
     }
 
     if (
       print.full_art
     ) {
-      score += 42;
+      score += 52;
     }
 
     if (
@@ -748,7 +785,7 @@
         "extendedart"
       )
     ) {
-      score += 38;
+      score += 45;
     }
 
     if (
@@ -756,7 +793,7 @@
         "inverted"
       )
     ) {
-      score += 28;
+      score += 32;
     }
 
     if (
@@ -764,7 +801,7 @@
         "etched"
       )
     ) {
-      score += 20;
+      score += 24;
     }
 
     if (
@@ -777,7 +814,7 @@
 
 
     /*
-     * Booster-fun / unusual treatments.
+     * Booster-fun and premium treatments.
      */
 
     if (
@@ -785,7 +822,7 @@
         "boosterfun"
       )
     ) {
-      score += 30;
+      score += 35;
     }
 
     if (
@@ -793,7 +830,7 @@
         "textured"
       )
     ) {
-      score += 28;
+      score += 34;
     }
 
     if (
@@ -801,7 +838,7 @@
         "galaxyfoil"
       )
     ) {
-      score += 20;
+      score += 30;
     }
 
     if (
@@ -809,7 +846,7 @@
         "surgefoil"
       )
     ) {
-      score += 18;
+      score += 28;
     }
 
     if (
@@ -817,7 +854,7 @@
         "rainbowfoil"
       )
     ) {
-      score += 18;
+      score += 28;
     }
 
     if (
@@ -825,7 +862,7 @@
         "stepandcompleat"
       )
     ) {
-      score += 18;
+      score += 26;
     }
 
     if (
@@ -833,13 +870,14 @@
         "halofoil"
       )
     ) {
-      score += 18;
+      score += 26;
     }
 
 
     /*
-     * Finishes are useful signals, but should
-     * never overpower the artwork/frame itself.
+     * Finish is useful evidence of a premium
+     * printing, but artwork/frame treatment
+     * remains more important.
      */
 
     if (
@@ -847,7 +885,7 @@
         "etched"
       )
     ) {
-      score += 12;
+      score += 16;
     }
 
     if (
@@ -855,12 +893,12 @@
         "foil"
       )
     ) {
-      score += 6;
+      score += 9;
     }
 
 
     /*
-     * Promo gets only a small bonus.
+     * Promo status alone is only a small bonus.
      */
 
     if (
@@ -871,9 +909,9 @@
 
 
     /*
-     * Serialized cards should NOT automatically
-     * become the hero simply because they are
-     * rare or expensive.
+     * Serialized cards can be extraordinarily
+     * expensive without necessarily being the
+     * best-looking version.
      */
 
     if (
@@ -881,28 +919,94 @@
         "serialized"
       )
     ) {
-      score -= 8;
-    }
-
-
-    /*
-     * Prefer English where possible.
-     */
-
-    if (
-      print.lang === "en"
-    ) {
-      score += 12;
-    } else {
-      score -= 20;
+      score -= 12;
     }
 
     return score;
   }
 
 
-  function preferredPrinting(
-    printings
+  /*
+   * PRICE DESIRABILITY SIGNAL
+   *
+   * Price can be evidence that a treatment is
+   * desirable, but it must never overpower the
+   * visual ranking.
+   *
+   * The logarithmic calculation means price
+   * differences matter progressively less as
+   * prices become extreme.
+   *
+   * Maximum contribution: 18 points.
+   */
+
+  function preferredPrintingPriceBonus(
+    print,
+    rates
+  ) {
+    if (!rates) {
+      return 0;
+    }
+
+    const regularPrice =
+      regularGbpValue(
+        print,
+        rates
+      );
+
+    const foilPrice =
+      foilGbpValue(
+        print,
+        rates
+      );
+
+    const availablePrices =
+      [
+        regularPrice,
+        foilPrice
+      ].filter(
+        price =>
+          Number.isFinite(price) &&
+          price > 0
+      );
+
+    if (!availablePrices.length) {
+      return 0;
+    }
+
+    const price =
+      Math.max(
+        ...availablePrices
+      );
+
+    return Math.min(
+      18,
+      Math.log10(
+        price + 1
+      ) * 7
+    );
+  }
+
+
+  function manaScoutPrintingScore(
+    print,
+    rates
+  ) {
+    return (
+      preferredPrintingScore(
+        print
+      ) +
+      preferredPrintingPriceBonus(
+        print,
+        rates
+      )
+    );
+  }
+
+
+  function rankedPreferredPrintings(
+    printings,
+    rates
   ) {
     const usable =
       printings.filter(
@@ -910,22 +1014,29 @@
           printingImage(print)
       );
 
-    if (!usable.length) {
-      return null;
-    }
-
     return [...usable]
       .sort(
         (a, b) => {
           const scoreDifference =
-            preferredPrintingScore(b) -
-            preferredPrintingScore(a);
+            manaScoutPrintingScore(
+              b,
+              rates
+            ) -
+            manaScoutPrintingScore(
+              a,
+              rates
+            );
 
           if (
             scoreDifference !== 0
           ) {
             return scoreDifference;
           }
+
+          /*
+           * Equal ManaScout scores favour the
+           * newer treatment.
+           */
 
           const dateDifference =
             String(
@@ -942,6 +1053,10 @@
             return dateDifference;
           }
 
+          /*
+           * Final deterministic tie-break.
+           */
+
           return String(
             a.collector_number ||
             ""
@@ -952,7 +1067,132 @@
             )
           );
         }
-      )[0];
+      );
+  }
+
+
+  /*
+   * Stable cache key shared by every printing
+   * belonging to the same underlying card.
+   */
+
+  function manaScoutPickKey(
+    printings
+  ) {
+    const first =
+      printings?.[0];
+
+    return (
+      first?.oracle_id ||
+      first?.name
+        ?.toLowerCase() ||
+      ""
+    );
+  }
+
+
+  /*
+   * MANASCOUT PICK
+   *
+   * Three or fewer usable versions:
+   * always use ranked #1.
+   *
+   * Four or more:
+   * #1 = 50%
+   * #2 = 30%
+   * #3 = 20%
+   *
+   * Once chosen, the result is cached for the
+   * current page session so re-rendering cannot
+   * randomly change the hero card.
+   */
+
+  function preferredPrinting(
+    printings,
+    rates
+  ) {
+    const ranked =
+      rankedPreferredPrintings(
+        printings,
+        rates
+      );
+
+    if (!ranked.length) {
+      return null;
+    }
+
+    const cacheKey =
+      manaScoutPickKey(
+        ranked
+      );
+
+    if (
+      cacheKey &&
+      manaScoutPickCache.has(
+        cacheKey
+      )
+    ) {
+      const cachedId =
+        manaScoutPickCache.get(
+          cacheKey
+        );
+
+      const cached =
+        ranked.find(
+          print =>
+            print.id === cachedId
+        );
+
+      if (cached) {
+        return cached;
+      }
+    }
+
+
+    let selected;
+
+
+    if (
+      ranked.length <= 3
+    ) {
+      selected =
+        ranked[0];
+
+    } else {
+      const roll =
+        Math.random();
+
+      if (
+        roll < 0.50
+      ) {
+        selected =
+          ranked[0];
+
+      } else if (
+        roll < 0.80
+      ) {
+        selected =
+          ranked[1];
+
+      } else {
+        selected =
+          ranked[2];
+      }
+    }
+
+
+    if (
+      cacheKey &&
+      selected?.id
+    ) {
+      manaScoutPickCache.set(
+        cacheKey,
+        selected.id
+      );
+    }
+
+
+    return selected;
   }
 
 
@@ -1487,47 +1727,15 @@
 
 
     /*
-     * NORMAL / NON-EXACT SEARCH:
+     * Fetch GBP rates BEFORE ManaScout chooses
+     * the preferred printing.
      *
-     * If no valid exact printing was resolved,
-     * ManaScout chooses its preferred visual
-     * printing from the complete printings list.
+     * This allows market desirability to act as
+     * a small supporting ranking signal.
      *
-     * This now works for:
-     * - typed searches
-     * - autocomplete
-     * - Try links
-     * - initial ?q= links
-     * - permanent card pages
-     * - stale/invalid printing IDs
-     *
-     * A valid exact printing supplied by
-     * Featured, COTW, Discover or the URL
-     * bypasses this block.
+     * If FX is unavailable, the ranking still
+     * works perfectly using visual signals alone.
      */
-
-    if (
-      options.choosePreferred
-    ) {
-      const preferred =
-        preferredPrinting(all);
-
-      if (preferred) {
-        card = preferred;
-
-        renderCard(card);
-
-        /*
-         * Preserve the current page structure
-         * while storing the chosen exact printing.
-         */
-
-        replacePreferredPrintingInUrl(
-          card
-        );
-      }
-    }
-
 
     let rates = null;
 
@@ -1540,6 +1748,58 @@
         error
       );
     }
+
+
+    /*
+     * NORMAL / NON-EXACT SEARCH:
+     *
+     * If no valid exact printing was resolved,
+     * ManaScout ranks every usable printing and
+     * chooses from the strongest candidates.
+     *
+     * 1–3 usable printings:
+     * #1 always wins.
+     *
+     * 4+ usable printings:
+     * #1 = 50%
+     * #2 = 30%
+     * #3 = 20%
+     *
+     * Exact printing URLs, Featured links,
+     * COTW, Discover and manually selected
+     * versions bypass automatic replacement.
+     */
+
+    if (
+      options.choosePreferred
+    ) {
+      const preferred =
+        preferredPrinting(
+          all,
+          rates
+        );
+
+      if (preferred) {
+        card = preferred;
+
+        renderCard(
+          card,
+          {
+            manaScoutPick: true
+          }
+        );
+
+        /*
+         * Preserve the current page structure
+         * while storing the chosen exact printing.
+         */
+
+        replacePreferredPrintingInUrl(
+          card
+        );
+      }
+    }
+
 
     els.status.textContent =
       rates
@@ -2234,6 +2494,11 @@
           ];
 
         if (exactPrinting) {
+          /*
+           * This is now an explicit user choice,
+           * so it must NOT display the automatic
+           * ManaScout Pick label.
+           */
           renderCard(
             exactPrinting
           );
@@ -2261,6 +2526,10 @@
           ) &&
           matches.length === 1
         ) {
+          /*
+           * Snapshot produced one exact result.
+           * Treat that as an explicit selection.
+           */
           renderCard(
             matches[0]
           );
@@ -2315,7 +2584,13 @@
           return;
         }
 
-        renderCard(selected);
+        /*
+         * Manual printing selection always wins
+         * and removes the ManaScout Pick label.
+         */
+        renderCard(
+          selected
+        );
 
         setQuery(
           selected.name,
@@ -2408,18 +2683,9 @@
       let card;
 
       /*
-       * IMPORTANT:
-       *
-       * This tracks whether the requested exact
-       * printing genuinely resolved to the card
-       * being requested.
-       *
-       * Previously the code only checked whether
-       * a printing ID STRING existed and whether
-       * fromHistory was true. That prevented the
-       * preferred-printing system from running on
-       * Try links, permanent pages and initial
-       * ?q= searches.
+       * Tracks whether the requested exact
+       * printing genuinely resolved to the
+       * requested card.
        */
 
       let exactPrintingResolved =
@@ -2451,9 +2717,8 @@
               );
           } else {
             /*
-             * The exact requested printing is
-             * valid. It must NOT be replaced by
-             * ManaScout's automatic preference.
+             * Valid exact printing:
+             * ManaScout MUST NOT replace it.
              */
 
             exactPrintingResolved =
@@ -2471,7 +2736,7 @@
           /*
            * Invalid/stale printing ID:
            * recover the named card and allow
-           * preferred-printing selection below.
+           * ManaScout Pick selection.
            */
 
           card =
@@ -2501,11 +2766,14 @@
        *
        * If this was not a valid exact-printing
        * request, renderPrintings() will replace
-       * it with ManaScout's preferred visual
-       * printing after all printings have loaded.
+       * it with ManaScout's preferred printing
+       * after the complete printing list and FX
+       * rates have loaded.
        */
 
-      renderCard(card);
+      renderCard(
+        card
+      );
 
 
       await renderPrintings(
