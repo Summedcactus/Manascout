@@ -928,22 +928,23 @@
               id="card-week-card"
             >
 
-              <div
-                class="card-week-card-placeholder"
-                id="card-week-placeholder"
-              >
+            <div
+  class="card-week-card-placeholder"
+  id="card-week-placeholder"
+  hidden
+>
                 <span>◇</span>
                 <small>
                   OPENING THE ARCHIVE…
                 </small>
               </div>
 
-              <img
-                id="card-week-image"
-                class="card-week-image"
-                alt="Rhystic Study"
-                hidden
-              >
+            <img
+  id="card-week-image"
+  class="card-week-image"
+  src="https://cards.scryfall.io/normal/front/e/6/e6a06aad-6073-465b-89d0-8c4ae4307aff.jpg"
+  alt="Rhystic Study — Wilds of Eldraine: Enchanting Tales #71"
+>
 
               <div
                 class="card-week-foil"
@@ -1505,15 +1506,15 @@
       }
             function imageFor(printing) {
         return (
-          printing?.image_uris?.art_crop ||
-          printing?.image_uris?.large ||
           printing?.image_uris?.normal ||
-          printing?.card_faces?.[0]
-            ?.image_uris?.art_crop ||
-          printing?.card_faces?.[0]
-            ?.image_uris?.large ||
+          printing?.image_uris?.large ||
           printing?.card_faces?.[0]
             ?.image_uris?.normal ||
+          printing?.card_faces?.[0]
+            ?.image_uris?.large ||
+          printing?.image_uris?.art_crop ||
+          printing?.card_faces?.[0]
+            ?.image_uris?.art_crop ||
           ""
         );
       }
@@ -2903,7 +2904,97 @@
     })();
   </script>
 
+<style>
+  /* FEATURED CARD DISPLAY FIX */
 
+  .featured-art {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    overflow: visible !important;
+    padding: 1rem !important;
+    min-height: 280px !important;
+  }
+
+  .featured-art img {
+    display: block !important;
+    width: auto !important;
+   height: 380px !important;
+max-height: 70vh !important;
+    max-width: 100% !important;
+    object-fit: contain !important;
+    border-radius: 10px !important;
+    box-shadow: 0 16px 35px rgba(0, 0, 0, 0.42) !important;
+  }
+
+  @media (max-width: 720px) {
+    .featured-art {
+      min-height: 230px !important;
+    }
+
+  .featured-art img {
+  height: 300px !important;
+  max-height: 58vh !important;
+}
+  }
+
+  /* SCOUT ROULETTE LABEL POSITION FIX */
+
+  .scout-wheel-label {
+    position: absolute !important;
+    z-index: 3 !important;
+    width: auto !important;
+    max-width: 88px !important;
+    transform: translate(-50%, -50%) !important;
+    transform-origin: center !important;
+    text-align: center !important;
+    white-space: nowrap !important;
+    line-height: 1 !important;
+    pointer-events: none !important;
+  }
+
+  .scout-wheel-label:nth-child(1) {
+    left: 50% !important;
+    top: 16% !important;
+    transform: translate(-50%, -50%) !important;
+  }
+
+  .scout-wheel-label:nth-child(2) {
+    left: 76.6% !important;
+    top: 28.8% !important;
+    transform: translate(-50%, -50%) !important;
+  }
+
+  .scout-wheel-label:nth-child(3) {
+    left: 83.1% !important;
+    top: 57.6% !important;
+    transform: translate(-50%, -50%) !important;
+  }
+
+  .scout-wheel-label:nth-child(4) {
+    left: 64.8% !important;
+    top: 80.6% !important;
+    transform: translate(-50%, -50%) !important;
+  }
+
+  .scout-wheel-label:nth-child(5) {
+    left: 35.2% !important;
+    top: 80.6% !important;
+    transform: translate(-50%, -50%) !important;
+  }
+
+  .scout-wheel-label:nth-child(6) {
+    left: 16.9% !important;
+    top: 57.6% !important;
+    transform: translate(-50%, -50%) !important;
+  }
+
+  .scout-wheel-label:nth-child(7) {
+    left: 23.4% !important;
+    top: 28.8% !important;
+    transform: translate(-50%, -50%) !important;
+  }
+</style>
   <!-- SCOUT ROULETTE STYLES -->
   <style>
     .scout-roulette-section {
