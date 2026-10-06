@@ -2594,6 +2594,1339 @@
 
     })();
   </script>
+    <!-- SCOUT ROULETTE -->
+  <style>
+    .scout-roulette-section {
+      position: relative;
+      margin: 5rem 0 2rem;
+      padding: 0;
+    }
+
+    .scout-roulette-heading {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: 2rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .scout-roulette-heading h2 {
+      margin: 0.35rem 0 0;
+      font-size: clamp(1.8rem, 4vw, 2.7rem);
+      line-height: 1.05;
+      letter-spacing: -0.035em;
+    }
+
+    .scout-roulette-heading p:last-child {
+      max-width: 620px;
+      margin: 0.7rem 0 0;
+      color: rgba(241, 238, 233, 0.62);
+      line-height: 1.7;
+    }
+
+    .scout-roulette-badge {
+      flex: 0 0 auto;
+      padding: 0.55rem 0.75rem;
+      border: 1px solid rgba(184, 44, 62, 0.25);
+      border-radius: 999px;
+      background: rgba(134, 28, 43, 0.06);
+      color: rgba(241, 238, 233, 0.55);
+      font-size: 0.62rem;
+      font-weight: 800;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+
+    .scout-roulette-panel {
+      position: relative;
+      display: grid;
+      grid-template-columns: minmax(300px, 0.9fr) minmax(320px, 1.1fr);
+      min-height: 520px;
+      overflow: hidden;
+      border: 1px solid rgba(255, 255, 255, 0.07);
+      border-radius: 24px;
+      background:
+        radial-gradient(
+          circle at 20% 50%,
+          rgba(134, 28, 43, 0.13),
+          transparent 42%
+        ),
+        linear-gradient(
+          135deg,
+          rgba(18, 18, 21, 0.98),
+          rgba(9, 9, 11, 0.99)
+        );
+      box-shadow:
+        0 28px 80px rgba(0, 0, 0, 0.35),
+        inset 0 1px 0 rgba(255, 255, 255, 0.025);
+    }
+
+    .scout-roulette-panel::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      background:
+        linear-gradient(
+          90deg,
+          transparent,
+          rgba(255, 255, 255, 0.012),
+          transparent
+        );
+    }
+
+    .scout-roulette-stage {
+      position: relative;
+      display: grid;
+      place-items: center;
+      min-width: 0;
+      padding: 3rem 2rem;
+      border-right: 1px solid rgba(255, 255, 255, 0.055);
+    }
+
+    .scout-wheel-wrap {
+      position: relative;
+      width: min(390px, 100%);
+      aspect-ratio: 1;
+      display: grid;
+      place-items: center;
+    }
+
+    .scout-wheel-pointer {
+      position: absolute;
+      z-index: 8;
+      top: -13px;
+      left: 50%;
+      width: 0;
+      height: 0;
+      transform: translateX(-50%);
+      border-left: 14px solid transparent;
+      border-right: 14px solid transparent;
+      border-top: 28px solid #f1eee9;
+      filter: drop-shadow(0 4px 10px rgba(0, 0, 0, 0.55));
+    }
+
+    .scout-wheel {
+      --roulette-rotation: 0deg;
+
+      position: absolute;
+      inset: 0;
+      border: 1px solid rgba(255, 255, 255, 0.11);
+      border-radius: 50%;
+      transform: rotate(var(--roulette-rotation));
+      transition:
+        transform 5.2s cubic-bezier(0.12, 0.72, 0.08, 1);
+      background:
+        conic-gradient(
+          from -25.714deg,
+
+          #751827 0deg 51.428deg,
+          #17171b 51.428deg 102.856deg,
+
+          #932236 102.856deg 154.284deg,
+          #121216 154.284deg 205.712deg,
+
+          #6e1724 205.712deg 257.14deg,
+          #1d1d22 257.14deg 308.568deg,
+
+          #a52a40 308.568deg 360deg
+        );
+      box-shadow:
+        0 0 0 8px rgba(255, 255, 255, 0.018),
+        0 0 0 9px rgba(184, 44, 62, 0.15),
+        0 25px 65px rgba(0, 0, 0, 0.48),
+        inset 0 0 45px rgba(0, 0, 0, 0.35);
+    }
+
+    .scout-wheel::before {
+      content: "";
+      position: absolute;
+      inset: 8%;
+      border: 1px solid rgba(255, 255, 255, 0.075);
+      border-radius: 50%;
+      pointer-events: none;
+    }
+
+    .scout-wheel::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      border-radius: inherit;
+      pointer-events: none;
+      background:
+        radial-gradient(
+          circle,
+          transparent 0 40%,
+          rgba(255, 255, 255, 0.018) 65%,
+          rgba(255, 255, 255, 0.06) 100%
+        );
+    }
+
+    .scout-wheel-label {
+      --label-angle: 0deg;
+
+      position: absolute;
+      z-index: 2;
+      top: 50%;
+      left: 50%;
+      width: 44%;
+      transform-origin: 0 50%;
+      transform:
+        rotate(var(--label-angle))
+        translateX(31%)
+        rotate(90deg);
+      color: rgba(255, 255, 255, 0.88);
+      font-size: clamp(0.58rem, 1.25vw, 0.76rem);
+      font-weight: 900;
+      letter-spacing: 0.07em;
+      text-align: center;
+      text-transform: uppercase;
+      text-shadow: 0 2px 8px rgba(0, 0, 0, 0.8);
+    }
+
+    .scout-wheel-label:nth-child(1) {
+      --label-angle: -90deg;
+    }
+
+    .scout-wheel-label:nth-child(2) {
+      --label-angle: -38.572deg;
+    }
+
+    .scout-wheel-label:nth-child(3) {
+      --label-angle: 12.856deg;
+    }
+
+    .scout-wheel-label:nth-child(4) {
+      --label-angle: 64.284deg;
+    }
+
+    .scout-wheel-label:nth-child(5) {
+      --label-angle: 115.712deg;
+    }
+
+    .scout-wheel-label:nth-child(6) {
+      --label-angle: 167.14deg;
+    }
+
+    .scout-wheel-label:nth-child(7) {
+      --label-angle: 218.568deg;
+    }
+
+    .scout-wheel-hub {
+      position: relative;
+      z-index: 10;
+      display: grid;
+      place-items: center;
+      width: 112px;
+      height: 112px;
+      padding: 0;
+      border: 1px solid rgba(255, 255, 255, 0.16);
+      border-radius: 50%;
+      background:
+        radial-gradient(
+          circle at 40% 32%,
+          #b72d43,
+          #761827 48%,
+          #25090e 100%
+        );
+      color: #fff;
+      font: inherit;
+      font-size: 0.8rem;
+      font-weight: 900;
+      letter-spacing: 0.16em;
+      cursor: pointer;
+      box-shadow:
+        0 12px 35px rgba(0, 0, 0, 0.6),
+        0 0 0 7px rgba(9, 9, 11, 0.9),
+        0 0 0 8px rgba(255, 255, 255, 0.08),
+        inset 0 1px 0 rgba(255, 255, 255, 0.18);
+      transition:
+        transform 160ms ease,
+        box-shadow 160ms ease,
+        opacity 160ms ease;
+    }
+
+    .scout-wheel-hub:hover:not(:disabled) {
+      transform: scale(1.055);
+      box-shadow:
+        0 15px 42px rgba(0, 0, 0, 0.68),
+        0 0 0 7px rgba(9, 9, 11, 0.9),
+        0 0 0 8px rgba(184, 44, 62, 0.32),
+        0 0 32px rgba(184, 44, 62, 0.18),
+        inset 0 1px 0 rgba(255, 255, 255, 0.2);
+    }
+
+    .scout-wheel-hub:disabled {
+      cursor: wait;
+      opacity: 0.68;
+    }
+
+    .scout-roulette-content {
+      position: relative;
+      display: flex;
+      min-width: 0;
+      align-items: center;
+      padding: 3.5rem;
+    }
+
+    .scout-roulette-idle,
+    .scout-roulette-result {
+      width: 100%;
+    }
+
+    .scout-roulette-kicker {
+      margin: 0 0 0.8rem;
+      color: #b82c3e;
+      font-size: 0.7rem;
+      font-weight: 900;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+    }
+
+    .scout-roulette-idle h3,
+    .scout-roulette-result h3 {
+      margin: 0;
+      color: #f1eee9;
+      font-size: clamp(2.25rem, 5vw, 4.1rem);
+      line-height: 0.98;
+      letter-spacing: -0.055em;
+    }
+
+    .scout-roulette-result h3 {
+      font-size: clamp(1.8rem, 4vw, 3.1rem);
+    }
+
+    .scout-roulette-copy {
+      max-width: 540px;
+      margin: 1.25rem 0 0;
+      color: rgba(241, 238, 233, 0.63);
+      font-size: 0.95rem;
+      line-height: 1.75;
+    }
+
+    .scout-roulette-category {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.45rem;
+      margin-top: 1.6rem;
+      padding: 0.6rem 0.75rem;
+      border: 1px solid rgba(184, 44, 62, 0.23);
+      border-radius: 8px;
+      background: rgba(134, 28, 43, 0.07);
+      color: rgba(241, 238, 233, 0.68);
+      font-size: 0.68rem;
+      font-weight: 800;
+      letter-spacing: 0.09em;
+      text-transform: uppercase;
+    }
+
+    .scout-roulette-category::before {
+      content: "◇";
+      color: #b82c3e;
+    }
+
+    .scout-roulette-reveal {
+      display: grid;
+      grid-template-columns: minmax(145px, 220px) minmax(0, 1fr);
+      align-items: center;
+      gap: 2rem;
+    }
+
+    .scout-roulette-card-shell {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 488 / 680;
+      overflow: hidden;
+      border-radius: 4.6% / 3.4%;
+      background: #111;
+      box-shadow:
+        0 22px 50px rgba(0, 0, 0, 0.52),
+        0 0 0 1px rgba(255, 255, 255, 0.08);
+      transform:
+        perspective(900px)
+        rotateY(-4deg)
+        rotateX(1deg);
+      animation: scoutRouletteReveal 520ms ease both;
+    }
+
+    .scout-roulette-card {
+      display: block;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .scout-roulette-meta {
+      margin: 0.8rem 0 0;
+      color: rgba(241, 238, 233, 0.42);
+      font-size: 0.7rem;
+      font-weight: 800;
+      line-height: 1.6;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .scout-roulette-actions {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 0.8rem;
+      margin-top: 1.5rem;
+    }
+
+    .scout-roulette-action,
+    .scout-roulette-again {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.6rem;
+      min-height: 43px;
+      padding: 0.7rem 0.95rem;
+      border-radius: 8px;
+      font: inherit;
+      font-size: 0.72rem;
+      font-weight: 900;
+      letter-spacing: 0.07em;
+      text-decoration: none;
+      text-transform: uppercase;
+      transition:
+        transform 160ms ease,
+        border-color 160ms ease,
+        background 160ms ease;
+    }
+
+    .scout-roulette-action {
+      border: 1px solid rgba(184, 44, 62, 0.48);
+      background: rgba(134, 28, 43, 0.17);
+      color: #f1eee9;
+    }
+
+    .scout-roulette-action:hover {
+      transform: translateY(-1px);
+      border-color: rgba(184, 44, 62, 0.9);
+      background: rgba(134, 28, 43, 0.27);
+    }
+
+    .scout-roulette-again {
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      background: rgba(255, 255, 255, 0.025);
+      color: rgba(241, 238, 233, 0.72);
+      cursor: pointer;
+    }
+
+    .scout-roulette-again:hover:not(:disabled) {
+      transform: translateY(-1px);
+      border-color: rgba(255, 255, 255, 0.2);
+      background: rgba(255, 255, 255, 0.05);
+    }
+
+    .scout-roulette-again:disabled {
+      cursor: wait;
+      opacity: 0.55;
+    }
+
+    .scout-roulette-error {
+      margin: 1rem 0 0;
+      color: #d77a87;
+      font-size: 0.78rem;
+      line-height: 1.6;
+    }
+
+    @keyframes scoutRouletteReveal {
+      from {
+        opacity: 0;
+        transform:
+          perspective(900px)
+          rotateY(-8deg)
+          rotateX(2deg)
+          translateY(14px)
+          scale(0.97);
+      }
+
+      to {
+        opacity: 1;
+        transform:
+          perspective(900px)
+          rotateY(-4deg)
+          rotateX(1deg)
+          translateY(0)
+          scale(1);
+      }
+    }
+
+    @media (max-width: 900px) {
+      .scout-roulette-panel {
+        grid-template-columns: 1fr;
+      }
+
+      .scout-roulette-stage {
+        padding: 3rem 2rem;
+        border-right: 0;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.055);
+      }
+
+      .scout-wheel-wrap {
+        width: min(360px, 88vw);
+      }
+
+      .scout-roulette-content {
+        padding: 2.6rem;
+      }
+    }
+
+    @media (max-width: 720px) {
+      .scout-roulette-section {
+        margin-top: 3.8rem;
+      }
+
+      .scout-roulette-heading {
+        align-items: flex-start;
+        flex-direction: column;
+        gap: 1rem;
+      }
+
+      .scout-roulette-stage {
+        padding: 2.5rem 1rem;
+      }
+
+      .scout-wheel-wrap {
+        width: min(320px, 82vw);
+      }
+
+      .scout-wheel-hub {
+        width: 96px;
+        height: 96px;
+        font-size: 0.7rem;
+      }
+
+      .scout-roulette-content {
+        padding: 2rem 1.35rem 2.3rem;
+      }
+
+      .scout-roulette-reveal {
+        grid-template-columns: 130px minmax(0, 1fr);
+        gap: 1.25rem;
+      }
+
+      .scout-roulette-result h3 {
+        font-size: clamp(1.55rem, 7vw, 2.5rem);
+      }
+    }
+
+    @media (max-width: 520px) {
+      .scout-roulette-reveal {
+        grid-template-columns: 1fr;
+      }
+
+      .scout-roulette-card-shell {
+        width: min(190px, 65%);
+      }
+
+      .scout-roulette-actions {
+        align-items: stretch;
+        flex-direction: column;
+      }
+
+      .scout-roulette-action,
+      .scout-roulette-again {
+        width: 100%;
+      }
+    }
+
+    @media (max-width: 390px) {
+      .scout-wheel-wrap {
+        width: min(285px, 82vw);
+      }
+
+      .scout-wheel-hub {
+        width: 88px;
+        height: 88px;
+      }
+
+      .scout-wheel-label {
+        font-size: 0.52rem;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .scout-wheel {
+        transition-duration: 80ms;
+      }
+
+      .scout-roulette-card-shell {
+        animation: none;
+      }
+    }
+  </style>
+
+
+  <section
+    class="scout-roulette-section container"
+    id="scout-roulette"
+    aria-labelledby="scout-roulette-heading"
+  >
+
+    <div class="scout-roulette-heading">
+
+      <div>
+
+        <p class="eyebrow">
+          ◇ SCOUT ROULETTE
+        </p>
+
+        <h2 id="scout-roulette-heading">
+          Let fate choose your next card
+        </h2>
+
+        <p>
+          Seven paths. One spin. ManaScout chooses the category
+          and scouts a real Magic card from Scryfall.
+        </p>
+
+      </div>
+
+      <span class="scout-roulette-badge">
+        POWERED BY FATE · DATA BY SCRYFALL
+      </span>
+
+    </div>
+
+
+    <div
+      class="scout-roulette-panel"
+      id="scout-roulette-panel"
+    >
+
+      <div class="scout-roulette-stage">
+
+        <div class="scout-wheel-wrap">
+
+          <div
+            class="scout-wheel-pointer"
+            aria-hidden="true"
+          ></div>
+
+
+          <div
+            class="scout-wheel"
+            id="scout-wheel"
+            aria-hidden="true"
+          >
+
+            <span class="scout-wheel-label">
+              Legendary
+            </span>
+
+            <span class="scout-wheel-label">
+              Artifact
+            </span>
+
+            <span class="scout-wheel-label">
+              Creature
+            </span>
+
+            <span class="scout-wheel-label">
+              Spell
+            </span>
+
+            <span class="scout-wheel-label">
+              Enchantment
+            </span>
+
+            <span class="scout-wheel-label">
+              Land
+            </span>
+
+            <span class="scout-wheel-label">
+              Wild
+            </span>
+
+          </div>
+
+
+          <button
+            class="scout-wheel-hub"
+            id="scout-roulette-spin"
+            type="button"
+            aria-label="Spin Scout Roulette"
+          >
+            SPIN
+          </button>
+
+        </div>
+
+      </div>
+
+
+      <div class="scout-roulette-content">
+
+        <div
+          class="scout-roulette-idle"
+          id="scout-roulette-idle"
+        >
+
+          <p class="scout-roulette-kicker">
+            SEVEN PATHS · ONE CARD
+          </p>
+
+          <h3>
+            What will<br>
+            you scout?
+          </h3>
+
+          <p class="scout-roulette-copy">
+            Legendary. Artifact. Creature. Spell. Enchantment.
+            Land. Wild. The wheel chooses the path — then
+            ManaScout finds your card.
+          </p>
+
+          <span
+            class="scout-roulette-category"
+            id="scout-roulette-status"
+          >
+            Awaiting your spin
+          </span>
+
+          <p
+            class="scout-roulette-error"
+            id="scout-roulette-error"
+            hidden
+          ></p>
+
+        </div>
+
+
+        <div
+          class="scout-roulette-result"
+          id="scout-roulette-result"
+          hidden
+        >
+
+          <div class="scout-roulette-reveal">
+
+            <div
+              class="scout-roulette-card-shell"
+              id="scout-roulette-card-shell"
+            >
+
+              <img
+                class="scout-roulette-card"
+                id="scout-roulette-card"
+                alt=""
+              >
+
+            </div>
+
+
+            <div class="scout-roulette-result-copy">
+
+              <p
+                class="scout-roulette-kicker"
+                id="scout-roulette-result-category"
+              >
+                SCOUT ROULETTE
+              </p>
+
+              <h3 id="scout-roulette-card-name">
+                Your card
+              </h3>
+
+              <p
+                class="scout-roulette-meta"
+                id="scout-roulette-card-meta"
+              ></p>
+
+              <p
+                class="scout-roulette-copy"
+                id="scout-roulette-card-copy"
+              >
+                Fate has spoken.
+              </p>
+
+
+              <div class="scout-roulette-actions">
+
+                <a
+                  class="scout-roulette-action"
+                  id="scout-roulette-action"
+                  href="/"
+                >
+                  Scout This Card
+                  <span aria-hidden="true">
+                    →
+                  </span>
+                </a>
+
+                <button
+                  class="scout-roulette-again"
+                  id="scout-roulette-again"
+                  type="button"
+                >
+                  Spin Again
+                </button>
+
+              </div>
+
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+
+  </section>
+
+
+  <script>
+    (() => {
+      "use strict";
+
+      const section =
+        document.getElementById(
+          "scout-roulette"
+        );
+
+      const wheel =
+        document.getElementById(
+          "scout-wheel"
+        );
+
+      const spinButton =
+        document.getElementById(
+          "scout-roulette-spin"
+        );
+
+      const againButton =
+        document.getElementById(
+          "scout-roulette-again"
+        );
+
+      const idle =
+        document.getElementById(
+          "scout-roulette-idle"
+        );
+
+      const result =
+        document.getElementById(
+          "scout-roulette-result"
+        );
+
+      const status =
+        document.getElementById(
+          "scout-roulette-status"
+        );
+
+      const errorMessage =
+        document.getElementById(
+          "scout-roulette-error"
+        );
+
+      const cardImage =
+        document.getElementById(
+          "scout-roulette-card"
+        );
+
+      const cardShell =
+        document.getElementById(
+          "scout-roulette-card-shell"
+        );
+
+      const cardName =
+        document.getElementById(
+          "scout-roulette-card-name"
+        );
+
+      const cardMeta =
+        document.getElementById(
+          "scout-roulette-card-meta"
+        );
+
+      const cardCopy =
+        document.getElementById(
+          "scout-roulette-card-copy"
+        );
+
+      const resultCategory =
+        document.getElementById(
+          "scout-roulette-result-category"
+        );
+
+      const action =
+        document.getElementById(
+          "scout-roulette-action"
+        );
+
+
+      if (
+        !section ||
+        !wheel ||
+        !spinButton ||
+        !idle ||
+        !result
+      ) {
+        return;
+      }
+
+
+      const categories = [
+        {
+          label: "Legendary",
+          query: "game:paper t:legendary",
+          copy:
+            "The wheel chose Legendary — a card with a name, story and reputation of its own."
+        },
+        {
+          label: "Artifact",
+          query: "game:paper t:artifact",
+          copy:
+            "The wheel chose Artifact — machinery, relics and strange objects from across Magic's history."
+        },
+        {
+          label: "Creature",
+          query: "game:paper t:creature -t:legendary",
+          copy:
+            "The wheel chose Creature — something from the enormous bestiary of Magic."
+        },
+        {
+          label: "Spell",
+          query: "game:paper (t:instant OR t:sorcery)",
+          copy:
+            "The wheel chose Spell — an instant or sorcery ready to change the game."
+        },
+        {
+          label: "Enchantment",
+          query: "game:paper t:enchantment -t:creature",
+          copy:
+            "The wheel chose Enchantment — persistent magic that reshapes the battlefield."
+        },
+        {
+          label: "Land",
+          query: "game:paper t:land",
+          copy:
+            "The wheel chose Land — one of the places, worlds or strange locations that power Magic."
+        },
+        {
+          label: "Wild",
+          query: "game:paper",
+          copy:
+            "The wheel chose Wild. No restrictions. Anything in paper Magic can appear."
+        }
+      ];
+
+
+      const segmentDegrees =
+        360 / categories.length;
+
+      let currentRotation = 0;
+      let spinning = false;
+
+
+      const reducedMotion =
+        window.matchMedia(
+          "(prefers-reduced-motion: reduce)"
+        );
+
+
+      function sleep(milliseconds) {
+        return new Promise(
+          resolve =>
+            window.setTimeout(
+              resolve,
+              milliseconds
+            )
+        );
+      }
+
+
+      function imageFor(card) {
+        return (
+          card?.image_uris?.normal ||
+          card?.card_faces?.[0]
+            ?.image_uris?.normal ||
+          ""
+        );
+      }
+
+
+      function setButtonsDisabled(disabled) {
+        spinButton.disabled =
+          disabled;
+
+        if (againButton) {
+          againButton.disabled =
+            disabled;
+        }
+      }
+
+
+      function setError(message = "") {
+        if (!errorMessage) {
+          return;
+        }
+
+        errorMessage.textContent =
+          message;
+
+        errorMessage.hidden =
+          !message;
+      }
+
+
+      function cardMetadata(card) {
+        const parts = [];
+
+        if (card.set_name) {
+          parts.push(
+            card.set_name
+          );
+        }
+
+        if (card.collector_number) {
+          parts.push(
+            `#${card.collector_number}`
+          );
+        }
+
+        if (card.type_line) {
+          parts.push(
+            card.type_line
+          );
+        }
+
+        return parts.join(
+          " · "
+        );
+      }
+
+
+      function exactCardHref(card) {
+        const params =
+          new URLSearchParams();
+
+        params.set(
+          "q",
+          card.name
+        );
+
+        params.set(
+          "printing",
+          card.id
+        );
+
+        return `/?${params.toString()}`;
+      }
+
+
+      async function fetchRandomCard(
+        category
+      ) {
+        const url =
+          `https://api.scryfall.com/cards/random?q=${encodeURIComponent(category.query)}`;
+
+        const response =
+          await fetch(
+            url,
+            {
+              headers: {
+                "Accept":
+                  "application/json"
+              }
+            }
+          );
+
+        if (!response.ok) {
+          throw new Error(
+            `Scryfall returned ${response.status}`
+          );
+        }
+
+        const card =
+          await response.json();
+
+        if (
+          !card?.name ||
+          !card?.id ||
+          !imageFor(card)
+        ) {
+          throw new Error(
+            "The selected card did not contain usable card data."
+          );
+        }
+
+        return card;
+      }
+
+
+      function targetRotationFor(
+        categoryIndex
+      ) {
+        /*
+          Segment zero is centred on the pointer when the
+          wheel is at zero degrees.
+
+          We keep adding whole rotations so the wheel always
+          spins forwards rather than snapping backwards.
+        */
+
+        const normalizedCurrent =
+          ((currentRotation % 360) + 360) %
+          360;
+
+        const desiredNormalized =
+          (
+            360 -
+            categoryIndex *
+              segmentDegrees
+          ) % 360;
+
+        let forwardDistance =
+          (
+            desiredNormalized -
+            normalizedCurrent +
+            360
+          ) % 360;
+
+        if (forwardDistance < 1) {
+          forwardDistance =
+            360;
+        }
+
+        return (
+          currentRotation +
+          (360 * 7) +
+          forwardDistance
+        );
+      }
+
+
+      function showResult(
+        category,
+        card
+      ) {
+        const imageUrl =
+          imageFor(card);
+
+        cardImage.src =
+          imageUrl;
+
+        cardImage.alt =
+          `${card.name} — ${card.set_name || "Magic printing"}`;
+
+        cardName.textContent =
+          card.name;
+
+        cardMeta.textContent =
+          cardMetadata(card);
+
+        cardCopy.textContent =
+          category.copy;
+
+        resultCategory.textContent =
+          `${category.label.toUpperCase()} · FATE HAS SPOKEN`;
+
+        action.href =
+          exactCardHref(card);
+
+
+        /*
+          Restart the reveal animation on every spin.
+        */
+
+        if (cardShell) {
+          cardShell.style.animation =
+            "none";
+
+          void cardShell.offsetWidth;
+
+          cardShell.style.animation =
+            "";
+        }
+
+
+        idle.hidden =
+          true;
+
+        result.hidden =
+          false;
+      }
+
+
+      async function spin() {
+        if (spinning) {
+          return;
+        }
+
+        spinning =
+          true;
+
+        setButtonsDisabled(
+          true
+        );
+
+        setError();
+
+        result.hidden =
+          true;
+
+        idle.hidden =
+          false;
+
+
+        const categoryIndex =
+          Math.floor(
+            Math.random() *
+            categories.length
+          );
+
+        const category =
+          categories[
+            categoryIndex
+          ];
+
+
+        status.textContent =
+          `Scouting ${category.label}…`;
+
+
+        const targetRotation =
+          targetRotationFor(
+            categoryIndex
+          );
+
+        currentRotation =
+          targetRotation;
+
+        wheel.style.setProperty(
+          "--roulette-rotation",
+          `${targetRotation}deg`
+        );
+
+
+        /*
+          Start the API request while the wheel is moving.
+          This means the animation doesn't add unnecessary
+          waiting after Scryfall has already answered.
+        */
+
+        const cardPromise =
+          fetchRandomCard(
+            category
+          );
+
+
+        try {
+          const [
+            card
+          ] =
+            await Promise.all([
+              cardPromise,
+              sleep(
+                reducedMotion.matches
+                  ? 100
+                  : 5300
+              )
+            ]);
+
+
+          status.textContent =
+            `${category.label} selected`;
+
+          showResult(
+            category,
+            card
+          );
+
+        } catch (error) {
+          console.error(
+            "ManaScout Scout Roulette failed:",
+            error
+          );
+
+          status.textContent =
+            "The wheel needs another spin";
+
+          setError(
+            "ManaScout couldn't pull a card from Scryfall this time. Give the wheel another spin."
+          );
+
+        } finally {
+          spinning =
+            false;
+
+          setButtonsDisabled(
+            false
+          );
+        }
+      }
+
+
+      spinButton.addEventListener(
+        "click",
+        spin
+      );
+
+
+      againButton?.addEventListener(
+        "click",
+        spin
+      );
+
+
+      /*
+        The Roulette sits at the bottom of the homepage,
+        so hide it whenever ManaScout is displaying a
+        searched card. This keeps search results focused
+        and matches the behaviour of the other discovery
+        sections.
+      */
+
+      function syncVisibility() {
+        section.hidden =
+          new URLSearchParams(
+            window.location.search
+          ).has("q");
+      }
+
+
+      window.addEventListener(
+        "popstate",
+        () => {
+          window.setTimeout(
+            syncVisibility,
+            0
+          );
+        }
+      );
+
+
+      const observer =
+        new MutationObserver(
+          syncVisibility
+        );
+
+      const details =
+        document.getElementById(
+          "card-details"
+        );
+
+      if (details) {
+        observer.observe(
+          details,
+          {
+            childList: true,
+            subtree: true
+          }
+        );
+      }
+
+
+      syncVisibility();
+
+    })();
+  </script>
 
 </body>
 </html>
