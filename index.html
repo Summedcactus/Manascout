@@ -187,6 +187,56 @@
 
       </div>
 
+      <!-- MANASCOUT PICK EXPLAINER -->
+      <div
+        class="manascout-pick-explainer"
+        style="
+          max-width: 760px;
+          margin: 1.25rem auto 0;
+          padding: 0.9rem 1rem;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          gap: 0.75rem;
+          flex-wrap: wrap;
+          border: 1px solid rgba(184, 44, 62, 0.22);
+          border-radius: 10px;
+          background: linear-gradient(
+            135deg,
+            rgba(134, 28, 43, 0.09),
+            rgba(134, 28, 43, 0.025)
+          );
+          box-shadow: inset 0 1px 0 rgba(255,255,255,0.02);
+          text-align: center;
+        "
+      >
+
+        <span
+          style="
+            color: #b82c3e;
+            font-size: 0.7rem;
+            font-weight: 900;
+            letter-spacing: 0.11em;
+            white-space: nowrap;
+          "
+        >
+          ◇ MANASCOUT PICK
+        </span>
+
+        <span
+          style="
+            color: rgba(241,238,233,0.58);
+            font-size: 0.76rem;
+            line-height: 1.55;
+          "
+        >
+          Too many printings? We scout standout artwork,
+          treatments and collectability — then surface one
+          of our favourite versions.
+        </span>
+
+      </div>
+
 
       <!-- DISCOVER -->
       <div
@@ -455,8 +505,7 @@
                   artwork and finishes and find the version that belongs in
                   your collection.
                 </p>
-
-                <a
+                                <a
                   class="featured-explore"
                   href="/card/the-one-ring/"
                 >
@@ -1034,6 +1083,227 @@
     </script>
 
 
+    <!-- SCOUT ROULETTE -->
+    <section
+ class="scout-roulette-section"
+      id="scout-roulette"
+      aria-labelledby="scout-roulette-heading"
+    >
+
+      <div class="scout-roulette-heading">
+
+        <div>
+
+          <p class="eyebrow">
+            ◇ SCOUT ROULETTE
+          </p>
+
+          <h2 id="scout-roulette-heading">
+            Let fate choose your next card
+          </h2>
+
+          <p>
+            Seven paths. One spin. ManaScout chooses the category
+            and scouts a real Magic card from Scryfall.
+          </p>
+
+        </div>
+
+        <span class="scout-roulette-badge">
+          POWERED BY FATE · DATA BY SCRYFALL
+        </span>
+
+      </div>
+
+
+      <div
+        class="scout-roulette-panel"
+        id="scout-roulette-panel"
+      >
+
+        <div class="scout-roulette-stage">
+
+          <div class="scout-wheel-wrap">
+
+            <div
+              class="scout-wheel-pointer"
+              aria-hidden="true"
+            ></div>
+
+
+            <div
+              class="scout-wheel"
+              id="scout-wheel"
+              aria-hidden="true"
+            >
+
+              <span class="scout-wheel-label">
+                Legendary
+              </span>
+
+              <span class="scout-wheel-label">
+                Artifact
+              </span>
+
+              <span class="scout-wheel-label">
+                Creature
+              </span>
+
+              <span class="scout-wheel-label">
+                Spell
+              </span>
+
+              <span class="scout-wheel-label">
+                Enchantment
+              </span>
+
+              <span class="scout-wheel-label">
+                Land
+              </span>
+
+              <span class="scout-wheel-label">
+                Wild
+              </span>
+
+            </div>
+
+
+            <button
+              class="scout-wheel-hub"
+              id="scout-roulette-spin"
+              type="button"
+              aria-label="Spin Scout Roulette"
+            >
+              SPIN
+            </button>
+
+          </div>
+
+        </div>
+
+
+        <div class="scout-roulette-content">
+
+          <div
+            class="scout-roulette-idle"
+            id="scout-roulette-idle"
+          >
+
+            <p class="scout-roulette-kicker">
+              SEVEN PATHS · ONE CARD
+            </p>
+
+            <h3>
+              What will<br>
+              you scout?
+            </h3>
+
+            <p class="scout-roulette-copy">
+              Legendary. Artifact. Creature. Spell. Enchantment.
+              Land. Wild. The wheel chooses the path — then
+              ManaScout finds your card.
+            </p>
+
+            <span
+              class="scout-roulette-category"
+              id="scout-roulette-status"
+            >
+              Awaiting your spin
+            </span>
+
+            <p
+              class="scout-roulette-error"
+              id="scout-roulette-error"
+              hidden
+            ></p>
+
+          </div>
+
+
+          <div
+            class="scout-roulette-result"
+            id="scout-roulette-result"
+            hidden
+          >
+
+            <div class="scout-roulette-reveal">
+
+              <div
+                class="scout-roulette-card-shell"
+                id="scout-roulette-card-shell"
+              >
+
+                <img
+                  class="scout-roulette-card"
+                  id="scout-roulette-card"
+                  alt=""
+                >
+
+              </div>
+
+
+              <div class="scout-roulette-result-copy">
+
+                <p
+                  class="scout-roulette-kicker"
+                  id="scout-roulette-result-category"
+                >
+                  SCOUT ROULETTE
+                </p>
+
+                <h3 id="scout-roulette-card-name">
+                  Your card
+                </h3>
+
+                <p
+                  class="scout-roulette-meta"
+                  id="scout-roulette-card-meta"
+                ></p>
+
+                <p
+                  class="scout-roulette-copy"
+                  id="scout-roulette-card-copy"
+                >
+                  Fate has spoken.
+                </p>
+
+
+                <div class="scout-roulette-actions">
+
+                  <a
+                    class="scout-roulette-action"
+                    id="scout-roulette-action"
+                    href="/"
+                  >
+                    Scout This Card
+                    <span aria-hidden="true">
+                      →
+                    </span>
+                  </a>
+
+                  <button
+                    class="scout-roulette-again"
+                    id="scout-roulette-again"
+                    type="button"
+                  >
+                    Spin Again
+                  </button>
+
+                </div>
+
+              </div>
+
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </section>
+
+
     <!-- PRINTINGS -->
     <section
       class="printings-section"
@@ -1233,126 +1503,16 @@
           "0"
         );
       }
-
-
-      function createDots() {
-        if (!dots) {
-          return;
-        }
-
-        dots.innerHTML =
-          cards
-            .map(
-              (card, index) => {
-                const title =
-                  card
-                    .querySelector("h3")
-                    ?.textContent
-                    ?.trim() ||
-                  `featured card ${index + 1}`;
-
-                return `
-                  <button
-                    type="button"
-                    class="featured-dot"
-                    data-featured-index="${index}"
-                    aria-label="Show ${title}"
-                  ></button>
-                `;
-              }
-            )
-            .join("");
-      }
-
-
-      function updateCarousel() {
-        track.style.transform =
-          `translateX(-${current * 100}%)`;
-
-        if (counter) {
-          counter.textContent =
-            twoDigits(current + 1);
-        }
-
-        dots
-          ?.querySelectorAll(
-            ".featured-dot"
-          )
-          .forEach(
-            (dot, index) => {
-              const active =
-                index === current;
-
-              dot.classList.toggle(
-                "is-active",
-                active
-              );
-
-              dot.setAttribute(
-                "aria-current",
-                active
-                  ? "true"
-                  : "false"
-              );
-            }
-          );
-      }
-
-
-      function goTo(index) {
-        current =
-          (index + cards.length) %
-          cards.length;
-
-        updateCarousel();
-      }
-
-
-      function pauseAutoplay() {
-        if (!autoplayTimer) {
-          return;
-        }
-
-        window.clearInterval(
-          autoplayTimer
-        );
-
-        autoplayTimer = null;
-      }
-
-
-      function stopAutoplay() {
-        userHasInteracted = true;
-        pauseAutoplay();
-      }
-
-
-      function startAutoplay() {
-        if (
-          featuredSection.hidden ||
-          userHasInteracted ||
-          autoplayTimer ||
-          window.matchMedia(
-            "(prefers-reduced-motion: reduce)"
-          ).matches
-        ) {
-          return;
-        }
-
-        autoplayTimer =
-          window.setInterval(
-            () => {
-              goTo(current + 1);
-            },
-            6500
-          );
-      }
-
-
-      function imageFor(card) {
+            function imageFor(printing) {
         return (
-          card.image_uris?.normal ||
-          card.card_faces?.[0]
+          printing?.image_uris?.art_crop ||
+          printing?.image_uris?.large ||
+          printing?.image_uris?.normal ||
+          printing?.card_faces?.[0]
+            ?.image_uris?.art_crop ||
+          printing?.card_faces?.[0]
+            ?.image_uris?.large ||
+          printing?.card_faces?.[0]
             ?.image_uris?.normal ||
           ""
         );
@@ -1368,134 +1528,116 @@
         const effects =
           printing.frame_effects || [];
 
-        const promos =
-          printing.promo_types || [];
-
         const finishes =
           printing.finishes || [];
 
-
-        if (imageFor(printing)) {
-          score += 5;
-        }
-
-        if (printing.full_art) {
-          score += 34;
-        }
-
-        if (
+        const borderless =
           printing.border_color ===
-          "borderless"
-        ) {
-          score += 26;
-        }
+          "borderless";
 
-        if (
-          effects.includes("showcase")
-        ) {
-          score += 42;
-        }
+        const showcase =
+          effects.includes("showcase");
 
-        if (
-          effects.includes("extendedart")
-        ) {
-          score += 30;
-        }
+        const extended =
+          effects.includes("extendedart");
 
-        if (
-          effects.includes("inverted")
-        ) {
-          score += 22;
-        }
+        const fullArt =
+          Boolean(printing.full_art);
 
-        if (
-          effects.includes("etched")
-        ) {
-          score += 18;
-        }
+        const etched =
+          finishes.includes("etched");
 
-        if (
-          finishes.includes("etched")
-        ) {
-          score += 18;
-        }
+        const foil =
+          finishes.includes("foil");
 
-        if (
-          finishes.includes("foil")
-        ) {
-          score += 7;
-        }
+        const promo =
+          Boolean(printing.promo);
 
-        if (
-          promos.includes("boosterfun")
-        ) {
-          score += 20;
-        }
+        const digital =
+          Boolean(printing.digital);
 
-        if (
-          promos.includes("textured")
-        ) {
-          score += 22;
-        }
 
-        if (
-          promos.includes("serialized")
-        ) {
-          score += 12;
-        }
-
-        if (printing.promo) {
-          score += 5;
+        if (digital) {
+          score -= 1000;
         }
 
 
         if (
           preference === "premium"
         ) {
-          if (printing.full_art) {
-            score += 22;
+          if (fullArt) {
+            score += 90;
           }
 
-          if (
-            printing.border_color ===
-            "borderless"
-          ) {
-            score += 18;
+          if (showcase) {
+            score += 85;
           }
 
-          if (
-            effects.includes("showcase")
-          ) {
-            score += 26;
+          if (borderless) {
+            score += 80;
           }
 
-          if (
-            promos.includes("boosterfun")
-          ) {
-            score += 18;
+          if (extended) {
+            score += 70;
           }
-        }
 
+          if (etched) {
+            score += 50;
+          }
 
-        if (
+          if (foil) {
+            score += 25;
+          }
+
+          if (promo) {
+            score += 15;
+          }
+
+        } else if (
           preference === "alternate"
         ) {
-          if (
-            printing.full_art ||
-            printing.border_color ===
-              "borderless"
-          ) {
+          if (showcase) {
+            score += 90;
+          }
+
+          if (fullArt) {
+            score += 85;
+          }
+
+          if (borderless) {
+            score += 80;
+          }
+
+          if (extended) {
+            score += 70;
+          }
+
+          if (promo) {
+            score += 25;
+          }
+
+          if (etched) {
             score += 20;
           }
 
-          if (effects.length) {
-            score += 14;
-          }
-
-          if (printing.promo) {
-            score += 8;
+          if (foil) {
+            score += 10;
           }
         }
+
+
+        const released =
+          Date.parse(
+            printing.released_at || ""
+          );
+
+        if (
+          Number.isFinite(released)
+        ) {
+          score +=
+            released / 10000000000000;
+        }
+
 
         return score;
       }
@@ -1508,8 +1650,10 @@
         const usable =
           printings.filter(
             printing =>
+              !printing.digital &&
               imageFor(printing)
           );
+
 
         if (!usable.length) {
           return null;
@@ -1563,7 +1707,9 @@
           }
         )[0];
       }
-            function printingLabel(printing) {
+
+
+      function printingLabel(printing) {
         const setName =
           printing.set_name ||
           printing.set?.toUpperCase() ||
@@ -1629,7 +1775,7 @@
 
 
         return (
-          `${setName}${collector}${treatmentText}`
+          `◇ MANASCOUT PICK · ${setName}${collector}${treatmentText}`
         ).toUpperCase();
       }
 
@@ -1849,27 +1995,164 @@
 
           } catch (error) {
             console.warn(
-              `Featured artwork unavailable for ${name}`,
+              `ManaScout featured artwork failed for ${name}:`,
               error
             );
           }
 
 
-          await sleep(120);
+          await sleep(90);
         }
       }
 
 
-      createDots();
-      updateCarousel();
-      syncFeaturedVisibility();
+      function createDots() {
+        if (!dots) {
+          return;
+        }
+
+        dots.innerHTML = "";
+
+        cards.forEach(
+          (_, index) => {
+            const button =
+              document.createElement(
+                "button"
+              );
+
+            button.type =
+              "button";
+
+            button.className =
+              "featured-dot";
+
+            button.setAttribute(
+              "aria-label",
+              `Show featured card ${index + 1}`
+            );
+
+            button.addEventListener(
+              "click",
+              () => {
+                userHasInteracted =
+                  true;
+
+                showCard(index);
+
+                pauseAutoplay();
+              }
+            );
+
+            dots.appendChild(
+              button
+            );
+          }
+        );
+      }
+
+
+      function updateDots() {
+        if (!dots) {
+          return;
+        }
+
+        [
+          ...dots.querySelectorAll(
+            ".featured-dot"
+          )
+        ].forEach(
+          (dot, index) => {
+            dot.classList.toggle(
+              "active",
+              index === current
+            );
+
+            dot.setAttribute(
+              "aria-current",
+              index === current
+                ? "true"
+                : "false"
+            );
+          }
+        );
+      }
+
+
+      function showCard(index) {
+        current =
+          (
+            index +
+            cards.length
+          ) %
+          cards.length;
+
+        track.style.transform =
+          `translateX(-${current * 100}%)`;
+
+        if (counter) {
+          counter.textContent =
+            twoDigits(
+              current + 1
+            );
+        }
+
+        updateDots();
+      }
+
+
+      function previousCard() {
+        showCard(
+          current - 1
+        );
+      }
+
+
+      function nextCard() {
+        showCard(
+          current + 1
+        );
+      }
+
+
+      function pauseAutoplay() {
+        if (autoplayTimer) {
+          window.clearInterval(
+            autoplayTimer
+          );
+
+          autoplayTimer =
+            null;
+        }
+      }
+
+
+      function startAutoplay() {
+        pauseAutoplay();
+
+        if (
+          userHasInteracted ||
+          hasSearchQuery()
+        ) {
+          return;
+        }
+
+        autoplayTimer =
+          window.setInterval(
+            nextCard,
+            7000
+          );
+      }
 
 
       previous?.addEventListener(
         "click",
         () => {
-          stopAutoplay();
-          goTo(current - 1);
+          userHasInteracted =
+            true;
+
+          previousCard();
+
+          pauseAutoplay();
         }
       );
 
@@ -1877,32 +2160,48 @@
       next?.addEventListener(
         "click",
         () => {
-          stopAutoplay();
-          goTo(current + 1);
+          userHasInteracted =
+            true;
+
+          nextCard();
+
+          pauseAutoplay();
         }
       );
 
 
-      dots?.addEventListener(
-        "click",
-        event => {
-          const dot =
-            event.target.closest(
-              "[data-featured-index]"
-            );
+      carousel.addEventListener(
+        "mouseenter",
+        pauseAutoplay
+      );
 
-          if (!dot) {
-            return;
+
+      carousel.addEventListener(
+        "mouseleave",
+        () => {
+          if (
+            !userHasInteracted
+          ) {
+            startAutoplay();
           }
+        }
+      );
 
-          stopAutoplay();
 
-          goTo(
-            Number(
-              dot.dataset
-                .featuredIndex
-            )
-          );
+      carousel.addEventListener(
+        "focusin",
+        pauseAutoplay
+      );
+
+
+      carousel.addEventListener(
+        "focusout",
+        () => {
+          if (
+            !userHasInteracted
+          ) {
+            startAutoplay();
+          }
         }
       );
 
@@ -1911,9 +2210,8 @@
         "touchstart",
         event => {
           touchStartX =
-            event.changedTouches[0]
-              ?.clientX ??
-            null;
+            event.changedTouches?.[0]
+              ?.clientX ?? null;
         },
         {
           passive: true
@@ -1930,13 +2228,12 @@
             return;
           }
 
-          const endX =
-            event.changedTouches[0]
-              ?.clientX ??
-            touchStartX;
+          const touchEndX =
+            event.changedTouches?.[0]
+              ?.clientX ?? touchStartX;
 
-          const distance =
-            endX -
+          const difference =
+            touchEndX -
             touchStartX;
 
           touchStartX =
@@ -1944,20 +2241,28 @@
 
 
           if (
-            Math.abs(distance) <
-            45
+            Math.abs(
+              difference
+            ) < 45
           ) {
             return;
           }
 
 
-          stopAutoplay();
+          userHasInteracted =
+            true;
 
-          goTo(
-            distance < 0
-              ? current + 1
-              : current - 1
-          );
+          pauseAutoplay();
+
+
+          if (
+            difference < 0
+          ) {
+            nextCard();
+
+          } else {
+            previousCard();
+          }
         },
         {
           passive: true
@@ -1965,50 +2270,107 @@
       );
 
 
-      carousel.addEventListener(
-        "mouseenter",
-        pauseAutoplay
-      );
+      createDots();
+
+      showCard(0);
+
+      syncFeaturedVisibility();
 
 
-      carousel.addEventListener(
-        "mouseleave",
-        startAutoplay
-      );
+      /*
+        Search changes the URL with history.pushState rather than
+        performing a full page navigation. Listen for those changes
+        so the discovery sections disappear when a card is being
+        viewed and return when the homepage is restored.
+      */
+
+      const originalPushState =
+        history.pushState.bind(
+          history
+        );
+
+      const originalReplaceState =
+        history.replaceState.bind(
+          history
+        );
 
 
-      searchForm?.addEventListener(
-        "submit",
-        () => {
-          if (
-            searchInput?.value.trim()
-          ) {
-            setDiscoverySectionsVisible(
-              false
+      history.pushState =
+        function (...args) {
+          const result =
+            originalPushState(
+              ...args
             );
-          }
-        }
-      );
 
-
-      autocomplete?.addEventListener(
-        "click",
-        event => {
-          if (
-            event.target.closest(
-              "[data-name]"
+          window.dispatchEvent(
+            new Event(
+              "manascout:urlchange"
             )
-          ) {
-            setDiscoverySectionsVisible(
-              false
+          );
+
+          return result;
+        };
+
+
+      history.replaceState =
+        function (...args) {
+          const result =
+            originalReplaceState(
+              ...args
             );
-          }
-        }
-      );
+
+          window.dispatchEvent(
+            new Event(
+              "manascout:urlchange"
+            )
+          );
+
+          return result;
+        };
 
 
       window.addEventListener(
         "popstate",
+        syncFeaturedVisibility
+      );
+
+
+      window.addEventListener(
+        "manascout:urlchange",
+        syncFeaturedVisibility
+      );
+
+
+      /*
+        The MutationObserver is retained as a second signal because
+        the main application may update the card result before or
+        after it changes browser history.
+      */
+
+      if (cardDetails) {
+        const observer =
+          new MutationObserver(
+            syncFeaturedVisibility
+          );
+
+        observer.observe(
+          cardDetails,
+          {
+            childList: true,
+            subtree: true
+          }
+        );
+      }
+
+
+      /*
+        Clicking an autocomplete result can happen immediately before
+        the application updates history. This micro-delay catches that
+        path without changing app.js.
+      */
+
+      autocomplete?.addEventListener(
+        "click",
         () => {
           window.setTimeout(
             syncFeaturedVisibility,
@@ -2018,43 +2380,26 @@
       );
 
 
-      const originalPushState =
-        history.pushState.bind(
-          history
-        );
-
-      history.pushState =
-        (...args) => {
-          originalPushState(
-            ...args
+      searchForm?.addEventListener(
+        "submit",
+        () => {
+          window.setTimeout(
+            syncFeaturedVisibility,
+            0
           );
+        }
+      );
 
-          syncFeaturedVisibility();
-        };
 
-
-      const originalReplaceState =
-        history.replaceState.bind(
-          history
-        );
-
-      history.replaceState =
-        (...args) => {
-          originalReplaceState(
-            ...args
+      searchInput?.addEventListener(
+        "search",
+        () => {
+          window.setTimeout(
+            syncFeaturedVisibility,
+            0
           );
-
-          syncFeaturedVisibility();
-        };
-
-
-      if (
-        cardDetails &&
-        !hasSearchQuery()
-      ) {
-        cardDetails.innerHTML =
-          "";
-      }
+        }
+      );
 
     })();
   </script>
@@ -2065,20 +2410,21 @@
     (() => {
       "use strict";
 
-      const section =
-        document.getElementById(
-          "card-of-the-week"
-        );
-
       const feature =
-        section?.querySelector(
+        document.querySelector(
           "[data-weekly-card]"
         );
 
-      const card =
-        document.getElementById(
-          "card-week-card"
-        );
+      if (!feature) {
+        return;
+      }
+
+
+      const cardName =
+        feature.dataset.weeklyCard;
+
+      const printingId =
+        feature.dataset.weeklyPrintingId;
 
       const image =
         document.getElementById(
@@ -2095,87 +2441,93 @@
           "card-week-printing"
         );
 
-      const exploreLink =
+      const link =
         document.getElementById(
           "card-week-link"
         );
 
+      const card =
+        document.getElementById(
+          "card-week-card"
+        );
+
 
       if (
-        !section ||
-        !feature ||
-        !card ||
-        !image
+        !cardName ||
+        !printingId ||
+        !image ||
+        !card
       ) {
         return;
       }
 
 
-      const cardName =
-        feature.dataset.weeklyCard ||
-        "Rhystic Study";
-
-      const exactPrintingId =
-        feature.dataset.weeklyPrintingId ||
-        "";
-
-
-      function imageFor(cardData) {
+      function imageFor(data) {
         return (
-          cardData.image_uris?.normal ||
-          cardData.card_faces?.[0]
+          data?.image_uris?.normal ||
+          data?.image_uris?.large ||
+          data?.card_faces?.[0]
             ?.image_uris?.normal ||
+          data?.card_faces?.[0]
+            ?.image_uris?.large ||
           ""
         );
       }
 
 
-      function setExactExploreLink(
-        selected
-      ) {
+      function displayPrinting(data) {
+        const parts = [];
+
+        if (data.set_name) {
+          parts.push(
+            data.set_name
+          );
+        }
+
         if (
-          !exploreLink ||
-          !selected?.id
+          data.collector_number
         ) {
+          parts.push(
+            `#${data.collector_number}`
+          );
+        }
+
+        return parts
+          .join(" · ")
+          .toUpperCase();
+      }
+
+
+      function setExactLink() {
+        if (!link) {
           return;
         }
 
-        const url =
-          new URL(
-            "/",
-            window.location.origin
-          );
+        const params =
+          new URLSearchParams();
 
-        url.searchParams.set(
+        params.set(
           "q",
           cardName
         );
 
-        url.searchParams.set(
+        params.set(
           "printing",
-          selected.id
+          printingId
         );
 
-        exploreLink.href =
-          url.pathname +
-          url.search;
+        link.href =
+          `/?${params.toString()}`;
       }
 
 
-      async function fetchWeeklyCard() {
-        /*
-          Card of the Week now stores its exact Scryfall
-          printing ID in the HTML.
+      async function loadWeeklyCard() {
+        setExactLink();
 
-          This avoids re-scoring every version each week
-          and guarantees that the editorial artwork is the
-          printing ManaScout actually intended to feature.
-        */
-
-        if (exactPrintingId) {
+        try {
           const response =
             await fetch(
-              `https://api.scryfall.com/cards/${encodeURIComponent(exactPrintingId)}`,
+              `https://api.scryfall.com/cards/${encodeURIComponent(printingId)}`,
               {
                 headers: {
                   "Accept":
@@ -2192,69 +2544,25 @@
           }
 
 
-          return response.json();
-        }
-
-
-        /*
-          Fallback only.
-
-          If a future weekly entry is accidentally added
-          without an exact printing ID, ManaScout can still
-          display the card instead of leaving the feature
-          empty.
-        */
-
-        const namedResponse =
-          await fetch(
-            `https://api.scryfall.com/cards/named?exact=${encodeURIComponent(cardName)}`,
-            {
-              headers: {
-                "Accept":
-                  "application/json"
-              }
-            }
-          );
-
-
-        if (!namedResponse.ok) {
-          throw new Error(
-            `Scryfall returned ${namedResponse.status}`
-          );
-        }
-
-
-        return namedResponse.json();
-      }
-
-
-      async function loadWeeklyCard() {
-        try {
-          const selected =
-            await fetchWeeklyCard();
+          const data =
+            await response.json();
 
           const imageUrl =
-            imageFor(selected);
+            imageFor(data);
 
 
-          if (
-            !selected ||
-            !imageUrl
-          ) {
+          if (!imageUrl) {
             throw new Error(
-              "No usable weekly-card printing found."
+              "No usable card image was returned."
             );
           }
 
 
-          card.dataset.printingId =
-            selected.id || "";
+          image.src =
+            imageUrl;
 
-
-          setExactExploreLink(
-            selected
-          );
-
+          image.alt =
+            `${cardName} — ${data.set_name || "featured printing"}`;
 
           image.addEventListener(
             "load",
@@ -2262,18 +2570,10 @@
               image.hidden =
                 false;
 
-              placeholder?.setAttribute(
-                "hidden",
-                ""
-              );
-
-              window.requestAnimationFrame(
-                () => {
-                  card.classList.add(
-                    "is-loaded"
-                  );
-                }
-              );
+              if (placeholder) {
+                placeholder.hidden =
+                  true;
+              }
             },
             {
               once: true
@@ -2281,32 +2581,30 @@
           );
 
 
-          image.src =
-            imageUrl;
+          if (
+            image.complete &&
+            image.naturalWidth
+          ) {
+            image.hidden =
+              false;
 
-          image.alt =
-            `${cardName} — ${
-              selected.set_name ||
-              "Magic printing"
-            }`;
+            if (placeholder) {
+              placeholder.hidden =
+                true;
+            }
+          }
 
 
           if (printing) {
-            const collector =
-              selected.collector_number
-                ? ` · #${selected.collector_number}`
-                : "";
-
             printing.textContent =
-              `${
-                selected.set_name ||
-                "Magic printing"
-              }${collector}`.toUpperCase();
+              displayPrinting(
+                data
+              );
           }
 
         } catch (error) {
           console.warn(
-            "Card of the Week artwork unavailable:",
+            "ManaScout Card of the Week image failed:",
             error
           );
 
@@ -2318,68 +2616,76 @@
 
             if (small) {
               small.textContent =
-                cardName.toUpperCase();
+                "RHYSTIC STUDY · WEEK 002";
             }
           }
         }
       }
 
 
-      const reducedMotion =
+      /*
+        Restrained interactive foil.
+
+        The effect follows the pointer on devices that support
+        hover, but the card remains readable and static enough
+        to feel like part of ManaScout rather than a novelty UI.
+      */
+
+      if (
         window.matchMedia(
-          "(prefers-reduced-motion: reduce)"
-        );
-
-
-      if (!reducedMotion.matches) {
+          "(hover: hover) and (pointer: fine)"
+        ).matches
+      ) {
         card.addEventListener(
           "pointermove",
           event => {
-            if (
-              event.pointerType ===
-              "touch"
-            ) {
-              return;
-            }
-
-            const rect =
+            const bounds =
               card.getBoundingClientRect();
 
             const x =
-              (event.clientX -
-                rect.left) /
-              rect.width;
+              (
+                (
+                  event.clientX -
+                  bounds.left
+                ) /
+                bounds.width
+              ) *
+              100;
 
             const y =
-              (event.clientY -
-                rect.top) /
-              rect.height;
-
-            const rotateY =
-              (x - .5) * 5;
-
-            const rotateX =
-              (.5 - y) * 5;
-
+              (
+                (
+                  event.clientY -
+                  bounds.top
+                ) /
+                bounds.height
+              ) *
+              100;
 
             card.style.setProperty(
-              "--week-rx",
-              `${rotateX}deg`
+              "--foil-x",
+              `${x}%`
             );
 
             card.style.setProperty(
-              "--week-ry",
-              `${rotateY}deg`
+              "--foil-y",
+              `${y}%`
             );
 
             card.style.setProperty(
-              "--week-x",
-              `${x * 100}%`
+              "--tilt-x",
+              `${
+                (50 - y) *
+                0.025
+              }deg`
             );
 
             card.style.setProperty(
-              "--week-y",
-              `${y * 100}%`
+              "--tilt-y",
+              `${
+                (x - 50) *
+                0.03
+              }deg`
             );
           }
         );
@@ -2389,23 +2695,23 @@
           "pointerleave",
           () => {
             card.style.setProperty(
-              "--week-rx",
-              "0deg"
-            );
-
-            card.style.setProperty(
-              "--week-ry",
-              "0deg"
-            );
-
-            card.style.setProperty(
-              "--week-x",
+              "--foil-x",
               "50%"
             );
 
             card.style.setProperty(
-              "--week-y",
-              "50%"
+              "--foil-y",
+              "45%"
+            );
+
+            card.style.setProperty(
+              "--tilt-x",
+              "0deg"
+            );
+
+            card.style.setProperty(
+              "--tilt-y",
+              "0deg"
             );
           }
         );
@@ -2428,21 +2734,22 @@
           "discover-card-button"
         );
 
+
       if (!button) {
         return;
       }
 
 
       const originalText =
-        button.textContent.trim();
+        button.textContent;
 
 
       function resetButton() {
-        button.textContent =
-          originalText;
-
         button.disabled =
           false;
+
+        button.textContent =
+          originalText;
 
         button.style.opacity =
           "1";
@@ -2455,12 +2762,14 @@
       button.addEventListener(
         "mouseenter",
         () => {
-          if (!button.disabled) {
+          if (
+            !button.disabled
+          ) {
             button.style.background =
-              "rgba(134, 28, 43, 0.18)";
+              "rgba(134, 28, 43, 0.16)";
 
             button.style.borderColor =
-              "rgba(184, 44, 62, 0.9)";
+              "rgba(184, 44, 62, 0.85)";
 
             button.style.transform =
               "translateY(-1px)";
@@ -2488,8 +2797,7 @@
         "click",
         async () => {
           if (
-            button.disabled ||
-            !window.ManaScout?.loadCard
+            button.disabled
           ) {
             return;
           }
@@ -2498,14 +2806,14 @@
           button.disabled =
             true;
 
+          button.textContent =
+            "◇ Scouting…";
+
           button.style.opacity =
-            "0.7";
+            "0.72";
 
           button.style.cursor =
             "wait";
-
-          button.textContent =
-            "◇ Scouting…";
 
 
           try {
@@ -2594,7 +2902,9 @@
 
     })();
   </script>
-    <!-- SCOUT ROULETTE -->
+
+
+  <!-- SCOUT ROULETTE STYLES -->
   <style>
     .scout-roulette-section {
       position: relative;
@@ -2686,65 +2996,50 @@
 
     .scout-wheel-wrap {
       position: relative;
-      width: min(390px, 100%);
+      width: min(390px, 34vw);
       aspect-ratio: 1;
       display: grid;
       place-items: center;
-    }
-
-    .scout-wheel-pointer {
-      position: absolute;
-      z-index: 8;
-      top: -13px;
-      left: 50%;
-      width: 0;
-      height: 0;
-      transform: translateX(-50%);
-      border-left: 14px solid transparent;
-      border-right: 14px solid transparent;
-      border-top: 28px solid #f1eee9;
-      filter: drop-shadow(0 4px 10px rgba(0, 0, 0, 0.55));
+      filter:
+        drop-shadow(0 26px 45px rgba(0, 0, 0, 0.42));
     }
 
     .scout-wheel {
       --roulette-rotation: 0deg;
-
       position: absolute;
       inset: 0;
-      border: 1px solid rgba(255, 255, 255, 0.11);
+      border: 1px solid rgba(255, 255, 255, 0.1);
       border-radius: 50%;
-      transform: rotate(var(--roulette-rotation));
-      transition:
-        transform 5.2s cubic-bezier(0.12, 0.72, 0.08, 1);
       background:
         conic-gradient(
           from -25.714deg,
-
-          #751827 0deg 51.428deg,
-          #17171b 51.428deg 102.856deg,
-
-          #932236 102.856deg 154.284deg,
-          #121216 154.284deg 205.712deg,
-
-          #6e1724 205.712deg 257.14deg,
-          #1d1d22 257.14deg 308.568deg,
-
-          #a52a40 308.568deg 360deg
+          rgba(134, 28, 43, 0.82) 0deg 51.428deg,
+          rgba(27, 27, 31, 0.98) 51.428deg 102.856deg,
+          rgba(92, 22, 34, 0.86) 102.856deg 154.284deg,
+          rgba(20, 20, 23, 0.98) 154.284deg 205.712deg,
+          rgba(112, 27, 41, 0.78) 205.712deg 257.14deg,
+          rgba(24, 24, 27, 0.98) 257.14deg 308.568deg,
+          rgba(70, 18, 29, 0.9) 308.568deg 360deg
         );
       box-shadow:
-        0 0 0 8px rgba(255, 255, 255, 0.018),
-        0 0 0 9px rgba(184, 44, 62, 0.15),
-        0 25px 65px rgba(0, 0, 0, 0.48),
-        inset 0 0 45px rgba(0, 0, 0, 0.35);
+        inset 0 0 0 10px rgba(0, 0, 0, 0.18),
+        inset 0 0 45px rgba(0, 0, 0, 0.28),
+        0 0 0 1px rgba(134, 28, 43, 0.08);
+      transform:
+        rotate(var(--roulette-rotation));
+      transition:
+        transform 5.2s cubic-bezier(.12,.72,.08,1);
+      will-change: transform;
     }
 
     .scout-wheel::before {
       content: "";
       position: absolute;
-      inset: 8%;
-      border: 1px solid rgba(255, 255, 255, 0.075);
+      inset: 8.5%;
+      border: 1px solid rgba(255, 255, 255, 0.065);
       border-radius: 50%;
-      pointer-events: none;
+      box-shadow:
+        inset 0 0 30px rgba(0, 0, 0, 0.32);
     }
 
     .scout-wheel::after {
@@ -2754,106 +3049,139 @@
       border-radius: inherit;
       pointer-events: none;
       background:
-        radial-gradient(
-          circle,
-          transparent 0 40%,
-          rgba(255, 255, 255, 0.018) 65%,
-          rgba(255, 255, 255, 0.06) 100%
+        repeating-conic-gradient(
+          from -25.714deg,
+          rgba(255, 255, 255, 0.13) 0deg 0.7deg,
+          transparent 0.7deg 51.428deg
         );
+      opacity: 0.38;
+    }
+
+    .scout-wheel-pointer {
+      position: absolute;
+      z-index: 5;
+      top: -14px;
+      left: 50%;
+      width: 0;
+      height: 0;
+      border-left: 12px solid transparent;
+      border-right: 12px solid transparent;
+      border-top: 24px solid #b82c3e;
+      transform: translateX(-50%);
+      filter:
+        drop-shadow(0 5px 8px rgba(0, 0, 0, 0.45));
     }
 
     .scout-wheel-label {
-      --label-angle: 0deg;
-
       position: absolute;
       z-index: 2;
       top: 50%;
       left: 50%;
-      width: 44%;
-      transform-origin: 0 50%;
-      transform:
-        rotate(var(--label-angle))
-        translateX(31%)
-        rotate(90deg);
-      color: rgba(255, 255, 255, 0.88);
-      font-size: clamp(0.58rem, 1.25vw, 0.76rem);
+      width: 39%;
+      color: rgba(241, 238, 233, 0.82);
+      font-size: clamp(0.54rem, 0.9vw, 0.68rem);
       font-weight: 900;
-      letter-spacing: 0.07em;
+      letter-spacing: 0.08em;
       text-align: center;
       text-transform: uppercase;
-      text-shadow: 0 2px 8px rgba(0, 0, 0, 0.8);
+      transform-origin: 0 50%;
+      text-shadow:
+        0 2px 6px rgba(0, 0, 0, 0.55);
     }
 
     .scout-wheel-label:nth-child(1) {
-      --label-angle: -90deg;
+      transform:
+        rotate(-90deg)
+        translateX(41%)
+        rotate(90deg);
     }
 
     .scout-wheel-label:nth-child(2) {
-      --label-angle: -38.572deg;
+      transform:
+        rotate(-38.572deg)
+        translateX(41%)
+        rotate(38.572deg);
     }
 
     .scout-wheel-label:nth-child(3) {
-      --label-angle: 12.856deg;
+      transform:
+        rotate(12.856deg)
+        translateX(41%)
+        rotate(-12.856deg);
     }
 
     .scout-wheel-label:nth-child(4) {
-      --label-angle: 64.284deg;
+      transform:
+        rotate(64.284deg)
+        translateX(41%)
+        rotate(-64.284deg);
     }
 
     .scout-wheel-label:nth-child(5) {
-      --label-angle: 115.712deg;
+      transform:
+        rotate(115.712deg)
+        translateX(41%)
+        rotate(-115.712deg);
     }
 
     .scout-wheel-label:nth-child(6) {
-      --label-angle: 167.14deg;
+      transform:
+        rotate(167.14deg)
+        translateX(41%)
+        rotate(-167.14deg);
     }
 
     .scout-wheel-label:nth-child(7) {
-      --label-angle: 218.568deg;
+      transform:
+        rotate(218.568deg)
+        translateX(41%)
+        rotate(-218.568deg);
     }
 
     .scout-wheel-hub {
       position: relative;
-      z-index: 10;
+      z-index: 6;
       display: grid;
       place-items: center;
       width: 112px;
       height: 112px;
       padding: 0;
-      border: 1px solid rgba(255, 255, 255, 0.16);
+      border: 1px solid rgba(184, 44, 62, 0.62);
       border-radius: 50%;
       background:
         radial-gradient(
-          circle at 40% 32%,
-          #b72d43,
-          #761827 48%,
-          #25090e 100%
-        );
-      color: #fff;
+          circle at 35% 30%,
+          rgba(184, 44, 62, 0.24),
+          transparent 38%
+        ),
+        #0d0d0f;
+      color: #f1eee9;
       font: inherit;
-      font-size: 0.8rem;
-      font-weight: 900;
+      font-size: 0.76rem;
+      font-weight: 950;
       letter-spacing: 0.16em;
+      text-transform: uppercase;
       cursor: pointer;
       box-shadow:
-        0 12px 35px rgba(0, 0, 0, 0.6),
-        0 0 0 7px rgba(9, 9, 11, 0.9),
-        0 0 0 8px rgba(255, 255, 255, 0.08),
-        inset 0 1px 0 rgba(255, 255, 255, 0.18);
+        0 12px 32px rgba(0, 0, 0, 0.48),
+        inset 0 0 0 7px rgba(134, 28, 43, 0.07),
+        inset 0 1px 0 rgba(255, 255, 255, 0.05);
       transition:
-        transform 160ms ease,
-        box-shadow 160ms ease,
-        opacity 160ms ease;
+        transform 180ms ease,
+        border-color 180ms ease,
+        background 180ms ease;
     }
 
     .scout-wheel-hub:hover:not(:disabled) {
-      transform: scale(1.055);
-      box-shadow:
-        0 15px 42px rgba(0, 0, 0, 0.68),
-        0 0 0 7px rgba(9, 9, 11, 0.9),
-        0 0 0 8px rgba(184, 44, 62, 0.32),
-        0 0 32px rgba(184, 44, 62, 0.18),
-        inset 0 1px 0 rgba(255, 255, 255, 0.2);
+      transform: scale(1.035);
+      border-color: rgba(184, 44, 62, 0.95);
+      background:
+        radial-gradient(
+          circle at 35% 30%,
+          rgba(184, 44, 62, 0.34),
+          transparent 42%
+        ),
+        #101012;
     }
 
     .scout-wheel-hub:disabled {
@@ -2863,10 +3191,11 @@
 
     .scout-roulette-content {
       position: relative;
+      z-index: 2;
       display: flex;
-      min-width: 0;
       align-items: center;
-      padding: 3.5rem;
+      min-width: 0;
+      padding: 3rem;
     }
 
     .scout-roulette-idle,
@@ -2875,59 +3204,47 @@
     }
 
     .scout-roulette-kicker {
-      margin: 0 0 0.8rem;
+      margin: 0;
       color: #b82c3e;
-      font-size: 0.7rem;
+      font-size: 0.68rem;
       font-weight: 900;
-      letter-spacing: 0.14em;
+      letter-spacing: 0.12em;
       text-transform: uppercase;
     }
 
     .scout-roulette-idle h3,
     .scout-roulette-result h3 {
-      margin: 0;
-      color: #f1eee9;
-      font-size: clamp(2.25rem, 5vw, 4.1rem);
+      margin: 0.7rem 0 0;
+      font-size: clamp(2rem, 4.4vw, 3.6rem);
       line-height: 0.98;
-      letter-spacing: -0.055em;
-    }
-
-    .scout-roulette-result h3 {
-      font-size: clamp(1.8rem, 4vw, 3.1rem);
+      letter-spacing: -0.05em;
     }
 
     .scout-roulette-copy {
       max-width: 540px;
-      margin: 1.25rem 0 0;
-      color: rgba(241, 238, 233, 0.63);
-      font-size: 0.95rem;
+      margin: 1.15rem 0 0;
+      color: rgba(241, 238, 233, 0.62);
       line-height: 1.75;
     }
 
     .scout-roulette-category {
       display: inline-flex;
       align-items: center;
-      gap: 0.45rem;
-      margin-top: 1.6rem;
-      padding: 0.6rem 0.75rem;
-      border: 1px solid rgba(184, 44, 62, 0.23);
-      border-radius: 8px;
-      background: rgba(134, 28, 43, 0.07);
-      color: rgba(241, 238, 233, 0.68);
-      font-size: 0.68rem;
+      margin-top: 1.4rem;
+      padding: 0.5rem 0.65rem;
+      border: 1px solid rgba(255, 255, 255, 0.075);
+      border-radius: 6px;
+      background: rgba(255, 255, 255, 0.025);
+      color: rgba(241, 238, 233, 0.48);
+      font-size: 0.65rem;
       font-weight: 800;
       letter-spacing: 0.09em;
       text-transform: uppercase;
     }
 
-    .scout-roulette-category::before {
-      content: "◇";
-      color: #b82c3e;
-    }
-
     .scout-roulette-reveal {
       display: grid;
-      grid-template-columns: minmax(145px, 220px) minmax(0, 1fr);
+      grid-template-columns: 170px minmax(0, 1fr);
       align-items: center;
       gap: 2rem;
     }
@@ -2935,7 +3252,7 @@
     .scout-roulette-card-shell {
       position: relative;
       width: 100%;
-      aspect-ratio: 488 / 680;
+      aspect-ratio: 0.718 / 1;
       overflow: hidden;
       border-radius: 4.6% / 3.4%;
       background: #111;
@@ -3031,8 +3348,7 @@
       font-size: 0.78rem;
       line-height: 1.6;
     }
-
-    @keyframes scoutRouletteReveal {
+        @keyframes scoutRouletteReveal {
       from {
         opacity: 0;
         transform:
@@ -3160,226 +3476,7 @@
   </style>
 
 
-  <section
-    class="scout-roulette-section container"
-    id="scout-roulette"
-    aria-labelledby="scout-roulette-heading"
-  >
-
-    <div class="scout-roulette-heading">
-
-      <div>
-
-        <p class="eyebrow">
-          ◇ SCOUT ROULETTE
-        </p>
-
-        <h2 id="scout-roulette-heading">
-          Let fate choose your next card
-        </h2>
-
-        <p>
-          Seven paths. One spin. ManaScout chooses the category
-          and scouts a real Magic card from Scryfall.
-        </p>
-
-      </div>
-
-      <span class="scout-roulette-badge">
-        POWERED BY FATE · DATA BY SCRYFALL
-      </span>
-
-    </div>
-
-
-    <div
-      class="scout-roulette-panel"
-      id="scout-roulette-panel"
-    >
-
-      <div class="scout-roulette-stage">
-
-        <div class="scout-wheel-wrap">
-
-          <div
-            class="scout-wheel-pointer"
-            aria-hidden="true"
-          ></div>
-
-
-          <div
-            class="scout-wheel"
-            id="scout-wheel"
-            aria-hidden="true"
-          >
-
-            <span class="scout-wheel-label">
-              Legendary
-            </span>
-
-            <span class="scout-wheel-label">
-              Artifact
-            </span>
-
-            <span class="scout-wheel-label">
-              Creature
-            </span>
-
-            <span class="scout-wheel-label">
-              Spell
-            </span>
-
-            <span class="scout-wheel-label">
-              Enchantment
-            </span>
-
-            <span class="scout-wheel-label">
-              Land
-            </span>
-
-            <span class="scout-wheel-label">
-              Wild
-            </span>
-
-          </div>
-
-
-          <button
-            class="scout-wheel-hub"
-            id="scout-roulette-spin"
-            type="button"
-            aria-label="Spin Scout Roulette"
-          >
-            SPIN
-          </button>
-
-        </div>
-
-      </div>
-
-
-      <div class="scout-roulette-content">
-
-        <div
-          class="scout-roulette-idle"
-          id="scout-roulette-idle"
-        >
-
-          <p class="scout-roulette-kicker">
-            SEVEN PATHS · ONE CARD
-          </p>
-
-          <h3>
-            What will<br>
-            you scout?
-          </h3>
-
-          <p class="scout-roulette-copy">
-            Legendary. Artifact. Creature. Spell. Enchantment.
-            Land. Wild. The wheel chooses the path — then
-            ManaScout finds your card.
-          </p>
-
-          <span
-            class="scout-roulette-category"
-            id="scout-roulette-status"
-          >
-            Awaiting your spin
-          </span>
-
-          <p
-            class="scout-roulette-error"
-            id="scout-roulette-error"
-            hidden
-          ></p>
-
-        </div>
-
-
-        <div
-          class="scout-roulette-result"
-          id="scout-roulette-result"
-          hidden
-        >
-
-          <div class="scout-roulette-reveal">
-
-            <div
-              class="scout-roulette-card-shell"
-              id="scout-roulette-card-shell"
-            >
-
-              <img
-                class="scout-roulette-card"
-                id="scout-roulette-card"
-                alt=""
-              >
-
-            </div>
-
-
-            <div class="scout-roulette-result-copy">
-
-              <p
-                class="scout-roulette-kicker"
-                id="scout-roulette-result-category"
-              >
-                SCOUT ROULETTE
-              </p>
-
-              <h3 id="scout-roulette-card-name">
-                Your card
-              </h3>
-
-              <p
-                class="scout-roulette-meta"
-                id="scout-roulette-card-meta"
-              ></p>
-
-              <p
-                class="scout-roulette-copy"
-                id="scout-roulette-card-copy"
-              >
-                Fate has spoken.
-              </p>
-
-
-              <div class="scout-roulette-actions">
-
-                <a
-                  class="scout-roulette-action"
-                  id="scout-roulette-action"
-                  href="/"
-                >
-                  Scout This Card
-                  <span aria-hidden="true">
-                    →
-                  </span>
-                </a>
-
-                <button
-                  class="scout-roulette-again"
-                  id="scout-roulette-again"
-                  type="button"
-                >
-                  Spin Again
-                </button>
-
-              </div>
-
-            </div>
-
-          </div>
-
-        </div>
-
-      </div>
-
-    </div>
-
-  </section>
-
-
+  <!-- SCOUT ROULETTE LOGIC -->
   <script>
     (() => {
       "use strict";
@@ -3876,11 +3973,8 @@
 
 
       /*
-        The Roulette sits at the bottom of the homepage,
-        so hide it whenever ManaScout is displaying a
-        searched card. This keeps search results focused
-        and matches the behaviour of the other discovery
-        sections.
+        Scout Roulette is part of the homepage discovery experience,
+        so hide it whenever ManaScout is displaying a searched card.
       */
 
       function syncVisibility() {
@@ -3893,6 +3987,17 @@
 
       window.addEventListener(
         "popstate",
+        () => {
+          window.setTimeout(
+            syncVisibility,
+            0
+          );
+        }
+      );
+
+
+      window.addEventListener(
+        "manascout:urlchange",
         () => {
           window.setTimeout(
             syncVisibility,
