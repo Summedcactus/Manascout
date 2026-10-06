@@ -104,9 +104,52 @@
         class="nav"
         aria-label="Primary navigation"
       >
-        <a href="/">
-          Search
-        </a>
+        <button
+          id="guide-search-toggle"
+          type="button"
+          aria-label="Search ManaScout"
+          aria-controls="guide-search-panel"
+          aria-expanded="false"
+          title="Search ManaScout"
+          style="
+            appearance:none;
+            display:inline-flex;
+            align-items:center;
+            justify-content:center;
+            width:40px;
+            height:40px;
+            padding:0;
+            border:0;
+            background:transparent;
+            color:#99979a;
+            cursor:pointer;
+          "
+        >
+          <svg
+            viewBox="0 0 24 24"
+            width="20"
+            height="20"
+            aria-hidden="true"
+            focusable="false"
+          >
+            <circle
+              cx="10.75"
+              cy="10.75"
+              r="6.25"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.8"
+            ></circle>
+
+            <path
+              d="M15.5 15.5L20.5 20.5"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.8"
+              stroke-linecap="round"
+            ></path>
+          </svg>
+        </button>
 
         <a
           class="active"
@@ -117,6 +160,63 @@
         </a>
       </nav>
 
+    </div>
+
+
+    <!-- GUIDE SEARCH -->
+    <div
+      id="guide-search-panel"
+      hidden
+      style="
+        border-top:1px solid rgba(255,255,255,.055);
+        background:rgba(9,9,11,.96);
+      "
+    >
+      <div
+        class="container"
+        style="padding-top:14px;padding-bottom:14px;"
+      >
+
+        <form
+          id="guide-search-form"
+          class="search-form"
+          role="search"
+          autocomplete="off"
+          style="margin:0 auto;"
+        >
+
+          <label
+            class="sr-only"
+            for="guide-card-search"
+          >
+            Search Magic cards
+          </label>
+
+          <div class="search-box">
+
+            <input
+              id="guide-card-search"
+              type="search"
+              placeholder="Search another Magic card…"
+              aria-label="Search another Magic card"
+              spellcheck="false"
+            >
+
+            <button type="submit">
+              Scout
+            </button>
+
+            <div
+              id="guide-autocomplete"
+              class="autocomplete"
+              hidden
+            ></div>
+
+          </div>
+
+        </form>
+
+      </div>
     </div>
 
   </header>
@@ -391,10 +491,108 @@
     window.addEventListener(
       "DOMContentLoaded",
       function () {
+        const searchToggle =
+          document.getElementById("guide-search-toggle");
+
+        const searchPanel =
+          document.getElementById("guide-search-panel");
+
+        const searchForm =
+          document.getElementById("guide-search-form");
+
+        const searchInput =
+          document.getElementById("guide-card-search");
+
         window.ManaScout.loadCard(
           "Rhystic Study",
           {
             fromHistory: true
+          }
+        );
+
+
+        /*
+         * GUIDE HEADER SEARCH
+         *
+         * The guide itself keeps its current card loaded.
+         * Searching here sends the visitor into ManaScout's
+         * normal search experience on the homepage.
+         */
+
+        if (
+          searchToggle &&
+          searchPanel &&
+          searchInput
+        ) {
+          searchToggle.addEventListener(
+            "click",
+            function () {
+              const opening =
+                searchPanel.hidden;
+
+              searchPanel.hidden =
+                !searchPanel.hidden;
+
+              searchToggle.setAttribute(
+                "aria-expanded",
+                opening ? "true" : "false"
+              );
+
+              if (opening) {
+                window.setTimeout(
+                  function () {
+                    searchInput.focus();
+                  },
+                  50
+                );
+              }
+            }
+          );
+        }
+
+
+        if (
+          searchForm &&
+          searchInput
+        ) {
+          searchForm.addEventListener(
+            "submit",
+            function (event) {
+              event.preventDefault();
+
+              const query =
+                searchInput.value.trim();
+
+              if (!query) {
+                searchInput.focus();
+                return;
+              }
+
+              window.location.href =
+                "/?q=" +
+                encodeURIComponent(query);
+            }
+          );
+        }
+
+
+        document.addEventListener(
+          "keydown",
+          function (event) {
+            if (
+              event.key === "Escape" &&
+              searchPanel &&
+              !searchPanel.hidden
+            ) {
+              searchPanel.hidden = true;
+
+              searchToggle.setAttribute(
+                "aria-expanded",
+                "false"
+              );
+
+              searchToggle.focus();
+            }
           }
         );
       }
