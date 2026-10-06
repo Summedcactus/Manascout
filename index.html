@@ -2905,38 +2905,43 @@
   </script>
 
 <style>
-  /* FEATURED CARD DISPLAY FIX */
+/* FEATURED CARD DISPLAY FIX */
 
-  .featured-art {
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    overflow: visible !important;
-    padding: 1rem !important;
-    min-height: 280px !important;
-  }
-
-  .featured-art img {
-    display: block !important;
-    width: auto !important;
-   height: 380px !important;
-max-height: 70vh !important;
-    max-width: 100% !important;
-    object-fit: contain !important;
-    border-radius: 10px !important;
-    box-shadow: 0 16px 35px rgba(0, 0, 0, 0.42) !important;
-  }
-
-  @media (max-width: 720px) {
-    .featured-art {
-      min-height: 230px !important;
-    }
-
-  .featured-art img {
-  height: 300px !important;
-  max-height: 58vh !important;
+.featured-art {
+  width: 100% !important;
+  max-width: 240px !important;
+  min-height: 335px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  margin: 0 auto !important;
+  padding: 0 !important;
+  overflow: visible !important;
 }
+
+.featured-art img {
+  display: block !important;
+  width: 100% !important;
+  height: auto !important;
+  max-width: 240px !important;
+  max-height: 350px !important;
+  object-fit: contain !important;
+  border-radius: 12px !important;
+}
+
+@media (max-width: 720px) {
+  .featured-art {
+    max-width: 220px !important;
+    min-height: 308px !important;
   }
+
+  .featured-art img {
+    width: 100% !important;
+    height: auto !important;
+    max-width: 220px !important;
+    max-height: 308px !important;
+  }
+}
 
   /* SCOUT ROULETTE LABEL POSITION FIX */
 
