@@ -1788,20 +1788,20 @@
       const roll =
         Math.random();
 
-      if (
-        roll < 0.50
-      ) {
-        selected =
-          ranked[0];
-      } else if (
-        roll < 0.80
-      ) {
-        selected =
-          ranked[1];
-      } else {
-        selected =
-          ranked[2];
-      }
+     if (
+  roll < 0.85
+) {
+  selected =
+    ranked[0];
+} else if (
+  roll < 0.97
+) {
+  selected =
+    ranked[1];
+} else {
+  selected =
+    ranked[2];
+}
     }
 
     if (
