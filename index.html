@@ -2889,8 +2889,7 @@
     .manascout-pick-reason {
       margin: 1rem 0 0;
       padding: 0.85rem 0.95rem;
-      border: 1px solid
-        rgba(184, 44, 62, 0.18);
+      border: 1px solid rgba(184, 44, 62, 0.18);
       border-radius: 9px;
       background:
         linear-gradient(
@@ -2911,24 +2910,20 @@
     }
 
     .manascout-pick-reason span {
-      color:
-        rgba(
-          241,
-          238,
-          233,
-          0.64
-        );
+      color: rgba(241, 238, 233, 0.64);
       font-size: 0.78rem;
       line-height: 1.6;
     }
 
 
+    /* KEEP SCOUTING */
+
     .scout-more {
-      margin-top: 1.5rem;
-      padding: 1.25rem;
-      border: 1px solid
-        rgba(255, 255, 255, 0.07);
-      border-radius: 16px;
+      width: 100%;
+      margin-top: 1.25rem;
+      padding: 1.15rem 1.2rem;
+      border: 1px solid rgba(255, 255, 255, 0.07);
+      border-radius: 14px;
       background:
         linear-gradient(
           135deg,
@@ -2937,16 +2932,18 @@
         );
     }
 
-
     .scout-more-heading {
-      margin-bottom: 1rem;
+      margin-bottom: 0.9rem;
     }
-
 
     .scout-more-heading .eyebrow {
-      margin-bottom: 0.35rem;
+      margin: 0 0 0.3rem;
+      color: #b82c3e;
+      font-size: 0.68rem;
+      font-weight: 900;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
     }
-
 
     .scout-more-heading h3 {
       margin: 0;
@@ -2954,35 +2951,78 @@
       line-height: 1.25;
     }
 
+    .scout-more-heading p {
+      margin: 0.45rem 0 0;
+      color: rgba(241, 238, 233, 0.58);
+      font-size: 0.8rem;
+      line-height: 1.5;
+    }
+
+
+    /* Fix the white Scout Another button */
+
+    .scout-more button {
+      font-family: inherit;
+    }
+
+    .scout-more > button,
+    .scout-more-heading + button {
+      appearance: none;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 0 0.75rem;
+      padding: 0.72rem 1rem;
+      border: 1px solid rgba(184, 44, 62, 0.48);
+      border-radius: 9px;
+      background: rgba(134, 28, 43, 0.1);
+      color: #f1eee9;
+      font: inherit;
+      font-size: 0.75rem;
+      font-weight: 800;
+      letter-spacing: 0.045em;
+      cursor: pointer;
+      transition:
+        transform 160ms ease,
+        border-color 160ms ease,
+        background 160ms ease;
+    }
+
+    .scout-more > button:hover:not(:disabled),
+    .scout-more-heading + button:hover:not(:disabled) {
+      transform: translateY(-1px);
+      border-color: rgba(184, 44, 62, 0.85);
+      background: rgba(134, 28, 43, 0.18);
+    }
+
+    .scout-more > button:focus-visible,
+    .scout-more-heading + button:focus-visible {
+      outline: 2px solid #b82c3e;
+      outline-offset: 3px;
+    }
+
+
+    /* Three discovery choices fill the full row */
 
     .scout-more-options {
       display: grid;
-      grid-template-columns:
-        repeat(
-          3,
-          minmax(0, 1fr)
-        );
+      grid-template-columns: repeat(3, minmax(0, 1fr));
       gap: 0.75rem;
+      width: 100%;
     }
-
 
     .scout-more-option {
       appearance: none;
       display: flex;
       flex-direction: column;
       align-items: flex-start;
+      justify-content: flex-start;
       min-width: 0;
+      min-height: 120px;
       padding: 0.95rem;
-      border: 1px solid
-        rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.08);
       border-radius: 10px;
-      background:
-        rgba(
-          255,
-          255,
-          255,
-          0.025
-        );
+      background: rgba(255, 255, 255, 0.025);
       color: #f1eee9;
       font: inherit;
       text-align: left;
@@ -2994,48 +3034,30 @@
         opacity 160ms ease;
     }
 
-
-    .scout-more-option:hover:not(
-      :disabled
-    ) {
-      transform:
-        translateY(-1px);
-      border-color:
-        rgba(
-          184,
-          44,
-          62,
-          0.55
-        );
-      background:
-        rgba(
-          134,
-          28,
-          43,
-          0.09
-        );
+    .scout-more-option:hover:not(:disabled) {
+      transform: translateY(-1px);
+      border-color: rgba(184, 44, 62, 0.55);
+      background: rgba(134, 28, 43, 0.09);
     }
 
-
     .scout-more-option:focus-visible {
-      outline:
-        2px solid #b82c3e;
+      outline: 2px solid #b82c3e;
       outline-offset: 3px;
     }
 
-
-    .scout-more-option:disabled {
+    .scout-more-option:disabled,
+    .scout-more > button:disabled,
+    .scout-more-heading + button:disabled {
       cursor: wait;
       opacity: 0.5;
     }
 
-
     .scout-more-mark {
-      margin-bottom: 0.6rem;
+      margin-bottom: 0.55rem;
       color: #b82c3e;
       font-size: 1rem;
+      line-height: 1;
     }
-
 
     .scout-more-option strong {
       font-size: 0.78rem;
@@ -3044,52 +3066,61 @@
       text-transform: uppercase;
     }
 
-
-    .scout-more-option
-    > span:last-child {
+    .scout-more-option > span:last-child {
       margin-top: 0.4rem;
-      color:
-        rgba(
-          241,
-          238,
-          233,
-          0.5
-        );
-      font-size: 0.72rem;
-      line-height: 1.55;
-    }
-
-
-    .scout-more-status {
-      min-height: 1.25em;
-      margin: 0.85rem 0 0;
-      color:
-        rgba(
-          241,
-          238,
-          233,
-          0.48
-        );
+      color: rgba(241, 238, 233, 0.5);
       font-size: 0.72rem;
       line-height: 1.5;
     }
 
+    .scout-more-status {
+      min-height: 0;
+      margin: 0.65rem 0 0;
+      color: rgba(241, 238, 233, 0.48);
+      font-size: 0.72rem;
+      line-height: 1.5;
+    }
 
-    @media (
-      max-width: 720px
-    ) {
+    .scout-more-status:empty {
+      display: none;
+    }
+
+
+    @media (max-width: 720px) {
+      .scout-more {
+        padding: 1rem;
+      }
+
       .scout-more-options {
-        grid-template-columns:
-          1fr;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .scout-more-option {
+        min-height: 110px;
       }
     }
 
 
-    @media (
-      prefers-reduced-motion:
-        reduce
-    ) {
+    @media (max-width: 480px) {
+      .scout-more-options {
+        grid-template-columns: 1fr;
+      }
+
       .scout-more-option {
+        min-height: 0;
+      }
+
+      .scout-more > button,
+      .scout-more-heading + button {
+        width: 100%;
+      }
+    }
+
+
+    @media (prefers-reduced-motion: reduce) {
+      .scout-more-option,
+      .scout-more > button,
+      .scout-more-heading + button {
         transition: none;
       }
     }
