@@ -427,7 +427,490 @@
     `;
   }
 
-  function renderCard(
+    /* ------------------------------
+     DISCOVERY + MANASCOUT PICK UX
+     ------------------------------ */
+
+  function manaScoutPickReasons(card) {
+    if (!card) {
+      return [];
+    }
+
+    const reasons = [];
+
+    const frameEffects =
+      Array.isArray(card.frame_effects)
+        ? card.frame_effects
+        : [];
+
+    const promoTypes =
+      Array.isArray(card.promo_types)
+        ? card.promo_types
+        : [];
+
+    const finishes =
+      Array.isArray(card.finishes)
+        ? card.finishes
+        : [];
+
+    if (
+      frameEffects.includes("showcase")
+    ) {
+      reasons.push(
+        "Showcase treatment"
+      );
+    }
+
+    if (
+      card.border_color ===
+      "borderless"
+    ) {
+      reasons.push(
+        "Borderless artwork"
+      );
+    }
+
+    if (card.full_art) {
+      reasons.push(
+        "Full-art treatment"
+      );
+    }
+
+    if (
+      frameEffects.includes(
+        "extendedart"
+      )
+    ) {
+      reasons.push(
+        "Extended artwork"
+      );
+    }
+
+    if (
+      promoTypes.includes(
+        "textured"
+      )
+    ) {
+      reasons.push(
+        "Textured treatment"
+      );
+    }
+
+    if (
+      promoTypes.includes(
+        "galaxyfoil"
+      )
+    ) {
+      reasons.push(
+        "Galaxy foil"
+      );
+    }
+
+    if (
+      promoTypes.includes(
+        "surgefoil"
+      )
+    ) {
+      reasons.push(
+        "Surge foil"
+      );
+    }
+
+    if (
+      promoTypes.includes(
+        "rainbowfoil"
+      )
+    ) {
+      reasons.push(
+        "Rainbow foil"
+      );
+    }
+
+    if (
+      promoTypes.includes(
+        "halofoil"
+      )
+    ) {
+      reasons.push(
+        "Halo foil"
+      );
+    }
+
+    if (
+      promoTypes.includes(
+        "stepandcompleat"
+      )
+    ) {
+      reasons.push(
+        "Step-and-compleat foil"
+      );
+    }
+
+    if (
+      finishes.includes("etched")
+    ) {
+      reasons.push(
+        "Etched finish"
+      );
+    }
+
+    if (
+      finishes.includes("foil") &&
+      reasons.length < 3
+    ) {
+      reasons.push(
+        "Foil available"
+      );
+    }
+
+    if (
+      card.promo &&
+      reasons.length < 3
+    ) {
+      reasons.push(
+        "Special promo printing"
+      );
+    }
+
+    if (!reasons.length) {
+      reasons.push(
+        "ManaScout's standout printing"
+      );
+    }
+
+    return reasons.slice(0, 3);
+  }
+
+
+  function manaScoutPickExplanation(
+    card,
+    enabled
+  ) {
+    if (!enabled) {
+      return "";
+    }
+
+    const reasons =
+      manaScoutPickReasons(card);
+
+    return `
+      <div
+        class="manascout-pick-reason"
+        aria-label="Why ManaScout selected this printing"
+      >
+        <strong>
+          Why this one?
+        </strong>
+
+        <span>
+          ${reasons
+            .map(
+              reason =>
+                escapeHtml(reason)
+            )
+            .join(" · ")}
+        </span>
+      </div>
+    `;
+  }
+
+
+  function discoverySearchQuery(
+    card,
+    mode
+  ) {
+    const oracleId =
+      String(
+        card?.oracle_id || ""
+      ).trim();
+
+    const exclusions = [];
+
+    if (oracleId) {
+      exclusions.push(
+        `-oracleid:${oracleId}`
+      );
+    }
+
+    if (mode === "colour") {
+      const colours =
+        Array.isArray(
+          card?.color_identity
+        )
+          ? card.color_identity
+          : [];
+
+      if (colours.length) {
+        return [
+          "game:paper",
+          `id:${colours.join("")}`,
+          ...exclusions
+        ].join(" ");
+      }
+
+      return [
+        "game:paper",
+        "id:c",
+        ...exclusions
+      ].join(" ");
+    }
+
+    if (mode === "type") {
+      const typeLine =
+        String(
+          card?.type_line || ""
+        );
+
+      const knownTypes = [
+        "Creature",
+        "Artifact",
+        "Enchantment",
+        "Instant",
+        "Sorcery",
+        "Planeswalker",
+        "Land",
+        "Battle"
+      ];
+
+      const selectedType =
+        knownTypes.find(
+          type =>
+            typeLine.includes(type)
+        );
+
+      if (selectedType) {
+        return [
+          "game:paper",
+          `t:${selectedType.toLowerCase()}`,
+          ...exclusions
+        ].join(" ");
+      }
+    }
+
+    return [
+      "game:paper",
+      ...exclusions
+    ].join(" ");
+  }
+
+
+  function resultDiscoveryActions(
+    card
+  ) {
+    const name =
+      escapeHtml(
+        card?.name ||
+        "this card"
+      );
+
+    return `
+      <section
+        class="scout-more"
+        aria-labelledby="scout-more-heading"
+      >
+        <div class="scout-more-heading">
+          <div>
+            <p class="eyebrow">
+              KEEP SCOUTING
+            </p>
+
+            <h3 id="scout-more-heading">
+              Where next?
+            </h3>
+
+            <p>
+              Let ManaScout take you somewhere new from ${name}.
+            </p>
+          </div>
+
+          <button
+            class="scout-another-button"
+            type="button"
+            data-discovery-mode="wild"
+          >
+            <span aria-hidden="true">
+              ◇
+            </span>
+
+            Scout Another
+          </button>
+        </div>
+
+        <div
+          class="scout-more-grid"
+          aria-label="Discover another Magic card"
+        >
+          <button
+            type="button"
+            class="scout-more-option"
+            data-discovery-mode="colour"
+          >
+            <span
+              class="scout-more-mark"
+              aria-hidden="true"
+            >
+              ◇
+            </span>
+
+            <strong>
+              Same colour
+            </strong>
+
+            <span>
+              Explore a random card with a matching colour identity.
+            </span>
+          </button>
+
+          <button
+            type="button"
+            class="scout-more-option"
+            data-discovery-mode="type"
+          >
+            <span
+              class="scout-more-mark"
+              aria-hidden="true"
+            >
+              ◈
+            </span>
+
+            <strong>
+              Same type
+            </strong>
+
+            <span>
+              Jump to another card from the same broad card type.
+            </span>
+          </button>
+
+          <button
+            type="button"
+            class="scout-more-option"
+            data-discovery-mode="wild"
+          >
+            <span
+              class="scout-more-mark"
+              aria-hidden="true"
+            >
+              ✦
+            </span>
+
+            <strong>
+              Wildcard
+            </strong>
+
+            <span>
+              No rules. Pull something random from paper Magic.
+            </span>
+          </button>
+        </div>
+
+        <p
+          class="scout-more-status"
+          role="status"
+          aria-live="polite"
+        ></p>
+      </section>
+    `;
+  }
+
+
+  function emitManaScoutState(
+    state,
+    detail = {}
+  ) {
+    window.dispatchEvent(
+      new CustomEvent(
+        "manascout:statechange",
+        {
+          detail: {
+            state,
+            ...detail
+          }
+        }
+      )
+    );
+  }
+
+
+  async function randomDiscoveryCard(
+    sourceCard,
+    mode,
+    statusElement,
+    buttons
+  ) {
+    const query =
+      discoverySearchQuery(
+        sourceCard,
+        mode
+      );
+
+    buttons.forEach(
+      button => {
+        button.disabled = true;
+      }
+    );
+
+    if (statusElement) {
+      statusElement.textContent =
+        "Scouting the archive…";
+    }
+
+    try {
+      const randomCard =
+        await fetchJson(
+          `${API}/cards/random?q=${encodeURIComponent(
+            query
+          )}`
+        );
+
+      if (!randomCard?.name) {
+        throw new Error(
+          "Random card unavailable."
+        );
+      }
+
+      if (statusElement) {
+        statusElement.textContent =
+          `Found ${randomCard.name}.`;
+      }
+
+      await loadCard(
+        randomCard.name
+      );
+
+      if (els.details) {
+        els.details.scrollIntoView({
+          behavior:
+            window.matchMedia(
+              "(prefers-reduced-motion: reduce)"
+            ).matches
+              ? "auto"
+              : "smooth",
+          block: "start"
+        });
+      }
+
+    } catch (error) {
+      console.error(
+        "ManaScout discovery failed:",
+        error
+      );
+
+      if (statusElement) {
+        statusElement.textContent =
+          "ManaScout couldn't scout another card this time. Try again.";
+      }
+
+    } finally {
+      buttons.forEach(
+        button => {
+          button.disabled = false;
+        }
+      );
+    }
+  }
+  
+   function renderCard(
     card,
     options = {}
   ) {
@@ -449,6 +932,7 @@
                 card.name ||
                 "Magic card"
               )}"
+              decoding="async"
             >
           </div>
         `
@@ -513,6 +997,13 @@
             }
           </p>
 
+          ${manaScoutPickExplanation(
+            card,
+            Boolean(
+              options.manaScoutPick
+            )
+          )}
+
           <div class="detail-grid">
 
             <div class="detail">
@@ -559,10 +1050,51 @@
         </div>
 
       </article>
+
+      ${resultDiscoveryActions(card)}
     `;
+
+    const discoveryButtons =
+      [
+        ...els.details
+          .querySelectorAll(
+            "[data-discovery-mode]"
+          )
+      ];
+
+    const discoveryStatus =
+      els.details.querySelector(
+        ".scout-more-status"
+      );
+
+    discoveryButtons.forEach(
+      button => {
+        button.addEventListener(
+          "click",
+          () => {
+            randomDiscoveryCard(
+              card,
+              button.dataset
+                .discoveryMode ||
+                "wild",
+              discoveryStatus,
+              discoveryButtons
+            );
+          }
+        );
+      }
+    );
+
+    emitManaScoutState(
+      "card",
+      {
+        cardName:
+          card.name || "",
+        printingId:
+          card.id || ""
+      }
+    );
   }
-
-
   /* ------------------------------
      PRICES + FX
      ------------------------------ */
@@ -2718,6 +3250,12 @@
 
 
     clearAutocomplete();
+        emitManaScoutState(
+      "loading",
+      {
+        cardName: query
+      }
+    );
     setLoading();
 
 
@@ -3147,6 +3685,7 @@
           }
         );
       } else if (els.details) {
+        emitManaScoutState("home");
         if (els.input) {
           els.input.value = "";
         }
@@ -3187,7 +3726,29 @@
 
   window.ManaScout =
     Object.freeze({
-      loadCard
+      loadCard,
+
+      scoutRandom:
+        async () => {
+          const randomCard =
+            await fetchJson(
+              `${API}/cards/random?q=${encodeURIComponent(
+                "game:paper"
+              )}`
+            );
+
+          if (!randomCard?.name) {
+            throw new Error(
+              "Random card unavailable."
+            );
+          }
+
+          await loadCard(
+            randomCard.name
+          );
+
+          return randomCard;
+        }
     });
 
 
