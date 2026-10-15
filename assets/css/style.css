@@ -2541,3 +2541,32 @@ body {
     transform: none;
   }
 }
+
+/* ========================================
+   SCOUT ROULETTE — DARK CONTROL FIX
+   ======================================== */
+
+.scout-roulette select,
+.scout-roulette button,
+.roulette-controls select,
+.roulette-controls button,
+.roulette-filter,
+.roulette-option {
+  background: #111114;
+  color: #f1eee9;
+  border: 1px solid #29272b;
+}
+
+.scout-roulette select:focus,
+.scout-roulette button:focus,
+.roulette-controls select:focus,
+.roulette-controls button:focus {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+.scout-roulette option,
+.roulette-controls option {
+  background: #111114;
+  color: #f1eee9;
+}
