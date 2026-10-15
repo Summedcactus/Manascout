@@ -159,7 +159,12 @@ button,input{font:inherit}
 @media(max-width:720px){
   .container{width:min(100% - 24px,1120px)}
   .header-inner{min-height:60px}
-  .nav{display:none}
+.nav{
+  display:flex;
+  gap:14px;
+  overflow-x:auto;
+  -webkit-overflow-scrolling:touch;
+}
   .hero{padding:58px 0 40px}
   .hero.compact{min-height:0}
   .hero h1{font-size:clamp(40px,12vw,62px)}
