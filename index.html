@@ -73,6 +73,10 @@
           Search
         </a>
 
+        <a href="/card/">
+          Card Guides
+        </a>
+
         <a href="/card/sol-ring/">
           Sol Ring
         </a>
@@ -1378,7 +1382,8 @@
 
   <!-- MAIN MANASCOUT APPLICATION -->
   <script src="/assets/js/app.js"></script>
-    <!-- FEATURED CARDS -->
+
+  <!-- FEATURED CARDS -->
   <script>
     (() => {
       "use strict";
@@ -1566,7 +1571,7 @@
         const finishes =
           printing.finishes || [];
 
-        const borderless =
+        const borderless = 
           printing.border_color ===
           "borderless";
 
@@ -2884,7 +2889,7 @@
   </script>
 
 
-   <!-- RESULT DISCOVERY STYLES -->
+  <!-- RESULT DISCOVERY STYLES -->
   <style>
     .manascout-pick-reason {
       margin: 1rem 0 0;
@@ -3100,8 +3105,6 @@
     }
 
 
-    /* Tablet */
-
     @media (max-width: 720px) {
       .scout-more {
         padding: 0.95rem;
@@ -3120,8 +3123,6 @@
       }
     }
 
-
-    /* Mobile */
 
     @media (max-width: 520px) {
       .scout-more-heading {
@@ -4501,7 +4502,9 @@
       }
     }
   </style>
-    <!-- SCOUT ROULETTE LOGIC -->
+
+
+  <!-- SCOUT ROULETTE LOGIC -->
   <script>
     (() => {
       "use strict";
@@ -4709,13 +4712,6 @@
           section.hidden =
             true;
 
-          /*
-            Keep printings hidden while a new card
-            is actually being resolved. app.js can
-            then populate the section without the
-            previous card's printings flashing.
-          */
-
           if (printingsSection) {
             printingsSection.hidden =
               true;
@@ -4728,12 +4724,6 @@
         if (state === "card") {
           section.hidden =
             true;
-
-          /*
-            app.js owns the contents of the printings
-            section. Once a card has rendered it is
-            safe for that section to be visible.
-          */
 
           if (printingsSection) {
             printingsSection.hidden =
@@ -4769,16 +4759,6 @@
         handleManaScoutState
       );
 
-
-      /*
-        Initialise once from the URL.
-
-        From this point onward app.js state events
-        control visibility. This replaces the old
-        pushState/replaceState interception,
-        MutationObservers and duplicate URL-change
-        listeners.
-      */
 
       setApplicationState(
         hasSearchQuery()
