@@ -7,11 +7,16 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
-  <title>ManaScout — MTG Card & Printing Explorer</title>
+  <title>MTG Card Printing Explorer & Version Finder | ManaScout</title>
 
   <meta
     name="description"
-    content="Find Magic: The Gathering cards, explore printings and compare available Scryfall price data in a fast, clean card discovery tool."
+    content="Search Magic: The Gathering cards and compare printings, artwork, foils, special treatments and available Scryfall price data. Find the MTG version you actually want."
+  >
+
+  <meta
+    name="robots"
+    content="index,follow,max-image-preview:large"
   >
 
   <meta name="theme-color" content="#09090b">
@@ -19,30 +24,466 @@
   <link rel="canonical" href="https://manascout.co.uk/">
 
   <meta property="og:type" content="website">
-  <meta property="og:title" content="ManaScout — MTG Card & Printing Explorer">
+  <meta property="og:site_name" content="ManaScout">
+
+  <meta
+    property="og:title"
+    content="MTG Card Printing Explorer & Version Finder | ManaScout"
+  >
 
   <meta
     property="og:description"
-    content="Find the card. Find the version. Find the one."
+    content="Find the card. Find the version. Find the one. Compare MTG printings, artwork, finishes and available price data with ManaScout."
   >
 
   <meta property="og:url" content="https://manascout.co.uk/">
 
   <meta name="twitter:card" content="summary">
 
+  <meta
+    name="twitter:title"
+    content="MTG Card Printing Explorer & Version Finder | ManaScout"
+  >
+
+  <meta
+    name="twitter:description"
+    content="Search Magic cards and compare printings, artwork, foils, treatments and available price data."
+  >
+
   <link rel="stylesheet" href="/assets/css/style.css">
+
+
+  <!-- HOMEPAGE STRUCTURE -->
+  <style>
+    .home-value-section {
+      margin: 0 0 4.5rem;
+    }
+
+    .home-value-heading {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: 2rem;
+      margin-bottom: 1.4rem;
+    }
+
+    .home-value-heading h2 {
+      margin: 0.35rem 0 0;
+      font-size: clamp(1.8rem, 4vw, 2.7rem);
+      line-height: 1.05;
+      letter-spacing: -0.035em;
+    }
+
+    .home-value-heading > div > p:last-child {
+      max-width: 680px;
+      margin: 0.7rem 0 0;
+      color: rgba(241,238,233,.62);
+      line-height: 1.7;
+    }
+
+    .home-value-guide-link {
+      flex: 0 0 auto;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.55rem;
+      padding: 0.72rem 0.95rem;
+      border: 1px solid rgba(184,44,62,.42);
+      border-radius: 9px;
+      background:
+        linear-gradient(
+          135deg,
+          rgba(134,28,43,.13),
+          rgba(134,28,43,.045)
+        );
+      color: #f0e9eb;
+      font-size: 0.72rem;
+      font-weight: 850;
+      letter-spacing: .045em;
+      text-decoration: none;
+      transition:
+        transform .16s ease,
+        border-color .16s ease,
+        background .16s ease;
+    }
+
+    .home-value-guide-link span {
+      color: var(--accent-bright);
+      font-size: 1rem;
+    }
+
+    .home-value-guide-link:hover {
+      transform: translateY(-1px);
+      border-color: rgba(184,44,62,.78);
+      background:
+        linear-gradient(
+          135deg,
+          rgba(134,28,43,.21),
+          rgba(134,28,43,.08)
+        );
+    }
+
+    .home-value-guide-link:focus-visible {
+      outline: 2px solid var(--accent-bright);
+      outline-offset: 3px;
+    }
+
+    .home-value-grid {
+      display: grid;
+      grid-template-columns: repeat(3,minmax(0,1fr));
+      gap: 14px;
+    }
+
+    .home-value-card {
+      position: relative;
+      overflow: hidden;
+      min-width: 0;
+      min-height: 190px;
+      padding: 21px;
+      border: 1px solid rgba(255,255,255,.065);
+      border-radius: 13px;
+      background:
+        radial-gradient(
+          circle at 100% 0%,
+          rgba(184,44,62,.07),
+          transparent 42%
+        ),
+        linear-gradient(
+          135deg,
+          rgba(255,255,255,.026),
+          rgba(255,255,255,.01)
+        );
+    }
+
+    .home-value-card::after {
+      content: "◇";
+      position: absolute;
+      right: 13px;
+      bottom: -3px;
+      color: rgba(184,44,62,.07);
+      font-size: 78px;
+      line-height: 1;
+      pointer-events: none;
+    }
+
+    .home-value-number {
+      position: relative;
+      z-index: 1;
+      display: inline-flex;
+      width: 29px;
+      height: 29px;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 14px;
+      border: 1px solid rgba(184,44,62,.32);
+      border-radius: 50%;
+      background: rgba(134,28,43,.08);
+      color: var(--accent-bright);
+      font-size: .66rem;
+      font-weight: 900;
+    }
+
+    .home-value-card h3 {
+      position: relative;
+      z-index: 1;
+      margin: 0;
+      color: var(--text);
+      font-size: 1.1rem;
+      line-height: 1.2;
+    }
+
+    .home-value-card p {
+      position: relative;
+      z-index: 1;
+      margin: .75rem 0 0;
+      color: #8f8c91;
+      font-size: .77rem;
+      line-height: 1.7;
+    }
+
+
+    /* GUIDE GATEWAY */
+
+    .home-guides-section {
+      margin: 0 0 4.8rem;
+      padding: 1.5rem;
+      border: 1px solid rgba(255,255,255,.065);
+      border-radius: 17px;
+      background:
+        radial-gradient(
+          circle at 100% 0%,
+          rgba(134,28,43,.11),
+          transparent 38%
+        ),
+        linear-gradient(
+          135deg,
+          rgba(18,18,21,.97),
+          rgba(10,10,12,.99)
+        );
+    }
+
+    .home-guides-heading {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: 2rem;
+      margin-bottom: 1.2rem;
+    }
+
+    .home-guides-heading h2 {
+      margin: .35rem 0 0;
+      font-size: clamp(1.75rem,4vw,2.6rem);
+      line-height: 1.06;
+      letter-spacing: -.035em;
+    }
+
+    .home-guides-heading p:last-child {
+      max-width: 650px;
+      margin: .65rem 0 0;
+      color: rgba(241,238,233,.6);
+      line-height: 1.7;
+    }
+
+    .home-guide-count {
+      flex: 0 0 auto;
+      display: inline-flex;
+      align-items: center;
+      gap: .5rem;
+      padding: .55rem .75rem;
+      border: 1px solid rgba(255,255,255,.075);
+      border-radius: 999px;
+      background: rgba(255,255,255,.025);
+      color: rgba(241,238,233,.6);
+      font-size: .62rem;
+      font-weight: 850;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+    }
+
+    .home-guide-count span {
+      color: var(--accent-bright);
+    }
+
+    .home-guide-grid {
+      display: grid;
+      grid-template-columns: repeat(4,minmax(0,1fr));
+      gap: 11px;
+    }
+
+    .home-guide-card {
+      display: flex;
+      min-width: 0;
+      min-height: 135px;
+      flex-direction: column;
+      padding: 16px;
+      border: 1px solid rgba(255,255,255,.065);
+      border-radius: 11px;
+      background: rgba(255,255,255,.02);
+      color: inherit;
+      text-decoration: none;
+      transition:
+        transform .15s ease,
+        border-color .15s ease,
+        background .15s ease;
+    }
+
+    .home-guide-card:hover {
+      transform: translateY(-2px);
+      border-color: rgba(184,44,62,.42);
+      background: rgba(134,28,43,.07);
+    }
+
+    .home-guide-card:focus-visible {
+      outline: 2px solid var(--accent-bright);
+      outline-offset: 3px;
+    }
+
+    .home-guide-card small {
+      margin-bottom: .45rem;
+      color: #769bad;
+      font-size: .54rem;
+      font-weight: 900;
+      letter-spacing: .13em;
+      text-transform: uppercase;
+    }
+
+    .home-guide-card strong {
+      color: #eeeae7;
+      font-size: .92rem;
+      line-height: 1.25;
+    }
+
+    .home-guide-card p {
+      margin: .5rem 0 0;
+      color: #7f7c81;
+      font-size: .68rem;
+      line-height: 1.55;
+    }
+
+    .home-guide-card span {
+      margin-top: auto;
+      padding-top: .8rem;
+      color: #6f6c71;
+      font-size: .58rem;
+      font-weight: 850;
+      letter-spacing: .06em;
+      text-transform: uppercase;
+    }
+
+    .home-guide-card span b {
+      color: var(--accent-bright);
+      font-size: .75rem;
+    }
+
+    .home-guides-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1.2rem;
+      margin-top: 1rem;
+      padding-top: 1rem;
+      border-top: 1px solid rgba(255,255,255,.055);
+    }
+
+    .home-guides-footer p {
+      margin: 0;
+      color: #757277;
+      font-size: .7rem;
+      line-height: 1.55;
+    }
+
+    .home-guides-all {
+      flex: 0 0 auto;
+      display: inline-flex;
+      align-items: center;
+      gap: .5rem;
+      color: #eee8e9;
+      font-size: .7rem;
+      font-weight: 850;
+      text-decoration: none;
+    }
+
+    .home-guides-all span {
+      color: var(--accent-bright);
+      font-size: .95rem;
+    }
+
+    .home-guides-all:hover {
+      color: var(--accent-bright);
+    }
+
+    .home-guides-all:focus-visible {
+      outline: 2px solid var(--accent-bright);
+      outline-offset: 3px;
+    }
+
+
+    @media (max-width: 900px) {
+      .home-value-grid {
+        grid-template-columns: repeat(2,minmax(0,1fr));
+      }
+
+      .home-guide-grid {
+        grid-template-columns: repeat(2,minmax(0,1fr));
+      }
+    }
+
+    @media (max-width: 720px) {
+      .home-value-heading,
+      .home-guides-heading,
+      .home-guides-footer {
+        display: block;
+      }
+
+      .home-value-guide-link,
+      .home-guide-count,
+      .home-guides-all {
+        margin-top: 1rem;
+      }
+
+      .home-value-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .home-value-card {
+        min-height: 0;
+      }
+
+      .home-guides-section {
+        padding: 1rem;
+      }
+    }
+
+    @media (max-width: 520px) {
+      .home-guide-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .home-guide-card {
+        min-height: 0;
+      }
+
+      .home-value-guide-link,
+      .home-guides-all {
+        width: 100%;
+        justify-content: center;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .home-value-guide-link,
+      .home-guide-card {
+        transition: none;
+      }
+
+      .home-value-guide-link:hover,
+      .home-guide-card:hover {
+        transform: none;
+      }
+    }
+  </style>
+
 
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
-    "@type": "WebSite",
-    "name": "ManaScout",
-    "url": "https://manascout.co.uk/",
-    "potentialAction": {
-      "@type": "SearchAction",
-      "target": "https://manascout.co.uk/?q={search_term_string}",
-      "query-input": "required name=search_term_string"
-    }
+    "@graph": [
+      {
+        "@type": "WebSite",
+        "@id": "https://manascout.co.uk/#website",
+        "name": "ManaScout",
+        "url": "https://manascout.co.uk/",
+        "description": "A Magic: The Gathering card and printing discovery tool for comparing artwork, finishes, versions and available price data.",
+        "potentialAction": {
+          "@type": "SearchAction",
+          "target": {
+            "@type": "EntryPoint",
+            "urlTemplate": "https://manascout.co.uk/?q={search_term_string}"
+          },
+          "query-input": "required name=search_term_string"
+        }
+      },
+      {
+        "@type": "WebPage",
+        "@id": "https://manascout.co.uk/#webpage",
+        "url": "https://manascout.co.uk/",
+        "name": "MTG Card Printing Explorer & Version Finder | ManaScout",
+        "description": "Search Magic: The Gathering cards and compare printings, artwork, foils, special treatments and available Scryfall price data.",
+        "isPartOf": {
+          "@id": "https://manascout.co.uk/#website"
+        },
+        "mainEntity": {
+          "@id": "https://manascout.co.uk/card/#webpage"
+        }
+      },
+      {
+        "@type": "CollectionPage",
+        "@id": "https://manascout.co.uk/card/#webpage",
+        "url": "https://manascout.co.uk/card/",
+        "name": "ManaScout MTG Card Printing Guides",
+        "description": "Permanent ManaScout guides covering notable Magic card printings, reprints, artwork, finishes and collectible versions."
+      }
+    ]
   }
   </script>
 </head>
@@ -69,6 +510,7 @@
         <a
           class="active"
           href="/"
+          aria-current="page"
         >
           Search
         </a>
@@ -101,7 +543,7 @@
     <section class="hero">
 
       <p class="eyebrow">
-        MTG CARD DISCOVERY
+        MTG CARD & PRINTING DISCOVERY
       </p>
 
       <h1>
@@ -111,7 +553,8 @@
       </h1>
 
       <p class="hero-copy">
-        Explore every printing, artwork, finish and price — and find the
+        Search Magic: The Gathering cards, compare their available
+        printings, artwork, finishes and price data, then scout the
         version you actually want.
       </p>
 
@@ -190,6 +633,7 @@
         </a>
 
       </div>
+
 
       <!-- MANASCOUT PICK EXPLAINER -->
       <div
@@ -299,6 +743,350 @@
     </section>
 
 
+    <!-- WHY MANASCOUT -->
+    <section
+      class="home-value-section"
+      id="home-value-section"
+      aria-labelledby="home-value-heading"
+    >
+
+      <div class="home-value-heading">
+
+        <div>
+
+          <p class="eyebrow">
+            WHY MANASCOUT
+          </p>
+
+          <h2 id="home-value-heading">
+            The card name is only the beginning
+          </h2>
+
+          <p>
+            Magic cards can have dozens of releases across different
+            sets, artwork, frames, finishes and collector treatments.
+            ManaScout is designed around choosing between those versions.
+          </p>
+
+        </div>
+
+        <a
+          class="home-value-guide-link"
+          href="/card/"
+        >
+          Browse Card Guides
+          <span aria-hidden="true">→</span>
+        </a>
+
+      </div>
+
+
+      <div class="home-value-grid">
+
+        <article class="home-value-card">
+
+          <span class="home-value-number">
+            1
+          </span>
+
+          <h3>
+            Search the card
+          </h3>
+
+          <p>
+            Start with the Magic card you already know. ManaScout
+            pulls together its available paper printings so you do
+            not have to chase versions across separate searches.
+          </p>
+
+        </article>
+
+
+        <article class="home-value-card">
+
+          <span class="home-value-number">
+            2
+          </span>
+
+          <h3>
+            Compare the versions
+          </h3>
+
+          <p>
+            Explore artwork, frames, foil availability, special
+            treatments, sets and available Scryfall price fields
+            side by side.
+          </p>
+
+        </article>
+
+
+        <article class="home-value-card">
+
+          <span class="home-value-number">
+            3
+          </span>
+
+          <h3>
+            Scout the one
+          </h3>
+
+          <p>
+            Choose the cheapest play copy, an original printing,
+            a favourite illustration or the collector version that
+            deserves the slot in your deck or binder.
+          </p>
+
+        </article>
+
+      </div>
+
+    </section>
+
+
+    <!-- PERMANENT GUIDE GATEWAY -->
+    <section
+      class="home-guides-section"
+      id="home-guides-section"
+      aria-labelledby="home-guides-heading"
+    >
+
+      <div class="home-guides-heading">
+
+        <div>
+
+          <p class="eyebrow">
+            MTG PRINTING GUIDES
+          </p>
+
+          <h2 id="home-guides-heading">
+            Go deeper on iconic cards
+          </h2>
+
+          <p>
+            ManaScout now has 25 permanent card guides combining
+            printing history, version advice and the live explorer.
+            Start with a favourite or browse the complete directory.
+          </p>
+
+        </div>
+
+        <span class="home-guide-count">
+          <span aria-hidden="true">◇</span>
+          25 guides
+        </span>
+
+      </div>
+
+
+      <div class="home-guide-grid">
+
+        <a
+          class="home-guide-card"
+          href="/card/sol-ring/"
+        >
+          <small>
+            COMMANDER ICON
+          </small>
+
+          <strong>
+            Sol Ring
+          </strong>
+
+          <p>
+            Original printing, Commander reprints and decades
+            of artwork and treatments.
+          </p>
+
+          <span>
+            Explore guide <b>→</b>
+          </span>
+        </a>
+
+
+        <a
+          class="home-guide-card"
+          href="/card/rhystic-study/"
+        >
+          <small>
+            CARD ADVANTAGE
+          </small>
+
+          <strong>
+            Rhystic Study
+          </strong>
+
+          <p>
+            From Prophecy to modern alternative art and
+            premium collector versions.
+          </p>
+
+          <span>
+            Explore guide <b>→</b>
+          </span>
+        </a>
+
+
+        <a
+          class="home-guide-card"
+          href="/card/black-lotus/"
+        >
+          <small>
+            MAGIC HISTORY
+          </small>
+
+          <strong>
+            Black Lotus
+          </strong>
+
+          <p>
+            Explore editions and releases of Magic's most
+            famous Power Nine card.
+          </p>
+
+          <span>
+            Explore guide <b>→</b>
+          </span>
+        </a>
+
+
+        <a
+          class="home-guide-card"
+          href="/card/the-one-ring/"
+        >
+          <small>
+            COLLECTOR FAVOURITE
+          </small>
+
+          <strong>
+            The One Ring
+          </strong>
+
+          <p>
+            Compare artwork, premium finishes and distinctive
+            collector-focused treatments.
+          </p>
+
+          <span>
+            Explore guide <b>→</b>
+          </span>
+        </a>
+
+
+        <a
+          class="home-guide-card"
+          href="/card/demonic-tutor/"
+        >
+          <small>
+            ICONIC TUTOR
+          </small>
+
+          <strong>
+            Demonic Tutor
+          </strong>
+
+          <p>
+            Classic artwork, later releases and modern
+            collector treatments.
+          </p>
+
+          <span>
+            Explore guide <b>→</b>
+          </span>
+        </a>
+
+
+        <a
+          class="home-guide-card"
+          href="/card/force-of-will/"
+        >
+          <small>
+            BLUE ICON
+          </small>
+
+          <strong>
+            Force of Will
+          </strong>
+
+          <p>
+            Compare one of Magic's defining counterspells
+            across famous artwork and premium versions.
+          </p>
+
+          <span>
+            Explore guide <b>→</b>
+          </span>
+        </a>
+
+
+        <a
+          class="home-guide-card"
+          href="/card/smothering-tithe/"
+        >
+          <small>
+            COMMANDER STAPLE
+          </small>
+
+          <strong>
+            Smothering Tithe
+          </strong>
+
+          <p>
+            Explore artwork, foil finishes and alternative
+            versions of the famous Treasure engine.
+          </p>
+
+          <span>
+            Explore guide <b>→</b>
+          </span>
+        </a>
+
+
+        <a
+          class="home-guide-card"
+          href="/card/vampiric-tutor/"
+        >
+          <small>
+            BLACK TUTOR
+          </small>
+
+          <strong>
+            Vampiric Tutor
+          </strong>
+
+          <p>
+            Compare the Visions original with later artwork
+            and premium treatments.
+          </p>
+
+          <span>
+            Explore guide <b>→</b>
+          </span>
+        </a>
+
+      </div>
+
+
+      <div class="home-guides-footer">
+
+        <p>
+          The full directory includes Commander staples, historic
+          originals, tutors, fast mana, interaction and showcase cards.
+        </p>
+
+        <a
+          class="home-guides-all"
+          href="/card/"
+        >
+          Explore all 25 guides
+          <span aria-hidden="true">→</span>
+        </a>
+
+      </div>
+
+    </section>
+
+
     <!-- FEATURED CARDS -->
     <section
       class="featured-section"
@@ -310,16 +1098,16 @@
         <div>
 
           <p class="eyebrow">
-            FEATURED CARDS
+            FEATURED CARD GUIDES
           </p>
 
           <h2 id="featured-heading">
-            Explore something iconic
+            Scout a standout printing
           </h2>
 
           <p>
-            Browse some of ManaScout's permanent card guides and compare
-            their printings, artwork, finishes and available price data.
+            Explore a rotating selection of ManaScout's permanent
+            guides and compare artwork, finishes and available price data.
           </p>
 
         </div>
@@ -1366,6 +2154,14 @@
       </p>
 
       <div>
+        <a href="/">
+          Search
+        </a>
+
+        <a href="/card/">
+          Card Guides
+        </a>
+
         <a href="/privacy/">
           Privacy
         </a>
@@ -1383,6 +2179,7 @@
   <!-- MAIN MANASCOUT APPLICATION -->
   <script src="/assets/js/app.js"></script>
 
+
   <!-- FEATURED CARDS -->
   <script>
     (() => {
@@ -1393,6 +2190,12 @@
 
       const cardWeekSection =
         document.querySelector(".card-week-section");
+
+      const homeValueSection =
+        document.getElementById("home-value-section");
+
+      const homeGuidesSection =
+        document.getElementById("home-guides-section");
 
       const carousel =
         document.getElementById("featured-carousel");
@@ -1485,6 +2288,16 @@
             !discoveryVisible;
         }
 
+        if (homeValueSection) {
+          homeValueSection.hidden =
+            !discoveryVisible;
+        }
+
+        if (homeGuidesSection) {
+          homeGuidesSection.hidden =
+            !discoveryVisible;
+        }
+
 
         if (!discoveryVisible) {
           pauseAutoplay();
@@ -1571,7 +2384,7 @@
         const finishes =
           printing.finishes || [];
 
-        const borderless = 
+        const borderless =
           printing.border_color ===
           "borderless";
 
@@ -2362,14 +3175,6 @@
       showCard(0);
 
 
-      /*
-        app.js owns application state after startup.
-
-        The URL is inspected once here so direct
-        page loads containing ?q= begin with the
-        homepage discovery sections hidden.
-      */
-
       setDiscoverySectionsVisible(
         !hasSearchQuery()
       );
@@ -2921,8 +3726,6 @@
     }
 
 
-    /* KEEP SCOUTING */
-
     .scout-more {
       width: 100%;
       margin-top: 1.25rem;
@@ -2936,9 +3739,6 @@
           rgba(10, 10, 12, 0.98)
         );
     }
-
-
-    /* Heading + Scout Another */
 
     .scout-more-heading {
       display: flex;
@@ -2973,9 +3773,6 @@
       font-size: 0.76rem;
       line-height: 1.45;
     }
-
-
-    /* ACTUAL Scout Another button generated by app.js */
 
     .scout-another-button {
       appearance: none;
@@ -3016,9 +3813,6 @@
       outline: 2px solid #b82c3e;
       outline-offset: 3px;
     }
-
-
-    /* ACTUAL options grid generated by app.js */
 
     .scout-more-grid {
       display: grid;
@@ -3082,9 +3876,6 @@
       font-size: 0.7rem;
       line-height: 1.45;
     }
-
-
-    /* Loading/status */
 
     .scout-another-button:disabled,
     .scout-more-option:disabled {
@@ -3156,6 +3947,8 @@
 
   <!-- FEATURED CARD DISPLAY FIX -->
   <style>
+    .home-value-section[hidden],
+    .home-guides-section[hidden],
     .featured-section[hidden],
     .card-week-section[hidden],
     .scout-roulette-section[hidden],
@@ -3204,8 +3997,6 @@
       }
     }
 
-
-    /* SCOUT ROULETTE LABEL POSITION FIX */
 
     .scout-wheel-label {
       position: absolute !important;
@@ -3291,8 +4082,6 @@
       }
     }
 
-
-    /* WILDFIRE ATMOSPHERE */
 
     .card-week-wildfire
     .card-week-visual {
@@ -4028,6 +4817,11 @@
         #101012;
     }
 
+    .scout-wheel-hub:focus-visible {
+      outline: 2px solid var(--accent-bright);
+      outline-offset: 4px;
+    }
+
     .scout-wheel-hub:disabled {
       cursor: wait;
       opacity: 0.68;
@@ -4250,6 +5044,12 @@
           43,
           0.27
         );
+    }
+
+    .scout-roulette-action:focus-visible,
+    .scout-roulette-again:focus-visible {
+      outline: 2px solid var(--accent-bright);
+      outline-offset: 3px;
     }
 
     .scout-roulette-again {
@@ -5486,4 +6286,5 @@
   </script>
 
 </body>
-</html>
+
+  </html>
