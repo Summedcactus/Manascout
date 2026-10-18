@@ -7,11 +7,16 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
-  <title>MTG Card Printing Guides & Versions | ManaScout</title>
+  <title>MTG Card Printing Guides, Reprints & Versions | ManaScout</title>
 
   <meta
     name="description"
-    content="Browse ManaScout MTG card guides. Explore printings, reprints, artwork, finishes and available price data for iconic Magic: The Gathering cards."
+    content="Browse 25 ManaScout MTG printing guides. Compare card reprints, artwork, foils, special treatments and versions for iconic Magic: The Gathering cards."
+  >
+
+  <meta
+    name="robots"
+    content="index,follow,max-image-preview:large"
   >
 
   <meta name="theme-color" content="#09090b">
@@ -24,13 +29,18 @@
   <meta property="og:type" content="website">
 
   <meta
+    property="og:site_name"
+    content="ManaScout"
+  >
+
+  <meta
     property="og:title"
-    content="MTG Card Printing Guides & Versions | ManaScout"
+    content="MTG Card Printing Guides, Reprints & Versions | ManaScout"
   >
 
   <meta
     property="og:description"
-    content="Browse ManaScout guides for iconic MTG cards and explore their printings, reprints, artwork, finishes and available price data."
+    content="Browse 25 ManaScout MTG printing guides and compare reprints, artwork, foils, special treatments and collectible versions."
   >
 
   <meta
@@ -38,24 +48,398 @@
     content="https://manascout.co.uk/card/"
   >
 
-  <meta name="twitter:card" content="summary">
+  <meta
+    name="twitter:card"
+    content="summary"
+  >
+
+  <meta
+    name="twitter:title"
+    content="MTG Card Printing Guides, Reprints & Versions | ManaScout"
+  >
+
+  <meta
+    name="twitter:description"
+    content="Browse 25 ManaScout MTG printing guides and compare artwork, reprints, foils and special versions."
+  >
 
   <link rel="stylesheet" href="/assets/css/style.css">
 
+
   <style>
+    /* ========================================
+       CARD GUIDE HUB
+       ======================================== */
+
+    .guide-hub {
+      margin-bottom: 72px;
+    }
+
+    .guide-hub-summary {
+      display: grid;
+      grid-template-columns:
+        minmax(0, 1fr)
+        auto;
+      gap: 24px;
+      align-items: end;
+      margin-bottom: 22px;
+    }
+
+    .guide-hub-summary-copy {
+      max-width: 760px;
+    }
+
+    .guide-hub-summary-copy p:last-child {
+      margin-bottom: 0;
+    }
+
+    .guide-count {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 9px 12px;
+      border: 1px solid rgba(255,255,255,.07);
+      border-radius: 999px;
+      background: rgba(255,255,255,.025);
+      color: #aaa7ab;
+      font-size: 10px;
+      font-weight: 800;
+      letter-spacing: .09em;
+      text-transform: uppercase;
+      white-space: nowrap;
+    }
+
+    .guide-count-mark {
+      color: var(--accent-bright);
+      font-size: 13px;
+      line-height: 1;
+    }
+
+
+    /* ========================================
+       GUIDE FILTER
+       ======================================== */
+
+    .guide-filter {
+      margin: 0 0 24px;
+      padding: 18px;
+      border: 1px solid rgba(255,255,255,.065);
+      border-radius: 13px;
+      background:
+        linear-gradient(
+          135deg,
+          rgba(255,255,255,.026),
+          rgba(255,255,255,.012)
+        );
+    }
+
+    .guide-filter-label {
+      display: block;
+      margin: 0 0 9px;
+      color: #769bad;
+      font-size: 9px;
+      font-weight: 800;
+      letter-spacing: .14em;
+      text-transform: uppercase;
+    }
+
+    .guide-filter-row {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .guide-filter-input-wrap {
+      position: relative;
+      flex: 1 1 auto;
+      min-width: 0;
+    }
+
+    .guide-filter-icon {
+      position: absolute;
+      top: 50%;
+      left: 14px;
+      width: 17px;
+      height: 17px;
+      color: #66656b;
+      transform: translateY(-50%);
+      pointer-events: none;
+    }
+
+    .guide-filter input {
+      display: block;
+      width: 100%;
+      min-height: 45px;
+      padding: 0 15px 0 42px;
+      border: 1px solid rgba(255,255,255,.08);
+      border-radius: 9px;
+      background: #111114;
+      color: #f1eee9;
+      font: inherit;
+      font-size: 13px;
+      outline: none;
+      transition:
+        border-color .16s ease,
+        box-shadow .16s ease;
+    }
+
+    .guide-filter input::placeholder {
+      color: #5f5d62;
+    }
+
+    .guide-filter input:focus {
+      border-color: rgba(184,44,62,.62);
+      box-shadow:
+        0 0 0 3px rgba(184,44,62,.09);
+    }
+
+    .guide-filter-clear {
+      appearance: none;
+      flex: 0 0 auto;
+      min-height: 45px;
+      padding: 0 15px;
+      border: 1px solid rgba(255,255,255,.08);
+      border-radius: 9px;
+      background: rgba(255,255,255,.025);
+      color: #aaa7ab;
+      font: inherit;
+      font-size: 11px;
+      font-weight: 800;
+      cursor: pointer;
+      transition:
+        border-color .16s ease,
+        color .16s ease,
+        background .16s ease;
+    }
+
+    .guide-filter-clear:hover {
+      border-color: rgba(184,44,62,.42);
+      background: rgba(134,28,43,.08);
+      color: #eee9e8;
+    }
+
+    .guide-filter-clear:focus-visible {
+      outline: 2px solid var(--accent-bright);
+      outline-offset: 3px;
+    }
+
+    .guide-filter-status {
+      min-height: 18px;
+      margin: 10px 0 0;
+      color: #747177;
+      font-size: 10px;
+      line-height: 1.5;
+    }
+
+
+    /* ========================================
+       CATEGORY JUMP LINKS
+       ======================================== */
+
+    .guide-jumps {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin: 0 0 42px;
+    }
+
+    .guide-jump {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      padding: 9px 12px;
+      border: 1px solid rgba(255,255,255,.065);
+      border-radius: 999px;
+      background: rgba(255,255,255,.02);
+      color: #aaa7ab;
+      font-size: 10px;
+      font-weight: 750;
+      line-height: 1;
+      text-decoration: none;
+      transition:
+        border-color .16s ease,
+        color .16s ease,
+        background .16s ease;
+    }
+
+    .guide-jump span {
+      color: var(--accent-bright);
+    }
+
+    .guide-jump:hover {
+      border-color: rgba(184,44,62,.4);
+      background: rgba(134,28,43,.07);
+      color: #eee9e8;
+    }
+
+    .guide-jump:focus-visible {
+      outline: 2px solid var(--accent-bright);
+      outline-offset: 3px;
+    }
+
+
+    /* ========================================
+       START HERE
+       ======================================== */
+
+    .guide-feature-grid {
+      display: grid;
+      grid-template-columns:
+        repeat(3, minmax(0, 1fr));
+      gap: 14px;
+      margin-top: 22px;
+    }
+
+    .guide-feature {
+      position: relative;
+      display: flex;
+      min-width: 0;
+      min-height: 180px;
+      flex-direction: column;
+      justify-content: space-between;
+      overflow: hidden;
+      padding: 21px;
+      border: 1px solid rgba(255,255,255,.07);
+      border-radius: 13px;
+      background:
+        radial-gradient(
+          circle at 100% 0%,
+          rgba(184,44,62,.095),
+          transparent 42%
+        ),
+        linear-gradient(
+          135deg,
+          rgba(255,255,255,.03),
+          rgba(255,255,255,.012)
+        );
+      color: inherit;
+      text-decoration: none;
+      transition:
+        transform .16s ease,
+        border-color .16s ease,
+        box-shadow .16s ease;
+    }
+
+    .guide-feature::after {
+      content: "◇";
+      position: absolute;
+      right: 15px;
+      bottom: 2px;
+      color: rgba(184,44,62,.08);
+      font-size: 74px;
+      line-height: 1;
+      pointer-events: none;
+    }
+
+    .guide-feature:hover {
+      transform: translateY(-2px);
+      border-color: rgba(184,44,62,.45);
+      box-shadow:
+        0 16px 38px rgba(0,0,0,.18);
+    }
+
+    .guide-feature:focus-visible {
+      outline: 2px solid var(--accent-bright);
+      outline-offset: 3px;
+    }
+
+    .guide-feature-top,
+    .guide-feature-bottom {
+      position: relative;
+      z-index: 1;
+    }
+
+    .guide-feature-label {
+      margin: 0 0 8px;
+      color: #769bad;
+      font-size: 9px;
+      font-weight: 800;
+      letter-spacing: .14em;
+      text-transform: uppercase;
+    }
+
+    .guide-feature h3 {
+      margin: 0;
+      color: var(--text);
+      font-size: 22px;
+      line-height: 1.08;
+      letter-spacing: -.03em;
+    }
+
+    .guide-feature p {
+      margin: 14px 0 0;
+      color: #908d92;
+      font-size: 12px;
+      line-height: 1.6;
+    }
+
+    .guide-feature-cta {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      margin-top: 19px;
+      color: #d9d4d5;
+      font-size: 10px;
+      font-weight: 800;
+      letter-spacing: .04em;
+      text-transform: uppercase;
+    }
+
+    .guide-feature-cta span {
+      color: var(--accent-bright);
+      font-size: 14px;
+    }
+
+
+    /* ========================================
+       GUIDE GROUPS
+       ======================================== */
+
+    .guide-group {
+      scroll-margin-top: 84px;
+      margin-top: 58px;
+    }
+
+    .guide-group:first-child {
+      margin-top: 0;
+    }
+
+    .guide-group-heading {
+      display: flex;
+      justify-content: space-between;
+      gap: 22px;
+      align-items: end;
+      padding-bottom: 15px;
+      border-bottom: 1px solid rgba(255,255,255,.055);
+    }
+
+    .guide-group-heading h2 {
+      margin-bottom: 0;
+    }
+
+    .guide-group-description {
+      max-width: 540px;
+      margin: 0;
+      color: #747177;
+      font-size: 11px;
+      line-height: 1.65;
+      text-align: right;
+    }
+
     .guide-grid {
       display: grid;
-      grid-template-columns: repeat(
-        3,
-        minmax(0, 1fr)
-      );
+      grid-template-columns:
+        repeat(3, minmax(0, 1fr));
       gap: 14px;
-      margin-top: 24px;
+      margin-top: 18px;
     }
 
     .guide-card {
-      display: block;
+      position: relative;
+      display: flex;
       min-width: 0;
+      min-height: 155px;
+      flex-direction: column;
       padding: 20px;
       border: 1px solid rgba(255,255,255,.065);
       border-radius: 12px;
@@ -70,7 +454,8 @@
       transition:
         transform .15s ease,
         border-color .15s ease,
-        background .15s ease;
+        background .15s ease,
+        box-shadow .15s ease;
     }
 
     .guide-card:hover {
@@ -82,6 +467,8 @@
           rgba(134,28,43,.08),
           rgba(255,255,255,.015)
         );
+      box-shadow:
+        0 14px 34px rgba(0,0,0,.15);
     }
 
     .guide-card:focus-visible {
@@ -98,7 +485,7 @@
       text-transform: uppercase;
     }
 
-    .guide-card h2 {
+    .guide-card h3 {
       margin: 0;
       color: var(--text);
       font-size: 19px;
@@ -106,65 +493,439 @@
       letter-spacing: -.025em;
     }
 
-    .guide-card p:last-child {
+    .guide-card-copy {
       margin: 10px 0 0;
       color: #8f8c91;
       font-size: 12px;
       line-height: 1.6;
     }
 
-    .guide-intro {
-      max-width: 720px;
-      margin-bottom: 28px;
-      color: #aaa7ab;
-      font-size: 14px;
-      line-height: 1.7;
+    .guide-card-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      margin-top: auto;
+      padding-top: 15px;
+      color: #716f74;
+      font-size: 9px;
+      font-weight: 800;
+      letter-spacing: .06em;
+      text-transform: uppercase;
     }
 
+    .guide-card-link span {
+      color: var(--accent-bright);
+      font-size: 12px;
+    }
+
+    .guide-card[hidden] {
+      display: none;
+    }
+
+
+    /* ========================================
+       EMPTY FILTER RESULT
+       ======================================== */
+
+    .guide-no-results {
+      margin: 28px 0 0;
+      padding: 24px;
+      border: 1px solid rgba(255,255,255,.065);
+      border-radius: 12px;
+      background: rgba(255,255,255,.018);
+      text-align: center;
+    }
+
+    .guide-no-results h2 {
+      margin: 0 0 8px;
+      font-size: 22px;
+    }
+
+    .guide-no-results p {
+      max-width: 540px;
+      margin: 0 auto;
+      color: #858287;
+      font-size: 12px;
+      line-height: 1.65;
+    }
+
+    .guide-no-results a {
+      display: inline-flex;
+      margin-top: 15px;
+      color: #ddd6d8;
+      font-size: 11px;
+      font-weight: 800;
+      text-decoration: none;
+    }
+
+    .guide-no-results a:hover {
+      color: var(--accent-bright);
+    }
+
+
+    /* ========================================
+       WHY PRINTINGS MATTER
+       ======================================== */
+
+    .guide-explainer {
+      display: grid;
+      grid-template-columns:
+        repeat(3, minmax(0,1fr));
+      gap: 14px;
+      margin-top: 22px;
+    }
+
+    .guide-explainer-card {
+      padding: 20px;
+      border: 1px solid rgba(255,255,255,.06);
+      border-radius: 12px;
+      background: rgba(255,255,255,.018);
+    }
+
+    .guide-explainer-number {
+      display: inline-flex;
+      width: 28px;
+      height: 28px;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 13px;
+      border: 1px solid rgba(184,44,62,.32);
+      border-radius: 50%;
+      background: rgba(134,28,43,.08);
+      color: var(--accent-bright);
+      font-size: 10px;
+      font-weight: 900;
+    }
+
+    .guide-explainer-card h3 {
+      margin: 0 0 8px;
+      color: var(--text);
+      font-size: 16px;
+    }
+
+    .guide-explainer-card p {
+      margin: 0;
+      color: #878489;
+      font-size: 12px;
+      line-height: 1.65;
+    }
+
+
+    /* ========================================
+       EDITORIAL COPY
+       ======================================== */
+
+    .guide-editorial {
+      max-width: 820px;
+      margin-top: 22px;
+      color: #99969b;
+      font-size: 13px;
+      line-height: 1.75;
+    }
+
+    .guide-editorial p {
+      margin-top: 0;
+    }
+
+    .guide-editorial p:last-child {
+      margin-bottom: 0;
+    }
+
+    .guide-editorial strong {
+      color: #ded9da;
+    }
+
+
+    /* ========================================
+       RESPONSIVE
+       ======================================== */
+
     @media (max-width: 900px) {
-      .guide-grid {
-        grid-template-columns: repeat(
-          2,
-          minmax(0, 1fr)
-        );
+      .guide-feature-grid,
+      .guide-grid,
+      .guide-explainer {
+        grid-template-columns:
+          repeat(2, minmax(0, 1fr));
+      }
+
+      .guide-group-heading {
+        display: block;
+      }
+
+      .guide-group-description {
+        max-width: 680px;
+        margin-top: 8px;
+        text-align: left;
       }
     }
 
-    @media (max-width: 620px) {
-      .guide-grid {
+    @media (max-width: 720px) {
+      .guide-hub {
+        margin-bottom: 56px;
+      }
+
+      .guide-hub-summary {
+        display: block;
+      }
+
+      .guide-count {
+        margin-top: 14px;
+      }
+
+      .guide-filter {
+        padding: 14px;
+      }
+
+      .guide-filter-row {
+        display: block;
+      }
+
+      .guide-filter-clear {
+        width: 100%;
+        margin-top: 9px;
+      }
+
+      .guide-jumps {
+        margin-bottom: 34px;
+      }
+
+      .guide-feature-grid,
+      .guide-grid,
+      .guide-explainer {
         grid-template-columns: 1fr;
       }
 
+      .guide-feature {
+        min-height: 160px;
+      }
+
       .guide-card {
+        min-height: 0;
         padding: 17px;
+      }
+
+      .guide-group {
+        margin-top: 46px;
       }
     }
 
     @media (prefers-reduced-motion: reduce) {
-      .guide-card {
+      .guide-feature,
+      .guide-card,
+      .guide-jump,
+      .guide-filter input,
+      .guide-filter-clear {
         transition: none;
       }
 
+      .guide-feature:hover,
       .guide-card:hover {
         transform: none;
       }
     }
   </style>
 
+
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
-    "@type": "CollectionPage",
-    "@id": "https://manascout.co.uk/card/#webpage",
-    "url": "https://manascout.co.uk/card/",
-    "name": "MTG Card Printing Guides & Versions | ManaScout",
-    "description": "Browse ManaScout MTG card guides and explore printings, reprints, artwork, finishes and available price data.",
-    "isPartOf": {
-      "@type": "WebSite",
-      "@id": "https://manascout.co.uk/#website",
-      "name": "ManaScout",
-      "url": "https://manascout.co.uk/"
-    }
+    "@graph": [
+      {
+        "@type": "CollectionPage",
+        "@id": "https://manascout.co.uk/card/#webpage",
+        "url": "https://manascout.co.uk/card/",
+        "name": "MTG Card Printing Guides, Reprints & Versions | ManaScout",
+        "description": "Browse 25 ManaScout MTG printing guides. Compare card reprints, artwork, foils, special treatments and versions for iconic Magic: The Gathering cards.",
+        "isPartOf": {
+          "@type": "WebSite",
+          "@id": "https://manascout.co.uk/#website",
+          "name": "ManaScout",
+          "url": "https://manascout.co.uk/"
+        },
+        "breadcrumb": {
+          "@id": "https://manascout.co.uk/card/#breadcrumb"
+        },
+        "mainEntity": {
+          "@id": "https://manascout.co.uk/card/#guide-list"
+        }
+      },
+      {
+        "@type": "BreadcrumbList",
+        "@id": "https://manascout.co.uk/card/#breadcrumb",
+        "itemListElement": [
+          {
+            "@type": "ListItem",
+            "position": 1,
+            "name": "ManaScout",
+            "item": "https://manascout.co.uk/"
+          },
+          {
+            "@type": "ListItem",
+            "position": 2,
+            "name": "Card Guides",
+            "item": "https://manascout.co.uk/card/"
+          }
+        ]
+      },
+      {
+        "@type": "ItemList",
+        "@id": "https://manascout.co.uk/card/#guide-list",
+        "name": "ManaScout MTG Card Printing Guides",
+        "numberOfItems": 25,
+        "itemListElement": [
+          {
+            "@type": "ListItem",
+            "position": 1,
+            "name": "Ancient Tomb",
+            "url": "https://manascout.co.uk/card/ancient-tomb/"
+          },
+          {
+            "@type": "ListItem",
+            "position": 2,
+            "name": "Birds of Paradise",
+            "url": "https://manascout.co.uk/card/birds-of-paradise/"
+          },
+          {
+            "@type": "ListItem",
+            "position": 3,
+            "name": "Black Lotus",
+            "url": "https://manascout.co.uk/card/black-lotus/"
+          },
+          {
+            "@type": "ListItem",
+            "position": 4,
+            "name": "Counterspell",
+            "url": "https://manascout.co.uk/card/counterspell/"
+          },
+          {
+            "@type": "ListItem",
+            "position": 5,
+            "name": "Cyclonic Rift",
+            "url": "https://manascout.co.uk/card/cyclonic-rift/"
+          },
+          {
+            "@type": "ListItem",
+            "position": 6,
+            "name": "Deflecting Swat",
+            "url": "https://manascout.co.uk/card/deflecting-swat/"
+          },
+          {
+            "@type": "ListItem",
+            "position": 7,
+            "name": "Demonic Consultation",
+            "url": "https://manascout.co.uk/card/demonic-consultation/"
+          },
+          {
+            "@type": "ListItem",
+            "position": 8,
+            "name": "Demonic Tutor",
+            "url": "https://manascout.co.uk/card/demonic-tutor/"
+          },
+          {
+            "@type": "ListItem",
+            "position": 9,
+            "name": "Dockside Extortionist",
+            "url": "https://manascout.co.uk/card/dockside-extortionist/"
+          },
+          {
+            "@type": "ListItem",
+            "position": 10,
+            "name": "Force of Will",
+            "url": "https://manascout.co.uk/card/force-of-will/"
+          },
+          {
+            "@type": "ListItem",
+            "position": 11,
+            "name": "Jace, the Mind Sculptor",
+            "url": "https://manascout.co.uk/card/jace-the-mind-sculptor/"
+          },
+          {
+            "@type": "ListItem",
+            "position": 12,
+            "name": "Jeska's Will",
+            "url": "https://manascout.co.uk/card/jeskas-will/"
+          },
+          {
+            "@type": "ListItem",
+            "position": 13,
+            "name": "Lightning Greaves",
+            "url": "https://manascout.co.uk/card/lightning-greaves/"
+          },
+          {
+            "@type": "ListItem",
+            "position": 14,
+            "name": "Mana Crypt",
+            "url": "https://manascout.co.uk/card/mana-crypt/"
+          },
+          {
+            "@type": "ListItem",
+            "position": 15,
+            "name": "Mana Drain",
+            "url": "https://manascout.co.uk/card/mana-drain/"
+          },
+          {
+            "@type": "ListItem",
+            "position": 16,
+            "name": "Mystic Remora",
+            "url": "https://manascout.co.uk/card/mystic-remora/"
+          },
+          {
+            "@type": "ListItem",
+            "position": 17,
+            "name": "Rhystic Study",
+            "url": "https://manascout.co.uk/card/rhystic-study/"
+          },
+          {
+            "@type": "ListItem",
+            "position": 18,
+            "name": "Smaug, Wicked Worm",
+            "url": "https://manascout.co.uk/card/smaug-wicked-worm/"
+          },
+          {
+            "@type": "ListItem",
+            "position": 19,
+            "name": "Smothering Tithe",
+            "url": "https://manascout.co.uk/card/smothering-tithe/"
+          },
+          {
+            "@type": "ListItem",
+            "position": 20,
+            "name": "Sol Ring",
+            "url": "https://manascout.co.uk/card/sol-ring/"
+          },
+          {
+            "@type": "ListItem",
+            "position": 21,
+            "name": "Swords to Plowshares",
+            "url": "https://manascout.co.uk/card/swords-to-plowshares/"
+          },
+          {
+            "@type": "ListItem",
+            "position": 22,
+            "name": "Teferi's Protection",
+            "url": "https://manascout.co.uk/card/teferis-protection/"
+          },
+          {
+            "@type": "ListItem",
+            "position": 23,
+            "name": "The One Ring",
+            "url": "https://manascout.co.uk/card/the-one-ring/"
+          },
+          {
+            "@type": "ListItem",
+            "position": 24,
+            "name": "The Theorist, Jace Beleren",
+            "url": "https://manascout.co.uk/card/the-theorist-jace-beleren/"
+          },
+          {
+            "@type": "ListItem",
+            "position": 25,
+            "name": "Vampiric Tutor",
+            "url": "https://manascout.co.uk/card/vampiric-tutor/"
+          }
+        ]
+      }
+    ]
   }
   </script>
 </head>
@@ -199,6 +960,14 @@
         >
           Card Guides
         </a>
+
+        <a href="/card/sol-ring/">
+          Sol Ring
+        </a>
+
+        <a href="/card/rhystic-study/">
+          Rhystic Study
+        </a>
       </nav>
 
     </div>
@@ -216,22 +985,1274 @@
       </p>
 
       <h1>
-        Explore MTG card printings
+        Find the card.<br>
+        Find the version.
       </h1>
 
       <p class="hero-copy">
-        Browse ManaScout guides for iconic Magic: The Gathering cards.
-        Explore their printings, reprints, artwork, finishes and available
-        price data before choosing the version you actually want.
+        Explore ManaScout's MTG printing guides for iconic cards,
+        Commander staples, historic releases and modern collector
+        favourites. Compare reprints, artwork, foils and special
+        treatments before choosing the version you actually want.
       </p>
 
     </section>
 
 
-    <!-- CARD GUIDE DIRECTORY -->
+    <!-- HUB INTRO -->
+    <section
+      class="guide-hub"
+      aria-labelledby="guide-hub-heading"
+    >
+
+      <div class="guide-hub-summary">
+
+        <div class="guide-hub-summary-copy">
+
+          <p class="eyebrow">
+            PRINTING GUIDE DIRECTORY
+          </p>
+
+          <h2 id="guide-hub-heading">
+            Explore all ManaScout card guides
+          </h2>
+
+          <p>
+            Each guide combines card-specific editorial information
+            with ManaScout's live printing explorer, helping you compare
+            different releases, artwork, finishes and available price data.
+          </p>
+
+        </div>
+
+        <div
+          class="guide-count"
+          aria-label="25 card guides"
+        >
+          <span
+            class="guide-count-mark"
+            aria-hidden="true"
+          >
+            ◇
+          </span>
+
+          25 guides
+        </div>
+
+      </div>
+
+
+      <!-- FILTER -->
+      <div class="guide-filter">
+
+        <label
+          class="guide-filter-label"
+          for="guide-filter-input"
+        >
+          FILTER CARD GUIDES
+        </label>
+
+        <div class="guide-filter-row">
+
+          <div class="guide-filter-input-wrap">
+
+            <svg
+              class="guide-filter-icon"
+              viewBox="0 0 24 24"
+              aria-hidden="true"
+              focusable="false"
+            >
+              <circle
+                cx="10.75"
+                cy="10.75"
+                r="6.25"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.8"
+              ></circle>
+
+              <path
+                d="M15.5 15.5L20.5 20.5"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.8"
+                stroke-linecap="round"
+              ></path>
+            </svg>
+
+            <input
+              id="guide-filter-input"
+              type="search"
+              placeholder="Filter by card name, type or theme…"
+              aria-describedby="guide-filter-status"
+              autocomplete="off"
+              spellcheck="false"
+            >
+
+          </div>
+
+          <button
+            id="guide-filter-clear"
+            class="guide-filter-clear"
+            type="button"
+          >
+            Clear
+          </button>
+
+        </div>
+
+        <p
+          id="guide-filter-status"
+          class="guide-filter-status"
+          aria-live="polite"
+        >
+          Showing all 25 ManaScout card guides.
+        </p>
+
+      </div>
+
+
+      <!-- CATEGORY JUMPS -->
+      <nav
+        class="guide-jumps"
+        aria-label="Card guide categories"
+      >
+
+        <a
+          class="guide-jump"
+          href="#icons-originals"
+        >
+          <span aria-hidden="true">◇</span>
+          Icons & originals
+        </a>
+
+        <a
+          class="guide-jump"
+          href="#commander-staples"
+        >
+          <span aria-hidden="true">◇</span>
+          Commander staples
+        </a>
+
+        <a
+          class="guide-jump"
+          href="#tutors-power"
+        >
+          <span aria-hidden="true">◇</span>
+          Tutors, mana & power
+        </a>
+
+        <a
+          class="guide-jump"
+          href="#showcase-releases"
+        >
+          <span aria-hidden="true">◇</span>
+          Jace & showcase
+        </a>
+
+      </nav>
+
+
+      <!-- START HERE -->
+      <section
+        class="featured-section"
+        aria-labelledby="start-here-heading"
+      >
+
+        <div class="featured-heading">
+
+          <div>
+
+            <p class="eyebrow">
+              START HERE
+            </p>
+
+            <h2 id="start-here-heading">
+              Six guides worth scouting first
+            </h2>
+
+            <p>
+              A mix of Magic history, Commander staples and
+              highly distinctive collector versions.
+            </p>
+
+          </div>
+
+        </div>
+
+
+        <div class="guide-feature-grid">
+
+          <a
+            class="guide-feature"
+            href="/card/sol-ring/"
+          >
+            <div class="guide-feature-top">
+
+              <p class="guide-feature-label">
+                COMMANDER ICON
+              </p>
+
+              <h3>
+                Sol Ring
+              </h3>
+
+              <p>
+                Trace Sol Ring from its 1993 debut through decades
+                of reprints, artwork and premium treatments.
+              </p>
+
+            </div>
+
+            <div class="guide-feature-bottom">
+              <span class="guide-feature-cta">
+                Scout the guide
+                <span aria-hidden="true">→</span>
+              </span>
+            </div>
+          </a>
+
+
+          <a
+            class="guide-feature"
+            href="/card/rhystic-study/"
+          >
+            <div class="guide-feature-top">
+
+              <p class="guide-feature-label">
+                COMMANDER STAPLE
+              </p>
+
+              <h3>
+                Rhystic Study
+              </h3>
+
+              <p>
+                Compare its original Prophecy printing with later
+                artwork, foils and collector-focused versions.
+              </p>
+
+            </div>
+
+            <div class="guide-feature-bottom">
+              <span class="guide-feature-cta">
+                Scout the guide
+                <span aria-hidden="true">→</span>
+              </span>
+            </div>
+          </a>
+
+
+          <a
+            class="guide-feature"
+            href="/card/black-lotus/"
+          >
+            <div class="guide-feature-top">
+
+              <p class="guide-feature-label">
+                MAGIC HISTORY
+              </p>
+
+              <h3>
+                Black Lotus
+              </h3>
+
+              <p>
+                Explore one of Magic's most historically significant
+                cards and the differences between its releases.
+              </p>
+
+            </div>
+
+            <div class="guide-feature-bottom">
+              <span class="guide-feature-cta">
+                Scout the guide
+                <span aria-hidden="true">→</span>
+              </span>
+            </div>
+          </a>
+
+
+          <a
+            class="guide-feature"
+            href="/card/the-one-ring/"
+          >
+            <div class="guide-feature-top">
+
+              <p class="guide-feature-label">
+                COLLECTOR FAVOURITE
+              </p>
+
+              <h3>
+                The One Ring
+              </h3>
+
+              <p>
+                Compare one of Magic's most collector-driven modern
+                cards across artwork, finishes and special treatments.
+              </p>
+
+            </div>
+
+            <div class="guide-feature-bottom">
+              <span class="guide-feature-cta">
+                Scout the guide
+                <span aria-hidden="true">→</span>
+              </span>
+            </div>
+          </a>
+
+
+          <a
+            class="guide-feature"
+            href="/card/demonic-tutor/"
+          >
+            <div class="guide-feature-top">
+
+              <p class="guide-feature-label">
+                ICONIC TUTOR
+              </p>
+
+              <h3>
+                Demonic Tutor
+              </h3>
+
+              <p>
+                Compare one of black's defining tutors across classic
+                artwork, modern frames and premium versions.
+              </p>
+
+            </div>
+
+            <div class="guide-feature-bottom">
+              <span class="guide-feature-cta">
+                Scout the guide
+                <span aria-hidden="true">→</span>
+              </span>
+            </div>
+          </a>
+
+
+          <a
+            class="guide-feature"
+            href="/card/force-of-will/"
+          >
+            <div class="guide-feature-top">
+
+              <p class="guide-feature-label">
+                BLUE ICON
+              </p>
+
+              <h3>
+                Force of Will
+              </h3>
+
+              <p>
+                Explore one of Magic's defining counterspells across
+                artwork, reprints, foils and premium treatments.
+              </p>
+
+            </div>
+
+            <div class="guide-feature-bottom">
+              <span class="guide-feature-cta">
+                Scout the guide
+                <span aria-hidden="true">→</span>
+              </span>
+            </div>
+          </a>
+
+        </div>
+
+      </section>
+
+
+      <!-- ==================================================
+           GROUP 1 — ICONS & ORIGINALS
+           ================================================== -->
+
+      <section
+        id="icons-originals"
+        class="guide-group"
+        aria-labelledby="icons-originals-heading"
+      >
+
+        <div class="guide-group-heading">
+
+          <div>
+
+            <p class="eyebrow">
+              ICONS & ORIGINALS
+            </p>
+
+            <h2 id="icons-originals-heading">
+              Cards with deep Magic history
+            </h2>
+
+          </div>
+
+          <p class="guide-group-description">
+            Explore cards whose printing histories stretch back
+            to Magic's earliest years and compare how their artwork,
+            frames and presentation changed over time.
+          </p>
+
+        </div>
+
+
+        <div class="guide-grid">
+
+          <a
+            class="guide-card"
+            href="/card/black-lotus/"
+            data-guide-title="black lotus"
+            data-guide-keywords="alpha power nine historic iconic artifact collector original"
+          >
+
+            <p class="guide-card-label">
+              MAGIC HISTORY
+            </p>
+
+            <h3>
+              Black Lotus
+            </h3>
+
+            <p class="guide-card-copy">
+              Explore the editions and collectible releases of
+              Magic's most famous Power Nine card.
+            </p>
+
+            <span class="guide-card-link">
+              Explore printings
+              <span aria-hidden="true">→</span>
+            </span>
+
+          </a>
+
+
+          <a
+            class="guide-card"
+            href="/card/sol-ring/"
+            data-guide-title="sol ring"
+            data-guide-keywords="alpha commander artifact mana rock fast mana historic original reprints"
+          >
+
+            <p class="guide-card-label">
+              COMMANDER ICON
+            </p>
+
+            <h3>
+              Sol Ring
+            </h3>
+
+            <p class="guide-card-copy">
+              Compare its original 1993 release with decades
+              of Commander reprints and collector treatments.
+            </p>
+
+            <span class="guide-card-link">
+              Explore printings
+              <span aria-hidden="true">→</span>
+            </span>
+
+          </a>
+
+
+          <a
+            class="guide-card"
+            href="/card/birds-of-paradise/"
+            data-guide-title="birds of paradise"
+            data-guide-keywords="alpha green mana creature historic original reprints artwork"
+          >
+
+            <p class="guide-card-label">
+              CLASSIC MAGIC
+            </p>
+
+            <h3>
+              Birds of Paradise
+            </h3>
+
+            <p class="guide-card-copy">
+              Compare decades of artwork and versions for one
+              of Magic's longest-running mana creatures.
+            </p>
+
+            <span class="guide-card-link">
+              Explore printings
+              <span aria-hidden="true">→</span>
+            </span>
+
+          </a>
+
+
+          <a
+            class="guide-card"
+            href="/card/swords-to-plowshares/"
+            data-guide-title="swords to plowshares"
+            data-guide-keywords="alpha white removal exile instant historic original reprints artwork"
+          >
+
+            <p class="guide-card-label">
+              CLASSIC REMOVAL
+            </p>
+
+            <h3>
+              Swords to Plowshares
+            </h3>
+
+            <p class="guide-card-copy">
+              Explore one of white's defining removal spells
+              across decades of frames, artwork and finishes.
+            </p>
+
+            <span class="guide-card-link">
+              Explore printings
+              <span aria-hidden="true">→</span>
+            </span>
+
+          </a>
+
+
+          <a
+            class="guide-card"
+            href="/card/counterspell/"
+            data-guide-title="counterspell"
+            data-guide-keywords="alpha blue counterspell instant historic original reprints artwork"
+          >
+
+            <p class="guide-card-label">
+              BLUE CLASSIC
+            </p>
+
+            <h3>
+              Counterspell
+            </h3>
+
+            <p class="guide-card-copy">
+              Compare one of blue's original defining spells
+              across artwork, frames and special treatments.
+            </p>
+
+            <span class="guide-card-link">
+              Explore printings
+              <span aria-hidden="true">→</span>
+            </span>
+
+          </a>
+
+        </div>
+
+      </section>
+
+
+      <!-- ==================================================
+           GROUP 2 — COMMANDER STAPLES
+           ================================================== -->
+
+      <section
+        id="commander-staples"
+        class="guide-group"
+        aria-labelledby="commander-staples-heading"
+      >
+
+        <div class="guide-group-heading">
+
+          <div>
+
+            <p class="eyebrow">
+              COMMANDER STAPLES
+            </p>
+
+            <h2 id="commander-staples-heading">
+              Familiar cards, very different versions
+            </h2>
+
+          </div>
+
+          <p class="guide-group-description">
+            Compare widely recognised Commander cards where
+            artwork, frame treatment and premium finishes can
+            make one printing feel completely different from another.
+          </p>
+
+        </div>
+
+
+        <div class="guide-grid">
+
+          <a
+            class="guide-card"
+            href="/card/rhystic-study/"
+            data-guide-title="rhystic study"
+            data-guide-keywords="commander blue enchantment draw tax prophecy card advantage"
+          >
+
+            <p class="guide-card-label">
+              CARD ADVANTAGE
+            </p>
+
+            <h3>
+              Rhystic Study
+            </h3>
+
+            <p class="guide-card-copy">
+              Compare its original Prophecy release with later
+              artwork, foils and premium treatments.
+            </p>
+
+            <span class="guide-card-link">
+              Explore printings
+              <span aria-hidden="true">→</span>
+            </span>
+
+          </a>
+
+
+          <a
+            class="guide-card"
+            href="/card/mystic-remora/"
+            data-guide-title="mystic remora"
+            data-guide-keywords="commander blue enchantment draw tax ice age card advantage"
+          >
+
+            <p class="guide-card-label">
+              CARD ADVANTAGE
+            </p>
+
+            <h3>
+              Mystic Remora
+            </h3>
+
+            <p class="guide-card-copy">
+              Explore the Ice Age original and later versions
+              of this famous multiplayer draw engine.
+            </p>
+
+            <span class="guide-card-link">
+              Explore printings
+              <span aria-hidden="true">→</span>
+            </span>
+
+          </a>
+
+
+          <a
+            class="guide-card"
+            href="/card/smothering-tithe/"
+            data-guide-title="smothering tithe"
+            data-guide-keywords="commander white enchantment treasure tax mana ravnica allegiance"
+          >
+
+            <p class="guide-card-label">
+              TREASURE ENGINE
+            </p>
+
+            <h3>
+              Smothering Tithe
+            </h3>
+
+            <p class="guide-card-copy">
+              Compare one of white's best-known Commander
+              engines across artwork and collector treatments.
+            </p>
+
+            <span class="guide-card-link">
+              Explore printings
+              <span aria-hidden="true">→</span>
+            </span>
+
+          </a>
+
+
+          <a
+            class="guide-card"
+            href="/card/cyclonic-rift/"
+            data-guide-title="cyclonic rift"
+            data-guide-keywords="commander blue instant overload interaction bounce removal"
+          >
+
+            <p class="guide-card-label">
+              BLUE INTERACTION
+            </p>
+
+            <h3>
+              Cyclonic Rift
+            </h3>
+
+            <p class="guide-card-copy">
+              Explore one of blue's most recognisable multiplayer
+              spells across its available versions.
+            </p>
+
+            <span class="guide-card-link">
+              Explore printings
+              <span aria-hidden="true">→</span>
+            </span>
+
+          </a>
+
+
+          <a
+            class="guide-card"
+            href="/card/teferis-protection/"
+            data-guide-title="teferi's protection teferis protection"
+            data-guide-keywords="commander white instant protection phase out defensive teferi"
+          >
+
+            <p class="guide-card-label">
+              PROTECTION
+            </p>
+
+            <h3>
+              Teferi's Protection
+            </h3>
+
+            <p class="guide-card-copy">
+              Compare the Commander 2017 original with later
+              artwork, finishes and premium versions.
+            </p>
+
+            <span class="guide-card-link">
+              Explore printings
+              <span aria-hidden="true">→</span>
+            </span>
+
+          </a>
+
+
+          <a
+            class="guide-card"
+            href="/card/lightning-greaves/"
+            data-guide-title="lightning greaves"
+            data-guide-keywords="commander artifact equipment haste shroud mirrodin staple"
+          >
+
+            <p class="guide-card-label">
+              EQUIPMENT STAPLE
+            </p>
+
+            <h3>
+              Lightning Greaves
+            </h3>
+
+            <p class="guide-card-copy">
+              Explore this long-running Commander equipment
+              across reprints, artwork and special versions.
+            </p>
+
+            <span class="guide-card-link">
+              Explore printings
+              <span aria-hidden="true">→</span>
+            </span>
+
+          </a>
+
+
+          <a
+            class="guide-card"
+            href="/card/deflecting-swat/"
+            data-guide-title="deflecting swat"
+            data-guide-keywords="commander red instant interaction protection free spell"
+          >
+
+            <p class="guide-card-label">
+              COMMANDER INTERACTION
+            </p>
+
+            <h3>
+              Deflecting Swat
+            </h3>
+
+            <p class="guide-card-copy">
+              Compare this Commander-era interaction spell
+              across its different treatments and finishes.
+            </p>
+
+            <span class="guide-card-link">
+              Explore printings
+              <span aria-hidden="true">→</span>
+            </span>
+
+          </a>
+
+
+          <a
+            class="guide-card"
+            href="/card/dockside-extortionist/"
+            data-guide-title="dockside extortionist"
+            data-guide-keywords="commander red creature goblin treasure mana resource"
+          >
+
+            <p class="guide-card-label">
+              TREASURE
+            </p>
+
+            <h3>
+              Dockside Extortionist
+            </h3>
+
+            <p class="guide-card-copy">
+              Explore the versions and premium treatments of
+              one of Commander's most recognisable Treasure cards.
+            </p>
+
+            <span class="guide-card-link">
+              Explore printings
+              <span aria-hidden="true">→</span>
+            </span>
+
+          </a>
+
+
+          <a
+            class="guide-card"
+            href="/card/jeskas-will/"
+            data-guide-title="jeska's will jeskas will"
+            data-guide-keywords="commander red sorcery mana impulse draw commander legends"
+          >
+
+            <p class="guide-card-label">
+              RED RESOURCE ENGINE
+            </p>
+
+            <h3>
+              Jeska's Will
+            </h3>
+
+            <p class="guide-card-copy">
+              Compare this explosive red Commander spell
+              across artwork, printings and finishes.
+            </p>
+
+            <span class="guide-card-link">
+              Explore printings
+              <span aria-hidden="true">→</span>
+            </span>
+
+          </a>
+
+        </div>
+
+      </section>
+
+
+      <!-- ==================================================
+           GROUP 3 — TUTORS, MANA & POWER
+           ================================================== -->
+
+      <section
+        id="tutors-power"
+        class="guide-group"
+        aria-labelledby="tutors-power-heading"
+      >
+
+        <div class="guide-group-heading">
+
+          <div>
+
+            <p class="eyebrow">
+              TUTORS, MANA & POWER
+            </p>
+
+            <h2 id="tutors-power-heading">
+              High-impact Magic staples
+            </h2>
+
+          </div>
+
+          <p class="guide-group-description">
+            Browse famous tutors, fast mana and premium interaction
+            where older printings and modern collector treatments
+            can sit side by side.
+          </p>
+
+        </div>
+
+
+        <div class="guide-grid">
+
+          <a
+            class="guide-card"
+            href="/card/demonic-tutor/"
+            data-guide-title="demonic tutor"
+            data-guide-keywords="black sorcery tutor search alpha iconic historic"
+          >
+
+            <p class="guide-card-label">
+              ICONIC TUTOR
+            </p>
+
+            <h3>
+              Demonic Tutor
+            </h3>
+
+            <p class="guide-card-copy">
+              Compare one of black's defining search spells
+              across classic artwork and modern treatments.
+            </p>
+
+            <span class="guide-card-link">
+              Explore printings
+              <span aria-hidden="true">→</span>
+            </span>
+
+          </a>
+
+
+          <a
+            class="guide-card"
+            href="/card/vampiric-tutor/"
+            data-guide-title="vampiric tutor"
+            data-guide-keywords="black instant tutor search visions combo commander"
+          >
+
+            <p class="guide-card-label">
+              INSTANT TUTOR
+            </p>
+
+            <h3>
+              Vampiric Tutor
+            </h3>
+
+            <p class="guide-card-copy">
+              Explore the Visions original and later premium
+              versions of this one-mana tutor.
+            </p>
+
+            <span class="guide-card-link">
+              Explore printings
+              <span aria-hidden="true">→</span>
+            </span>
+
+          </a>
+
+
+          <a
+            class="guide-card"
+            href="/card/demonic-consultation/"
+            data-guide-title="demonic consultation"
+            data-guide-keywords="black instant tutor combo ice age search competitive"
+          >
+
+            <p class="guide-card-label">
+              COMBO STAPLE
+            </p>
+
+            <h3>
+              Demonic Consultation
+            </h3>
+
+            <p class="guide-card-copy">
+              Compare the available versions of one of black's
+              most unusual and efficient search spells.
+            </p>
+
+            <span class="guide-card-link">
+              Explore printings
+              <span aria-hidden="true">→</span>
+            </span>
+
+          </a>
+
+
+          <a
+            class="guide-card"
+            href="/card/mana-crypt/"
+            data-guide-title="mana crypt"
+            data-guide-keywords="artifact fast mana commander zero cost colourless premium"
+          >
+
+            <p class="guide-card-label">
+              FAST MANA
+            </p>
+
+            <h3>
+              Mana Crypt
+            </h3>
+
+            <p class="guide-card-copy">
+              Explore this famous zero-cost mana artifact across
+              its unusual history and collector treatments.
+            </p>
+
+            <span class="guide-card-link">
+              Explore printings
+              <span aria-hidden="true">→</span>
+            </span>
+
+          </a>
+
+
+          <a
+            class="guide-card"
+            href="/card/ancient-tomb/"
+            data-guide-title="ancient tomb"
+            data-guide-keywords="land fast mana colourless tempests commander legacy"
+          >
+
+            <p class="guide-card-label">
+              FAST MANA LAND
+            </p>
+
+            <h3>
+              Ancient Tomb
+            </h3>
+
+            <p class="guide-card-copy">
+              Compare this famous colourless mana land across
+              older printings and modern collector versions.
+            </p>
+
+            <span class="guide-card-link">
+              Explore printings
+              <span aria-hidden="true">→</span>
+            </span>
+
+          </a>
+
+
+          <a
+            class="guide-card"
+            href="/card/mana-drain/"
+            data-guide-title="mana drain"
+            data-guide-keywords="blue instant counterspell legends mana interaction premium"
+          >
+
+            <p class="guide-card-label">
+              PREMIUM INTERACTION
+            </p>
+
+            <h3>
+              Mana Drain
+            </h3>
+
+            <p class="guide-card-copy">
+              Explore the 1994 Legends original and later
+              releases of this famous blue counterspell.
+            </p>
+
+            <span class="guide-card-link">
+              Explore printings
+              <span aria-hidden="true">→</span>
+            </span>
+
+          </a>
+
+
+          <a
+            class="guide-card"
+            href="/card/force-of-will/"
+            data-guide-title="force of will"
+            data-guide-keywords="blue instant counterspell alliances free spell legacy premium"
+          >
+
+            <p class="guide-card-label">
+              BLUE ICON
+            </p>
+
+            <h3>
+              Force of Will
+            </h3>
+
+            <p class="guide-card-copy">
+              Compare one of Magic's defining counterspells
+              across iconic artwork and premium versions.
+            </p>
+
+            <span class="guide-card-link">
+              Explore printings
+              <span aria-hidden="true">→</span>
+            </span>
+
+          </a>
+
+        </div>
+
+      </section>
+
+
+      <!-- ==================================================
+           GROUP 4 — JACE & SHOWCASE
+           ================================================== -->
+
+      <section
+        id="showcase-releases"
+        class="guide-group"
+        aria-labelledby="showcase-releases-heading"
+      >
+
+        <div class="guide-group-heading">
+
+          <div>
+
+            <p class="eyebrow">
+              JACE & SHOWCASE RELEASES
+            </p>
+
+            <h2 id="showcase-releases-heading">
+              Distinctive art and collector treatments
+            </h2>
+
+          </div>
+
+          <p class="guide-group-description">
+            Explore cards where visual presentation is a major part
+            of the appeal, from famous planeswalkers to Tolkien
+            releases and newer showcase versions.
+          </p>
+
+        </div>
+
+
+        <div class="guide-grid">
+
+          <a
+            class="guide-card"
+            href="/card/jace-the-mind-sculptor/"
+            data-guide-title="jace the mind sculptor"
+            data-guide-keywords="blue planeswalker jace worldwake collector artwork"
+          >
+
+            <p class="guide-card-label">
+              PLANESWALKER ICON
+            </p>
+
+            <h3>
+              Jace, the Mind Sculptor
+            </h3>
+
+            <p class="guide-card-copy">
+              Compare one of Magic's most famous planeswalkers
+              across artwork, reprints and premium treatments.
+            </p>
+
+            <span class="guide-card-link">
+              Explore printings
+              <span aria-hidden="true">→</span>
+            </span>
+
+          </a>
+
+
+          <a
+            class="guide-card"
+            href="/card/the-theorist-jace-beleren/"
+            data-guide-title="the theorist jace beleren"
+            data-guide-keywords="jace blue reality fracture planeswalker showcase new card"
+          >
+
+            <p class="guide-card-label">
+              REALITY FRACTURE
+            </p>
+
+            <h3>
+              The Theorist, Jace Beleren
+            </h3>
+
+            <p class="guide-card-copy">
+              Explore this newer Jace card across its available
+              Reality Fracture versions and treatments.
+            </p>
+
+            <span class="guide-card-link">
+              Explore printings
+              <span aria-hidden="true">→</span>
+            </span>
+
+          </a>
+
+
+          <a
+            class="guide-card"
+            href="/card/the-one-ring/"
+            data-guide-title="the one ring"
+            data-guide-keywords="lord of the rings lotr artifact legendary tolkien collector serialized showcase"
+          >
+
+            <p class="guide-card-label">
+              TOLKIEN COLLECTOR
+            </p>
+
+            <h3>
+              The One Ring
+            </h3>
+
+            <p class="guide-card-copy">
+              Compare this legendary artifact across artwork,
+              premium finishes and collector-focused versions.
+            </p>
+
+            <span class="guide-card-link">
+              Explore printings
+              <span aria-hidden="true">→</span>
+            </span>
+
+          </a>
+
+
+          <a
+            class="guide-card"
+            href="/card/smaug-wicked-worm/"
+            data-guide-title="smaug wicked worm"
+            data-guide-keywords="smaug hobbit tolkien dragon red collector borderless showcase"
+          >
+
+            <p class="guide-card-label">
+              THE HOBBIT
+            </p>
+
+            <h3>
+              Smaug, Wicked Worm
+            </h3>
+
+            <p class="guide-card-copy">
+              Explore Smaug across its available artwork,
+              borderless presentations and premium finishes.
+            </p>
+
+            <span class="guide-card-link">
+              Explore printings
+              <span aria-hidden="true">→</span>
+            </span>
+
+          </a>
+
+        </div>
+
+      </section>
+
+
+      <!-- NO RESULTS -->
+      <div
+        id="guide-no-results"
+        class="guide-no-results"
+        hidden
+      >
+
+        <h2>
+          No guide matches that search yet
+        </h2>
+
+        <p>
+          ManaScout currently has 25 permanent card guides.
+          You can still search the full Magic card database
+          from the main ManaScout explorer.
+        </p>
+
+        <a href="/">
+          Search all Magic cards →
+        </a>
+
+      </div>
+
+    </section>
+
+
+    <!-- HOW THE GUIDES WORK -->
     <section
       class="featured-section"
-      aria-labelledby="card-guides-heading"
+      aria-labelledby="how-guides-work-heading"
     >
 
       <div class="featured-heading">
@@ -239,16 +2260,16 @@
         <div>
 
           <p class="eyebrow">
-            CARD GUIDES
+            HOW IT WORKS
           </p>
 
-          <h2 id="card-guides-heading">
-            Browse all ManaScout guides
+          <h2 id="how-guides-work-heading">
+            More than a card list
           </h2>
 
           <p>
-            Start with a card below, then explore its available
-            versions and related ManaScout guides.
+            Each guide is built to help answer a different question:
+            not just “what is this card?”, but “which version do I want?”
           </p>
 
         </div>
@@ -256,489 +2277,110 @@
       </div>
 
 
-      <p class="guide-intro">
-        ManaScout's card guides combine useful static information
-        about notable Magic cards with the live printing explorer,
-        making it easier to compare different releases, artwork,
-        finishes and available price information.
-      </p>
+      <div class="guide-explainer">
 
+        <div class="guide-explainer-card">
 
-      <div class="guide-grid">
+          <span class="guide-explainer-number">
+            1
+          </span>
 
-        <a
-          class="guide-card"
-          href="/card/ancient-tomb/"
-        >
-          <p class="guide-card-label">
-            MTG PRINTING GUIDE
-          </p>
-
-          <h2>
-            Ancient Tomb
-          </h2>
+          <h3>
+            Understand the printing history
+          </h3>
 
           <p>
-            Explore Ancient Tomb printings, artwork,
-            finishes and collectible versions.
-          </p>
-        </a>
-
-
-        <a
-          class="guide-card"
-          href="/card/birds-of-paradise/"
-        >
-          <p class="guide-card-label">
-            MTG PRINTING GUIDE
+            See where a card began, how its releases developed
+            and why certain versions stand apart.
           </p>
 
-          <h2>
-            Birds of Paradise
-          </h2>
+        </div>
+
+
+        <div class="guide-explainer-card">
+
+          <span class="guide-explainer-number">
+            2
+          </span>
+
+          <h3>
+            Compare the actual versions
+          </h3>
 
           <p>
-            Compare decades of Birds of Paradise
-            artwork, printings and finishes.
-          </p>
-        </a>
-
-
-        <a
-          class="guide-card"
-          href="/card/black-lotus/"
-        >
-          <p class="guide-card-label">
-            MTG PRINTING GUIDE
+            Browse available artwork, finishes, frames,
+            treatments and Scryfall-supplied price fields.
           </p>
 
-          <h2>
-            Black Lotus
-          </h2>
+        </div>
+
+
+        <div class="guide-explainer-card">
+
+          <span class="guide-explainer-number">
+            3
+          </span>
+
+          <h3>
+            Find the one
+          </h3>
 
           <p>
-            Explore the printing history and available
-            versions of Magic's most famous card.
-          </p>
-        </a>
-
-
-        <a
-          class="guide-card"
-          href="/card/counterspell/"
-        >
-          <p class="guide-card-label">
-            MTG PRINTING GUIDE
+            Choose by budget, artwork, historical interest,
+            premium treatment or whichever printing simply looks best.
           </p>
 
-          <h2>
-            Counterspell
+        </div>
+
+      </div>
+
+    </section>
+
+
+    <!-- WHY PRINTINGS MATTER -->
+    <section
+      class="featured-section"
+      aria-labelledby="why-printings-heading"
+    >
+
+      <div class="featured-heading">
+
+        <div>
+
+          <p class="eyebrow">
+            WHY PRINTINGS MATTER
+          </p>
+
+          <h2 id="why-printings-heading">
+            The same card can be a completely different choice
           </h2>
 
-          <p>
-            Compare Counterspell printings, artwork,
-            frames and special treatments.
-          </p>
-        </a>
-
-
-        <a
-          class="guide-card"
-          href="/card/cyclonic-rift/"
-        >
-          <p class="guide-card-label">
-            MTG PRINTING GUIDE
-          </p>
-
-          <h2>
-            Cyclonic Rift
-          </h2>
-
-          <p>
-            Explore Cyclonic Rift reprints, artwork,
-            finishes and available versions.
-          </p>
-        </a>
-
-
-        <a
-          class="guide-card"
-          href="/card/deflecting-swat/"
-        >
-          <p class="guide-card-label">
-            MTG PRINTING GUIDE
-          </p>
-
-          <h2>
-            Deflecting Swat
-          </h2>
-
-          <p>
-            Compare Deflecting Swat printings and
-            the versions available to players.
-          </p>
-        </a>
-
-
-        <a
-          class="guide-card"
-          href="/card/demonic-consultation/"
-        >
-          <p class="guide-card-label">
-            MTG PRINTING GUIDE
-          </p>
-
-          <h2>
-            Demonic Consultation
-          </h2>
-
-          <p>
-            Explore Demonic Consultation printings,
-            artwork and available treatments.
-          </p>
-        </a>
-
-
-        <a
-          class="guide-card"
-          href="/card/demonic-tutor/"
-        >
-          <p class="guide-card-label">
-            MTG PRINTING GUIDE
-          </p>
-
-          <h2>
-            Demonic Tutor
-          </h2>
-
-          <p>
-            Compare Demonic Tutor's many printings,
-            artworks and collectible versions.
-          </p>
-        </a>
-
-
-        <a
-          class="guide-card"
-          href="/card/dockside-extortionist/"
-        >
-          <p class="guide-card-label">
-            MTG PRINTING GUIDE
-          </p>
-
-          <h2>
-            Dockside Extortionist
-          </h2>
-
-          <p>
-            Explore Dockside Extortionist printings,
-            versions and alternative treatments.
-          </p>
-        </a>
-
-
-        <a
-          class="guide-card"
-          href="/card/force-of-will/"
-        >
-          <p class="guide-card-label">
-            MTG PRINTING GUIDE
-          </p>
-
-          <h2>
-            Force of Will
-          </h2>
-
-          <p>
-            Compare Force of Will printings, iconic
-            artwork and premium treatments.
-          </p>
-        </a>
-
-
-        <a
-          class="guide-card"
-          href="/card/jace-the-mind-sculptor/"
-        >
-          <p class="guide-card-label">
-            MTG PRINTING GUIDE
-          </p>
-
-          <h2>
-            Jace, the Mind Sculptor
-          </h2>
-
-          <p>
-            Explore Jace, the Mind Sculptor printings,
-            artwork and available versions.
-          </p>
-        </a>
-
-
-        <a
-          class="guide-card"
-          href="/card/jeskas-will/"
-        >
-          <p class="guide-card-label">
-            MTG PRINTING GUIDE
-          </p>
-
-          <h2>
-            Jeska's Will
-          </h2>
-
-          <p>
-            Compare Jeska's Will printings,
-            artwork and finishes.
-          </p>
-        </a>
-
-
-        <a
-          class="guide-card"
-          href="/card/lightning-greaves/"
-        >
-          <p class="guide-card-label">
-            MTG PRINTING GUIDE
-          </p>
-
-          <h2>
-            Lightning Greaves
-          </h2>
-
-          <p>
-            Explore Lightning Greaves reprints,
-            artwork and special versions.
-          </p>
-        </a>
-
-
-        <a
-          class="guide-card"
-          href="/card/mana-crypt/"
-        >
-          <p class="guide-card-label">
-            MTG PRINTING GUIDE
-          </p>
-
-          <h2>
-            Mana Crypt
-          </h2>
-
-          <p>
-            Compare Mana Crypt printings,
-            treatments and collectible versions.
-          </p>
-        </a>
-
-
-        <a
-          class="guide-card"
-          href="/card/mana-drain/"
-        >
-          <p class="guide-card-label">
-            MTG PRINTING GUIDE
-          </p>
-
-          <h2>
-            Mana Drain
-          </h2>
-
-          <p>
-            Explore Mana Drain printings, artwork,
-            finishes and reprints.
-          </p>
-        </a>
-
-
-        <a
-          class="guide-card"
-          href="/card/mystic-remora/"
-        >
-          <p class="guide-card-label">
-            MTG PRINTING GUIDE
-          </p>
-
-          <h2>
-            Mystic Remora
-          </h2>
-
-          <p>
-            Compare Mystic Remora printings,
-            versions and artwork.
-          </p>
-        </a>
-
-
-        <a
-          class="guide-card"
-          href="/card/rhystic-study/"
-        >
-          <p class="guide-card-label">
-            MTG PRINTING GUIDE
-          </p>
-
-          <h2>
-            Rhystic Study
-          </h2>
-
-          <p>
-            Explore Rhystic Study's first printing,
-            reprints, artwork and premium treatments.
-          </p>
-        </a>
-
-
-        <a
-          class="guide-card"
-          href="/card/smaug-wicked-worm/"
-        >
-          <p class="guide-card-label">
-            MTG PRINTING GUIDE
-          </p>
-
-          <h2>
-            Smaug, Wicked Worm
-          </h2>
-
-          <p>
-            Explore Smaug, Wicked Worm printings,
-            treatments and available versions.
-          </p>
-        </a>
-
-
-        <a
-          class="guide-card"
-          href="/card/smothering-tithe/"
-        >
-          <p class="guide-card-label">
-            MTG PRINTING GUIDE
-          </p>
-
-          <h2>
-            Smothering Tithe
-          </h2>
-
-          <p>
-            Compare Smothering Tithe printings,
-            artwork and collectible treatments.
-          </p>
-        </a>
-
-
-        <a
-          class="guide-card"
-          href="/card/sol-ring/"
-        >
-          <p class="guide-card-label">
-            MTG PRINTING GUIDE
-          </p>
-
-          <h2>
-            Sol Ring
-          </h2>
-
-          <p>
-            Explore Sol Ring's original printing,
-            reprints and huge range of versions.
-          </p>
-        </a>
-
-
-        <a
-          class="guide-card"
-          href="/card/swords-to-plowshares/"
-        >
-          <p class="guide-card-label">
-            MTG PRINTING GUIDE
-          </p>
-
-          <h2>
-            Swords to Plowshares
-          </h2>
-
-          <p>
-            Compare Swords to Plowshares printings,
-            artwork, frames and finishes.
-          </p>
-        </a>
-
-
-        <a
-          class="guide-card"
-          href="/card/teferis-protection/"
-        >
-          <p class="guide-card-label">
-            MTG PRINTING GUIDE
-          </p>
-
-          <h2>
-            Teferi's Protection
-          </h2>
-
-          <p>
-            Explore Teferi's Protection printings,
-            treatments and alternative versions.
-          </p>
-        </a>
-
-
-        <a
-          class="guide-card"
-          href="/card/the-one-ring/"
-        >
-          <p class="guide-card-label">
-            MTG PRINTING GUIDE
-          </p>
-
-          <h2>
-            The One Ring
-          </h2>
-
-          <p>
-            Compare The One Ring printings,
-            artwork and collectible treatments.
-          </p>
-        </a>
-
-
-        <a
-          class="guide-card"
-          href="/card/the-theorist-jace-beleren/"
-        >
-          <p class="guide-card-label">
-            MTG PRINTING GUIDE
-          </p>
-
-          <h2>
-            The Theorist, Jace Beleren
-          </h2>
-
-          <p>
-            Explore available printings and
-            versions of The Theorist, Jace Beleren.
-          </p>
-        </a>
-
-
-        <a
-          class="guide-card"
-          href="/card/vampiric-tutor/"
-        >
-          <p class="guide-card-label">
-            MTG PRINTING GUIDE
-          </p>
-
-          <h2>
-            Vampiric Tutor
-          </h2>
-
-          <p>
-            Compare Vampiric Tutor printings,
-            artwork and premium treatments.
-          </p>
-        </a>
+        </div>
+
+      </div>
+
+
+      <div class="guide-editorial">
+
+        <p>
+          Magic cards can accumulate years or even decades of reprints.
+          A single card name may cover old-border versions, modern frames,
+          alternative illustrations, foil finishes, borderless treatments,
+          promotional releases and collector-focused editions.
+        </p>
+
+        <p>
+          That means searching only for the card name can hide the part
+          that actually matters when you are buying or collecting:
+          <strong>which printing is the one you want?</strong>
+        </p>
+
+        <p>
+          ManaScout is built around that decision. The permanent card
+          guides add context around notable releases, while the live explorer
+          lets you compare available printings directly and continue scouting
+          through related cards.
+        </p>
 
       </div>
 
@@ -759,12 +2401,21 @@
           target="_blank"
           rel="noopener noreferrer"
         >Scryfall</a>.
-        Magic: The Gathering is a trademark of Wizards of
-        the Coast LLC. ManaScout is not affiliated with or
-        endorsed by Wizards of the Coast or Scryfall.
+        Magic: The Gathering is a trademark of Wizards of the Coast LLC.
+        ManaScout is not affiliated with or endorsed by Wizards of the
+        Coast or Scryfall.
       </p>
 
       <div>
+
+        <a href="/card/">
+          Card Guides
+        </a>
+
+        <a href="/">
+          Search
+        </a>
+
         <a href="/privacy/">
           Privacy
         </a>
@@ -772,12 +2423,153 @@
         <a href="/terms/">
           Terms
         </a>
+
       </div>
 
     </div>
 
   </footer>
 
+
+  <script>
+    window.addEventListener(
+      "DOMContentLoaded",
+      function () {
+        const input =
+          document.getElementById("guide-filter-input");
+
+        const clearButton =
+          document.getElementById("guide-filter-clear");
+
+        const status =
+          document.getElementById("guide-filter-status");
+
+        const noResults =
+          document.getElementById("guide-no-results");
+
+        const cards =
+          Array.from(
+            document.querySelectorAll(
+              ".guide-card[data-guide-title]"
+            )
+          );
+
+        const groups =
+          Array.from(
+            document.querySelectorAll(".guide-group")
+          );
+
+
+        function normalise(value) {
+          return String(value || "")
+            .toLowerCase()
+            .replace(/[’']/g, "")
+            .replace(/[^a-z0-9]+/g, " ")
+            .trim();
+        }
+
+
+        function updateGuideFilter() {
+          const rawQuery =
+            input ? input.value : "";
+
+          const query =
+            normalise(rawQuery);
+
+          let visibleCount = 0;
+
+
+          cards.forEach(
+            function (card) {
+              const searchable =
+                normalise(
+                  [
+                    card.dataset.guideTitle,
+                    card.dataset.guideKeywords,
+                    card.textContent
+                  ].join(" ")
+                );
+
+              const matches =
+                !query ||
+                searchable.includes(query);
+
+              card.hidden =
+                !matches;
+
+              if (matches) {
+                visibleCount += 1;
+              }
+            }
+          );
+
+
+          groups.forEach(
+            function (group) {
+              const visibleCards =
+                group.querySelectorAll(
+                  ".guide-card:not([hidden])"
+                );
+
+              group.hidden =
+                visibleCards.length === 0;
+            }
+          );
+
+
+          if (noResults) {
+            noResults.hidden =
+              visibleCount !== 0;
+          }
+
+
+          if (status) {
+            if (!query) {
+              status.textContent =
+                "Showing all 25 ManaScout card guides.";
+            } else if (visibleCount === 1) {
+              status.textContent =
+                "Showing 1 matching card guide.";
+            } else {
+              status.textContent =
+                "Showing " +
+                visibleCount +
+                " matching card guides.";
+            }
+          }
+        }
+
+
+        if (input) {
+          input.addEventListener(
+            "input",
+            updateGuideFilter
+          );
+        }
+
+
+        if (
+          clearButton &&
+          input
+        ) {
+          clearButton.addEventListener(
+            "click",
+            function () {
+              input.value = "";
+
+              updateGuideFilter();
+
+              input.focus();
+            }
+          );
+        }
+
+
+        updateGuideFilter();
+      }
+    );
+  </script>
+
 </body>
 
-</html>
+              </html>
