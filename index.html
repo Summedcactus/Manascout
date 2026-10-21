@@ -19,10 +19,7 @@
     content="index,follow,max-image-preview:large"
   >
 
-  <meta
-    name="theme-color"
-    content="#09090b"
-  >
+  <meta name="theme-color" content="#09090b">
 
   <link
     rel="canonical"
@@ -107,21 +104,12 @@
         "description": "Search Magic: The Gathering cards and compare printings, artwork, foils, special treatments and available Scryfall price data.",
         "isPartOf": {
           "@id": "https://manascout.co.uk/#website"
-        },
-        "mainEntity": {
-          "@id": "https://manascout.co.uk/card/#webpage"
         }
-      },
-      {
-        "@type": "CollectionPage",
-        "@id": "https://manascout.co.uk/card/#webpage",
-        "url": "https://manascout.co.uk/card/",
-        "name": "ManaScout MTG Card Printing Guides",
-        "description": "Permanent ManaScout guides covering notable Magic card printings, reprints, artwork, finishes and collectible versions."
       }
     ]
   }
   </script>
+
 </head>
 
 
@@ -171,7 +159,7 @@
   <main class="container">
 
     <!-- ========================================
-         HERO
+         HERO / SEARCH
          ======================================== -->
 
     <section
@@ -197,8 +185,6 @@
         version you actually want.
       </p>
 
-
-      <!-- SEARCH -->
 
       <form
         id="search-form"
@@ -246,8 +232,6 @@
       </form>
 
 
-      <!-- QUICK SEARCHES -->
-
       <div class="try-row">
 
         <span>
@@ -277,24 +261,20 @@
       </div>
 
 
-      <!-- SHORT VALUE LINE -->
-
       <div class="home-hero-value">
 
-        <span class="home-hero-value-mark">
+        <span aria-hidden="true">
           ◇
         </span>
 
-        <span>
+        <p>
           Search the card.
           Compare the versions.
           Scout the one.
-        </span>
+        </p>
 
       </div>
 
-
-      <!-- DISCOVER RANDOM CARD -->
 
       <div class="home-discover">
 
@@ -316,7 +296,7 @@
 
 
     <!-- ========================================
-         CARD RESULT
+         SEARCH RESULT
          ======================================== -->
 
     <section
@@ -356,15 +336,16 @@
           </h2>
 
           <p>
-            Explore standout printings, open this week's archive,
-            let fate choose a card or browse ManaScout's permanent guides.
+            A smaller home for ManaScout's discovery tools.
+            Explore standout printings, open the weekly archive,
+            spin the wheel or head into the permanent card guides.
           </p>
 
         </div>
 
 
         <span class="scoutboard-status">
-          ◇ FOUR PATHS
+          ◇ DISCOVERY ARCHIVE
         </span>
 
       </div>
@@ -387,11 +368,12 @@
           aria-controls="scoutboard-panel-explore"
           data-scoutboard-tab="explore"
         >
-          <span class="scoutboard-tab-mark">
+
+          <span class="scoutboard-tab-number">
             01
           </span>
 
-          <span class="scoutboard-tab-copy">
+          <span>
 
             <strong>
               Explore
@@ -402,6 +384,7 @@
             </small>
 
           </span>
+
         </button>
 
 
@@ -415,21 +398,23 @@
           data-scoutboard-tab="weekly"
           tabindex="-1"
         >
-          <span class="scoutboard-tab-mark">
+
+          <span class="scoutboard-tab-number">
             02
           </span>
 
-          <span class="scoutboard-tab-copy">
+          <span>
 
             <strong>
               This Week
             </strong>
 
             <small>
-              Open the archive
+              Edgar Markov
             </small>
 
           </span>
+
         </button>
 
 
@@ -443,11 +428,12 @@
           data-scoutboard-tab="roulette"
           tabindex="-1"
         >
-          <span class="scoutboard-tab-mark">
+
+          <span class="scoutboard-tab-number">
             03
           </span>
 
-          <span class="scoutboard-tab-copy">
+          <span>
 
             <strong>
               Roulette
@@ -458,6 +444,7 @@
             </small>
 
           </span>
+
         </button>
 
 
@@ -471,32 +458,34 @@
           data-scoutboard-tab="guides"
           tabindex="-1"
         >
-          <span class="scoutboard-tab-mark">
+
+          <span class="scoutboard-tab-number">
             04
           </span>
 
-          <span class="scoutboard-tab-copy">
+          <span>
 
             <strong>
               Guides
             </strong>
 
             <small>
-              Go deeper
+              The archive
             </small>
 
           </span>
+
         </button>
 
       </div>
 
 
       <!-- ========================================
-           EXPLORE PANEL
+           EXPLORE
            ======================================== -->
 
       <div
-        class="scoutboard-panel scoutboard-panel-explore"
+        class="scoutboard-panel"
         id="scoutboard-panel-explore"
         role="tabpanel"
         aria-labelledby="scoutboard-tab-explore"
@@ -507,24 +496,24 @@
 
           <div>
 
-            <p class="scoutboard-panel-kicker">
+            <p class="scoutboard-kicker">
               FEATURED PRINTINGS
             </p>
 
             <h3>
-              Four cards worth scouting
+              Cards worth scouting
             </h3>
 
             <p>
-              A tighter rotating selection of cards where artwork,
-              treatments and printing choice genuinely matter.
+              Four cards where choosing the printing can matter
+              almost as much as choosing the card.
             </p>
 
           </div>
 
 
           <a
-            class="scoutboard-panel-link"
+            class="scoutboard-heading-link"
             href="/card/"
           >
             All 25 guides
@@ -536,17 +525,14 @@
         </div>
 
 
-        <div
-          class="scoutboard-feature-grid"
-          id="scoutboard-feature-grid"
-        >
+        <div class="scoutboard-feature-grid">
 
-          <!-- RHYSTIC STUDY -->
+          <!-- RHYSTIC -->
 
           <article
             class="scoutboard-feature-card"
-            data-scoutboard-card="Rhystic Study"
-            data-scoutboard-preference="premium"
+            data-feature-card="Rhystic Study"
+            data-feature-preference="premium"
           >
 
             <div class="scoutboard-feature-art">
@@ -560,26 +546,24 @@
 
             <div class="scoutboard-feature-copy">
 
-              <p class="scoutboard-feature-label">
+              <small>
                 CARD ADVANTAGE
-              </p>
+              </small>
 
               <h4>
                 Rhystic Study
               </h4>
 
               <p>
-                From Prophecy to premium modern treatments,
-                Rhystic Study has become one of Magic's most
-                recognisable printing rabbit holes.
+                From Prophecy to wildly different modern art
+                and premium collector treatments.
               </p>
-
 
               <a
                 class="scoutboard-feature-link"
                 href="/card/rhystic-study/"
               >
-                Scout Rhystic Study
+                Scout the printings
                 <span aria-hidden="true">
                   →
                 </span>
@@ -594,8 +578,8 @@
 
           <article
             class="scoutboard-feature-card"
-            data-scoutboard-card="Sol Ring"
-            data-scoutboard-preference="alternate"
+            data-feature-card="Sol Ring"
+            data-feature-preference="alternate"
           >
 
             <div class="scoutboard-feature-art">
@@ -609,26 +593,24 @@
 
             <div class="scoutboard-feature-copy">
 
-              <p class="scoutboard-feature-label">
+              <small>
                 COMMANDER ICON
-              </p>
+              </small>
 
               <h4>
                 Sol Ring
               </h4>
 
               <p>
-                Decades of Commander releases, alternate art,
-                special frames and premium treatments make Sol Ring
-                perfect ManaScout territory.
+                Decades of releases, frames, artwork and
+                premium versions of the Commander staple.
               </p>
-
 
               <a
                 class="scoutboard-feature-link"
                 href="/card/sol-ring/"
               >
-                Scout Sol Ring
+                Scout the printings
                 <span aria-hidden="true">
                   →
                 </span>
@@ -639,12 +621,12 @@
           </article>
 
 
-          <!-- THE ONE RING -->
+          <!-- ONE RING -->
 
           <article
             class="scoutboard-feature-card"
-            data-scoutboard-card="The One Ring"
-            data-scoutboard-preference="premium"
+            data-feature-card="The One Ring"
+            data-feature-preference="premium"
           >
 
             <div class="scoutboard-feature-art">
@@ -658,25 +640,24 @@
 
             <div class="scoutboard-feature-copy">
 
-              <p class="scoutboard-feature-label">
+              <small>
                 COLLECTOR FAVOURITE
-              </p>
+              </small>
 
               <h4>
                 The One Ring
               </h4>
 
               <p>
-                Compare the standard release against distinctive
-                borderless, showcase and collector-focused versions.
+                Standard releases meet borderless and
+                collector-focused treatments.
               </p>
-
 
               <a
                 class="scoutboard-feature-link"
                 href="/card/the-one-ring/"
               >
-                Scout The One Ring
+                Scout the printings
                 <span aria-hidden="true">
                   →
                 </span>
@@ -687,12 +668,12 @@
           </article>
 
 
-          <!-- FORCE OF WILL -->
+          <!-- FORCE -->
 
           <article
             class="scoutboard-feature-card"
-            data-scoutboard-card="Force of Will"
-            data-scoutboard-preference="premium"
+            data-feature-card="Force of Will"
+            data-feature-preference="premium"
           >
 
             <div class="scoutboard-feature-art">
@@ -706,26 +687,24 @@
 
             <div class="scoutboard-feature-copy">
 
-              <p class="scoutboard-feature-label">
+              <small>
                 BLUE ICON
-              </p>
+              </small>
 
               <h4>
                 Force of Will
               </h4>
 
               <p>
-                From the original Alliances printing to modern
-                premium artwork, Force of Will rewards choosing
-                the version carefully.
+                The Alliances original against some of
+                Magic's strongest modern alternative artwork.
               </p>
-
 
               <a
                 class="scoutboard-feature-link"
                 href="/card/force-of-will/"
               >
-                Scout Force of Will
+                Scout the printings
                 <span aria-hidden="true">
                   →
                 </span>
@@ -741,7 +720,7 @@
 
 
       <!-- ========================================
-           WEEKLY PANEL
+           CARD OF THE WEEK — EDGAR MARKOV
            ======================================== -->
 
       <div
@@ -757,159 +736,191 @@
 
           <div>
 
-            <p class="scoutboard-panel-kicker">
-              CARD OF THE WEEK · WEEK 003
+            <p class="scoutboard-kicker">
+              CARD OF THE WEEK · WEEK 004
             </p>
 
             <h3>
-              Beyond the search
+              The first of the Markov line
             </h3>
 
             <p>
-              One card. One story. A different corner of Magic
-              every week.
+              One card. One printing. One corner of Magic
+              worth opening the archive for.
             </p>
 
           </div>
+
+
+          <span class="weekly-edition-badge">
+            WEEK 004
+          </span>
 
         </div>
 
 
         <article
-          class="card-week-feature card-week-wildfire scoutboard-weekly"
-          data-weekly-card="Wildfire"
-          data-weekly-printing-id="72d50972-4549-40cd-9c33-4b341333803f"
+          class="edgar-week"
+          id="card-of-the-week"
+          data-weekly-card="Edgar Markov"
+          data-weekly-set="inr"
+          data-weekly-number="328"
         >
 
-          <div class="card-week-visual">
+          <!-- ATMOSPHERE -->
 
-            <div
-              class="wildfire-atmosphere"
-              aria-hidden="true"
-            >
+          <div
+            class="edgar-scene"
+            aria-hidden="true"
+          >
 
-              <span class="wildfire-ember"></span>
-              <span class="wildfire-ember"></span>
-              <span class="wildfire-ember"></span>
-              <span class="wildfire-ember"></span>
-              <span class="wildfire-ember"></span>
-              <span class="wildfire-ember"></span>
-              <span class="wildfire-ember"></span>
-              <span class="wildfire-ember"></span>
-              <span class="wildfire-ember"></span>
-              <span class="wildfire-ember"></span>
-              <span class="wildfire-ember"></span>
-              <span class="wildfire-ember"></span>
+            <div class="edgar-moon"></div>
+
+            <div class="edgar-cathedral">
+              <span></span>
+              <span></span>
+              <span></span>
+            </div>
+
+            <div class="edgar-mist edgar-mist-one"></div>
+            <div class="edgar-mist edgar-mist-two"></div>
+            <div class="edgar-mist edgar-mist-three"></div>
+
+            <div class="edgar-particles">
+
+              <i></i>
+              <i></i>
+              <i></i>
+              <i></i>
+              <i></i>
+              <i></i>
+              <i></i>
+              <i></i>
 
             </div>
 
+          </div>
 
-            <div class="card-week-card-shell">
+
+          <!-- CARD -->
+
+          <div class="edgar-card-column">
+
+            <div class="edgar-card-halo"></div>
+
+
+            <div
+              class="edgar-card-shell"
+              id="edgar-card-shell"
+            >
 
               <div
-                class="card-week-card is-loaded"
-                id="card-week-card"
+                class="edgar-card-placeholder"
+                id="card-week-placeholder"
+              >
+                <span>
+                  ◇
+                </span>
+
+                <small>
+                  OPENING THE MARKOV ARCHIVE…
+                </small>
+              </div>
+
+
+              <img
+                id="card-week-image"
+                class="edgar-card-image"
+                src="https://api.scryfall.com/cards/inr/328?format=image&version=normal"
+                alt="Edgar Markov — Innistrad Remastered showcase printing #328"
+                loading="lazy"
+                decoding="async"
               >
 
-                <div
-                  class="card-week-card-placeholder"
-                  id="card-week-placeholder"
-                  hidden
-                >
 
-                  <span>
-                    ◇
-                  </span>
-
-                  <small>
-                    OPENING THE ARCHIVE…
-                  </small>
-
-                </div>
+              <div
+                class="edgar-crimson-wash"
+                aria-hidden="true"
+              ></div>
 
 
-                <img
-                  id="card-week-image"
-                  class="card-week-image"
-                  src="https://cards.scryfall.io/normal/front/7/2/72d50972-4549-40cd-9c33-4b341333803f.jpg"
-                  alt="Wildfire — Urza's Saga #228"
-                  loading="lazy"
-                  decoding="async"
-                >
-
-
-                <div
-                  class="wildfire-card-wash"
-                  aria-hidden="true"
-                ></div>
-
-
-                <div
-                  class="card-week-glint"
-                  aria-hidden="true"
-                ></div>
-
-              </div>
+              <div
+                class="edgar-crimson-sheen"
+                aria-hidden="true"
+              ></div>
 
             </div>
 
 
             <p
-              class="card-week-printing"
+              class="edgar-printing"
               id="card-week-printing"
             >
-              URZA'S SAGA · #228
+              INNISTRAD REMASTERED · SHOWCASE · #328
             </p>
 
           </div>
 
 
-          <div class="card-week-story">
+          <!-- STORY -->
 
-            <p class="card-week-kicker">
-              SORCERY · SIX MANA · NOTHING LEFT STANDING
+          <div class="edgar-story">
+
+            <p class="edgar-kicker">
+              VAMPIRE KNIGHT · EMINENCE · THE PROGENITOR
             </p>
 
 
             <h3>
-              Wildfire
+              Edgar Markov
             </h3>
 
 
-            <p class="card-week-intro">
-              Some spells win the game. Others leave almost nothing
-              behind. First appearing in 1998, Wildfire asks every
-              player to sacrifice four lands before dealing four
-              damage to every creature. What remains is a battlefield
-              stripped of resources — and an opportunity for whoever
-              prepared for the devastation.
+            <p class="edgar-intro">
+              Edgar Markov does not need to enter the battlefield
+              to begin building his army.
             </p>
 
 
-            <div class="card-week-fact">
+            <p>
+              His defining ability, <strong>Eminence</strong>, works
+              from the command zone as well as the battlefield:
+              every other Vampire spell brings another Vampire with it.
+              By the time Edgar finally attacks, the court he created
+              can already be waiting for him.
+            </p>
 
-              <div
-                class="card-week-fact-mark"
+
+            <p>
+              First released in Commander 2017, Edgar became one of
+              Magic's defining Vampire commanders. Innistrad Remastered
+              returned him to the plane that made the Markov name famous,
+              including this showcase treatment illustrated by
+              <strong>Betty Jiang</strong>.
+            </p>
+
+
+            <div class="edgar-fact">
+
+              <span
+                class="edgar-fact-mark"
                 aria-hidden="true"
               >
                 ◇
-              </div>
+              </span>
 
 
               <div>
 
-                <p class="card-week-fact-label">
-                  DID YOU KNOW?
-                </p>
+                <small>
+                  MANASCOUT'S PRINTING
+                </small>
 
                 <p>
-                  Wildfire became a natural partner for
-                  <strong>
-                    artifact mana and resilient creatures
-                  </strong>.
-                  While opponents lost lands and smaller creatures,
-                  a prepared deck could retain enough resources to
-                  rebuild first.
+                  The showcase #328 gets the nod this week.
+                  Edgar seated at court with goblets surrounding him
+                  feels less like another Vampire card and more like
+                  a portrait of the dynasty itself.
                 </p>
 
               </div>
@@ -918,30 +929,74 @@
 
 
             <a
-              class="card-week-link"
+              class="edgar-link"
               id="card-week-link"
-              href="/?q=Wildfire&amp;printing=72d50972-4549-40cd-9c33-4b341333803f"
+              href="/?q=Edgar%20Markov"
             >
-              Explore Wildfire
+              Scout Edgar Markov
               <span aria-hidden="true">
                 →
               </span>
             </a>
 
 
-            <p class="card-week-source">
-              Card history and printing data: Scryfall.
+            <p class="edgar-source">
+              Printing and card data supplied by Scryfall.
             </p>
 
           </div>
 
         </article>
 
+
+        <!-- COTW ARCHIVE DATA -->
+
+        <script
+          id="card-week-archive-data"
+          type="application/json"
+        >
+        {
+          "currentWeek": 4,
+          "entries": [
+            {
+              "week": 1,
+              "card": "Thassa, Deep-Dwelling",
+              "set": "Theros Beyond Death",
+              "collectorNumber": "261",
+              "status": "archived"
+            },
+            {
+              "week": 2,
+              "card": "Rhystic Study",
+              "set": "Wilds of Eldraine: Enchanting Tales",
+              "collectorNumber": "71",
+              "status": "archived"
+            },
+            {
+              "week": 3,
+              "card": "Wildfire",
+              "set": "Urza's Saga",
+              "collectorNumber": "228",
+              "status": "archived"
+            },
+            {
+              "week": 4,
+              "card": "Edgar Markov",
+              "set": "Innistrad Remastered",
+              "collectorNumber": "328",
+              "artist": "Betty Jiang",
+              "theme": "blood-moon-court",
+              "status": "current"
+            }
+          ]
+        }
+        </script>
+
       </div>
 
 
       <!-- ========================================
-           ROULETTE PANEL
+           ROULETTE
            ======================================== -->
 
       <div
@@ -957,33 +1012,25 @@
 
           <div>
 
-            <p class="scoutboard-panel-kicker">
+            <p class="scoutboard-kicker">
               SCOUT ROULETTE
             </p>
 
             <h3>
-              Let fate choose your next card
+              Let fate choose
             </h3>
 
             <p>
-              Seven paths. One spin. ManaScout chooses the category
-              and scouts a real Magic card from Scryfall.
+              Seven paths. One spin.
+              ManaScout chooses the category and finds the card.
             </p>
 
           </div>
 
-
-          <span class="scoutboard-panel-badge">
-            POWERED BY FATE
-          </span>
-
         </div>
 
 
-        <div
-          class="scout-roulette-panel scoutboard-roulette"
-          id="scout-roulette-panel"
-        >
+        <div class="scout-roulette-panel">
 
           <div class="scout-roulette-stage">
 
@@ -1036,7 +1083,6 @@
                 class="scout-wheel-hub"
                 id="scout-roulette-spin"
                 type="button"
-                aria-label="Spin Scout Roulette"
               >
                 SPIN
               </button>
@@ -1067,8 +1113,6 @@
               <p class="scout-roulette-copy">
                 Legendary. Artifact. Creature. Spell.
                 Enchantment. Land. Wild.
-                The wheel chooses the path — then ManaScout
-                finds your card.
               </p>
 
 
@@ -1115,7 +1159,7 @@
                 </div>
 
 
-                <div class="scout-roulette-result-copy">
+                <div>
 
                   <p
                     class="scout-roulette-kicker"
@@ -1182,7 +1226,7 @@
 
 
       <!-- ========================================
-           GUIDES PANEL
+           GUIDES
            ======================================== -->
 
       <div
@@ -1198,24 +1242,25 @@
 
           <div>
 
-            <p class="scoutboard-panel-kicker">
+            <p class="scoutboard-kicker">
               PRINTING GUIDES
             </p>
 
             <h3>
-              Go deeper on the cards that need it
+              Open the archive
             </h3>
 
             <p>
-              Permanent ManaScout guides combine printing history,
-              version advice and the live explorer.
+              Permanent guides for cards where artwork,
+              release history and treatment choice deserve more
+              than a simple database row.
             </p>
 
           </div>
 
 
           <a
-            class="scoutboard-panel-link"
+            class="scoutboard-heading-link"
             href="/card/"
           >
             Browse all 25
@@ -1230,202 +1275,82 @@
         <div class="scoutboard-guide-grid">
 
           <a
-            class="scoutboard-guide-card"
+            class="scoutboard-guide"
             href="/card/sol-ring/"
           >
-
-            <small>
-              COMMANDER ICON
-            </small>
-
-            <strong>
-              Sol Ring
-            </strong>
-
-            <p>
-              Original printing, Commander releases,
-              alternate artwork and premium treatments.
-            </p>
-
-            <span>
-              Open guide →
-            </span>
-
+            <small>COMMANDER ICON</small>
+            <strong>Sol Ring</strong>
+            <span>Open guide →</span>
           </a>
 
 
           <a
-            class="scoutboard-guide-card"
+            class="scoutboard-guide"
             href="/card/rhystic-study/"
           >
-
-            <small>
-              CARD ADVANTAGE
-            </small>
-
-            <strong>
-              Rhystic Study
-            </strong>
-
-            <p>
-              Prophecy original, modern artwork and
-              premium collector versions.
-            </p>
-
-            <span>
-              Open guide →
-            </span>
-
+            <small>CARD ADVANTAGE</small>
+            <strong>Rhystic Study</strong>
+            <span>Open guide →</span>
           </a>
 
 
           <a
-            class="scoutboard-guide-card"
+            class="scoutboard-guide"
             href="/card/demonic-tutor/"
           >
-
-            <small>
-              BLACK TUTOR
-            </small>
-
-            <strong>
-              Demonic Tutor
-            </strong>
-
-            <p>
-              Historic releases, alternate artwork,
-              borderless versions and foil treatments.
-            </p>
-
-            <span>
-              Open guide →
-            </span>
-
+            <small>BLACK TUTOR</small>
+            <strong>Demonic Tutor</strong>
+            <span>Open guide →</span>
           </a>
 
 
           <a
-            class="scoutboard-guide-card"
+            class="scoutboard-guide"
             href="/card/the-one-ring/"
           >
-
-            <small>
-              COLLECTOR FAVOURITE
-            </small>
-
-            <strong>
-              The One Ring
-            </strong>
-
-            <p>
-              Standard, showcase and collector-focused
-              treatments across its major releases.
-            </p>
-
-            <span>
-              Open guide →
-            </span>
-
+            <small>COLLECTOR FAVOURITE</small>
+            <strong>The One Ring</strong>
+            <span>Open guide →</span>
           </a>
 
 
           <a
-            class="scoutboard-guide-card"
+            class="scoutboard-guide"
             href="/card/force-of-will/"
           >
-
-            <small>
-              BLUE ICON
-            </small>
-
-            <strong>
-              Force of Will
-            </strong>
-
-            <p>
-              Alliances original through modern alternate
-              and premium versions.
-            </p>
-
-            <span>
-              Open guide →
-            </span>
-
+            <small>BLUE ICON</small>
+            <strong>Force of Will</strong>
+            <span>Open guide →</span>
           </a>
 
 
           <a
-            class="scoutboard-guide-card"
+            class="scoutboard-guide"
             href="/card/birds-of-paradise/"
           >
-
-            <small>
-              MAGIC HISTORY
-            </small>
-
-            <strong>
-              Birds of Paradise
-            </strong>
-
-            <p>
-              Decades of artwork, frames, sets and
-              collectible treatments.
-            </p>
-
-            <span>
-              Open guide →
-            </span>
-
+            <small>MAGIC HISTORY</small>
+            <strong>Birds of Paradise</strong>
+            <span>Open guide →</span>
           </a>
 
 
           <a
-            class="scoutboard-guide-card"
+            class="scoutboard-guide"
             href="/card/cyclonic-rift/"
           >
-
-            <small>
-              COMMANDER STAPLE
-            </small>
-
-            <strong>
-              Cyclonic Rift
-            </strong>
-
-            <p>
-              Compare the original release with reprints,
-              foils and alternative versions.
-            </p>
-
-            <span>
-              Open guide →
-            </span>
-
+            <small>COMMANDER STAPLE</small>
+            <strong>Cyclonic Rift</strong>
+            <span>Open guide →</span>
           </a>
 
 
           <a
-            class="scoutboard-guide-card"
+            class="scoutboard-guide"
             href="/card/swords-to-plowshares/"
           >
-
-            <small>
-              WHITE ICON
-            </small>
-
-            <strong>
-              Swords to Plowshares
-            </strong>
-
-            <p>
-              Classic printings, modern artwork and
-              premium versions of a defining removal spell.
-            </p>
-
-            <span>
-              Open guide →
-            </span>
-
+            <small>WHITE ICON</small>
+            <strong>Swords to Plowshares</strong>
+            <span>Open guide →</span>
           </a>
 
         </div>
@@ -1433,18 +1358,13 @@
 
         <div class="scoutboard-guide-footer">
 
-          <p>
-            25 permanent guides are currently available across
-            Commander staples, tutors, fast mana, historic cards
-            and collector-focused releases.
-          </p>
+          <span>
+            25 permanent printing guides
+          </span>
 
 
           <a href="/card/">
-            Enter the full guide archive
-            <span aria-hidden="true">
-              →
-            </span>
+            View the complete directory →
           </a>
 
         </div>
@@ -1456,6 +1376,7 @@
 
     <!-- ========================================
          PRINTINGS
+         app.js owns the contents
          ======================================== -->
 
     <section
@@ -1496,53 +1417,42 @@
 
 
   <!-- ========================================
-       MOBILE / SCROLL DOCK
+       QUICK DOCK
        ======================================== -->
 
   <nav
     class="home-dock"
     id="home-dock"
-    aria-label="Homepage shortcuts"
+    aria-label="ManaScout homepage shortcuts"
     hidden
   >
 
-    <a
-      class="home-dock-link"
-      href="#search"
-    >
+    <a href="#search">
       Search
     </a>
 
-
     <button
-      class="home-dock-link"
       type="button"
       data-scoutboard-open="explore"
     >
       Explore
     </button>
 
-
     <button
-      class="home-dock-link"
       type="button"
       data-scoutboard-open="weekly"
     >
       Weekly
     </button>
 
-
     <button
-      class="home-dock-link"
       type="button"
       data-scoutboard-open="roulette"
     >
       Roulette
     </button>
 
-
     <button
-      class="home-dock-link"
       type="button"
       data-scoutboard-open="guides"
     >
@@ -1600,10 +1510,6 @@
 
   </footer>
 
-
-  <!-- ========================================
-       APPLICATION
-       ======================================== -->
 
   <script src="/assets/js/app.js"></script>
 
