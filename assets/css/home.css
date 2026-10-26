@@ -492,11 +492,32 @@
 .weekly-card-feature::after {
   content: "";
   position: absolute;
-  inset: 0;
+  inset: -8% -14%;
   z-index: 1;
   pointer-events: none;
-  opacity: .45;
-  background: repeating-linear-gradient(104deg,transparent 0 58px,rgba(143,244,239,.015) 60px,transparent 64px 118px);
+  opacity: .52;
+  mix-blend-mode: screen;
+  background:
+    linear-gradient(
+      108deg,
+      transparent 0 16%,
+      rgba(188,255,251,.045) 22%,
+      transparent 29%,
+      rgba(122,239,240,.04) 36%,
+      transparent 44%,
+      rgba(188,255,251,.04) 52%,
+      transparent 60%,
+      rgba(105,223,231,.03) 69%,
+      transparent 79%
+    ),
+    repeating-linear-gradient(
+      104deg,
+      transparent 0 52px,
+      rgba(157,247,243,.02) 52px 58px,
+      transparent 58px 118px
+    );
+  transform: rotate(-4deg);
+  animation: weeklyLightBands 16s linear infinite;
 }
 
 .weekly-scene {
@@ -505,6 +526,48 @@
   z-index: 0;
   overflow: hidden;
   pointer-events: none;
+}
+
+.weekly-scene::before {
+  content: "";
+  position: absolute;
+  inset: -12% -10% 8% -10%;
+  z-index: 0;
+  pointer-events: none;
+  opacity: .34;
+  mix-blend-mode: screen;
+  background:
+    radial-gradient(
+      ellipse at 50% -8%,
+      rgba(216,255,252,.16) 0,
+      rgba(125,236,238,.08) 26%,
+      transparent 58%
+    ),
+    repeating-linear-gradient(
+      102deg,
+      transparent 0 64px,
+      rgba(186,255,251,.04) 64px 70px,
+      transparent 70px 136px
+    );
+  filter: blur(8px);
+  transform: rotate(-5deg);
+  animation: weeklySurfaceShimmer 18s linear infinite;
+}
+
+.weekly-scene::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  opacity: .22;
+  mix-blend-mode: screen;
+  background:
+    radial-gradient(circle at 20% 14%,rgba(209,255,252,.15),transparent 20%),
+    radial-gradient(circle at 68% 16%,rgba(121,233,238,.11),transparent 24%),
+    radial-gradient(circle at 44% 8%,rgba(255,255,255,.08),transparent 16%);
+  filter: blur(14px);
+  animation: weeklySunPulse 8s ease-in-out infinite;
 }
 
 .weekly-water-glow {
@@ -540,18 +603,33 @@
 
 .weekly-caustics {
   position: absolute;
-  inset: -18% -12% 44% -12%;
-  opacity: .25;
-  filter: blur(1px);
-  transform: rotate(-5deg);
+  inset: -14% -10% 40% -10%;
+  opacity: .34;
+  filter: blur(.6px) saturate(1.08);
+  transform: rotate(-6deg);
+  mix-blend-mode: screen;
 }
 
 .weekly-caustics span {
   position: absolute;
   inset: 0;
-  background: repeating-radial-gradient(ellipse at 50% 0%,transparent 0 28px,rgba(148,244,236,.10) 31px,transparent 35px 58px);
+  background:
+    repeating-radial-gradient(
+      ellipse at 50% 0%,
+      transparent 0 18px,
+      rgba(180,255,248,.11) 21px 24px,
+      transparent 27px 50px
+    ),
+    repeating-linear-gradient(
+      104deg,
+      transparent 0 42px,
+      rgba(129,236,236,.045) 42px 46px,
+      transparent 46px 88px
+    );
   mix-blend-mode: screen;
-  animation: weeklyCausticDrift 14s linear infinite;
+  animation:
+    weeklyCausticDrift 12s linear infinite,
+    weeklyCausticPulse 5.6s ease-in-out infinite;
 }
 
 .weekly-caustics span:nth-child(2) { transform: translateX(12%) scale(1.15); opacity: .55; animation-duration: 19s; animation-direction: reverse; }
@@ -691,18 +769,43 @@
 
 .weekly-aqua-wash {
   z-index: 2;
-  background: radial-gradient(circle at var(--weekly-x) var(--weekly-y),rgba(111,242,233,.20),transparent 29%), linear-gradient(180deg,rgba(127,238,234,.025),transparent 45%,rgba(7,92,119,.10));
+  background:
+    radial-gradient(
+      circle at var(--weekly-x) var(--weekly-y),
+      rgba(165,255,245,.22) 0,
+      rgba(113,242,233,.17) 14%,
+      rgba(63,195,217,.11) 24%,
+      transparent 39%
+    ),
+    linear-gradient(
+      180deg,
+      rgba(170,255,251,.055) 0,
+      rgba(92,226,229,.035) 22%,
+      transparent 48%,
+      rgba(7,92,119,.12) 100%
+    );
   mix-blend-mode: screen;
+  animation: weeklyAquaPulse 6.8s ease-in-out infinite;
 }
 
 .weekly-water-sheen {
   z-index: 3;
-  width: 45%;
-  left: -74%;
-  background: linear-gradient(108deg,transparent,rgba(162,249,243,.02) 20%,rgba(211,255,251,.22) 48%,rgba(88,220,219,.10) 66%,transparent 83%);
-  transform: skewX(-13deg);
+  width: 52%;
+  left: -82%;
+  background:
+    linear-gradient(
+      108deg,
+      transparent 0%,
+      rgba(176,255,251,.03) 18%,
+      rgba(223,255,253,.28) 42%,
+      rgba(111,241,236,.16) 56%,
+      rgba(63,192,213,.08) 66%,
+      transparent 84%
+    );
+  filter: blur(.5px);
+  transform: skewX(-14deg);
   mix-blend-mode: screen;
-  animation: weeklySheen 7.6s ease-in-out infinite;
+  animation: weeklySheen 6.2s ease-in-out infinite;
 }
 
 .weekly-printing {
@@ -819,8 +922,36 @@
 }
 
 @keyframes weeklyCausticDrift {
-  from { transform: translate3d(-5%,0,0) rotate(0deg); }
-  to { transform: translate3d(7%,9%,0) rotate(4deg); }
+  0% { transform: translate3d(-6%,0,0) rotate(0deg) scale(1); }
+  50% { transform: translate3d(3%,6%,0) rotate(2deg) scale(1.04); }
+  100% { transform: translate3d(8%,10%,0) rotate(4deg) scale(.98); }
+}
+
+@keyframes weeklyLightBands {
+  0% { transform: translate3d(-4%,0,0) rotate(-4deg); opacity: .36; }
+  50% { transform: translate3d(3%,2%,0) rotate(-2deg); opacity: .58; }
+  100% { transform: translate3d(7%,4%,0) rotate(0deg); opacity: .4; }
+}
+
+@keyframes weeklySurfaceShimmer {
+  0% { transform: translate3d(-5%,0,0) rotate(-5deg); opacity: .24; }
+  50% { transform: translate3d(4%,5%,0) rotate(-2deg); opacity: .4; }
+  100% { transform: translate3d(8%,9%,0) rotate(1deg); opacity: .28; }
+}
+
+@keyframes weeklySunPulse {
+  0%,100% { opacity: .16; transform: scale(1); }
+  50% { opacity: .3; transform: scale(1.04); }
+}
+
+@keyframes weeklyCausticPulse {
+  0%,100% { opacity: .42; filter: brightness(.96) saturate(1); }
+  50% { opacity: .72; filter: brightness(1.1) saturate(1.08); }
+}
+
+@keyframes weeklyAquaPulse {
+  0%,100% { opacity: .84; filter: saturate(.98); }
+  50% { opacity: 1; filter: saturate(1.12); }
 }
 
 @keyframes weeklyRipple {
@@ -1348,7 +1479,7 @@
   gap: 1rem;
   margin-top: 1rem;
   padding-top: 1rem;
-     border-top: 1px solid rgba(255,255,255,.05);
+  border-top: 1px solid rgba(255,255,255,.05);
   color: #656166;
   font-size: .67rem;
 }
@@ -1728,6 +1859,10 @@
   .weekly-water-glow,
   .weekly-water-glow::before,
   .weekly-water-glow::after,
+  .weekly-scene::before,
+  .weekly-scene::after,
+  .weekly-aqua-wash,
+  .weekly-card-feature::after,
   .weekly-card-halo,
   .weekly-drift,
   .weekly-bubbles i,
@@ -1765,4 +1900,4 @@
     transition: none;
   }
 
-       }
+   }
