@@ -166,7 +166,7 @@
      SCOUTBOARD TABS
      ======================================== */
 
-  function wakeEdgar() {
+  function wakeWeekly() {
     const weekly =
       document.getElementById(
         "card-of-the-week"
@@ -264,7 +264,7 @@
       name ===
       "weekly"
     ) {
-      wakeEdgar();
+      wakeWeekly();
     }
 
 
@@ -952,7 +952,7 @@
 
 
   /* ========================================
-     CARD OF THE WEEK — EDGAR MARKOV
+     CARD OF THE WEEK
      ======================================== */
 
   const weekly =
@@ -975,9 +975,9 @@
       "card-week-link"
     );
 
-  const edgarShell =
+  const weeklyShell =
     document.getElementById(
-      "edgar-card-shell"
+      "weekly-card-shell"
     );
 
 
@@ -1033,9 +1033,11 @@
 
         weeklyImage.alt =
           `${card.name} — ${
-            card.set_name
+            card.set_name ||
+            "Magic printing"
           } #${
-            card.collector_number
+            card.collector_number ||
+            number
           }`;
       }
 
@@ -1044,23 +1046,54 @@
         weeklyPrinting
       ) {
 
-        const treatment =
+        const treatments = [];
+
+
+        if (
           (
             card.frame_effects ||
             []
           ).includes(
             "showcase"
           )
-            ? "SHOWCASE · "
+        ) {
+          treatments.push(
+            "SHOWCASE"
+          );
+        }
+
+
+        if (
+          card.border_color ===
+          "borderless"
+        ) {
+          treatments.push(
+            "BORDERLESS"
+          );
+        }
+
+
+        if (
+          card.full_art
+        ) {
+          treatments.push(
+            "FULL ART"
+          );
+        }
+
+
+        const treatmentText =
+          treatments.length
+            ? `${treatments.join(" · ")} · `
             : "";
 
 
         weeklyPrinting.textContent =
           `${
             card.set_name ||
-            "INNISTRAD REMASTERED"
+            "MYSTIC SANCTUARY"
           } · ${
-            treatment
+            treatmentText
           }#${
             card.collector_number ||
             number
@@ -1069,14 +1102,38 @@
       }
 
 
+      /*
+       * The homepage Card of the Week now links to a
+       * dedicated ManaScout guide page.
+       *
+       * Do not replace that internal guide URL with
+       * exactCardHref(card). The printing itself is
+       * already represented by the image/set metadata.
+       */
       if (
         weeklyLink &&
-        card.id
+        !weeklyLink.getAttribute(
+          "href"
+        )
       ) {
         weeklyLink.href =
-          exactCardHref(
-            card
-          );
+          `/card/${encodeURIComponent(
+            (
+              card.name ||
+              weekly.dataset
+                .weeklyCard ||
+              "card"
+            )
+              .toLowerCase()
+              .replace(
+                /[^a-z0-9]+/g,
+                "-"
+              )
+              .replace(
+                /^-|-$/g,
+                ""
+              )
+          )}/`;
       }
 
 
@@ -1096,24 +1153,24 @@
 
 
   /* ========================================
-     EDGAR PARALLAX
+     WEEKLY CARD PARALLAX
      ======================================== */
 
   if (
     weekly &&
-    edgarShell &&
+    weeklyShell &&
     !reducedMotion.matches &&
     window.matchMedia(
       "(hover: hover) and (pointer: fine)"
     ).matches
   ) {
 
-    edgarShell.addEventListener(
+    weeklyShell.addEventListener(
       "pointermove",
       event => {
 
         const bounds =
-          edgarShell
+          weeklyShell
             .getBoundingClientRect();
 
 
@@ -1141,21 +1198,21 @@
 
         weekly.style
           .setProperty(
-            "--edgar-x",
+            "--weekly-x",
             `${x}%`
           );
 
 
         weekly.style
           .setProperty(
-            "--edgar-y",
+            "--weekly-y",
             `${y}%`
           );
 
 
         weekly.style
           .setProperty(
-            "--edgar-rx",
+            "--weekly-rx",
             `${
               (
                 50 -
@@ -1168,7 +1225,7 @@
 
         weekly.style
           .setProperty(
-            "--edgar-ry",
+            "--weekly-ry",
             `${
               (
                 x -
@@ -1182,34 +1239,34 @@
     );
 
 
-    edgarShell.addEventListener(
+    weeklyShell.addEventListener(
       "pointerleave",
       () => {
 
         weekly.style
           .setProperty(
-            "--edgar-x",
+            "--weekly-x",
             "50%"
           );
 
 
         weekly.style
           .setProperty(
-            "--edgar-y",
-            "45%"
+            "--weekly-y",
+            "42%"
           );
 
 
         weekly.style
           .setProperty(
-            "--edgar-rx",
+            "--weekly-rx",
             "0deg"
           );
 
 
         weekly.style
           .setProperty(
-            "--edgar-ry",
+            "--weekly-ry",
             "0deg"
           );
 
