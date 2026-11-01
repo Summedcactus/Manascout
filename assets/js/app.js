@@ -450,7 +450,8 @@
 
     ui.printings?.replaceChildren();
 
-    announce("home");
+    // Keep the alert visible while hiding the empty printings section.
+    announce("loading");
   }
 
 
