@@ -1,19 +1,21 @@
 
 /*
  * ManaScout — Homepage Controller
- * Complete replacement:
- * /assets/js/scoutboard.js
+ * File: assets/js/scoutboard.js
+ * Branch: DEVELOPMENT
  *
- * Designed for the new homepage:
- * - No roulette
- * - No tabs
- * - 12 rotating featured cards
- * - Discover a Card
- * - Minas Morgul Card of the Week
- * - Weekly archive
- * - Accessible reduced-motion support
+ * Complete replacement based on the DEVELOPMENT homepage.
  *
- * The main card search remains in app.js.
+ * - Preserve the 12 rotating featured cards
+ * - Search paginated Scryfall printings for featured art
+ * - Preserve exact printing IDs in featured links
+ * - Resolve exact printings for archived Cards of the Week
+ * - Preserve Minas Morgul LTC #390 (not #390z)
+ * - Preserve Discover a Card
+ * - Preserve pointer-based card atmosphere
+ * - No roulette, tabs or floating dock
+ *
+ * Card search and printing tables belong to app.js.
  */
 
 (() => {
@@ -21,32 +23,41 @@
 
   const API = "https://api.scryfall.com";
 
-  const root =
-    document.getElementById("scoutboard");
+  const $ = id =>
+    document.getElementById(id);
+
+  const root = $("scoutboard");
+
+  const cardSection =
+    $("card-details-section");
 
   const results =
-    document.querySelector(".printings-section");
+    document.querySelector(
+      ".printings-section"
+    );
 
   const editorial =
-    document.querySelector(".home-editorial");
+    document.querySelector(
+      ".home-editorial"
+    );
 
   const discover =
-    document.getElementById("discover-card-button");
+    $("discover-card-button");
 
   const weekly =
-    document.getElementById("card-of-the-week");
+    $("card-of-the-week");
 
   const weeklyImage =
-    document.getElementById("card-week-image");
+    $("card-week-image");
 
   const weeklyPrinting =
-    document.getElementById("card-week-printing");
+    $("card-week-printing");
 
   const weeklyLink =
-    document.getElementById("card-week-link");
+    $("card-week-link");
 
   const weeklyShell =
-    document.getElementById("weekly-card-shell");
+    $("weekly-card-shell");
 
   const featureElements = [
     ...document.querySelectorAll(
@@ -54,7 +65,7 @@
     )
   ];
 
-  const reduceMotion =
+  const reducedMotion =
     window.matchMedia(
       "(prefers-reduced-motion: reduce)"
     );
@@ -68,66 +79,179 @@
 
 
   /* ========================================
-     HELPERS
+     BASIC HELPERS
      ======================================== */
 
   const pause = ms =>
     new Promise(resolve =>
-      window.setTimeout(resolve, ms)
+      setTimeout(resolve, ms)
     );
 
-
-  const cardImage = card => (
-    card?.image_uris?.normal ||
-    card?.image_uris?.large ||
-    card?.card_faces?.[0]?.image_uris?.normal ||
-    card?.card_faces?.[0]?.image_uris?.large ||
-    ""
-  );
-
+  const norm = value =>
+    String(value || "")
+      .trim()
+      .toLowerCase();
 
   const guideSlug = name =>
-    name
-      .toLowerCase()
+    norm(name)
       .replace(/[^a-z0-9]+/g, "-")
       .replace(/^-|-$/g, "");
 
 
-  const queryHref = name =>
-    `/?q=${encodeURIComponent(name)}`;
+  function safeUrl(value) {
+    try {
+      const parsed = new URL(value);
 
+      return /^https?:$/.test(
+        parsed.protocol
+      )
+        ? parsed.href
+        : "";
 
-  async function getJson(url) {
-    if (cache.has(url)) {
-      return cache.get(url);
+    } catch {
+      return "";
     }
+  }
 
-    const response = await fetch(url, {
-      headers: {
-        Accept: "application/json"
-      }
-    });
 
-    if (!response.ok) {
-      throw new Error(
-        `Scryfall request failed (${response.status})`
-      );
-    }
-
-    const data = await response.json();
-
-    cache.set(url, data);
-
-    return data;
+  function cardImage(card) {
+    return safeUrl(
+      card?.image_uris?.normal ||
+      card?.image_uris?.large ||
+      card?.card_faces?.[0]?.image_uris?.normal ||
+      card?.card_faces?.[0]?.image_uris?.large ||
+      ""
+    );
   }
 
 
   /* ========================================
-     HOMEPAGE / SEARCH STATE
+     EXACT PRINTING LINKS
+     ======================================== */
+
+  function linkToCard(
+    name,
+    card = null,
+    guide = false
+  ) {
+    const target = guide
+      ? `/card/${guideSlug(name)}/`
+      : "/";
+
+    const query =
+      new URLSearchParams();
+
+    if (!guide) {
+      query.set("q", name);
+    }
+
+    if (card?.id) {
+      query.set(
+        "printing",
+        card.id
+      );
+    }
+
+    if (
+      card?.finishes?.includes("foil")
+    ) {
+      query.set(
+        "finish",
+        "foil"
+      );
+
+    } else if (
+      card?.finishes?.includes("etched")
+    ) {
+      query.set(
+        "finish",
+        "etched"
+      );
+
+    } else if (
+      card?.finishes?.includes("nonfoil")
+    ) {
+      query.set(
+        "finish",
+        "nonfoil"
+      );
+    }
+
+    return target +
+      (
+        query.size
+          ? `?${query.toString()}`
+          : ""
+      );
+  }
+
+
+  /* ========================================
+     SCRYFALL NETWORK + CACHE
+     ======================================== */
+
+  async function getJson(url) {
+    const key =
+      safeUrl(url);
+
+    if (!key) {
+      throw new Error(
+        "Invalid Scryfall URL"
+      );
+    }
+
+    if (
+      cache.has(key)
+    ) {
+      return cache.get(key);
+    }
+
+    const request = (async () => {
+      const response = await fetch(
+        key,
+        {
+          headers: {
+            Accept: "application/json"
+          }
+        }
+      );
+
+      if (!response.ok) {
+        const error = new Error(
+          `Scryfall request failed (${response.status})`
+        );
+
+        error.status =
+          response.status;
+
+        throw error;
+      }
+
+      return response.json();
+    })();
+
+    cache.set(
+      key,
+      request
+    );
+
+    try {
+      return await request;
+
+    } catch (error) {
+      cache.delete(key);
+      throw error;
+    }
+  }
+
+
+  /* ========================================
+     HOMEPAGE / RESULT STATES
      ======================================== */
 
   function showState(state) {
-    const home = state === "home";
+    const home =
+      state === "home";
 
     if (root) {
       root.hidden = !home;
@@ -137,24 +261,15 @@
       editorial.hidden = !home;
     }
 
+    if (cardSection) {
+      cardSection.hidden = home;
+    }
+
     if (results) {
-      results.hidden = state !== "card";
+      results.hidden =
+        state !== "card";
     }
   }
-
-
-  window.addEventListener(
-    "manascout:statechange",
-    event => {
-      const state = event?.detail?.state;
-
-      if (
-        ["home", "loading", "card"].includes(state)
-      ) {
-        showState(state);
-      }
-    }
-  );
 
 
   const initialQuery =
@@ -169,12 +284,32 @@
   );
 
 
+  window.addEventListener(
+    "manascout:statechange",
+    event => {
+      const state =
+        event?.detail?.state;
+
+      if (
+        [
+          "home",
+          "loading",
+          "card"
+        ].includes(state)
+      ) {
+        showState(state);
+      }
+    }
+  );
+
+
   /* ========================================
      DISCOVER A CARD
      ======================================== */
 
   if (discover) {
-    const defaultContent = discover.innerHTML;
+    const originalLabel =
+      discover.innerHTML;
 
     discover.addEventListener(
       "click",
@@ -184,45 +319,50 @@
         }
 
         discover.disabled = true;
-        discover.textContent = "Scouting a card…";
+
+        discover.textContent =
+          "Scouting a card…";
 
         try {
           if (
-            typeof window.ManaScout?.scoutRandom !==
+            typeof window.ManaScout
+              ?.scoutRandom !==
             "function"
           ) {
             throw new Error(
-              "ManaScout search is unavailable."
+              "The card explorer is unavailable"
             );
           }
 
-          await window.ManaScout.scoutRandom();
+          await window.ManaScout
+            .scoutRandom();
 
-          document
-            .getElementById(
-              "card-details-section"
-            )
+          cardSection
             ?.scrollIntoView({
-              behavior: reduceMotion.matches
-                ? "auto"
-                : "smooth",
+              behavior:
+                reducedMotion.matches
+                  ? "auto"
+                  : "smooth",
+
               block: "start"
             });
 
         } catch (error) {
           console.warn(
-            "Discover a Card:",
+            "Discover a Card failed:",
             error
           );
 
           discover.textContent =
             "Could not scout — try again";
 
-          await pause(1100);
+          await pause(1000);
 
         } finally {
           discover.disabled = false;
-          discover.innerHTML = defaultContent;
+
+          discover.innerHTML =
+            originalLabel;
         }
       }
     );
@@ -231,6 +371,7 @@
 
   /* ========================================
      FEATURED CARD CATALOGUE
+     ALL 12 CARDS
      ======================================== */
 
   const featured = [
@@ -322,43 +463,117 @@
 
 
   /* ========================================
-     PRINTING SELECTION
+     FEATURED PRINTING SCORING
      ======================================== */
 
-  function scorePrinting(card, preference) {
+  function isUsableArt(card) {
+    return Boolean(
+      card?.id &&
+      cardImage(card) &&
+      !card.digital &&
+      (
+        card.games || []
+      ).includes("paper") &&
+      ![
+        "art_series",
+        "token",
+        "emblem",
+        "double_faced_token"
+      ].includes(card.layout) &&
+      !card.oversized
+    );
+  }
+
+
+  function scorePrinting(
+    card,
+    preference
+  ) {
     if (
-      card.digital ||
-      !cardImage(card)
+      !isUsableArt(card)
     ) {
-      return -9999;
+      return -100000;
     }
 
-    const effects = card.frame_effects || [];
-    const finishes = card.finishes || [];
+    const effects =
+      card.frame_effects || [];
 
-    let score = 0;
+    const promos =
+      card.promo_types || [];
 
-    if (effects.includes("showcase")) {
+    const finishes =
+      card.finishes || [];
+
+    let score =
+      card.lang === "en"
+        ? 20
+        : 0;
+
+    if (
+      effects.includes("showcase")
+    ) {
       score += 95;
     }
 
-    if (card.border_color === "borderless") {
+    if (
+      card.border_color === "borderless"
+    ) {
       score += 90;
     }
 
-    if (card.full_art) {
+    if (
+      card.full_art
+    ) {
       score += 80;
     }
 
-    if (effects.includes("extendedart")) {
+    if (
+      effects.includes("extendedart")
+    ) {
       score += 70;
     }
 
-    if (finishes.includes("etched")) {
+    if (
+      effects.includes("inverted")
+    ) {
+      score += 35;
+    }
+
+    if (
+      card.textless
+    ) {
+      score += 30;
+    }
+
+    for (
+      const [type, bonus] of
+      Object.entries({
+        textured: 45,
+        surgefoil: 42,
+        galaxyfoil: 40,
+        halofoil: 40,
+        confettifoil: 40,
+        rainbowfoil: 36,
+        stepandcompleat: 34,
+        boosterfun: 22
+      })
+    ) {
+      if (
+        promos.includes(type)
+      ) {
+        score += bonus;
+      }
+    }
+
+    if (
+      finishes.includes("etched")
+    ) {
       score += 25;
     }
 
-    if (finishes.includes("foil")) {
+    if (
+      finishes.includes("foil")
+    ) {
       score += 12;
     }
 
@@ -376,162 +591,374 @@
       score += 10;
     }
 
-    const release = Date.parse(
-      card.released_at || ""
-    );
-
-    if (Number.isFinite(release)) {
-      score += release / 1e13;
+    if (
+      promos.includes("serialized")
+    ) {
+      score -= 25;
     }
 
     return score;
   }
 
 
-  async function artFor(name, preference) {
-    const search = encodeURIComponent(
-      `!"${name}" game:paper`
-    );
+  /* ========================================
+     PAGINATED FEATURED ARTWORK
+     ======================================== */
 
-    const url =
-      `${API}/cards/search?q=${search}` +
-      "&unique=prints" +
-      "&order=released" +
-      "&dir=desc" +
-      "&include_extras=true";
+  async function artFor(
+    name,
+    preference
+  ) {
+    const query =
+      new URLSearchParams({
+        q:
+          `!"${name.replace(/"/g, "")}" game:paper`,
 
-    const data = await getJson(url);
+        unique: "prints",
 
-    const cards = Array.isArray(data.data)
-      ? data.data
-      : [];
+        order: "released",
 
-    return cards
-      .filter(card =>
-        cardImage(card) &&
-        !card.digital
-      )
-      .sort((a, b) =>
-        scorePrinting(b, preference) -
-        scorePrinting(a, preference)
-      )[0] || null;
+        dir: "desc",
+
+        include_extras: "true",
+
+        include_multilingual: "true",
+
+        include_variations: "true"
+      });
+
+    let next =
+      `${API}/cards/search?${query}`;
+
+    const visited =
+      new Set();
+
+    let pageCount = 0;
+
+    let best = null;
+
+    let bestScore =
+      -Infinity;
+
+    while (
+      next &&
+      pageCount < 24 &&
+      !visited.has(next)
+    ) {
+      visited.add(next);
+
+      let data;
+
+      try {
+        data =
+          await getJson(next);
+
+      } catch (error) {
+        if (
+          pageCount === 0
+        ) {
+          try {
+            const fallback =
+              await getJson(
+                `${API}/cards/named?exact=${encodeURIComponent(name)}`
+              );
+
+            data = {
+              data: [fallback]
+            };
+
+          } catch {
+            throw error;
+          }
+
+        } else {
+          console.warn(
+            `Some featured printings for ${name} were unavailable`,
+            error
+          );
+
+          break;
+        }
+      }
+
+      for (
+        const card of data.data || []
+      ) {
+        const score =
+          scorePrinting(
+            card,
+            preference
+          );
+
+        if (
+          score > bestScore ||
+          (
+            score === bestScore &&
+            best &&
+            String(
+              card.released_at || ""
+            ) >
+            String(
+              best.released_at || ""
+            )
+          )
+        ) {
+          best = card;
+
+          bestScore =
+            score;
+        }
+      }
+
+      next =
+        data.has_more
+          ? safeUrl(data.next_page)
+          : "";
+
+      pageCount++;
+
+      if (next) {
+        await pause(120);
+      }
+    }
+
+    return best;
   }
 
 
   /* ========================================
-     RENDER FEATURED PRINTINGS
+     FEATURED CARD ROTATION
+     FOUR AT A TIME
      ======================================== */
 
   let featureGeneration = 0;
 
+  let featurePainted = false;
+
+  let featuredPage = 0;
+
+
+  function fillText(
+    element,
+    selector,
+    value
+  ) {
+    const target =
+      element.querySelector(
+        selector
+      );
+
+    if (target) {
+      target.textContent =
+        value;
+    }
+  }
+
+
+  function featureFallback(
+    item,
+    element
+  ) {
+    fillText(
+      element,
+      "small",
+      item.tag
+    );
+
+    fillText(
+      element,
+      "h4",
+      item.name
+    );
+
+    fillText(
+      element,
+      ".scoutboard-feature-copy p",
+      item.description
+    );
+
+    const anchor =
+      element.querySelector(
+        ".scoutboard-feature-link"
+      );
+
+    if (anchor) {
+      anchor.href =
+        linkToCard(
+          item.name,
+          null,
+          true
+        );
+
+      anchor.innerHTML =
+        'Scout the printings ' +
+        '<span aria-hidden="true">→</span>';
+    }
+
+    const art =
+      element.querySelector(
+        ".scoutboard-feature-art"
+      );
+
+    if (art) {
+      art.innerHTML =
+        '<div class="scoutboard-feature-placeholder">◇</div>';
+    }
+  }
+
 
   async function paintFeatures(page) {
-    const generation = ++featureGeneration;
+    const job =
+      ++featureGeneration;
+
+    featurePainted = true;
+
+    const start =
+      page * featureElements.length;
+
+    featureElements.forEach(
+      (element, index) => {
+        const item =
+          featured[
+            (
+              start + index
+            ) % featured.length
+          ];
+
+        if (!item) {
+          return;
+        }
+
+        element.dataset.featureCard =
+          item.name;
+
+        element.dataset.featurePreference =
+          item.preference;
+
+        featureFallback(
+          item,
+          element
+        );
+      }
+    );
 
     for (
-      let i = 0;
-      i < featureElements.length;
-      i++
+      let index = 0;
+      index < featureElements.length;
+      index++
     ) {
-      const element = featureElements[i];
+      if (
+        job !== featureGeneration
+      ) {
+        return;
+      }
 
-      const item = featured[
-        (page * featureElements.length + i) %
-        featured.length
-      ];
+      const element =
+        featureElements[index];
+
+      const item =
+        featured[
+          (
+            start + index
+          ) % featured.length
+        ];
 
       if (!item) {
         continue;
       }
 
-      element.dataset.featureCard = item.name;
-
-      element.dataset.featurePreference =
-        item.preference;
-
-      element
-        .querySelector("small")
-        ?.replaceChildren(
-          document.createTextNode(item.tag)
-        );
-
-      element
-        .querySelector("h4")
-        ?.replaceChildren(
-          document.createTextNode(item.name)
-        );
-
-      element
-        .querySelector(
-          ".scoutboard-feature-copy p"
-        )
-        ?.replaceChildren(
-          document.createTextNode(
-            item.description
-          )
-        );
-
-      const anchor =
-        element.querySelector(
-          ".scoutboard-feature-link"
-        );
-
-      if (anchor) {
-        anchor.href =
-          `/card/${guideSlug(item.name)}/`;
-
-        anchor.innerHTML =
-          'Scout the printings ' +
-          '<span aria-hidden="true">→</span>';
-      }
-
-      const artwork =
-        element.querySelector(
-          ".scoutboard-feature-art"
-        );
-
-      if (artwork) {
-        artwork.innerHTML =
-          '<div class="scoutboard-feature-placeholder">◇</div>';
-      }
-
       try {
-        const card = await artFor(
-          item.name,
-          item.preference
-        );
+        const card =
+          await artFor(
+            item.name,
+            item.preference
+          );
 
-        if (generation !== featureGeneration) {
+        if (
+          job !== featureGeneration
+        ) {
           return;
         }
 
-        if (card && artwork) {
-          const img =
-            document.createElement("img");
+        if (
+          !card ||
+          !cardImage(card)
+        ) {
+          continue;
+        }
 
-          img.src = cardImage(card);
+        const art =
+          element.querySelector(
+            ".scoutboard-feature-art"
+          );
 
-          img.alt =
+        const anchor =
+          element.querySelector(
+            ".scoutboard-feature-link"
+          );
+
+        if (art) {
+          const picture =
+            document.createElement(
+              "img"
+            );
+
+          picture.src =
+            cardImage(card);
+
+          picture.alt =
             `${item.name} — ` +
             `${card.set_name || "Magic printing"}, ` +
             `#${card.collector_number || "?"}`;
 
-          img.loading = "lazy";
-          img.decoding = "async";
+          picture.loading =
+            "lazy";
 
-          img.width = 488;
-          img.height = 680;
+          picture.decoding =
+            "async";
 
-          artwork.replaceChildren(img);
+          picture.width = 488;
 
-          if (anchor && card.id) {
-            anchor.href =
-              `/card/${guideSlug(item.name)}/` +
-              `?printing=${encodeURIComponent(card.id)}`;
-          }
+          picture.height = 680;
+
+          picture.addEventListener(
+            "error",
+            () => {
+              if (
+                picture.isConnected
+              ) {
+                featureFallback(
+                  item,
+                  element
+                );
+              }
+            },
+            {
+              once: true
+            }
+          );
+
+          art.replaceChildren(
+            picture
+          );
+        }
+
+        if (anchor) {
+          anchor.href =
+            linkToCard(
+              item.name,
+              card,
+              true
+            );
         }
 
       } catch (error) {
+        if (
+          job !== featureGeneration
+        ) {
+          return;
+        }
+
         console.warn(
           `Featured printing unavailable: ${item.name}`,
           error
@@ -544,43 +971,39 @@
 
 
   /* ========================================
-     FEATURED CARD ROTATION
+     ROTATION BUTTON
      ======================================== */
 
-  if (featureElements.length) {
-    let page = 0;
+  if (
+    featureElements.length
+  ) {
+    const grid =
+      document.querySelector(
+        ".scoutboard-feature-grid"
+      );
 
-    const grid = document.querySelector(
-      ".scoutboard-feature-grid"
-    );
-
-    if (grid) {
+    if (
+      grid &&
+      featured.length >
+        featureElements.length
+    ) {
       const more =
-        document.createElement("button");
+        document.createElement(
+          "button"
+        );
 
-      more.type = "button";
+      more.type =
+        "button";
 
       more.textContent =
-        "Explore four more cards ↻";
+        `Explore ${featureElements.length} more cards ↻`;
 
       more.className =
         "scoutboard-heading-link";
 
-      more.style.cssText =
-        "display:block;" +
-        "max-width:max-content;" +
-        "margin:1.35rem auto 0;" +
-        "padding:.7rem 1rem;" +
-        "background:transparent;" +
-        "border:1px solid rgba(255,255,255,.18);" +
-        "border-radius:8px;" +
-        "cursor:pointer;" +
-        "font:inherit;" +
-        "color:inherit;";
-
       more.setAttribute(
         "aria-label",
-        "Show four more featured Magic cards"
+        `Show ${featureElements.length} more featured Magic cards`
       );
 
       grid.insertAdjacentElement(
@@ -591,20 +1014,28 @@
       more.addEventListener(
         "click",
         () => {
-          page =
-            (page + 1) %
+          featuredPage =
+            (
+              featuredPage + 1
+            ) %
             Math.ceil(
               featured.length /
-              featureElements.length
+                featureElements.length
             );
 
-          void paintFeatures(page);
+          void paintFeatures(
+            featuredPage
+          );
         }
       );
     }
 
-    if (!initialQuery?.trim()) {
-      void paintFeatures(page);
+    if (
+      !initialQuery?.trim()
+    ) {
+      void paintFeatures(
+        featuredPage
+      );
     }
 
     window.addEventListener(
@@ -612,9 +1043,11 @@
       event => {
         if (
           event?.detail?.state === "home" &&
-          featureGeneration === 0
+          !featurePainted
         ) {
-          void paintFeatures(page);
+          void paintFeatures(
+            featuredPage
+          );
         }
       }
     );
@@ -623,20 +1056,16 @@
 
   /* ========================================
      CARD OF THE WEEK — MINAS MORGUL
-     ========================================
 
      Actual card: Cabal Coffers
-     Display name: Minas Morgul
      Set: LTC
      Collector number: 390
+     Artwork: Sean Vo
      Treatment: Surge foil
 
-     Do not substitute #390z, which is
-     the serialized printing.
-
-     The HTML contains the story and
-     animated shadow/foil effects.
-  */
+     IMPORTANT: NOT #390z, the
+     serialized printing.
+     ======================================== */
 
   async function loadWeekly() {
     if (!weekly) {
@@ -644,152 +1073,238 @@
     }
 
     const set =
-      weekly.dataset.weeklySet || "ltc";
+      String(
+        weekly.dataset.weeklySet ||
+        "ltc"
+      )
+        .trim()
+        .toLowerCase();
 
     const number =
-      weekly.dataset.weeklyNumber || "390";
+      String(
+        weekly.dataset.weeklyNumber ||
+        "390"
+      ).trim();
 
     try {
-      const card = await getJson(
-        `${API}/cards/` +
-        `${encodeURIComponent(set)}/` +
-        `${encodeURIComponent(number)}`
-      );
+      const card =
+        await getJson(
+          `${API}/cards/` +
+          `${encodeURIComponent(set)}/` +
+          `${encodeURIComponent(number)}`
+        );
 
-      const url = cardImage(card);
+      if (
+        norm(card?.set) !== set ||
+        String(
+          card?.collector_number
+        ) !== number
+      ) {
+        throw new Error(
+          "Card of the Week printing mismatch"
+        );
+      }
 
-      if (weeklyImage && url) {
-        weeklyImage.src = url;
+      const art =
+        cardImage(card);
+
+      if (
+        weeklyImage &&
+        art
+      ) {
+        weeklyImage.src =
+          art;
 
         weeklyImage.alt =
           "Minas Morgul (Cabal Coffers) — " +
           `${card.set_name}, ` +
-          `surge foil #${card.collector_number}`;
+          `surge foil #${number}`;
       }
 
-      if (weeklyPrinting) {
+      if (
+        weeklyPrinting
+      ) {
         weeklyPrinting.textContent =
           (
             `${card.set_name || "Tales of Middle-earth Commander"}` +
-            ` · #${card.collector_number || number}`
+            ` · #${number}`
           ).toUpperCase();
       }
 
-      if (weeklyLink && card.id) {
-        const params = new URLSearchParams({
-          q: card.name || "Cabal Coffers",
-          printing: card.id
-        });
-
-        weeklyLink.href = `/?${params}`;
+      if (
+        weeklyLink &&
+        card.id
+      ) {
+        weeklyLink.href =
+          linkToCard(
+            card.name ||
+              "Cabal Coffers",
+            card
+          );
       }
 
     } catch (error) {
+      /*
+       * Keep the static image and exact
+       * URL supplied by index.html.
+       */
       console.warn(
-        "Card of the Week lookup unavailable:",
+        "Card of the Week lookup unavailable; static fallback retained:",
         error
       );
     }
   }
-
 
   void loadWeekly();
 
 
   /* ========================================
      CARD OF THE WEEK ARCHIVE
+
+     Existing homepage entries store
+     full set names, not Scryfall set
+     codes or card UUIDs.
+
+     Resolve the precise set and
+     collector number through Scryfall.
+
+     Never invent a printing ID.
      ======================================== */
 
-  const archiveData =
-    document.getElementById(
-      "card-week-archive-data"
-    );
+  const setCodes = {
+    "theros beyond death":
+      "thb",
 
-  if (archiveData) {
-    try {
-      const parsed = JSON.parse(
-        archiveData.textContent
+    "wilds of eldraine: enchanting tales":
+      "wot",
+
+    "urza's saga":
+      "usg",
+
+    "innistrad remastered":
+      "inr",
+
+    "secret lair drop":
+      "sld",
+
+    "tales of middle-earth commander":
+      "ltc"
+  };
+
+
+  function codeFor(entry) {
+    const explicit =
+      String(
+        entry?.setCode ||
+        entry?.set_code ||
+        ""
+      )
+        .trim()
+        .toLowerCase();
+
+    if (
+      /^[a-z0-9]{2,8}$/.test(
+        explicit
+      )
+    ) {
+      return explicit;
+    }
+
+    return (
+      setCodes[
+        norm(entry?.set)
+      ] || ""
+    );
+  }
+
+
+  function exactArchivedCard(entry) {
+    const code =
+      codeFor(entry);
+
+    const number =
+      String(
+        entry?.collectorNumber ||
+        entry?.collector_number ||
+        ""
+      ).trim();
+
+    if (
+      !code ||
+      !/^[a-z0-9★]+$/i.test(
+        number
+      )
+    ) {
+      return null;
+    }
+
+    return {
+      code,
+      number
+    };
+  }
+
+
+  /* ========================================
+     RESOLVE AN ARCHIVED PRINTING
+     ======================================== */
+
+  async function hydrateArchiveLink(
+    link,
+    entry
+  ) {
+    const key =
+      exactArchivedCard(
+        entry
       );
 
-      const entries =
-        Array.isArray(parsed.entries)
-          ? parsed.entries.filter(
-              item => item.status === "archived"
-            )
-          : [];
+    if (!key) {
+      return;
+    }
 
-      if (entries.length) {
-        const section =
-          document.getElementById(
-            "scoutboard-panel-weekly"
-          );
+    try {
+      const card =
+        await getJson(
+          `${API}/cards/` +
+          `${encodeURIComponent(key.code)}/` +
+          `${encodeURIComponent(key.number)}`
+        );
 
-        const wrap =
-          document.createElement("div");
-
-        wrap.style.cssText =
-          "margin:1.6rem 0 0;" +
-          "padding:1rem 0 0;" +
-          "border-top:1px solid rgba(255,255,255,.09);";
-
-        const heading =
-          document.createElement("h4");
-
-        heading.textContent =
-          "Previous Cards of the Week";
-
-        heading.style.cssText =
-          "font-size:1rem;" +
-          "margin:0 0 .8rem;";
-
-        wrap.appendChild(heading);
-
-        const links =
-          document.createElement("div");
-
-        links.style.cssText =
-          "display:flex;" +
-          "flex-wrap:wrap;" +
-          "gap:.6rem;";
-
-        entries
-          .sort((a, b) => b.week - a.week)
-          .forEach(entry => {
-            const a =
-              document.createElement("a");
-
-            a.href = queryHref(
-              entry.card
-            );
-
-            a.textContent =
-              `Week ${String(entry.week).padStart(3, "0")}` +
-              ` · ${entry.card}`;
-
-            a.style.cssText =
-              "display:inline-block;" +
-              "padding:.6rem .75rem;" +
-              "border:1px solid rgba(255,255,255,.1);" +
-              "border-radius:7px;" +
-              "color:#d7d6d5;" +
-              "text-decoration:none;" +
-              "font-size:.72rem;";
-
-            a.title =
-              `${entry.set || "Magic printing"}` +
-              ` #${entry.collectorNumber || ""}`;
-
-            links.appendChild(a);
-          });
-
-        wrap.appendChild(links);
-
-        section?.appendChild(wrap);
+      if (
+        norm(card.set) !== key.code ||
+        String(
+          card.collector_number
+        ) !== key.number ||
+        norm(card.name) !==
+          norm(entry.card)
+      ) {
+        throw new Error(
+          "Archived printing did not match its entry"
+        );
       }
 
+      link.href =
+        linkToCard(
+          entry.card,
+          card
+        );
+
+      link.title =
+        `${card.set_name} · ` +
+        `#${card.collector_number} · ` +
+        "View exact printing";
+
+      link.dataset.printingResolved =
+        "true";
+
     } catch (error) {
+      /*
+       * Keep the ordinary card-search
+       * fallback rather than linking
+       * to an incorrect printing.
+       */
       console.warn(
-        "Weekly archive could not be read:",
+        `Week ${entry.week} exact printing unavailable:`,
         error
       );
     }
@@ -797,42 +1312,257 @@
 
 
   /* ========================================
-     CARD PARALLAX
+     BUILD THE ARCHIVE
+     ======================================== */
+
+  async function loadArchive() {
+    const archiveData =
+      $("card-week-archive-data");
+
+    const section =
+      $("scoutboard-panel-weekly");
+
+    if (
+      !archiveData ||
+      !section
+    ) {
+      return;
+    }
+
+    let entries;
+
+    try {
+      const parsed =
+        JSON.parse(
+          archiveData.textContent
+        );
+
+      entries =
+        Array.isArray(
+          parsed.entries
+        )
+          ? parsed.entries.filter(
+              entry =>
+                entry?.status ===
+                  "archived" &&
+                typeof entry.card ===
+                  "string" &&
+                entry.card.trim()
+            )
+          : [];
+
+    } catch (error) {
+      console.warn(
+        "Card of the Week archive JSON unavailable:",
+        error
+      );
+
+      return;
+    }
+
+    if (
+      !entries.length ||
+      $("ms-weekly-archive")
+    ) {
+      return;
+    }
+
+    entries.sort(
+      (a, b) =>
+        Number(b.week) -
+        Number(a.week)
+    );
+
+    const wrap =
+      document.createElement(
+        "div"
+      );
+
+    wrap.id =
+      "ms-weekly-archive";
+
+    wrap.style.cssText =
+      "margin:1.6rem 0 0;" +
+      "padding:1rem 0 0;" +
+      "border-top:1px solid rgba(255,255,255,.09);";
+
+    const heading =
+      document.createElement(
+        "h4"
+      );
+
+    heading.textContent =
+      "Previous Cards of the Week";
+
+    heading.style.cssText =
+      "font-size:1rem;" +
+      "margin:0 0 .8rem;";
+
+    wrap.appendChild(
+      heading
+    );
+
+    const links =
+      document.createElement(
+        "nav"
+      );
+
+    links.setAttribute(
+      "aria-label",
+      "Previous Cards of the Week"
+    );
+
+    links.style.cssText =
+      "display:flex;" +
+      "flex-wrap:wrap;" +
+      "gap:.6rem;";
+
+    const jobs = [];
+
+    for (
+      const entry of entries
+    ) {
+      const link =
+        document.createElement(
+          "a"
+        );
+
+      link.href =
+        linkToCard(
+          entry.card
+        );
+
+      link.textContent =
+        `Week ${String(entry.week).padStart(3, "0")}` +
+        ` · ${entry.card}`;
+
+      link.title =
+        `${entry.set || "Magic printing"}` +
+        ` #${entry.collectorNumber || ""}`;
+
+      link.style.cssText =
+        "display:inline-block;" +
+        "padding:.6rem .75rem;" +
+        "border:1px solid rgba(255,255,255,.1);" +
+        "border-radius:7px;" +
+        "color:#d7d6d5;" +
+        "text-decoration:none;" +
+        "font-size:.72rem;";
+
+      links.appendChild(
+        link
+      );
+
+      jobs.push({
+        link,
+        entry
+      });
+    }
+
+    wrap.appendChild(
+      links
+    );
+
+    section.appendChild(
+      wrap
+    );
+
+    /*
+     * Stagger independent Scryfall
+     * requests to avoid burst traffic.
+     */
+
+    for (
+      const job of jobs
+    ) {
+      await hydrateArchiveLink(
+        job.link,
+        job.entry
+      );
+
+      await pause(125);
+    }
+  }
+
+  void loadArchive();
+
+
+  /* ========================================
+     MINAS MORGUL CARD ATMOSPHERE
+
+     Fine-pointer desktop only.
+     Respect reduced-motion settings.
      ======================================== */
 
   if (
     weekly &&
     weeklyShell &&
     finePointer.matches &&
-    !reduceMotion.matches
+    !reducedMotion.matches
   ) {
+    const reset = () => {
+      weekly.style.setProperty(
+        "--weekly-x",
+        "50%"
+      );
+
+      weekly.style.setProperty(
+        "--weekly-y",
+        "42%"
+      );
+
+      weekly.style.setProperty(
+        "--weekly-rx",
+        "0deg"
+      );
+
+      weekly.style.setProperty(
+        "--weekly-ry",
+        "0deg"
+      );
+    };
+
     weeklyShell.addEventListener(
       "pointermove",
       event => {
         const rect =
-          weeklyShell.getBoundingClientRect();
+          weeklyShell
+            .getBoundingClientRect();
 
-        if (!rect.width || !rect.height) {
+        if (
+          !rect.width ||
+          !rect.height
+        ) {
           return;
         }
 
-        const x = Math.max(
-          0,
-          Math.min(
-            100,
-            (event.clientX - rect.left) /
-            rect.width * 100
-          )
-        );
+        const x =
+          Math.max(
+            0,
+            Math.min(
+              100,
+              (
+                event.clientX -
+                rect.left
+              ) /
+              rect.width *
+              100
+            )
+          );
 
-        const y = Math.max(
-          0,
-          Math.min(
-            100,
-            (event.clientY - rect.top) /
-            rect.height * 100
-          )
-        );
+        const y =
+          Math.max(
+            0,
+            Math.min(
+              100,
+              (
+                event.clientY -
+                rect.top
+              ) /
+              rect.height *
+              100
+            )
+          );
 
         weekly.style.setProperty(
           "--weekly-x",
@@ -854,32 +1584,14 @@
           `${(x - 50) * .05}deg`
         );
       },
-      { passive: true }
+      {
+        passive: true
+      }
     );
 
     weeklyShell.addEventListener(
       "pointerleave",
-      () => {
-        weekly.style.setProperty(
-          "--weekly-x",
-          "50%"
-        );
-
-        weekly.style.setProperty(
-          "--weekly-y",
-          "42%"
-        );
-
-        weekly.style.setProperty(
-          "--weekly-rx",
-          "0deg"
-        );
-
-        weekly.style.setProperty(
-          "--weekly-ry",
-          "0deg"
-        );
-      }
+      reset
     );
   }
 
@@ -887,12 +1599,11 @@
   /* ========================================
      END
 
-     Old tab switching, roulette controls
-     and retired floating dock behaviour
-     are intentionally excluded.
+     No retired tabs, roulette or
+     floating dock.
 
-     Main card search, printings and
-     filtering remain in app.js.
+     Search and printing explorer
+     remain in app.js.
      ======================================== */
 
 })();
