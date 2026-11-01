@@ -1,458 +1,144 @@
+
+/*
+ * ManaScout — Homepage Controller
+ * Complete replacement:
+ * /assets/js/scoutboard.js
+ *
+ * Designed for the new homepage:
+ * - No roulette
+ * - No tabs
+ * - 12 rotating featured cards
+ * - Discover a Card
+ * - Minas Morgul Card of the Week
+ * - Weekly archive
+ * - Accessible reduced-motion support
+ *
+ * The main card search remains in app.js.
+ */
+
 (() => {
   "use strict";
 
+  const API = "https://api.scryfall.com";
 
-  /* ========================================
-     CONFIG
-     ======================================== */
+  const root =
+    document.getElementById("scoutboard");
 
-  const API =
-    "https://api.scryfall.com";
+  const results =
+    document.querySelector(".printings-section");
 
-  const reducedMotion =
+  const editorial =
+    document.querySelector(".home-editorial");
+
+  const discover =
+    document.getElementById("discover-card-button");
+
+  const weekly =
+    document.getElementById("card-of-the-week");
+
+  const weeklyImage =
+    document.getElementById("card-week-image");
+
+  const weeklyPrinting =
+    document.getElementById("card-week-printing");
+
+  const weeklyLink =
+    document.getElementById("card-week-link");
+
+  const weeklyShell =
+    document.getElementById("weekly-card-shell");
+
+  const featureElements = [
+    ...document.querySelectorAll(
+      "[data-feature-card]"
+    )
+  ];
+
+  const reduceMotion =
     window.matchMedia(
       "(prefers-reduced-motion: reduce)"
     );
 
-
-  /* ========================================
-     ELEMENTS
-     ======================================== */
-
-  const scoutboard =
-    document.getElementById(
-      "scoutboard"
+  const finePointer =
+    window.matchMedia(
+      "(hover: hover) and (pointer: fine)"
     );
 
-  const tabs = [
-    ...document.querySelectorAll(
-      "[data-scoutboard-tab]"
-    )
-  ];
-
-  const panels = [
-    ...document.querySelectorAll(
-      "[data-scoutboard-panel]"
-    )
-  ];
-
-  const dock =
-    document.getElementById(
-      "home-dock"
-    );
-
-  const printingsSection =
-    document.querySelector(
-      ".printings-section"
-    );
-
-  const discoverButton =
-    document.getElementById(
-      "discover-card-button"
-    );
+  const cache = new Map();
 
 
   /* ========================================
      HELPERS
      ======================================== */
 
-  function sleep(
-    milliseconds
-  ) {
-    return new Promise(
-      resolve => {
-        window.setTimeout(
-          resolve,
-          milliseconds
-        );
-      }
+  const pause = ms =>
+    new Promise(resolve =>
+      window.setTimeout(resolve, ms)
     );
-  }
 
 
-  function imageFor(
-    card
-  ) {
-    return (
-      card?.image_uris?.normal ||
-      card?.image_uris?.large ||
-      card?.card_faces?.[0]
-        ?.image_uris?.normal ||
-      card?.card_faces?.[0]
-        ?.image_uris?.large ||
-      ""
-    );
-  }
+  const cardImage = card => (
+    card?.image_uris?.normal ||
+    card?.image_uris?.large ||
+    card?.card_faces?.[0]?.image_uris?.normal ||
+    card?.card_faces?.[0]?.image_uris?.large ||
+    ""
+  );
 
 
-  function hasQuery() {
-    const value =
-      new URLSearchParams(
-        window.location.search
-      ).get("q");
-
-    return Boolean(
-      value &&
-      value.trim()
-    );
-  }
+  const guideSlug = name =>
+    name
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, "-")
+      .replace(/^-|-$/g, "");
 
 
-  function exactCardHref(
-    card
-  ) {
-    if (
-      !card?.name ||
-      !card?.id
-    ) {
-      return "/";
+  const queryHref = name =>
+    `/?q=${encodeURIComponent(name)}`;
+
+
+  async function getJson(url) {
+    if (cache.has(url)) {
+      return cache.get(url);
     }
 
-
-    const params =
-      new URLSearchParams();
-
-
-    params.set(
-      "q",
-      card.name
-    );
-
-    params.set(
-      "printing",
-      card.id
-    );
-
-
-    return (
-      `/?${params.toString()}`
-    );
-  }
-
-
-  async function fetchJson(
-    url
-  ) {
-    const response =
-      await fetch(
-        url,
-        {
-          headers: {
-            Accept:
-              "application/json"
-          }
-        }
-      );
-
+    const response = await fetch(url, {
+      headers: {
+        Accept: "application/json"
+      }
+    });
 
     if (!response.ok) {
-      const error =
-        new Error(
-          `Scryfall returned ${response.status}`
-        );
-
-      error.status =
-        response.status;
-
-      throw error;
+      throw new Error(
+        `Scryfall request failed (${response.status})`
+      );
     }
 
+    const data = await response.json();
 
-    return response.json();
+    cache.set(url, data);
+
+    return data;
   }
-
-
-  /* ========================================
-     SCOUTBOARD TABS
-     ======================================== */
-
-  function wakeWeekly() {
-    const weekly =
-      document.getElementById(
-        "card-of-the-week"
-      );
-
-
-    if (!weekly) {
-      return;
-    }
-
-
-    weekly.classList.remove(
-      "is-awake"
-    );
-
-
-    void weekly.offsetWidth;
-
-
-    weekly.classList.add(
-      "is-awake"
-    );
-  }
-
-
-  function activatePanel(
-    name,
-    options = {}
-  ) {
-    const selectedTab =
-      tabs.find(
-        tab =>
-          tab.dataset
-            .scoutboardTab ===
-          name
-      );
-
-
-    const selectedPanel =
-      panels.find(
-        panel =>
-          panel.dataset
-            .scoutboardPanel ===
-          name
-      );
-
-
-    if (
-      !selectedTab ||
-      !selectedPanel
-    ) {
-      return;
-    }
-
-
-    tabs.forEach(
-      tab => {
-        const active =
-          tab ===
-          selectedTab;
-
-
-        tab.classList.toggle(
-          "is-active",
-          active
-        );
-
-
-        tab.setAttribute(
-          "aria-selected",
-          active
-            ? "true"
-            : "false"
-        );
-
-
-        tab.tabIndex =
-          active
-            ? 0
-            : -1;
-      }
-    );
-
-
-    panels.forEach(
-      panel => {
-        panel.hidden =
-          panel !==
-          selectedPanel;
-      }
-    );
-
-
-    if (
-      name ===
-      "weekly"
-    ) {
-      wakeWeekly();
-    }
-
-
-    if (
-      options.focus
-    ) {
-      selectedTab.focus();
-    }
-
-
-    if (
-      options.scroll &&
-      scoutboard
-    ) {
-      scoutboard.scrollIntoView({
-        behavior:
-          reducedMotion.matches
-            ? "auto"
-            : "smooth",
-
-        block:
-          "start"
-      });
-    }
-  }
-
-
-  tabs.forEach(
-    (
-      tab,
-      index
-    ) => {
-
-      tab.addEventListener(
-        "click",
-        () => {
-          activatePanel(
-            tab.dataset
-              .scoutboardTab
-          );
-        }
-      );
-
-
-      tab.addEventListener(
-        "keydown",
-        event => {
-
-          if (
-            event.key !==
-              "ArrowRight" &&
-            event.key !==
-              "ArrowLeft" &&
-            event.key !==
-              "Home" &&
-            event.key !==
-              "End"
-          ) {
-            return;
-          }
-
-
-          event.preventDefault();
-
-
-          let nextIndex =
-            index;
-
-
-          if (
-            event.key ===
-            "ArrowRight"
-          ) {
-            nextIndex =
-              (
-                index + 1
-              ) %
-              tabs.length;
-          }
-
-
-          if (
-            event.key ===
-            "ArrowLeft"
-          ) {
-            nextIndex =
-              (
-                index -
-                1 +
-                tabs.length
-              ) %
-              tabs.length;
-          }
-
-
-          if (
-            event.key ===
-            "Home"
-          ) {
-            nextIndex = 0;
-          }
-
-
-          if (
-            event.key ===
-            "End"
-          ) {
-            nextIndex =
-              tabs.length - 1;
-          }
-
-
-          activatePanel(
-            tabs[nextIndex]
-              .dataset
-              .scoutboardTab,
-            {
-              focus:
-                true
-            }
-          );
-        }
-      );
-
-    }
-  );
-
-
-  document.addEventListener(
-    "click",
-    event => {
-
-      const trigger =
-        event.target.closest(
-          "[data-scoutboard-open]"
-        );
-
-
-      if (!trigger) {
-        return;
-      }
-
-
-      activatePanel(
-        trigger.dataset
-          .scoutboardOpen,
-        {
-          scroll:
-            true
-        }
-      );
-    }
-  );
 
 
   /* ========================================
      HOMEPAGE / SEARCH STATE
      ======================================== */
 
-  function setHomepageState(
-    state
-  ) {
-    const home =
-      state ===
-      "home";
+  function showState(state) {
+    const home = state === "home";
 
-
-    if (scoutboard) {
-      scoutboard.hidden =
-        !home;
+    if (root) {
+      root.hidden = !home;
     }
 
-
-    if (
-      printingsSection
-    ) {
-      printingsSection.hidden =
-        state !==
-        "card";
+    if (editorial) {
+      editorial.hidden = !home;
     }
 
-
-    if (
-      dock &&
-      !home
-    ) {
-      dock.hidden =
-        true;
+    if (results) {
+      results.hidden = state !== "card";
     }
   }
 
@@ -460,1342 +146,753 @@
   window.addEventListener(
     "manascout:statechange",
     event => {
-
-      const state =
-        event?.detail?.state;
-
+      const state = event?.detail?.state;
 
       if (
-        state === "home" ||
-        state === "loading" ||
-        state === "card"
+        ["home", "loading", "card"].includes(state)
       ) {
-        setHomepageState(
-          state
-        );
+        showState(state);
       }
     }
   );
 
 
-  setHomepageState(
-    hasQuery()
+  const initialQuery =
+    new URLSearchParams(
+      window.location.search
+    ).get("q");
+
+  showState(
+    initialQuery?.trim()
       ? "loading"
       : "home"
   );
 
 
   /* ========================================
-     HOME DOCK
-     ======================================== */
-
-  function updateDock() {
-    if (
-      !dock ||
-      !scoutboard ||
-      scoutboard.hidden
-    ) {
-      if (dock) {
-        dock.hidden =
-          true;
-      }
-
-      return;
-    }
-
-
-    dock.hidden =
-      window.scrollY <
-      520;
-  }
-
-
-  window.addEventListener(
-    "scroll",
-    updateDock,
-    {
-      passive: true
-    }
-  );
-
-
-  window.addEventListener(
-    "resize",
-    updateDock
-  );
-
-
-  updateDock();
-
-
-  /* ========================================
      DISCOVER A CARD
      ======================================== */
 
-  if (discoverButton) {
+  if (discover) {
+    const defaultContent = discover.innerHTML;
 
-    const originalText =
-      discoverButton.innerHTML;
-
-
-    discoverButton.addEventListener(
+    discover.addEventListener(
       "click",
       async () => {
-
-        if (
-          discoverButton.disabled
-        ) {
+        if (discover.disabled) {
           return;
         }
 
-
-        discoverButton.disabled =
-          true;
-
-
-        discoverButton.innerHTML =
-          "<span>◇</span> Scouting…";
-
+        discover.disabled = true;
+        discover.textContent = "Scouting a card…";
 
         try {
-
           if (
-            !window.ManaScout ||
-            typeof window.ManaScout
-              .scoutRandom !==
-              "function"
+            typeof window.ManaScout?.scoutRandom !==
+            "function"
           ) {
             throw new Error(
-              "ManaScout API unavailable."
+              "ManaScout search is unavailable."
             );
           }
 
-
-          await window.ManaScout
-            .scoutRandom();
-
+          await window.ManaScout.scoutRandom();
 
           document
             .getElementById(
               "card-details-section"
             )
             ?.scrollIntoView({
-              behavior:
-                reducedMotion.matches
-                  ? "auto"
-                  : "smooth",
-
-              block:
-                "start"
+              behavior: reduceMotion.matches
+                ? "auto"
+                : "smooth",
+              block: "start"
             });
 
-
         } catch (error) {
-
-          console.error(
-            "ManaScout Discover failed:",
+          console.warn(
+            "Discover a Card:",
             error
           );
 
+          discover.textContent =
+            "Could not scout — try again";
 
-          discoverButton.innerHTML =
-            "<span>◇</span> Try Again";
-
-
-          await sleep(
-            1400
-          );
-
+          await pause(1100);
 
         } finally {
-
-          discoverButton.disabled =
-            false;
-
-
-          discoverButton.innerHTML =
-            originalText;
-
+          discover.disabled = false;
+          discover.innerHTML = defaultContent;
         }
-
       }
     );
-
   }
 
 
   /* ========================================
-     EXPLORE FEATURE ART
+     FEATURED CARD CATALOGUE
      ======================================== */
 
-  const featureCards = [
-    ...document.querySelectorAll(
-      "[data-feature-card]"
-    )
+  const featured = [
+    {
+      name: "Rhystic Study",
+      tag: "CARD ADVANTAGE",
+      preference: "premium",
+      description:
+        "From Prophecy to Enchanting Tales, compare the iconic blue enchantment's many treatments."
+    },
+    {
+      name: "Sol Ring",
+      tag: "COMMANDER ICON",
+      preference: "alternate",
+      description:
+        "Discover decades of art, special frames and collector versions of a Commander staple."
+    },
+    {
+      name: "The One Ring",
+      tag: "COLLECTOR FAVOURITE",
+      preference: "premium",
+      description:
+        "Explore the different Lord of the Rings frames and collector-focused printings."
+    },
+    {
+      name: "Force of Will",
+      tag: "BLUE ICON",
+      preference: "premium",
+      description:
+        "Compare the Alliances original with striking modern alternate artwork."
+    },
+    {
+      name: "Demonic Tutor",
+      tag: "BLACK TUTOR",
+      preference: "premium",
+      description:
+        "A legendary black tutor with numerous iconic and premium versions."
+    },
+    {
+      name: "Mystic Remora",
+      tag: "CARD DRAW",
+      preference: "alternate",
+      description:
+        "Explore the art and printing history of this Commander favourite."
+    },
+    {
+      name: "Ancient Tomb",
+      tag: "FAST MANA",
+      preference: "premium",
+      description:
+        "A powerful land with distinctive special and borderless printings."
+    },
+    {
+      name: "Smothering Tithe",
+      tag: "WHITE STAPLE",
+      preference: "premium",
+      description:
+        "Trace its original printing and rich collection of showcase designs."
+    },
+    {
+      name: "Cyclonic Rift",
+      tag: "BLUE STAPLE",
+      preference: "alternate",
+      description:
+        "Discover the notorious board-reset spell across its different releases."
+    },
+    {
+      name: "Swords to Plowshares",
+      tag: "WHITE REMOVAL",
+      preference: "alternate",
+      description:
+        "An enduring Magic classic with decades of alternate card artwork."
+    },
+    {
+      name: "Vampiric Tutor",
+      tag: "BLACK TUTOR",
+      preference: "premium",
+      description:
+        "Explore printings of one of Magic's best-known instant-speed tutors."
+    },
+    {
+      name: "Mana Drain",
+      tag: "COUNTERSPELL ICON",
+      preference: "premium",
+      description:
+        "From an early Magic rarity to modern premium collector treatments."
+    }
   ];
 
 
-  function printingScore(
-    printing,
-    preference
-  ) {
+  /* ========================================
+     PRINTING SELECTION
+     ======================================== */
+
+  function scorePrinting(card, preference) {
+    if (
+      card.digital ||
+      !cardImage(card)
+    ) {
+      return -9999;
+    }
+
+    const effects = card.frame_effects || [];
+    const finishes = card.finishes || [];
+
     let score = 0;
 
-
-    const effects =
-      printing.frame_effects ||
-      [];
-
-    const finishes =
-      printing.finishes ||
-      [];
-
-
-    if (printing.digital) {
-      return -10000;
+    if (effects.includes("showcase")) {
+      score += 95;
     }
 
+    if (card.border_color === "borderless") {
+      score += 90;
+    }
+
+    if (card.full_art) {
+      score += 80;
+    }
+
+    if (effects.includes("extendedart")) {
+      score += 70;
+    }
+
+    if (finishes.includes("etched")) {
+      score += 25;
+    }
+
+    if (finishes.includes("foil")) {
+      score += 12;
+    }
 
     if (
-      preference ===
-      "premium"
+      preference === "premium" &&
+      card.promo
     ) {
-
-      if (
-        effects.includes(
-          "showcase"
-        )
-      ) {
-        score += 100;
-      }
-
-
-      if (
-        printing.border_color ===
-        "borderless"
-      ) {
-        score += 90;
-      }
-
-
-      if (
-        printing.full_art
-      ) {
-        score += 85;
-      }
-
-
-      if (
-        effects.includes(
-          "extendedart"
-        )
-      ) {
-        score += 75;
-      }
-
-
-      if (
-        finishes.includes(
-          "etched"
-        )
-      ) {
-        score += 40;
-      }
-
-
-      if (
-        finishes.includes(
-          "foil"
-        )
-      ) {
-        score += 18;
-      }
-
+      score += 12;
     }
-
 
     if (
-      preference ===
-      "alternate"
+      preference === "alternate" &&
+      card.border_color === "borderless"
     ) {
-
-      if (
-        effects.includes(
-          "showcase"
-        )
-      ) {
-        score += 95;
-      }
-
-
-      if (
-        printing.full_art
-      ) {
-        score += 90;
-      }
-
-
-      if (
-        printing.border_color ===
-        "borderless"
-      ) {
-        score += 85;
-      }
-
-
-      if (
-        effects.includes(
-          "extendedart"
-        )
-      ) {
-        score += 75;
-      }
-
+      score += 10;
     }
 
+    const release = Date.parse(
+      card.released_at || ""
+    );
 
-    const date =
-      Date.parse(
-        printing.released_at ||
-        ""
-      );
-
-
-    if (
-      Number.isFinite(
-        date
-      )
-    ) {
-      score +=
-        date /
-        10000000000000;
+    if (Number.isFinite(release)) {
+      score += release / 1e13;
     }
-
 
     return score;
   }
 
 
-  async function loadFeatureCard(
-    element
-  ) {
-    const name =
-      element.dataset
-        .featureCard;
+  async function artFor(name, preference) {
+    const search = encodeURIComponent(
+      `!"${name}" game:paper`
+    );
 
-    const preference =
-      element.dataset
-        .featurePreference ||
-      "alternate";
+    const url =
+      `${API}/cards/search?q=${search}` +
+      "&unique=prints" +
+      "&order=released" +
+      "&dir=desc" +
+      "&include_extras=true";
 
-    const art =
-      element.querySelector(
-        ".scoutboard-feature-art"
-      );
+    const data = await getJson(url);
 
-    const link =
-      element.querySelector(
-        ".scoutboard-feature-link"
-      );
+    const cards = Array.isArray(data.data)
+      ? data.data
+      : [];
 
-
-    if (
-      !name ||
-      !art
-    ) {
-      return;
-    }
-
-
-    try {
-
-      const query =
-        encodeURIComponent(
-          `!"${name}"`
-        );
-
-
-      const data =
-        await fetchJson(
-          `${API}/cards/search?q=${query}&unique=prints&order=released&dir=desc&include_extras=true`
-        );
-
-
-      const printings =
-        Array.isArray(
-          data.data
-        )
-          ? data.data
-          : [];
-
-
-      const selected =
-        printings
-          .filter(
-            card =>
-              !card.digital &&
-              imageFor(card)
-          )
-          .sort(
-            (a, b) =>
-              printingScore(
-                b,
-                preference
-              ) -
-              printingScore(
-                a,
-                preference
-              )
-          )[0];
-
-
-      if (!selected) {
-        return;
-      }
-
-
-      const image =
-        document.createElement(
-          "img"
-        );
-
-
-      image.src =
-        imageFor(
-          selected
-        );
-
-
-      image.alt =
-        `${name} — ${
-          selected.set_name ||
-          "Magic printing"
-        }`;
-
-
-      image.loading =
-        "lazy";
-
-      image.decoding =
-        "async";
-
-
-      art.innerHTML =
-        "";
-
-      art.appendChild(
-        image
-      );
-
-
-      if (
-        link &&
-        selected.id
-      ) {
-
-        const url =
-          new URL(
-            link.href
-          );
-
-
-        url.searchParams.set(
-          "printing",
-          selected.id
-        );
-
-
-        link.href =
-          url.pathname +
-          url.search;
-
-      }
-
-
-    } catch (error) {
-
-      console.warn(
-        `ManaScout feature artwork failed for ${name}:`,
-        error
-      );
-
-    }
-  }
-
-
-  async function loadFeatureArtwork() {
-
-    for (
-      const element of
-      featureCards
-    ) {
-
-      await loadFeatureCard(
-        element
-      );
-
-
-      await sleep(
-        110
-      );
-
-    }
-
-  }
-
-
-  if (
-    featureCards.length
-  ) {
-    loadFeatureArtwork();
+    return cards
+      .filter(card =>
+        cardImage(card) &&
+        !card.digital
+      )
+      .sort((a, b) =>
+        scorePrinting(b, preference) -
+        scorePrinting(a, preference)
+      )[0] || null;
   }
 
 
   /* ========================================
-     CARD OF THE WEEK
+     RENDER FEATURED PRINTINGS
      ======================================== */
 
-  const weekly =
-    document.getElementById(
-      "card-of-the-week"
+  let featureGeneration = 0;
+
+
+  async function paintFeatures(page) {
+    const generation = ++featureGeneration;
+
+    for (
+      let i = 0;
+      i < featureElements.length;
+      i++
+    ) {
+      const element = featureElements[i];
+
+      const item = featured[
+        (page * featureElements.length + i) %
+        featured.length
+      ];
+
+      if (!item) {
+        continue;
+      }
+
+      element.dataset.featureCard = item.name;
+
+      element.dataset.featurePreference =
+        item.preference;
+
+      element
+        .querySelector("small")
+        ?.replaceChildren(
+          document.createTextNode(item.tag)
+        );
+
+      element
+        .querySelector("h4")
+        ?.replaceChildren(
+          document.createTextNode(item.name)
+        );
+
+      element
+        .querySelector(
+          ".scoutboard-feature-copy p"
+        )
+        ?.replaceChildren(
+          document.createTextNode(
+            item.description
+          )
+        );
+
+      const anchor =
+        element.querySelector(
+          ".scoutboard-feature-link"
+        );
+
+      if (anchor) {
+        anchor.href =
+          `/card/${guideSlug(item.name)}/`;
+
+        anchor.innerHTML =
+          'Scout the printings ' +
+          '<span aria-hidden="true">→</span>';
+      }
+
+      const artwork =
+        element.querySelector(
+          ".scoutboard-feature-art"
+        );
+
+      if (artwork) {
+        artwork.innerHTML =
+          '<div class="scoutboard-feature-placeholder">◇</div>';
+      }
+
+      try {
+        const card = await artFor(
+          item.name,
+          item.preference
+        );
+
+        if (generation !== featureGeneration) {
+          return;
+        }
+
+        if (card && artwork) {
+          const img =
+            document.createElement("img");
+
+          img.src = cardImage(card);
+
+          img.alt =
+            `${item.name} — ` +
+            `${card.set_name || "Magic printing"}, ` +
+            `#${card.collector_number || "?"}`;
+
+          img.loading = "lazy";
+          img.decoding = "async";
+
+          img.width = 488;
+          img.height = 680;
+
+          artwork.replaceChildren(img);
+
+          if (anchor && card.id) {
+            anchor.href =
+              `/card/${guideSlug(item.name)}/` +
+              `?printing=${encodeURIComponent(card.id)}`;
+          }
+        }
+
+      } catch (error) {
+        console.warn(
+          `Featured printing unavailable: ${item.name}`,
+          error
+        );
+      }
+
+      await pause(125);
+    }
+  }
+
+
+  /* ========================================
+     FEATURED CARD ROTATION
+     ======================================== */
+
+  if (featureElements.length) {
+    let page = 0;
+
+    const grid = document.querySelector(
+      ".scoutboard-feature-grid"
     );
 
-  const weeklyImage =
-    document.getElementById(
-      "card-week-image"
+    if (grid) {
+      const more =
+        document.createElement("button");
+
+      more.type = "button";
+
+      more.textContent =
+        "Explore four more cards ↻";
+
+      more.className =
+        "scoutboard-heading-link";
+
+      more.style.cssText =
+        "display:block;" +
+        "max-width:max-content;" +
+        "margin:1.35rem auto 0;" +
+        "padding:.7rem 1rem;" +
+        "background:transparent;" +
+        "border:1px solid rgba(255,255,255,.18);" +
+        "border-radius:8px;" +
+        "cursor:pointer;" +
+        "font:inherit;" +
+        "color:inherit;";
+
+      more.setAttribute(
+        "aria-label",
+        "Show four more featured Magic cards"
+      );
+
+      grid.insertAdjacentElement(
+        "afterend",
+        more
+      );
+
+      more.addEventListener(
+        "click",
+        () => {
+          page =
+            (page + 1) %
+            Math.ceil(
+              featured.length /
+              featureElements.length
+            );
+
+          void paintFeatures(page);
+        }
+      );
+    }
+
+    if (!initialQuery?.trim()) {
+      void paintFeatures(page);
+    }
+
+    window.addEventListener(
+      "manascout:statechange",
+      event => {
+        if (
+          event?.detail?.state === "home" &&
+          featureGeneration === 0
+        ) {
+          void paintFeatures(page);
+        }
+      }
     );
-
-  const weeklyPrinting =
-    document.getElementById(
-      "card-week-printing"
-    );
-
-  const weeklyLink =
-    document.getElementById(
-      "card-week-link"
-    );
-
-  const weeklyShell =
-    document.getElementById(
-      "weekly-card-shell"
-    );
+  }
 
 
-  async function loadWeeklyCard() {
+  /* ========================================
+     CARD OF THE WEEK — MINAS MORGUL
+     ========================================
 
+     Actual card: Cabal Coffers
+     Display name: Minas Morgul
+     Set: LTC
+     Collector number: 390
+     Treatment: Surge foil
+
+     Do not substitute #390z, which is
+     the serialized printing.
+
+     The HTML contains the story and
+     animated shadow/foil effects.
+  */
+
+  async function loadWeekly() {
     if (!weekly) {
       return;
     }
 
-
     const set =
-      weekly.dataset
-        .weeklySet;
+      weekly.dataset.weeklySet || "ltc";
 
     const number =
-      weekly.dataset
-        .weeklyNumber;
-
-
-    if (
-      !set ||
-      !number
-    ) {
-      return;
-    }
-
+      weekly.dataset.weeklyNumber || "390";
 
     try {
-
-      const card =
-        await fetchJson(
-          `${API}/cards/${encodeURIComponent(
-            set
-          )}/${encodeURIComponent(
-            number
-          )}`
-        );
-
-
-      const imageUrl =
-        imageFor(
-          card
-        );
-
-
-      if (
-        weeklyImage &&
-        imageUrl
-      ) {
-        weeklyImage.src =
-          imageUrl;
-
-
-        weeklyImage.alt =
-          `${card.name} — ${
-            card.set_name ||
-            "Magic printing"
-          } #${
-            card.collector_number ||
-            number
-          }`;
-      }
-
-
-      if (
-        weeklyPrinting
-      ) {
-
-        const treatments = [];
-
-
-        if (
-          (
-            card.frame_effects ||
-            []
-          ).includes(
-            "showcase"
-          )
-        ) {
-          treatments.push(
-            "SHOWCASE"
-          );
-        }
-
-
-        if (
-          card.border_color ===
-          "borderless"
-        ) {
-          treatments.push(
-            "BORDERLESS"
-          );
-        }
-
-
-        if (
-          card.full_art
-        ) {
-          treatments.push(
-            "FULL ART"
-          );
-        }
-
-
-        const treatmentText =
-          treatments.length
-            ? `${treatments.join(" · ")} · `
-            : "";
-
-
-        weeklyPrinting.textContent =
-          `${
-            card.set_name ||
-            "MYSTIC SANCTUARY"
-          } · ${
-            treatmentText
-          }#${
-            card.collector_number ||
-            number
-          }`.toUpperCase();
-
-      }
-
-
-      /*
-       * The homepage Card of the Week now links to a
-       * dedicated ManaScout guide page.
-       *
-       * Do not replace that internal guide URL with
-       * exactCardHref(card). The printing itself is
-       * already represented by the image/set metadata.
-       */
-      if (
-        weeklyLink &&
-        !weeklyLink.getAttribute(
-          "href"
-        )
-      ) {
-        weeklyLink.href =
-          `/card/${encodeURIComponent(
-            (
-              card.name ||
-              weekly.dataset
-                .weeklyCard ||
-              "card"
-            )
-              .toLowerCase()
-              .replace(
-                /[^a-z0-9]+/g,
-                "-"
-              )
-              .replace(
-                /^-|-$/g,
-                ""
-              )
-          )}/`;
-      }
-
-
-    } catch (error) {
-
-      console.warn(
-        "ManaScout weekly card lookup failed:",
-        error
+      const card = await getJson(
+        `${API}/cards/` +
+        `${encodeURIComponent(set)}/` +
+        `${encodeURIComponent(number)}`
       );
 
-    }
+      const url = cardImage(card);
 
+      if (weeklyImage && url) {
+        weeklyImage.src = url;
+
+        weeklyImage.alt =
+          "Minas Morgul (Cabal Coffers) — " +
+          `${card.set_name}, ` +
+          `surge foil #${card.collector_number}`;
+      }
+
+      if (weeklyPrinting) {
+        weeklyPrinting.textContent =
+          (
+            `${card.set_name || "Tales of Middle-earth Commander"}` +
+            ` · #${card.collector_number || number}`
+          ).toUpperCase();
+      }
+
+      if (weeklyLink && card.id) {
+        const params = new URLSearchParams({
+          q: card.name || "Cabal Coffers",
+          printing: card.id
+        });
+
+        weeklyLink.href = `/?${params}`;
+      }
+
+    } catch (error) {
+      console.warn(
+        "Card of the Week lookup unavailable:",
+        error
+      );
+    }
   }
 
 
-  loadWeeklyCard();
+  void loadWeekly();
 
 
   /* ========================================
-     WEEKLY CARD PARALLAX
+     CARD OF THE WEEK ARCHIVE
+     ======================================== */
+
+  const archiveData =
+    document.getElementById(
+      "card-week-archive-data"
+    );
+
+  if (archiveData) {
+    try {
+      const parsed = JSON.parse(
+        archiveData.textContent
+      );
+
+      const entries =
+        Array.isArray(parsed.entries)
+          ? parsed.entries.filter(
+              item => item.status === "archived"
+            )
+          : [];
+
+      if (entries.length) {
+        const section =
+          document.getElementById(
+            "scoutboard-panel-weekly"
+          );
+
+        const wrap =
+          document.createElement("div");
+
+        wrap.style.cssText =
+          "margin:1.6rem 0 0;" +
+          "padding:1rem 0 0;" +
+          "border-top:1px solid rgba(255,255,255,.09);";
+
+        const heading =
+          document.createElement("h4");
+
+        heading.textContent =
+          "Previous Cards of the Week";
+
+        heading.style.cssText =
+          "font-size:1rem;" +
+          "margin:0 0 .8rem;";
+
+        wrap.appendChild(heading);
+
+        const links =
+          document.createElement("div");
+
+        links.style.cssText =
+          "display:flex;" +
+          "flex-wrap:wrap;" +
+          "gap:.6rem;";
+
+        entries
+          .sort((a, b) => b.week - a.week)
+          .forEach(entry => {
+            const a =
+              document.createElement("a");
+
+            a.href = queryHref(
+              entry.card
+            );
+
+            a.textContent =
+              `Week ${String(entry.week).padStart(3, "0")}` +
+              ` · ${entry.card}`;
+
+            a.style.cssText =
+              "display:inline-block;" +
+              "padding:.6rem .75rem;" +
+              "border:1px solid rgba(255,255,255,.1);" +
+              "border-radius:7px;" +
+              "color:#d7d6d5;" +
+              "text-decoration:none;" +
+              "font-size:.72rem;";
+
+            a.title =
+              `${entry.set || "Magic printing"}` +
+              ` #${entry.collectorNumber || ""}`;
+
+            links.appendChild(a);
+          });
+
+        wrap.appendChild(links);
+
+        section?.appendChild(wrap);
+      }
+
+    } catch (error) {
+      console.warn(
+        "Weekly archive could not be read:",
+        error
+      );
+    }
+  }
+
+
+  /* ========================================
+     CARD PARALLAX
      ======================================== */
 
   if (
     weekly &&
     weeklyShell &&
-    !reducedMotion.matches &&
-    window.matchMedia(
-      "(hover: hover) and (pointer: fine)"
-    ).matches
+    finePointer.matches &&
+    !reduceMotion.matches
   ) {
-
     weeklyShell.addEventListener(
       "pointermove",
       event => {
+        const rect =
+          weeklyShell.getBoundingClientRect();
 
-        const bounds =
-          weeklyShell
-            .getBoundingClientRect();
+        if (!rect.width || !rect.height) {
+          return;
+        }
 
+        const x = Math.max(
+          0,
+          Math.min(
+            100,
+            (event.clientX - rect.left) /
+            rect.width * 100
+          )
+        );
 
-        const x =
-          (
-            (
-              event.clientX -
-              bounds.left
-            ) /
-            bounds.width
-          ) *
-          100;
+        const y = Math.max(
+          0,
+          Math.min(
+            100,
+            (event.clientY - rect.top) /
+            rect.height * 100
+          )
+        );
 
+        weekly.style.setProperty(
+          "--weekly-x",
+          `${x}%`
+        );
 
-        const y =
-          (
-            (
-              event.clientY -
-              bounds.top
-            ) /
-            bounds.height
-          ) *
-          100;
+        weekly.style.setProperty(
+          "--weekly-y",
+          `${y}%`
+        );
 
+        weekly.style.setProperty(
+          "--weekly-rx",
+          `${(50 - y) * .045}deg`
+        );
 
-        weekly.style
-          .setProperty(
-            "--weekly-x",
-            `${x}%`
-          );
-
-
-        weekly.style
-          .setProperty(
-            "--weekly-y",
-            `${y}%`
-          );
-
-
-        weekly.style
-          .setProperty(
-            "--weekly-rx",
-            `${
-              (
-                50 -
-                y
-              ) *
-              .045
-            }deg`
-          );
-
-
-        weekly.style
-          .setProperty(
-            "--weekly-ry",
-            `${
-              (
-                x -
-                50
-              ) *
-              .05
-            }deg`
-          );
-
-      }
+        weekly.style.setProperty(
+          "--weekly-ry",
+          `${(x - 50) * .05}deg`
+        );
+      },
+      { passive: true }
     );
-
 
     weeklyShell.addEventListener(
       "pointerleave",
       () => {
-
-        weekly.style
-          .setProperty(
-            "--weekly-x",
-            "50%"
-          );
-
-
-        weekly.style
-          .setProperty(
-            "--weekly-y",
-            "42%"
-          );
-
-
-        weekly.style
-          .setProperty(
-            "--weekly-rx",
-            "0deg"
-          );
-
-
-        weekly.style
-          .setProperty(
-            "--weekly-ry",
-            "0deg"
-          );
-
-      }
-    );
-
-  }
-
-
-  /* ========================================
-     SCOUT ROULETTE
-     ======================================== */
-
-  const wheel =
-    document.getElementById(
-      "scout-wheel"
-    );
-
-  const spinButton =
-    document.getElementById(
-      "scout-roulette-spin"
-    );
-
-  const againButton =
-    document.getElementById(
-      "scout-roulette-again"
-    );
-
-  const rouletteIdle =
-    document.getElementById(
-      "scout-roulette-idle"
-    );
-
-  const rouletteResult =
-    document.getElementById(
-      "scout-roulette-result"
-    );
-
-  const rouletteStatus =
-    document.getElementById(
-      "scout-roulette-status"
-    );
-
-  const rouletteError =
-    document.getElementById(
-      "scout-roulette-error"
-    );
-
-  const rouletteImage =
-    document.getElementById(
-      "scout-roulette-card"
-    );
-
-  const rouletteName =
-    document.getElementById(
-      "scout-roulette-card-name"
-    );
-
-  const rouletteMeta =
-    document.getElementById(
-      "scout-roulette-card-meta"
-    );
-
-  const rouletteCopy =
-    document.getElementById(
-      "scout-roulette-card-copy"
-    );
-
-  const rouletteCategory =
-    document.getElementById(
-      "scout-roulette-result-category"
-    );
-
-  const rouletteAction =
-    document.getElementById(
-      "scout-roulette-action"
-    );
-
-
-  const categories = [
-    {
-      label:
-        "Legendary",
-
-      query:
-        "game:paper t:legendary",
-
-      copy:
-        "The wheel chose Legendary — a named figure, object or place from Magic's history."
-    },
-
-    {
-      label:
-        "Artifact",
-
-      query:
-        "game:paper t:artifact",
-
-      copy:
-        "The wheel chose Artifact — relics, machinery and strange objects from across the Multiverse."
-    },
-
-    {
-      label:
-        "Creature",
-
-      query:
-        "game:paper t:creature -t:legendary",
-
-      copy:
-        "The wheel chose Creature — something from Magic's enormous bestiary."
-    },
-
-    {
-      label:
-        "Spell",
-
-      query:
-        "game:paper (t:instant OR t:sorcery)",
-
-      copy:
-        "The wheel chose Spell — an instant or sorcery ready to change the game."
-    },
-
-    {
-      label:
-        "Enchantment",
-
-      query:
-        "game:paper t:enchantment -t:creature",
-
-      copy:
-        "The wheel chose Enchantment — persistent magic waiting to reshape the battlefield."
-    },
-
-    {
-      label:
-        "Land",
-
-      query:
-        "game:paper t:land",
-
-      copy:
-        "The wheel chose Land — one of the places that power Magic."
-    },
-
-    {
-      label:
-        "Wild",
-
-      query:
-        "game:paper",
-
-      copy:
-        "No restrictions. Anything in paper Magic can appear."
-    }
-  ];
-
-
-  let currentRotation =
-    0;
-
-  let spinning =
-    false;
-
-
-  function randomInt(
-    max
-  ) {
-
-    const values =
-      new Uint32Array(1);
-
-
-    window.crypto
-      .getRandomValues(
-        values
-      );
-
-
-    return (
-      values[0] %
-      max
-    );
-
-  }
-
-
-  function cardMeta(
-    card
-  ) {
-
-    const values = [];
-
-
-    if (card.set_name) {
-      values.push(
-        card.set_name
-      );
-    }
-
-
-    if (
-      card.collector_number
-    ) {
-      values.push(
-        `#${card.collector_number}`
-      );
-    }
-
-
-    if (
-      card.type_line
-    ) {
-      values.push(
-        card.type_line
-      );
-    }
-
-
-    return values.join(
-      " · "
-    );
-
-  }
-
-
-  async function fetchRandomCard(
-    category
-  ) {
-
-    return fetchJson(
-      `${API}/cards/random?q=${encodeURIComponent(
-        category.query
-      )}`
-    );
-
-  }
-
-
-  function targetRotation(
-    index
-  ) {
-
-    const segment =
-      360 /
-      categories.length;
-
-
-    const normalized =
-      (
-        (
-          currentRotation %
-          360
-        ) +
-        360
-      ) %
-      360;
-
-
-    const desired =
-      (
-        360 -
-        index *
-          segment +
-        360
-      ) %
-      360;
-
-
-    let distance =
-      (
-        desired -
-        normalized +
-        360
-      ) %
-      360;
-
-
-    if (
-      distance <
-      1
-    ) {
-      distance +=
-        360;
-    }
-
-
-    return (
-      currentRotation +
-      (
-        360 *
-        (
-          6 +
-          randomInt(4)
-        )
-      ) +
-      distance
-    );
-
-  }
-
-
-  function showRouletteResult(
-    category,
-    card
-  ) {
-
-    const image =
-      imageFor(
-        card
-      );
-
-
-    rouletteImage.src =
-      image;
-
-
-    rouletteImage.alt =
-      `${card.name} — ${
-        card.set_name ||
-        "Magic printing"
-      }`;
-
-
-    rouletteName.textContent =
-      card.name;
-
-
-    rouletteMeta.textContent =
-      cardMeta(
-        card
-      );
-
-
-    rouletteCopy.textContent =
-      category.copy;
-
-
-    rouletteCategory.textContent =
-      `${category.label.toUpperCase()} · FATE HAS SPOKEN`;
-
-
-    rouletteAction.href =
-      exactCardHref(
-        card
-      );
-
-
-    rouletteIdle.hidden =
-      true;
-
-
-    rouletteResult.hidden =
-      false;
-
-  }
-
-
-  async function spinRoulette() {
-
-    if (
-      spinning ||
-      !wheel
-    ) {
-      return;
-    }
-
-
-    spinning =
-      true;
-
-
-    spinButton.disabled =
-      true;
-
-
-    if (
-      againButton
-    ) {
-      againButton.disabled =
-        true;
-    }
-
-
-    rouletteError.hidden =
-      true;
-
-
-    rouletteResult.hidden =
-      true;
-
-
-    rouletteIdle.hidden =
-      false;
-
-
-    rouletteStatus.textContent =
-      "FATE IS CHOOSING…";
-
-
-    const index =
-      randomInt(
-        categories.length
-      );
-
-
-    const category =
-      categories[index];
-
-
-    currentRotation =
-      targetRotation(
-        index
-      );
-
-
-    wheel.style
-      .setProperty(
-        "--roulette-rotation",
-        `${currentRotation}deg`
-      );
-
-
-    try {
-
-      const [
-        card
-      ] =
-        await Promise.all([
-          fetchRandomCard(
-            category
-          ),
-
-          sleep(
-            reducedMotion.matches
-              ? 100
-              : 5250
-          )
-        ]);
-
-
-      if (
-        !card?.name ||
-        !imageFor(card)
-      ) {
-        throw new Error(
-          "No usable card returned."
+        weekly.style.setProperty(
+          "--weekly-x",
+          "50%"
+        );
+
+        weekly.style.setProperty(
+          "--weekly-y",
+          "42%"
+        );
+
+        weekly.style.setProperty(
+          "--weekly-rx",
+          "0deg"
+        );
+
+        weekly.style.setProperty(
+          "--weekly-ry",
+          "0deg"
         );
       }
-
-
-      rouletteStatus.textContent =
-        `${category.label} selected`;
-
-
-      showRouletteResult(
-        category,
-        card
-      );
-
-
-    } catch (error) {
-
-      console.error(
-        "ManaScout Roulette failed:",
-        error
-      );
-
-
-      rouletteStatus.textContent =
-        "The wheel needs another spin";
-
-
-      rouletteError.textContent =
-        "ManaScout couldn't retrieve a card this time. Spin again.";
-
-
-      rouletteError.hidden =
-        false;
-
-
-    } finally {
-
-      spinning =
-        false;
-
-
-      spinButton.disabled =
-        false;
-
-
-      if (
-        againButton
-      ) {
-        againButton.disabled =
-          false;
-      }
-
-    }
-
-  }
-
-
-  if (
-    wheel &&
-    spinButton
-  ) {
-
-    spinButton.addEventListener(
-      "click",
-      spinRoulette
     );
-
-
-    againButton?.addEventListener(
-      "click",
-      spinRoulette
-    );
-
   }
 
 
   /* ========================================
-     DEFAULT PANEL
-     ======================================== */
+     END
 
-  activatePanel(
-    "explore"
-  );
+     Old tab switching, roulette controls
+     and retired floating dock behaviour
+     are intentionally excluded.
+
+     Main card search, printings and
+     filtering remain in app.js.
+     ======================================== */
 
 })();
