@@ -1,719 +1,799 @@
+
+/*
+ * ManaScout — Complete card-search engine
+ * File: assets/js/app.js
+ * Branch: DEVELOPMENT
+ *
+ * Search, autocomplete, printing selection, ManaScout Pick,
+ * finish previews, printings archive, GBP estimates and discovery.
+ * No roulette and no change to main/dev branches.
+ */
 (() => {
   "use strict";
 
-
-  /* ========================================
-     CONFIG
-     ======================================== */
-
-  const API =
-    "https://api.scryfall.com";
-
-  const FX_API =
-    "https://api.frankfurter.dev/v2/rate";
-
-  const REDUCED_MOTION_QUERY =
-    "(prefers-reduced-motion: reduce)";
-
+  const API = "https://api.scryfall.com";
+  const FX_API = "https://api.frankfurter.dev/v2/rate";
+  const $ = id => document.getElementById(id);
 
   const els = {
-    form:
-      document.getElementById(
-        "search-form"
-      ),
-
-    input:
-      document.getElementById(
-        "search-input"
-      ),
-
-    autocomplete:
-      document.getElementById(
-        "autocomplete-list"
-      ),
-
-    details:
-      document.getElementById(
-        "card-details"
-      ),
-
-    status:
-      document.getElementById(
-        "printings-status"
-      ),
-
-    printings:
-      document.getElementById(
-        "printings-container"
-      )
+    form: $("search-form"),
+    input: $("search-input"),
+    autocomplete: $("autocomplete-list"),
+    details: $("card-details"),
+    status: $("printings-status"),
+    printings: $("printings-container")
   };
 
+  const GUIDE_SLUGS = new Set([
+    "ancient-tomb", "birds-of-paradise", "black-lotus",
+    "counterspell", "cyclonic-rift", "deflecting-swat",
+    "demonic-consultation", "demonic-tutor",
+    "dockside-extortionist", "force-of-will",
+    "jace-the-mind-sculptor", "jeskas-will",
+    "lightning-greaves", "mana-crypt", "mana-drain",
+    "mystic-remora", "rhystic-study", "smaug-wicked-worm",
+    "smothering-tithe", "sol-ring", "swords-to-plowshares",
+    "teferis-protection", "the-one-ring",
+    "the-theorist-jace-beleren", "vampiric-tutor",
+    "mana-vault", "arcane-signet", "esper-sentinel",
+    "doubling-season", "path-to-exile", "lightning-bolt",
+    "mystic-sanctuary"
+  ]);
 
-  let searchController = null;
-  let autocompleteController = null;
-  let autocompleteTimer = null;
+  const TREATMENT_LABELS = {
+    surgefoil: "Surge foil",
+    galaxyfoil: "Galaxy foil",
+    halofoil: "Halo foil",
+    textured: "Textured foil",
+    rainbowfoil: "Rainbow foil",
+    stepandcompleat: "Step-and-Compleat foil",
+    serialized: "Serialized",
+    boosterfun: "Booster Fun",
+    etched: "Etched",
+    extendedart: "Extended art",
+    showcase: "Showcase",
+    fullart: "Full art",
+    borderless: "Borderless",
+    inverted: "Inverted"
+  };
 
+  let requestController = null;
+  let suggestController = null;
+  let suggestTimer = 0;
   let searchToken = 0;
+  let activeSuggestion = -1;
+  let ratesPromise = null;
+  let currentCard = null;
+  let printingState = null;
 
-  let activeAutocompleteIndex =
-    -1;
-
-  let fxRatesPromise = null;
-
-
-  /*
-   * Keep the ManaScout Pick stable for the
-   * current browser session.
-   *
-   * Picks themselves are deterministic. This
-   * cache additionally prevents an FX outage
-   * or temporary data change from swapping the
-   * selected version halfway through a session.
-   */
-
-  const manaScoutPickCache =
-    new Map();
+  const pickCache = new Map();
+  const foilDisabled = new Set();
 
 
   /* ========================================
-     CARD GUIDE INDEX
+     HELPERS
      ======================================== */
 
-  const GUIDE_SLUGS = {
-    "ancient tomb":
-      "ancient-tomb",
+  const html = value => String(value ?? "")
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;");
 
-    "birds of paradise":
-      "birds-of-paradise",
-
-    "black lotus":
-      "black-lotus",
-
-    "counterspell":
-      "counterspell",
-
-    "cyclonic rift":
-      "cyclonic-rift",
-
-    "deflecting swat":
-      "deflecting-swat",
-
-    "demonic consultation":
-      "demonic-consultation",
-
-    "demonic tutor":
-      "demonic-tutor",
-
-    "dockside extortionist":
-      "dockside-extortionist",
-
-    "force of will":
-      "force-of-will",
-
-    "jace, the mind sculptor":
-      "jace-the-mind-sculptor",
-
-    "jeska's will":
-      "jeskas-will",
-
-    "lightning greaves":
-      "lightning-greaves",
-
-    "mana crypt":
-      "mana-crypt",
-
-    "mana drain":
-      "mana-drain",
-
-    "mystic remora":
-      "mystic-remora",
-
-    "rhystic study":
-      "rhystic-study",
-
-    "smaug, wicked worm":
-      "smaug-wicked-worm",
-
-    "smothering tithe":
-      "smothering-tithe",
-
-    "sol ring":
-      "sol-ring",
-
-    "swords to plowshares":
-      "swords-to-plowshares",
-
-    "teferi's protection":
-      "teferis-protection",
-
-    "the one ring":
-      "the-one-ring",
-
-    "the theorist, jace beleren":
-      "the-theorist-jace-beleren",
-
-    "the theorist":
-      "the-theorist-jace-beleren",
-
-    "vampiric tutor":
-      "vampiric-tutor"
+  const asNumber = value => {
+    const n = Number.parseFloat(value);
+    return Number.isFinite(n) && n >= 0 ? n : null;
   };
 
+  const title = value => String(value || "")
+    .replace(/_/g, " ")
+    .replace(/\b\w/g, c => c.toUpperCase());
 
-  /* ========================================
-     BASIC HELPERS
-     ======================================== */
+  const slug = name => String(name || "")
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-|-$/g, "");
 
-  function escapeHtml(value) {
-    return String(
-      value ?? ""
-    )
-      .replace(
-        /&/g,
-        "&amp;"
-      )
-      .replace(
-        /</g,
-        "&lt;"
-      )
-      .replace(
-        />/g,
-        "&gt;"
-      )
-      .replace(
-        /"/g,
-        "&quot;"
-      )
-      .replace(
-        /'/g,
-        "&#039;"
-      );
-  }
-
-
-  function safeUrl(value) {
+  const safeUrl = value => {
     try {
-      const url =
-        new URL(value);
-
-      return /^https?:$/.test(
-        url.protocol
-      )
+      const url = new URL(value);
+      return /^https?:$/.test(url.protocol)
         ? url.href
         : "";
-
     } catch {
       return "";
     }
-  }
+  };
 
+  const imageFor = (card, size = "normal") => safeUrl(
+    card?.image_uris?.[size] ||
+    card?.image_uris?.normal ||
+    card?.card_faces?.[0]?.image_uris?.[size] ||
+    card?.card_faces?.[0]?.image_uris?.normal ||
+    ""
+  );
 
-  function reducedMotion() {
-    return window.matchMedia(
-      REDUCED_MOTION_QUERY
+  const finishHas = (card, finish) =>
+    (card?.finishes || []).includes(finish);
+
+  const prefersReducedMotion = () =>
+    window.matchMedia(
+      "(prefers-reduced-motion: reduce)"
     ).matches;
-  }
+
+  const scrollTo = element =>
+    element?.scrollIntoView({
+      behavior: prefersReducedMotion() ? "auto" : "smooth",
+      block: "start"
+    });
+
+  const wait = ms =>
+    new Promise(resolve => window.setTimeout(resolve, ms));
 
 
-  function smoothBehaviour() {
-    return reducedMotion()
-      ? "auto"
-      : "smooth";
-  }
+  /* ========================================
+     PAGE STATE AND HISTORY
+     ======================================== */
 
-
-  function getQueryName() {
-    return (
-      new URLSearchParams(
-        window.location.search
-      )
-        .get("q")
-        ?.trim() ||
-      ""
+  function announce(state, extra = {}) {
+    window.dispatchEvent(
+      new CustomEvent("manascout:statechange", {
+        detail: {
+          state,
+          ...extra
+        }
+      })
     );
   }
 
-
-  function getPrintingId() {
-    return (
-      new URLSearchParams(
-        window.location.search
-      )
-        .get("printing")
-        ?.trim() ||
-      ""
-    );
+  function urlParams() {
+    return new URLSearchParams(window.location.search);
   }
 
-
-  function setQuery(
-    name,
-    replace = false,
-    printingId = ""
-  ) {
-    const url =
-      new URL(
-        window.location.href
-      );
-
+  function updateUrl(name, printingId = "", replace = false) {
+    const url = new URL(window.location.href);
 
     if (name) {
-      url.searchParams.set(
-        "q",
-        name
-      );
-
+      url.searchParams.set("q", name);
     } else {
-      url.searchParams.delete(
-        "q"
-      );
+      url.searchParams.delete("q");
     }
-
 
     if (printingId) {
-      url.searchParams.set(
-        "printing",
-        printingId
-      );
-
+      url.searchParams.set("printing", printingId);
     } else {
-      url.searchParams.delete(
-        "printing"
-      );
+      url.searchParams.delete("printing");
     }
-
 
     history[
-      replace
-        ? "replaceState"
-        : "pushState"
-    ](
-      {},
-      "",
-      url
-    );
-  }
-
-
-  function replacePreferredPrintingInUrl(
-    card
-  ) {
-    if (!card?.id) {
-      return;
-    }
-
-
-    const url =
-      new URL(
-        window.location.href
-      );
-
-
-    /*
-     * Permanent guide URLs stay clean:
-     *
-     * /card/sol-ring/?printing=...
-     *
-     * Homepage searches preserve their q=
-     * parameter.
-     */
-
-    if (
-      url.searchParams.has("q")
-    ) {
-      url.searchParams.set(
-        "q",
-        card.name || ""
-      );
-    }
-
-
-    url.searchParams.set(
-      "printing",
-      card.id
-    );
-
-
-    history.replaceState(
-      {},
-      "",
-      url
-    );
-  }
-
-
-  function titleCase(value) {
-    const text =
-      String(
-        value || ""
-      );
-
-    if (!text) {
-      return "";
-    }
-
-
-    return (
-      text
-        .charAt(0)
-        .toUpperCase() +
-      text
-        .slice(1)
-        .toLowerCase()
-    );
-  }
-
-
-  function formatLegalFormat(
-    format
-  ) {
-    const specialFormats = {
-      predh:
-        "PreDH",
-
-      paupercommander:
-        "Pauper Commander",
-
-      standardbrawl:
-        "Standard Brawl",
-
-      oldschool:
-        "Old School",
-
-      penny:
-        "Penny Dreadful"
-    };
-
-
-    if (
-      specialFormats[
-        format
-      ]
-    ) {
-      return specialFormats[
-        format
-      ];
-    }
-
-
-    return String(
-      format || ""
-    )
-      .replace(
-        /_/g,
-        " "
-      )
-      .replace(
-        /\b\w/g,
-        character =>
-          character.toUpperCase()
-      );
-  }
-
-
-  function oracleTextHtml(
-    text
-  ) {
-    const value =
-      String(
-        text ||
-        "No oracle text supplied."
-      );
-
-
-    return value
-      .split("\n")
-      .map(
-        line =>
-          line.trim()
-      )
-      .filter(Boolean)
-      .map(
-        line =>
-          `<p>${escapeHtml(
-            line
-          )}</p>`
-      )
-      .join("");
-  }
-
-
-  function sleep(
-    milliseconds
-  ) {
-    return new Promise(
-      resolve =>
-        window.setTimeout(
-          resolve,
-          milliseconds
-        )
-    );
-  }
-
-
-  function scrollToElement(
-    element
-  ) {
-    if (!element) {
-      return;
-    }
-
-
-    element.scrollIntoView({
-      behavior:
-        smoothBehaviour(),
-
-      block:
-        "start"
-    });
+      replace ? "replaceState" : "pushState"
+    ]({}, "", url);
   }
 
 
   /* ========================================
-     APPLICATION STATE
+     NETWORK REQUESTS
      ======================================== */
 
-  function emitManaScoutState(
-    state,
-    detail = {}
-  ) {
-    window.dispatchEvent(
-      new CustomEvent(
-        "manascout:statechange",
-        {
-          detail: {
-            state,
-            ...detail
-          }
-        }
-      )
+  async function json(url, signal) {
+    const response = await fetch(url, {
+      signal,
+      headers: {
+        Accept: "application/json"
+      }
+    });
+
+    if (!response.ok) {
+      const error = new Error(
+        `Scryfall returned HTTP ${response.status}`
+      );
+
+      error.status = response.status;
+      throw error;
+    }
+
+    return response.json();
+  }
+
+  async function cardNamed(name, signal) {
+    try {
+      return await json(
+        `${API}/cards/named?exact=${encodeURIComponent(name)}`,
+        signal
+      );
+    } catch (error) {
+      if (error.status !== 404) {
+        throw error;
+      }
+
+      return json(
+        `${API}/cards/named?fuzzy=${encodeURIComponent(name)}`,
+        signal
+      );
+    }
+  }
+
+  async function cardId(id, signal) {
+    return json(
+      `${API}/cards/${encodeURIComponent(id)}`,
+      signal
     );
   }
 
-
-  function clearPrintingArea() {
-    if (els.status) {
-      els.status.textContent =
-        "";
-    }
-
-
-    if (els.printings) {
-      els.printings.innerHTML =
-        "";
-    }
+  function sameCardName(a, b) {
+    return String(a || "").trim().toLowerCase() ===
+      String(b || "").trim().toLowerCase();
   }
 
 
-  function setLoading() {
-    if (!els.details) {
+  /* ========================================
+     CLEAR SEARCH / AUTOCOMPLETE
+     ======================================== */
+
+  function clearSuggestions() {
+    if (!els.autocomplete || !els.input) {
       return;
     }
 
+    els.autocomplete.replaceChildren();
+    els.autocomplete.hidden = true;
 
-    els.details.innerHTML = `
-      <div
-        class="loading-state"
-        role="status"
-        aria-live="polite"
-      >
-        Searching Scryfall…
-      </div>
-    `;
+    els.input.setAttribute(
+      "aria-expanded",
+      "false"
+    );
 
+    els.input.removeAttribute(
+      "aria-activedescendant"
+    );
 
-    clearPrintingArea();
+    activeSuggestion = -1;
   }
 
+  function stopRequests() {
+    requestController?.abort();
+    suggestController?.abort();
 
-  function setError(
-    message
-  ) {
-    if (!els.details) {
-      return;
-    }
+    window.clearTimeout(suggestTimer);
 
-
-    els.details.innerHTML = `
-      <div
-        class="error-state"
-        role="alert"
-      >
-        <h2>
-          We couldn't find that card
-        </h2>
-
-        <p>
-          ${escapeHtml(
-            message
-          )}
-        </p>
-      </div>
-    `;
-
-
-    clearPrintingArea();
+    ++searchToken;
+    printingState = null;
   }
 
+  function setHome() {
+    stopRequests();
+    currentCard = null;
 
-  function setHomeState() {
     if (els.input) {
-      els.input.value =
-        "";
+      els.input.value = "";
     }
-
-
-    clearAutocomplete();
-
-    clearPrintingArea();
-
 
     if (els.details) {
-      els.details.innerHTML =
-        "";
+      els.details.replaceChildren();
     }
 
+    if (els.printings) {
+      els.printings.replaceChildren();
+    }
 
-    emitManaScoutState(
-      "home"
-    );
+    if (els.status) {
+      els.status.textContent = "";
+    }
+
+    clearSuggestions();
+
+    document.title =
+      "MTG Card Printings, Foils & Versions | ManaScout";
+
+    announce("home");
   }
 
-
-  /* ========================================
-     CARD DISPLAY
-     ======================================== */
-
-  function primaryImage(card) {
-    return safeUrl(
-      card.image_uris
-        ?.normal ||
-      card.image_uris
-        ?.large ||
-      card.card_faces?.[0]
-        ?.image_uris?.normal ||
-      card.card_faces?.[0]
-        ?.image_uris?.large ||
-      ""
-    );
-  }
-
-
-  function renderFaces(card) {
-    if (
-      !Array.isArray(
-        card.card_faces
-      ) ||
-      card.card_faces.length <
-        2
-    ) {
-      return `
-        <div class="oracle">
-          ${oracleTextHtml(
-            card.oracle_text
-          )}
+  function setLoading() {
+    if (els.details) {
+      els.details.innerHTML = `
+        <div class="empty-state" role="status">
+          Scouting this card and its printings…
         </div>
       `;
     }
 
+    if (els.printings) {
+      els.printings.replaceChildren();
+    }
+
+    if (els.status) {
+      els.status.textContent =
+        "Loading printing data…";
+    }
+  }
+
+  function setError(message) {
+    if (els.details) {
+      els.details.innerHTML = `
+        <div class="empty-state" role="alert">
+          ${html(message)}
+        </div>
+      `;
+    }
+
+    if (els.printings) {
+      els.printings.replaceChildren();
+    }
+
+    if (els.status) {
+      els.status.textContent = "";
+    }
+
+    announce("home");
+  }
+
+
+  /* ========================================
+     ADDITIONAL COMPONENT STYLING
+     Bundled for single-file replacement
+     ======================================== */
+
+  function installStyles() {
+    if ($("manascout-app-extras")) {
+      return;
+    }
+
+    const style = document.createElement("style");
+    style.id = "manascout-app-extras";
+
+    style.textContent = `
+      .ms-preview {
+        position:relative;
+        display:inline-block;
+        max-width:100%;
+        isolation:isolate
+      }
+
+      .ms-preview>img {
+        display:block;
+        max-width:100%;
+        height:auto
+      }
+
+      .ms-foil-glint {
+        position:absolute;
+        inset:0;
+        border-radius:inherit;
+        pointer-events:none;
+        mix-blend-mode:screen;
+        opacity:.39;
+        background:linear-gradient(
+          110deg,
+          transparent 22%,
+          rgba(102,241,194,.1) 37%,
+          rgba(182,142,249,.18) 46%,
+          rgba(255,255,255,.33) 51%,
+          rgba(248,170,220,.15) 57%,
+          transparent 72%
+        );
+        background-size:250% 100%;
+        animation:msFoil 7s ease-in-out infinite
+      }
+
+      @keyframes msFoil {
+        0%,100% {background-position:100% 0}
+        50% {background-position:0 0}
+      }
+
+      .ms-finish-control {
+        position:absolute;
+        right:7px;
+        top:7px;
+        z-index:5;
+        max-width:calc(100% - 14px);
+        background:rgba(11,11,14,.89);
+        border:1px solid #bc4b5f;
+        border-radius:7px;
+        padding:5px 7px;
+        color:#f4d8de;
+        font-size:11px;
+        cursor:pointer;
+        box-shadow:0 4px 15px #0007
+      }
+
+      .ms-finish-control:focus-visible {
+        outline:2px solid #fff;
+        outline-offset:3px
+      }
+
+      .ms-finish-control[aria-pressed="true"] {
+        border-color:#6baa80;
+        color:#c9f0d6
+      }
+
+      .ms-card-image {
+        border-radius:12px;
+        overflow:hidden
+      }
+
+      .ms-card-image>.card-image {
+        width:100%;
+        display:block
+      }
+
+      .ms-card-extra {
+        display:flex;
+        flex-wrap:wrap;
+        gap:7px;
+        margin:12px 0
+      }
+
+      .ms-pill {
+        display:inline-flex;
+        align-items:center;
+        gap:4px;
+        border:1px solid #ffffff22;
+        background:#ffffff08;
+        border-radius:20px;
+        padding:5px 9px;
+        color:#c3bec1;
+        font-size:11px;
+        line-height:1.4
+      }
+
+      .ms-pill strong {
+        color:#f2e9eb
+      }
+
+      .ms-card-extra .ms-pill {
+        font-size:12px
+      }
+
+      .ms-card-actions {
+        display:flex;
+        flex-wrap:wrap;
+        gap:8px;
+        margin:13px 0
+      }
+
+      .ms-card-actions button,
+      .ms-card-actions a {
+        border:1px solid #ffffff28;
+        border-radius:8px;
+        background:#ffffff07;
+        color:#f1e6e8;
+        text-decoration:none;
+        padding:8px 10px;
+        font:inherit;
+        font-size:12px;
+        cursor:pointer;
+        line-height:1.4
+      }
+
+      .ms-card-actions button:hover,
+      .ms-card-actions a:hover {
+        border-color:#c75a69
+      }
+
+      .ms-card-actions button:disabled {
+        opacity:.55;
+        cursor:wait
+      }
+
+      .ms-help {
+        color:#a59aa0;
+        font-size:12px;
+        line-height:1.65
+      }
+
+      .ms-headline {
+        margin:10px 0 7px;
+        font-size:16px;
+        color:#f1e7ea
+      }
+
+      .ms-controls {
+        display:flex;
+        flex-wrap:wrap;
+        align-items:flex-end;
+        gap:11px;
+        margin:17px 0
+      }
+
+      .ms-controls label {
+        display:flex;
+        flex-direction:column;
+        gap:5px;
+        font-size:12px;
+        color:#ddd3d7
+      }
+
+      .ms-controls select,
+      .ms-controls input {
+        min-height:40px;
+        max-width:100%;
+        border:1px solid #ffffff32;
+        border-radius:8px;
+        background:#171519;
+        color:#f7edf0;
+        padding:8px;
+        font:inherit;
+        font-size:13px
+      }
+
+      .ms-controls input {
+        width:min(250px,85vw)
+      }
+
+      .ms-controls button {
+        min-height:40px;
+        padding:8px 12px;
+        border:1px solid #ffffff32;
+        border-radius:8px;
+        background:#ffffff0a;
+        color:#f2e7ea;
+        cursor:pointer
+      }
+
+      .ms-treatments {
+        max-width:300px;
+        line-height:1.5
+      }
+
+      .ms-printing-note {
+        display:block;
+        margin-top:5px;
+        color:#aaa0a5;
+        font-size:11px;
+        line-height:1.5
+      }
+
+      .ms-thumbnail {
+        position:relative;
+        display:inline-block;
+        max-width:100%;
+        border-radius:8px;
+        overflow:hidden
+      }
+
+      .ms-thumbnail img {
+        display:block;
+        width:64px;
+        height:auto;
+        border-radius:7px
+      }
+
+      .ms-thumbnail .ms-foil-glint {
+        opacity:.32
+      }
+
+      .ms-thumb-toggle {
+        position:absolute;
+        right:1px;
+        top:1px;
+        z-index:3;
+        width:22px;
+        height:22px;
+        border:1px solid #d65b69;
+        border-radius:50%;
+        background:#190f14dc;
+        color:#ffcad2;
+        font-size:12px;
+        cursor:pointer
+      }
+
+      .ms-table-information {
+        font-size:11px;
+        line-height:1.45;
+        color:#a99fa3
+      }
+
+      .ms-print-pagination {
+        display:flex;
+        justify-content:center;
+        align-items:center;
+        gap:12px;
+        margin:18px 0;
+        color:#c5bec1;
+        font-size:12px
+      }
+
+      .ms-print-pagination button {
+        border:1px solid #ffffff35;
+        background:#ffffff0b;
+        border-radius:8px;
+        padding:9px 13px;
+        color:#eee;
+        cursor:pointer
+      }
+
+      .ms-price-source {
+        display:block;
+        font-size:10px;
+        color:#9c9197
+      }
+
+      .ms-selection-banner {
+        padding:10px 12px;
+        margin:14px 0;
+        border:1px solid #6d9d7d66;
+        border-radius:9px;
+        color:#c9ead0;
+        background:#21533218;
+        font-size:12px;
+        line-height:1.5
+      }
+
+      .ms-table-empty {
+        padding:20px;
+        text-align:center;
+        color:#a99fa3
+      }
+
+      .ms-dfc-gallery {
+        display:flex;
+        flex-wrap:wrap;
+        gap:10px;
+        margin-top:12px
+      }
+
+      .ms-dfc-gallery img {
+        width:min(180px,45%);
+        height:auto;
+        border-radius:9px
+      }
+
+      .ms-actions-status {
+        font-size:12px;
+        color:#b9adad
+      }
+
+      .ms-card-image .ms-finish-control {
+        font-size:12px
+      }
+
+      @media(max-width:600px) {
+        .ms-thumbnail img {width:52px}
+        .ms-controls {gap:8px}
+        .ms-controls label {flex:1 1 120px}
+        .ms-controls select {width:100%}
+        .ms-card-extra {gap:5px}
+      }
+
+      @media(prefers-reduced-motion:reduce) {
+        .ms-foil-glint {animation:none!important}
+      }
+    `;
+
+    document.head.appendChild(style);
+  }
+
+
+  /* ========================================
+     FINISHES AND TREATMENTS
+     ======================================== */
+
+  function treatments(card) {
+    const values = [];
+    const effects = card?.frame_effects || [];
+    const promos = card?.promo_types || [];
+
+    if (card?.border_color === "borderless") {
+      values.push("Borderless");
+    }
+
+    if (card?.full_art) {
+      values.push("Full art");
+    }
+
+    if (card?.textless) {
+      values.push("Textless");
+    }
+
+    if (card?.promo) {
+      values.push("Promo");
+    }
+
+    for (const item of effects) {
+      values.push(
+        TREATMENT_LABELS[item] || title(item)
+      );
+    }
+
+    for (const item of promos) {
+      values.push(
+        TREATMENT_LABELS[item] || title(item)
+      );
+    }
+
+    return [...new Set(values)];
+  }
+
+  function treatmentText(card) {
+    return treatments(card).join(" · ") ||
+      "Standard treatment";
+  }
+
+  function finishText(card) {
+    const names = {
+      nonfoil: "Nonfoil",
+      foil: "Foil",
+      etched: "Etched foil"
+    };
+
+    return (card?.finishes || [])
+      .map(f => names[f] || title(f))
+      .join(", ") || "—";
+  }
+
+  function legalFormats(card) {
+    const labels = {
+      predh: "PreDH",
+      paupercommander: "Pauper Commander",
+      standardbrawl: "Standard Brawl",
+      oldschool: "Old School"
+    };
+
+    return Object.entries(card?.legalities || {})
+      .filter(([, value]) => value === "legal")
+      .map(([format]) =>
+        labels[format] || title(format)
+      )
+      .join(", ") || "None listed";
+  }
+
+  function oracleHtml(card) {
+    const faces = card?.card_faces?.length > 1
+      ? card.card_faces
+      : [card];
 
     return `
       <div class="oracle">
+        ${faces.map(face => `
+          <div class="oracle-face">
+            ${faces.length > 1 ? `
+              <strong class="oracle-face-name">
+                ${html(face.name)}
+              </strong>
+            ` : ""}
 
-        ${card.card_faces
-          .map(
-            face => `
-              <div class="oracle-face">
-
-                <strong
-                  class="oracle-face-name"
-                >
-                  ${escapeHtml(
-                    face.name ||
-                    ""
-                  )}
-                </strong>
-
-                ${oracleTextHtml(
-                  face.oracle_text ||
-                  ""
-                )}
-
-              </div>
-            `
-          )
-          .join("")}
-
+            ${String(
+              face.oracle_text ||
+              "No oracle text available."
+            )
+              .split("\n")
+              .filter(Boolean)
+              .map(line => `
+                <p>${html(line)}</p>
+              `)
+              .join("")}
+          </div>
+        `).join("")}
       </div>
     `;
   }
 
 
   /* ========================================
-     MANASCOUT GUIDE LINK
+     CARD GUIDES
      ======================================== */
 
-  function manaScoutGuideLink(
-    card
-  ) {
-    const key =
-      String(
-        card?.name || ""
-      )
-        .trim()
-        .toLowerCase();
+  function guideLink(card) {
+    const nameSlug = slug(card?.name);
 
-
-    const slug =
-      GUIDE_SLUGS[
-        key
-      ];
-
-
-    if (!slug) {
-      return "";
-    }
-
-
-    const currentPath =
-      window.location.pathname
-        .replace(
-          /\/+$/,
-          ""
-        );
-
-
-    const guidePath =
-      `/card/${slug}`;
-
+    const path = nameSlug === "the-theorist"
+      ? "the-theorist-jace-beleren"
+      : nameSlug;
 
     if (
-      currentPath ===
-      guidePath
+      !GUIDE_SLUGS.has(path) ||
+      window.location.pathname.replace(/\/+$/, "") ===
+      `/card/${path}`
     ) {
       return "";
     }
 
-
     return `
       <div class="manascout-guide-link">
-
-        <a
-          href="/card/${escapeHtml(
-            slug
-          )}/"
-        >
-          <span aria-hidden="true">
-            ◇
-          </span>
-
-          View ManaScout Guide
-
-          <span aria-hidden="true">
-            →
-          </span>
+        <a href="/card/${html(path)}/">
+          ◇ View ManaScout Guide →
         </a>
-
       </div>
     `;
   }
@@ -723,1389 +803,653 @@
      MARKETPLACE LINKS
      ======================================== */
 
-  function marketplaceLinks(
-    card
-  ) {
-    const name =
-      encodeURIComponent(
-        card.name || ""
-      );
+  function marketplaceLinks(card) {
+    const query = encodeURIComponent(
+      card?.name || ""
+    );
 
+    const scryfall = safeUrl(
+      card?.scryfall_uri
+    );
 
     return `
       <div class="marketplace-links">
 
         <a
-          href="https://www.cardmarket.com/en/Magic/Products/Search?searchString=${name}"
+          href="https://www.cardmarket.com/en/Magic/Products/Search?searchString=${query}"
           target="_blank"
           rel="noopener noreferrer sponsored"
-          data-outbound-marketplace="cardmarket"
         >
           Search Cardmarket
         </a>
 
         <a
-          href="https://www.tcgplayer.com/search/magic/product?q=${name}"
+          href="https://www.tcgplayer.com/search/magic/product?q=${query}"
           target="_blank"
           rel="noopener noreferrer sponsored"
-          data-outbound-marketplace="tcgplayer"
         >
           Search TCGplayer
         </a>
 
+        ${scryfall ? `
+          <a
+            href="${html(scryfall)}"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Scryfall details
+          </a>
+        ` : ""}
+
       </div>
     `;
   }
 
 
   /* ========================================
-     MANASCOUT PICK EXPLANATION
+     FOIL PREVIEW
      ======================================== */
 
-  function manaScoutPickReasons(
-    card
-  ) {
-    if (!card) {
-      return [];
-    }
-
-
-    const reasons = [];
-
-
-    const frameEffects =
-      Array.isArray(
-        card.frame_effects
-      )
-        ? card.frame_effects
-        : [];
-
-
-    const promoTypes =
-      Array.isArray(
-        card.promo_types
-      )
-        ? card.promo_types
-        : [];
-
-
-    const finishes =
-      Array.isArray(
-        card.finishes
-      )
-        ? card.finishes
-        : [];
-
-
-    if (
-      frameEffects.includes(
-        "showcase"
-      )
-    ) {
-      reasons.push(
-        "Showcase treatment"
-      );
-    }
-
-
-    if (
-      card.border_color ===
-      "borderless"
-    ) {
-      reasons.push(
-        "Borderless artwork"
-      );
-    }
-
-
-    if (
-      card.full_art
-    ) {
-      reasons.push(
-        "Full-art treatment"
-      );
-    }
-
-
-    if (
-      frameEffects.includes(
-        "extendedart"
-      )
-    ) {
-      reasons.push(
-        "Extended artwork"
-      );
-    }
-
-
-    if (
-      promoTypes.includes(
-        "textured"
-      )
-    ) {
-      reasons.push(
-        "Textured treatment"
-      );
-    }
-
-
-    if (
-      promoTypes.includes(
-        "galaxyfoil"
-      )
-    ) {
-      reasons.push(
-        "Galaxy foil"
-      );
-    }
-
-
-    if (
-      promoTypes.includes(
-        "surgefoil"
-      )
-    ) {
-      reasons.push(
-        "Surge foil"
-      );
-    }
-
-
-    if (
-      promoTypes.includes(
-        "rainbowfoil"
-      )
-    ) {
-      reasons.push(
-        "Rainbow foil"
-      );
-    }
-
-
-    if (
-      promoTypes.includes(
-        "halofoil"
-      )
-    ) {
-      reasons.push(
-        "Halo foil"
-      );
-    }
-
-
-    if (
-      promoTypes.includes(
-        "stepandcompleat"
-      )
-    ) {
-      reasons.push(
-        "Step-and-compleat foil"
-      );
-    }
-
-
-    if (
-      finishes.includes(
-        "etched"
-      )
-    ) {
-      reasons.push(
-        "Etched finish"
-      );
-    }
-
-
-    if (
-      finishes.includes(
-        "foil"
-      ) &&
-      reasons.length < 3
-    ) {
-      reasons.push(
-        "Foil available"
-      );
-    }
-
-
-    if (
-      card.promo &&
-      reasons.length < 3
-    ) {
-      reasons.push(
-        "Special promo printing"
-      );
-    }
-
-
-    if (
-      !reasons.length
-    ) {
-      reasons.push(
-        "ManaScout's standout printing"
-      );
-    }
-
-
-    return reasons.slice(
-      0,
-      3
+  function isFoilCapable(card) {
+    return (
+      finishHas(card, "foil") ||
+      finishHas(card, "etched")
     );
   }
 
+  function foilOn(card) {
+    return (
+      isFoilCapable(card) &&
+      !foilDisabled.has(card.id)
+    );
+  }
 
-  function manaScoutPickExplanation(
-    card,
-    enabled
-  ) {
-    if (!enabled) {
+  function selectPreviewFinish(card) {
+    if (!card) {
+      return "nonfoil";
+    }
+
+    if (
+      !foilOn(card) &&
+      finishHas(card, "nonfoil")
+    ) {
+      return "nonfoil";
+    }
+
+    if (
+      foilOn(card) &&
+      finishHas(card, "foil")
+    ) {
+      return "foil";
+    }
+
+    if (
+      foilOn(card) &&
+      finishHas(card, "etched")
+    ) {
+      return "etched";
+    }
+
+    return (card.finishes || ["nonfoil"])[0];
+  }
+
+  function foilButton(card, small = false) {
+    if (!isFoilCapable(card)) {
       return "";
     }
 
+    const active = foilOn(card);
+    const hasNonfoil = finishHas(card, "nonfoil");
 
-    const reasons =
-      manaScoutPickReasons(
-        card
-      );
-
+    const label = active
+      ? (hasNonfoil ? "✕ Nonfoil" : "✕ Hide shimmer")
+      : "✦ Show foil";
 
     return `
-      <div
-        class="manascout-pick-reason"
-        aria-label="Why ManaScout selected this printing"
+      <button
+        type="button"
+        ${small
+          ? 'class="ms-thumb-toggle"'
+          : 'class="ms-finish-control"'
+        }
+        data-foil-toggle="${html(card.id)}"
+        aria-pressed="${active ? "true" : "false"}"
+        aria-label="${html(label)}"
+        title="${html(label)}"
       >
+        ${small
+          ? (active ? "✕" : "✦")
+          : html(label)
+        }
+      </button>
+    `;
+  }
 
-        <strong>
-          Why this one?
-        </strong>
+  function cardImageMarkup(card) {
+    const src = imageFor(card);
 
-        <span>
-          ${reasons
-            .map(
-              reason =>
-                escapeHtml(
-                  reason
-                )
-            )
-            .join(" · ")}
-        </span>
+    const image = src ? `
+      <img
+        class="card-image"
+        src="${html(src)}"
+        alt="${html(card.name)} — ${html(card.set_name)} printing #${html(card.collector_number)}"
+        decoding="async"
+        width="488"
+        height="680"
+      >
+    ` : `
+      <div class="empty-state">
+        Image unavailable.
+      </div>
+    `;
 
+    return `
+      <div class="card-image-wrap">
+        <div class="ms-preview ms-card-image">
+
+          ${image}
+
+          ${foilOn(card) ? `
+            <span
+              class="ms-foil-glint"
+              aria-hidden="true"
+            ></span>
+          ` : ""}
+
+          ${foilButton(card)}
+
+        </div>
       </div>
     `;
   }
 
 
   /* ========================================
-     DISCOVERY / KEEP SCOUTING
+     CARD DETAILS
      ======================================== */
 
-  function discoverySearchQuery(
-    card,
-    mode
-  ) {
-    const oracleId =
-      String(
-        card?.oracle_id ||
-        ""
-      ).trim();
-
-
-    const exclusions = [];
-
-
-    if (oracleId) {
-      exclusions.push(
-        `-oracleid:${oracleId}`
-      );
-    }
-
-
-    if (
-      mode ===
-      "colour"
-    ) {
-      const colours =
-        Array.isArray(
-          card?.color_identity
-        )
-          ? card.color_identity
-          : [];
-
-
-      if (
-        colours.length
-      ) {
-        return [
-          "game:paper",
-          `id:${colours.join(
-            ""
-          )}`,
-          ...exclusions
-        ].join(" ");
-      }
-
-
-      return [
-        "game:paper",
-        "id:c",
-        ...exclusions
-      ].join(" ");
-    }
-
-
-    if (
-      mode ===
-      "type"
-    ) {
-      const typeLine =
-        String(
-          card?.type_line ||
-          ""
-        );
-
-
-      const knownTypes = [
-        "Creature",
-        "Artifact",
-        "Enchantment",
-        "Instant",
-        "Sorcery",
-        "Planeswalker",
-        "Land",
-        "Battle"
-      ];
-
-
-      const selectedType =
-        knownTypes.find(
-          type =>
-            typeLine.includes(
-              type
-            )
-        );
-
-
-      if (
-        selectedType
-      ) {
-        return [
-          "game:paper",
-          `t:${selectedType.toLowerCase()}`,
-          ...exclusions
-        ].join(" ");
-      }
-    }
-
-
-    return [
-      "game:paper",
-      ...exclusions
-    ].join(" ");
-  }
-
-
-  function resultDiscoveryActions(
-    card
-  ) {
-    const name =
-      escapeHtml(
-        card?.name ||
-        "this card"
-      );
-
-
+  function detailTile(label, value) {
     return `
-      <section
-        class="scout-more"
-        aria-labelledby="scout-more-heading"
-      >
-
-        <div class="scout-more-heading">
-
-          <div>
-
-            <p class="eyebrow">
-              KEEP SCOUTING
-            </p>
-
-            <h3 id="scout-more-heading">
-              Where next?
-            </h3>
-
-            <p>
-              Let ManaScout take you somewhere new from ${name}.
-            </p>
-
-          </div>
-
-
-          <button
-            class="scout-another-button"
-            type="button"
-            data-discovery-mode="wild"
-          >
-            <span aria-hidden="true">
-              ◇
-            </span>
-
-            Scout Another
-          </button>
-
-        </div>
-
-
-        <div
-          class="scout-more-grid"
-          aria-label="Discover another Magic card"
-        >
-
-          <button
-            type="button"
-            class="scout-more-option"
-            data-discovery-mode="colour"
-          >
-            <span
-              class="scout-more-mark"
-              aria-hidden="true"
-            >
-              ◇
-            </span>
-
-            <strong>
-              Same colour
-            </strong>
-
-            <span>
-              Explore a random card with a matching colour identity.
-            </span>
-          </button>
-
-
-          <button
-            type="button"
-            class="scout-more-option"
-            data-discovery-mode="type"
-          >
-            <span
-              class="scout-more-mark"
-              aria-hidden="true"
-            >
-              ◈
-            </span>
-
-            <strong>
-              Same type
-            </strong>
-
-            <span>
-              Jump to another card from the same broad card type.
-            </span>
-          </button>
-
-
-          <button
-            type="button"
-            class="scout-more-option"
-            data-discovery-mode="wild"
-          >
-            <span
-              class="scout-more-mark"
-              aria-hidden="true"
-            >
-              ✦
-            </span>
-
-            <strong>
-              Wildcard
-            </strong>
-
-            <span>
-              No rules. Pull something random from paper Magic.
-            </span>
-          </button>
-
-        </div>
-
-
-        <p
-          class="scout-more-status"
-          role="status"
-          aria-live="polite"
-        ></p>
-
-      </section>
+      <div class="detail">
+        <strong>${html(label)}</strong>
+        ${html(value || "—")}
+      </div>
     `;
   }
 
-
-  async function randomDiscoveryCard(
-    sourceCard,
-    mode,
-    statusElement,
-    buttons
-  ) {
-    const query =
-      discoverySearchQuery(
-        sourceCard,
-        mode
-      );
-
-
-    buttons.forEach(
-      button => {
-        button.disabled =
-          true;
-
-        button.setAttribute(
-          "aria-busy",
-          "true"
-        );
-      }
-    );
-
-
-    if (statusElement) {
-      statusElement.textContent =
-        "Scouting the archive…";
-    }
-
-
-    try {
-      const randomCard =
-        await fetchJson(
-          `${API}/cards/random?q=${encodeURIComponent(
-            query
-          )}`
-        );
-
-
-      if (
-        !randomCard?.name
-      ) {
-        throw new Error(
-          "Random card unavailable."
-        );
-      }
-
-
-      if (statusElement) {
-        statusElement.textContent =
-          `Found ${randomCard.name}.`;
-      }
-
-
-      await loadCard(
-        randomCard.name
-      );
-
-
-      scrollToElement(
-        els.details
-      );
-
-    } catch (error) {
-      console.error(
-        "ManaScout discovery failed:",
-        error
-      );
-
-
-      if (statusElement) {
-        statusElement.textContent =
-          "ManaScout couldn't scout another card this time. Try again.";
-      }
-
-    } finally {
-      buttons.forEach(
-        button => {
-          button.disabled =
-            false;
-
-          button.removeAttribute(
-            "aria-busy"
-          );
-        }
-      );
-    }
-  }
-
-
-  /* ========================================
-     RENDER CARD
-     ======================================== */
-
-  function renderCard(
-    card,
-    options = {}
-  ) {
-    if (!els.details) {
+  function renderCard(card, { isPick = false } = {}) {
+    if (!els.details || !card) {
       return;
     }
 
+    currentCard = card;
 
-    const image =
-      primaryImage(
-        card
-      );
+    const finish = selectPreviewFinish(card);
 
-
-    const imageHtml =
-      image
-        ? `
-          <div class="card-image-wrap">
-
-            <img
-              class="card-image"
-              src="${escapeHtml(
-                image
-              )}"
-              alt="${escapeHtml(
-                card.name ||
-                "Magic card"
-              )}"
-              decoding="async"
-            >
-
-          </div>
-        `
-        : `
-          <div class="card-image-wrap">
-
-            <div class="empty-state">
-              No card image supplied.
-            </div>
-
-          </div>
-        `;
-
-
-    const legalities =
-      card.legalities
-        ? Object.entries(
-            card.legalities
-          )
-            .filter(
-              ([, value]) =>
-                value ===
-                "legal"
-            )
-            .map(
-              ([key]) =>
-                formatLegalFormat(
-                  key
-                )
-            )
-            .join(", ")
-        : "Not available";
-
-
-    const eyebrow =
-      options.manaScoutPick
-        ? "◇ MANASCOUT PICK · CARD"
-        : "CARD";
-
+    const dfc = (card.card_faces || [])
+      .filter(face => face.image_uris?.normal)
+      .map(face => `
+        <img
+          loading="lazy"
+          decoding="async"
+          src="${html(safeUrl(face.image_uris.normal))}"
+          alt="${html(face.name)} card face"
+        >
+      `)
+      .join("");
 
     els.details.innerHTML = `
+
       <article class="card-display">
 
-        ${imageHtml}
-
+        ${cardImageMarkup(card)}
 
         <div class="card-text-details">
 
           <p class="eyebrow">
-            ${eyebrow}
+            ${isPick
+              ? "◇ MANASCOUT PICK · FEATURED PRINTING"
+              : "CARD & PRINTING"
+            }
           </p>
-
 
           <h2>
-            ${escapeHtml(
-              card.name ||
-              "Unknown card"
-            )}
+            ${html(card.name || "Unknown card")}
           </h2>
 
-
           <p class="card-subtitle">
+            ${html(card.type_line || "")}
 
-            ${escapeHtml(
-              card.type_line ||
-              ""
-            )}
-
-            ${
-              card.mana_cost
-                ? `
-                  ·
-                  <span class="mana-cost">
-                    ${escapeHtml(
-                      card.mana_cost
-                    )}
-                  </span>
-                `
-                : ""
-            }
-
+            ${card.mana_cost ? `
+              <span class="mana-cost">
+                · ${html(card.mana_cost)}
+              </span>
+            ` : ""}
           </p>
 
-
-          ${manaScoutPickExplanation(
-            card,
-            Boolean(
-              options.manaScoutPick
-            )
-          )}
-
+          ${isPick ? `
+            <div class="ms-selection-banner">
+              ◇ ManaScout Pick — selected for distinctive
+              artwork or collector treatment. Use the
+              printings table to choose any other version.
+            </div>
+          ` : ""}
 
           <div class="detail-grid">
 
-            <div class="detail">
-
-              <strong>
-                Set
-              </strong>
-
-              ${escapeHtml(
-                card.set_name ||
-                "—"
-              )}
-
-            </div>
-
-
-            <div class="detail">
-
-              <strong>
-                Collector number
-              </strong>
-
-              ${escapeHtml(
-                card.collector_number ||
-                "—"
-              )}
-
-            </div>
-
-
-            <div class="detail">
-
-              <strong>
-                Rarity
-              </strong>
-
-              ${escapeHtml(
-                titleCase(
-                  card.rarity ||
-                  "—"
-                )
-              )}
-
-            </div>
-
-
-            <div class="detail">
-
-              <strong>
-                Legal in
-              </strong>
-
-              ${escapeHtml(
-                legalities ||
-                "—"
-              )}
-
-            </div>
+            ${detailTile("Set", card.set_name)}
+            ${detailTile(
+              "Set code",
+              String(card.set || "").toUpperCase()
+            )}
+            ${detailTile(
+              "Collector number",
+              card.collector_number
+            )}
+            ${detailTile("Released", card.released_at)}
+            ${detailTile("Rarity", title(card.rarity))}
+            ${detailTile("Artist", card.artist)}
+            ${detailTile("Frame", card.frame)}
+            ${detailTile("Finishes", finishText(card))}
+            ${detailTile("Preview finish", title(finish))}
+            ${detailTile("Treatments", treatmentText(card))}
 
           </div>
 
+          <div class="ms-card-extra">
 
-          ${renderFaces(
-            card
-          )}
+            ${card.lang ? `
+              <span class="ms-pill">
+                Language
+                <strong>
+                  ${html(String(card.lang).toUpperCase())}
+                </strong>
+              </span>
+            ` : ""}
 
+            ${card.reserved ? `
+              <span class="ms-pill">
+                Reserved List
+              </span>
+            ` : ""}
 
-          ${manaScoutGuideLink(
-            card
-          )}
+            ${card.reprint ? `
+              <span class="ms-pill">
+                Reprint
+              </span>
+            ` : `
+              <span class="ms-pill">
+                First printing
+              </span>
+            `}
 
+            ${card.promo ? `
+              <span class="ms-pill">
+                Promo
+              </span>
+            ` : ""}
 
-          ${marketplaceLinks(
-            card
-          )}
+            ${card.security_stamp ? `
+              <span class="ms-pill">
+                Stamp: ${html(card.security_stamp)}
+              </span>
+            ` : ""}
+
+            ${card.illustration_id ? `
+              <span class="ms-pill">
+                Unique artwork identifiable
+              </span>
+            ` : ""}
+
+          </div>
+
+          <p class="ms-help">
+            <strong>Legal in:</strong>
+            ${html(legalFormats(card))}
+          </p>
+
+          ${oracleHtml(card)}
+
+          ${dfc ? `
+            <details>
+              <summary>
+                View card faces
+              </summary>
+
+              <div class="ms-dfc-gallery">
+                ${dfc}
+              </div>
+            </details>
+          ` : ""}
+
+          ${guideLink(card)}
+
+          ${marketplaceLinks(card)}
+
+          <div
+            class="ms-card-actions"
+            aria-label="Keep scouting"
+          >
+
+            <button
+              type="button"
+              data-discovery-mode="wild"
+            >
+              ◇ Surprise me
+            </button>
+
+            <button
+              type="button"
+              data-discovery-mode="colour"
+            >
+              Same colour identity
+            </button>
+
+            <button
+              type="button"
+              data-discovery-mode="type"
+            >
+              Same card type
+            </button>
+
+            <button
+              type="button"
+              data-copy-link
+            >
+              Copy this printing link
+            </button>
+
+          </div>
+
+          <p
+            class="ms-actions-status"
+            role="status"
+            aria-live="polite"
+          ></p>
 
         </div>
 
       </article>
-
-
-      ${resultDiscoveryActions(
-        card
-      )}
     `;
 
+    els.details
+      .querySelector("[data-copy-link]")
+      ?.addEventListener("click", async () => {
+        const url = new URL(window.location.href);
 
-    const discoveryButtons =
-      [
-        ...els.details
-          .querySelectorAll(
-            "[data-discovery-mode]"
-          )
-      ];
-
-
-    const discoveryStatus =
-      els.details.querySelector(
-        ".scout-more-status"
-      );
-
-
-    discoveryButtons.forEach(
-      button => {
-        button.addEventListener(
-          "click",
-          () => {
-            randomDiscoveryCard(
-              card,
-              button.dataset
-                .discoveryMode ||
-                "wild",
-              discoveryStatus,
-              discoveryButtons
-            );
-          }
+        url.searchParams.set(
+          "q",
+          card.name
         );
-      }
-    );
 
+        url.searchParams.set(
+          "printing",
+          card.id
+        );
 
-    emitManaScoutState(
-      "card",
-      {
-        cardName:
-          card.name ||
-          "",
+        try {
+          await navigator.clipboard.writeText(
+            url.href
+          );
 
-        printingId:
-          card.id ||
-          ""
-      }
-    );
+          const status = els.details.querySelector(
+            ".ms-actions-status"
+          );
+
+          if (status) {
+            status.textContent =
+              "Printing link copied.";
+          }
+
+        } catch {
+          const status = els.details.querySelector(
+            ".ms-actions-status"
+          );
+
+          if (status) {
+            status.textContent =
+              "Copy the URL from your browser address bar.";
+          }
+        }
+      });
+
+    announce("card", {
+      cardName: card.name,
+      printingId: card.id
+    });
   }
 
 
   /* ========================================
-     PRICE / FX HELPERS
+     PRICE AND GBP ESTIMATES
      ======================================== */
 
-  function priceCell(
-    value,
-    symbol = ""
-  ) {
-    if (
-      value === null ||
-      value === undefined ||
-      value === ""
-    ) {
-      return `
-        <span class="muted">
-          —
-        </span>
-      `;
-    }
-
-
-    return `
-      <span class="price">
-
-        <strong>
-          ${escapeHtml(
-            `${symbol}${value}`
-          )}
-        </strong>
-
-      </span>
-    `;
-  }
-
-
-  async function fetchFxRate(
-    base
-  ) {
-    const response =
-      await fetch(
-        `${FX_API}/${encodeURIComponent(
-          base
-        )}/GBP`,
-        {
-          headers: {
-            Accept:
-              "application/json"
-          }
+  async function getRate(base) {
+    const response = await fetch(
+      `${FX_API}/${base}/GBP`,
+      {
+        headers: {
+          Accept: "application/json"
         }
-      );
-
+      }
+    );
 
     if (!response.ok) {
       throw new Error(
-        `FX HTTP ${response.status}`
+        "Exchange rate unavailable"
       );
     }
 
+    const data = await response.json();
 
-    const data =
-      await response.json();
-
-
-    const rate =
-      Number(
-        data.rate
-      );
-
+    const rate = Number(data.rate);
 
     if (
-      !Number.isFinite(
-        rate
-      ) ||
+      !Number.isFinite(rate) ||
       rate <= 0
     ) {
       throw new Error(
-        "Invalid FX rate."
+        "Invalid exchange rate"
       );
     }
-
 
     return rate;
   }
 
-
-  async function getFxRates() {
-    if (!fxRatesPromise) {
-      fxRatesPromise =
-        Promise.all([
-          fetchFxRate(
-            "EUR"
-          ),
-
-          fetchFxRate(
-            "USD"
-          )
-        ])
-          .then(
-            ([
-              eurToGbp,
-              usdToGbp
-            ]) => ({
-              eurToGbp,
-              usdToGbp
-            })
-          )
-          .catch(
-            error => {
-              /*
-               * Allow a later search to retry
-               * instead of permanently caching
-               * a rejected Promise.
-               */
-
-              fxRatesPromise =
-                null;
-
-              throw error;
-            }
-          );
+  function rates() {
+    if (!ratesPromise) {
+      ratesPromise = Promise.all([
+        getRate("EUR"),
+        getRate("USD")
+      ])
+        .then(([eur, usd]) => ({
+          eur,
+          usd
+        }))
+        .catch(error => {
+          ratesPromise = null;
+          throw error;
+        });
     }
 
-
-    return fxRatesPromise;
+    return ratesPromise;
   }
 
+  function gbpPrice(card, kind, fx) {
+    const prices = card?.prices || {};
 
-  function convertToGbp(
-    value,
-    rate
-  ) {
-    const amount =
-      Number.parseFloat(
-        value
-      );
+    const eurKey = kind === "foil"
+      ? "eur_foil"
+      : "eur";
 
+    const usdKey = kind === "foil"
+      ? "usd_foil"
+      : kind === "etched"
+        ? "usd_etched"
+        : "usd";
 
-    if (
-      !Number.isFinite(
-        amount
-      ) ||
-      !Number.isFinite(
-        rate
-      )
-    ) {
-      return null;
+    if (kind !== "etched") {
+      const eur = asNumber(prices[eurKey]);
+
+      if (
+        eur !== null &&
+        fx?.eur
+      ) {
+        return eur * fx.eur;
+      }
     }
 
-
-    return (
-      amount *
-      rate
-    ).toFixed(2);
-  }
-
-
-  function regularGbpValue(
-    print,
-    rates
-  ) {
-    const eur =
-      Number.parseFloat(
-        print.prices?.eur
-      );
-
-
-    const usd =
-      Number.parseFloat(
-        print.prices?.usd
-      );
-
+    const usd = asNumber(prices[usdKey]);
 
     if (
-      Number.isFinite(
-        eur
-      ) &&
-      eur > 0 &&
-      rates?.eurToGbp
+      usd !== null &&
+      fx?.usd
     ) {
-      return (
-        eur *
-        rates.eurToGbp
-      );
+      return usd * fx.usd;
     }
-
-
-    if (
-      Number.isFinite(
-        usd
-      ) &&
-      usd > 0 &&
-      rates?.usdToGbp
-    ) {
-      return (
-        usd *
-        rates.usdToGbp
-      );
-    }
-
 
     return null;
   }
 
+  function displayPrice(card, kind, fx) {
+    const gbp = gbpPrice(card, kind, fx);
 
-  function foilGbpValue(
-    print,
-    rates
-  ) {
-    const eur =
-      Number.parseFloat(
-        print.prices?.eur_foil
-      );
+    if (gbp !== null) {
+      return `
+        <span class="price">
+          <strong>£${gbp.toFixed(2)}</strong>
+        </span>
+      `;
+    }
 
+    const eur = kind === "foil"
+      ? card.prices?.eur_foil
+      : card.prices?.eur;
 
-    const usd =
-      Number.parseFloat(
-        print.prices?.usd_foil
-      );
-
+    const usd = kind === "foil"
+      ? card.prices?.usd_foil
+      : kind === "etched"
+        ? card.prices?.usd_etched
+        : card.prices?.usd;
 
     if (
-      Number.isFinite(
-        eur
-      ) &&
-      eur > 0 &&
-      rates?.eurToGbp
+      kind !== "etched" &&
+      asNumber(eur) !== null
     ) {
-      return (
-        eur *
-        rates.eurToGbp
-      );
+      return `
+        <span class="price">
+          <strong>€${html(eur)}</strong>
+        </span>
+      `;
     }
 
-
-    if (
-      Number.isFinite(
-        usd
-      ) &&
-      usd > 0 &&
-      rates?.usdToGbp
-    ) {
-      return (
-        usd *
-        rates.usdToGbp
-      );
+    if (asNumber(usd) !== null) {
+      return `
+        <span class="price">
+          <strong>$${html(usd)}</strong>
+        </span>
+      `;
     }
 
-
-    return null;
+    return '<span class="muted">—</span>';
   }
 
+  function priceValue(card, kind, fx) {
+    const value = gbpPrice(card, kind, fx);
 
-  function sourceCurrencyCell(
-    eur,
-    usd
-  ) {
-    if (eur) {
-      return priceCell(
-        eur,
-        "€"
-      );
-    }
-
-
-    if (usd) {
-      return priceCell(
-        usd,
-        "$"
-      );
-    }
-
-
-    return priceCell(
-      null
-    );
-  }
-
-
-  function regularPriceCell(
-    print,
-    rates
-  ) {
-    if (rates) {
-      const value =
-        regularGbpValue(
-          print,
-          rates
-        );
-
-
-      return priceCell(
-        Number.isFinite(
-          value
-        )
-          ? value.toFixed(
-              2
-            )
-          : null,
-        "£"
-      );
-    }
-
-
-    return sourceCurrencyCell(
-      print.prices?.eur,
-      print.prices?.usd
-    );
-  }
-
-
-  function foilPriceCell(
-    print,
-    rates
-  ) {
-    if (rates) {
-      const value =
-        foilGbpValue(
-          print,
-          rates
-        );
-
-
-      return priceCell(
-        Number.isFinite(
-          value
-        )
-          ? value.toFixed(
-              2
-            )
-          : null,
-        "£"
-      );
-    }
-
-
-    return sourceCurrencyCell(
-      print.prices?.eur_foil,
-      print.prices?.usd_foil
-    );
-  }
-
-
-  function etchedPriceCell(
-    print,
-    rates
-  ) {
-    const usd =
-      print.prices
-        ?.usd_etched;
-
-
-    if (!usd) {
-      return priceCell(
-        null
-      );
-    }
-
-
-    if (rates) {
-      return priceCell(
-        convertToGbp(
-          usd,
-          rates.usdToGbp
-        ),
-        "£"
-      );
-    }
-
-
-    return priceCell(
-      usd,
-      "$"
-    );
+    return Number.isFinite(value) && value > 0
+      ? value
+      : null;
   }
 
 
   /* ========================================
-     PRINTING HELPERS
+     COLLECT ALL PRINTINGS
      ======================================== */
 
-  function finishText(
-    card
-  ) {
-    return (
-      Array.isArray(
-        card.finishes
-      ) &&
-      card.finishes.length
-    )
-      ? card.finishes
-          .map(
-            finish =>
-              titleCase(
-                finish
-              )
-          )
-          .join(", ")
-      : "—";
-  }
-
-
-  function printingImage(
-    print
-  ) {
-    return (
-      print.image_uris
-        ?.small ||
-      print.image_uris
-        ?.normal ||
-      print.card_faces?.[0]
-        ?.image_uris?.small ||
-      print.card_faces?.[0]
-        ?.image_uris?.normal ||
-      ""
+  function usablePrintings(cards) {
+    const images = cards.filter(card =>
+      imageFor(card, "small")
     );
-  }
 
-
-  function hasFinish(
-    print,
-    finish
-  ) {
-    return (
-      Array.isArray(
-        print.finishes
-      ) &&
-      print.finishes.includes(
-        finish
-      )
+    const standard = images.filter(card =>
+      ![
+        "art_series",
+        "token",
+        "emblem"
+      ].includes(card.layout) &&
+      !card.oversized
     );
-  }
 
-
-  function isStandardPrinting(
-    print
-  ) {
-    return (
-      print.layout !==
-        "art_series" &&
-      print.layout !==
-        "token" &&
-      print.layout !==
-        "emblem" &&
-      !print.oversized
+    const paper = standard.filter(card =>
+      (card.games || []).includes("paper")
     );
-  }
 
-
-  function isPaperPrinting(
-    print
-  ) {
-    return (
-      Array.isArray(
-        print.games
-      ) &&
-      print.games.includes(
-        "paper"
-      )
+    const english = paper.filter(card =>
+      card.lang === "en"
     );
+
+    return english.length
+      ? english
+      : paper.length
+        ? paper
+        : standard.length
+          ? standard
+          : images;
   }
 
+  async function allPrintings(card, token, signal) {
+    let next = safeUrl(card.prints_search_uri);
 
-  /*
-   * The site is primarily a physical-card
-   * printing explorer.
-   *
-   * Prefer ordinary paper printings whenever
-   * Scryfall supplies them. Fall back gracefully
-   * for unusual cards where no paper version is
-   * available.
-   */
-
-  function meaningfulPrintings(
-    printings
-  ) {
-    const withImages =
-      printings.filter(
-        print =>
-          printingImage(
-            print
-          )
-      );
-
-
-    const standard =
-      withImages.filter(
-        isStandardPrinting
-      );
-
-
-    const paper =
-      standard.filter(
-        isPaperPrinting
-      );
-
-
-    if (paper.length) {
-      return paper;
+    if (!next) {
+      return [card];
     }
 
+    const found = [];
+    const seen = new Set();
 
-    if (standard.length) {
-      return standard;
+    let pages = 0;
+
+    while (
+      next &&
+      pages < 40
+    ) {
+      const page = await json(next, signal);
+
+      if (token !== searchToken) {
+        return [];
+      }
+
+      for (const item of page.data || []) {
+        if (
+          item?.id &&
+          !seen.has(item.id)
+        ) {
+          seen.add(item.id);
+          found.push(item);
+        }
+      }
+
+      next = page.has_more
+        ? safeUrl(page.next_page)
+        : "";
+
+      pages++;
+
+      if (next) {
+        await wait(110);
+      }
     }
 
-
-    if (withImages.length) {
-      return withImages;
+    if (next) {
+      console.warn(
+        "ManaScout: Scryfall printings exceeded 40 pages."
+      );
     }
 
-
-    return [
-      ...printings
-    ];
+    return usablePrintings(
+      found.length ? found : [card]
+    );
   }
 
 
@@ -2113,800 +1457,240 @@
      MANASCOUT PICK SCORING
      ======================================== */
 
-  function preferredPrintingScore(
-    print
-  ) {
-    if (
-      !printingImage(
-        print
-      )
-    ) {
-      return -Infinity;
+  function pickScore(card, fx) {
+    if (!imageFor(card)) {
+      return -9999;
     }
 
+    const frames = card.frame_effects || [];
+    const promos = card.promo_types || [];
 
     let score = 0;
 
-
-    const frameEffects =
-      Array.isArray(
-        print.frame_effects
-      )
-        ? print.frame_effects
-        : [];
-
-
-    const promoTypes =
-      Array.isArray(
-        print.promo_types
-      )
-        ? print.promo_types
-        : [];
-
-
-    const finishes =
-      Array.isArray(
-        print.finishes
-      )
-        ? print.finishes
-        : [];
-
-
-    if (
-      isPaperPrinting(
-        print
-      )
-    ) {
+    if ((card.games || []).includes("paper")) {
       score += 30;
-
-    } else {
-      score -= 120;
     }
 
-
-    if (
-      print.lang ===
-      "en"
-    ) {
+    if (card.lang === "en") {
       score += 15;
-
-    } else {
-      score -= 25;
     }
 
-
-    if (
-      !isStandardPrinting(
-        print
-      )
-    ) {
-      score -= 150;
-    }
-
-
-    if (
-      frameEffects.includes(
-        "showcase"
-      )
-    ) {
+    if (frames.includes("showcase")) {
       score += 70;
     }
 
-
-    if (
-      print.border_color ===
-      "borderless"
-    ) {
+    if (card.border_color === "borderless") {
       score += 60;
     }
 
-
-    if (
-      print.full_art
-    ) {
-      score += 52;
+    if (card.full_art) {
+      score += 50;
     }
 
-
-    if (
-      frameEffects.includes(
-        "extendedart"
-      )
-    ) {
+    if (frames.includes("extendedart")) {
       score += 45;
     }
 
-
-    if (
-      frameEffects.includes(
-        "inverted"
-      )
+    for (
+      const [type, bonus] of Object.entries({
+        boosterfun: 35,
+        textured: 34,
+        galaxyfoil: 30,
+        surgefoil: 29,
+        rainbowfoil: 28,
+        halofoil: 27,
+        stepandcompleat: 26
+      })
     ) {
-      score += 32;
+      if (promos.includes(type)) {
+        score += bonus;
+      }
     }
 
-
-    if (
-      promoTypes.includes(
-        "boosterfun"
-      )
-    ) {
-      score += 35;
-    }
-
-
-    if (
-      promoTypes.includes(
-        "textured"
-      )
-    ) {
-      score += 34;
-    }
-
-
-    if (
-      promoTypes.includes(
-        "galaxyfoil"
-      )
-    ) {
-      score += 30;
-    }
-
-
-    if (
-      promoTypes.includes(
-        "surgefoil"
-      )
-    ) {
-      score += 28;
-    }
-
-
-    if (
-      promoTypes.includes(
-        "rainbowfoil"
-      )
-    ) {
-      score += 28;
-    }
-
-
-    if (
-      promoTypes.includes(
-        "stepandcompleat"
-      )
-    ) {
-      score += 26;
-    }
-
-
-    if (
-      promoTypes.includes(
-        "halofoil"
-      )
-    ) {
-      score += 26;
-    }
-
-
-    if (
-      finishes.includes(
-        "etched"
-      )
-    ) {
+    if (finishHas(card, "etched")) {
       score += 16;
     }
 
-
-    if (
-      finishes.includes(
-        "foil"
-      )
-    ) {
+    if (finishHas(card, "foil")) {
       score += 9;
     }
 
-
-    if (
-      print.promo
-    ) {
+    if (card.promo) {
       score += 5;
     }
 
-
-    /*
-     * Serialised cards are fascinating but
-     * shouldn't automatically become the normal
-     * ManaScout Pick simply because they are rare.
-     */
-
-    if (
-      promoTypes.includes(
-        "serialized"
-      )
-    ) {
+    if (promos.includes("serialized")) {
       score -= 12;
     }
 
+    const price = Math.max(
+      priceValue(card, "nonfoil", fx) || 0,
+      priceValue(card, "foil", fx) || 0
+    );
+
+    if (price) {
+      score += Math.min(
+        12,
+        Math.log10(price + 1) * 5
+      );
+    }
 
     return score;
   }
 
+  function choosePick(cards, fx) {
+    const key =
+      cards[0]?.oracle_id ||
+      cards[0]?.name ||
+      "";
 
-  function preferredPrintingPriceBonus(
-    print,
-    rates
-  ) {
-    if (!rates) {
-      return 0;
-    }
+    const previous = pickCache.get(key);
 
-
-    const regularPrice =
-      regularGbpValue(
-        print,
-        rates
+    if (previous) {
+      const chosen = cards.find(
+        c => c.id === previous
       );
 
-
-    const foilPrice =
-      foilGbpValue(
-        print,
-        rates
-      );
-
-
-    const available =
-      [
-        regularPrice,
-        foilPrice
-      ]
-        .filter(
-          value =>
-            Number.isFinite(
-              value
-            ) &&
-            value > 0
-        );
-
-
-    if (
-      !available.length
-    ) {
-      return 0;
-    }
-
-
-    const price =
-      Math.max(
-        ...available
-      );
-
-
-    /*
-     * Mild collector signal only.
-     *
-     * Treatment/art should dominate the score,
-     * not the market price.
-     */
-
-    return Math.min(
-      12,
-      Math.log10(
-        price + 1
-      ) * 5
-    );
-  }
-
-
-  function manaScoutPrintingScore(
-    print,
-    rates
-  ) {
-    return (
-      preferredPrintingScore(
-        print
-      ) +
-      preferredPrintingPriceBonus(
-        print,
-        rates
-      )
-    );
-  }
-
-
-  function preferredPrintingCandidates(
-    printings
-  ) {
-    const imageBearing =
-      printings.filter(
-        print =>
-          printingImage(
-            print
-          )
-      );
-
-
-    const standard =
-      imageBearing.filter(
-        isStandardPrinting
-      );
-
-
-    const paper =
-      standard.filter(
-        isPaperPrinting
-      );
-
-
-    const englishPaper =
-      paper.filter(
-        print =>
-          print.lang ===
-          "en"
-      );
-
-
-    if (
-      englishPaper.length
-    ) {
-      return englishPaper;
-    }
-
-
-    if (
-      paper.length
-    ) {
-      return paper;
-    }
-
-
-    if (
-      standard.length
-    ) {
-      return standard;
-    }
-
-
-    return imageBearing;
-  }
-
-
-  function rankedPreferredPrintings(
-    printings,
-    rates
-  ) {
-    const usable =
-      preferredPrintingCandidates(
-        printings
-      );
-
-
-    return [
-      ...usable
-    ].sort(
-      (a, b) => {
-        const scoreDifference =
-          manaScoutPrintingScore(
-            b,
-            rates
-          ) -
-          manaScoutPrintingScore(
-            a,
-            rates
-          );
-
-
-        if (
-          scoreDifference !== 0
-        ) {
-          return scoreDifference;
-        }
-
-
-        const dateDifference =
-          String(
-            b.released_at ||
-            ""
-          ).localeCompare(
-            String(
-              a.released_at ||
-              ""
-            )
-          );
-
-
-        if (
-          dateDifference !== 0
-        ) {
-          return dateDifference;
-        }
-
-
-        return String(
-          a.collector_number ||
-          ""
-        ).localeCompare(
-          String(
-            b.collector_number ||
-            ""
-          )
-        );
-      }
-    );
-  }
-
-
-  function manaScoutPickKey(
-    printings
-  ) {
-    const first =
-      printings?.[0];
-
-
-    return (
-      first?.oracle_id ||
-      first?.name
-        ?.toLowerCase() ||
-      ""
-    );
-  }
-
-
-  function preferredPrinting(
-    printings,
-    rates
-  ) {
-    const ranked =
-      rankedPreferredPrintings(
-        printings,
-        rates
-      );
-
-
-    if (
-      !ranked.length
-    ) {
-      return null;
-    }
-
-
-    const cacheKey =
-      manaScoutPickKey(
-        ranked
-      );
-
-
-    if (
-      cacheKey &&
-      manaScoutPickCache.has(
-        cacheKey
-      )
-    ) {
-      const cachedId =
-        manaScoutPickCache.get(
-          cacheKey
-        );
-
-
-      const cached =
-        ranked.find(
-          print =>
-            print.id ===
-            cachedId
-        );
-
-
-      if (cached) {
-        return cached;
+      if (chosen) {
+        return chosen;
       }
     }
 
+    const chosen = [...cards].sort((a, b) =>
+      pickScore(b, fx) -
+      pickScore(a, fx) ||
 
-    /*
-     * Stable and deterministic.
-     *
-     * Previous behaviour randomly picked from
-     * the top three, which meant the same search
-     * could promote a different printing later.
-     */
+      String(b.released_at || "")
+        .localeCompare(
+          String(a.released_at || "")
+        ) ||
 
-    const selected =
-      ranked[0];
+      String(a.collector_number || "")
+        .localeCompare(
+          String(b.collector_number || "")
+        )
+    )[0];
 
-
-    if (
-      cacheKey &&
-      selected?.id
-    ) {
-      manaScoutPickCache.set(
-        cacheKey,
-        selected.id
-      );
+    if (chosen?.id) {
+      pickCache.set(key, chosen.id);
     }
 
-
-    return selected;
+    return chosen;
   }
 
 
   /* ========================================
-     SNAPSHOT HELPERS
+     PRINTING SNAPSHOTS
      ======================================== */
 
-  function oldestYear(
-    printings
+  function priceExtreme(
+    cards,
+    kind,
+    fx,
+    highest = false
   ) {
-    const years =
-      printings
-        .map(
-          print =>
-            String(
-              print.released_at ||
-              ""
-            ).slice(
-              0,
-              4
-            )
-        )
-        .filter(
-          year =>
-            /^\d{4}$/.test(
-              year
-            )
-        );
-
-
-    return years.length
-      ? [
-          ...years
-        ].sort()[0]
-      : null;
-  }
-
-
-  function newestYear(
-    printings
-  ) {
-    const years =
-      printings
-        .map(
-          print =>
-            String(
-              print.released_at ||
-              ""
-            ).slice(
-              0,
-              4
-            )
-        )
-        .filter(
-          year =>
-            /^\d{4}$/.test(
-              year
-            )
-        );
-
-
-    return years.length
-      ? [
-          ...years
-        ]
-          .sort()
-          .reverse()[0]
-      : null;
-  }
-
-
-  function extremePrinting(
-    printings,
-    rates,
-    priceGetter,
-    direction =
-      "cheapest"
-  ) {
-    let winner =
-      null;
-
-
-    let winnerPrice =
-      direction ===
-      "most-expensive"
-        ? -Infinity
-        : Infinity;
-
-
-    printings.forEach(
-      print => {
-        const price =
-          priceGetter(
-            print,
-            rates
-          );
-
-
-        if (
-          !Number.isFinite(
-            price
-          ) ||
-          price <= 0
-        ) {
-          return;
-        }
-
-
-        const better =
-          direction ===
-          "most-expensive"
-            ? price >
-              winnerPrice
-            : price <
-              winnerPrice;
-
-
-        if (better) {
-          winner =
-            print;
-
-          winnerPrice =
-            price;
-        }
-      }
-    );
-
-
-    return winner
-      ? {
-          print:
-            winner,
-
-          price:
-            winnerPrice
-        }
-      : null;
-  }
-
-
-  function getSnapshotData(
-    printings,
-    rates
-  ) {
-    const foilPrintings =
-      printings.filter(
-        print =>
-          hasFinish(
-            print,
-            "foil"
-          )
+    const list = cards
+      .map(card => ({
+        card,
+        price: priceValue(card, kind, fx)
+      }))
+      .filter(item => item.price !== null)
+      .sort((a, b) =>
+        highest
+          ? b.price - a.price
+          : a.price - b.price
       );
 
+    return list[0] || null;
+  }
 
-    const etchedPrintings =
-      printings.filter(
-        print =>
-          hasFinish(
-            print,
-            "etched"
-          )
-      );
-
+  function snapshotData(cards, fx) {
+    const years = cards
+      .map(card =>
+        String(
+          card.released_at || ""
+        ).slice(0, 4)
+      )
+      .filter(year =>
+        /^\d{4}$/.test(year)
+      )
+      .sort();
 
     return {
-      oldest:
-        oldestYear(
-          printings
-        ),
+      oldest: years[0] || "",
+      newest: years[years.length - 1] || "",
 
-      newest:
-        newestYear(
-          printings
-        ),
+      foil: cards.filter(card =>
+        finishHas(card, "foil")
+      ),
 
-      foilPrintings,
+      etched: cards.filter(card =>
+        finishHas(card, "etched")
+      ),
 
-      etchedPrintings,
+      cheapest: priceExtreme(
+        cards,
+        "nonfoil",
+        fx
+      ),
 
-      cheapest:
-        extremePrinting(
-          printings,
-          rates,
-          regularGbpValue,
-          "cheapest"
-        ),
+      "most-expensive": priceExtreme(
+        cards,
+        "nonfoil",
+        fx,
+        true
+      ),
 
-      mostExpensive:
-        extremePrinting(
-          printings,
-          rates,
-          regularGbpValue,
-          "most-expensive"
-        ),
+      "cheapest-foil": priceExtreme(
+        cards,
+        "foil",
+        fx
+      ),
 
-      cheapestFoil:
-        extremePrinting(
-          printings,
-          rates,
-          foilGbpValue,
-          "cheapest"
-        ),
-
-      mostExpensiveFoil:
-        extremePrinting(
-          printings,
-          rates,
-          foilGbpValue,
-          "most-expensive"
-        )
+      "most-expensive-foil": priceExtreme(
+        cards,
+        "foil",
+        fx,
+        true
+      )
     };
   }
 
-
-  function snapshotButton({
+  function snapshotButton(
     action,
     value,
     label,
     disabled = false
-  }) {
+  ) {
     return `
       <button
         class="snapshot-stat"
         type="button"
-        data-snapshot-action="${escapeHtml(
-          action
-        )}"
-        ${
-          disabled
-            ? "disabled"
-            : ""
-        }
-        aria-pressed="false"
+        data-snapshot-action="${html(action)}"
+        aria-pressed="${action === "all" ? "true" : "false"}"
+        ${disabled ? "disabled" : ""}
       >
-
-        <strong>
-          ${escapeHtml(
-            value
-          )}
-        </strong>
-
-        <span>
-          ${escapeHtml(
-            label
-          )}
-        </span>
-
+        <strong>${html(value)}</strong>
+        <span>${html(label)}</span>
       </button>
     `;
   }
 
-
-  function buildSnapshot(
-    printings,
-    rates
-  ) {
-    if (
-      !Array.isArray(
-        printings
-      ) ||
-      !printings.length
-    ) {
-      return "";
-    }
-
-
-    const data =
-      getSnapshotData(
-        printings,
-        rates
-      );
-
+  function snapshotHtml(cards, fx, data) {
+    const priceLabel = entry =>
+      entry
+        ? `£${entry.price.toFixed(2)}`
+        : "—";
 
     return `
-      <section class="snapshot">
+      <section
+        class="snapshot"
+        aria-label="ManaScout printing snapshot"
+      >
 
         <div class="snapshot-heading">
 
           <div>
-
             <p class="eyebrow">
               MANASCOUT SNAPSHOT
             </p>
@@ -2914,9 +1698,7 @@
             <h3>
               At a glance
             </h3>
-
           </div>
-
 
           <span
             class="snapshot-mark"
@@ -2927,167 +1709,76 @@
 
         </div>
 
-
         <div class="snapshot-grid">
 
-          ${snapshotButton({
-            action:
-              "all",
+          ${snapshotButton(
+            "all",
+            cards.length,
+            "Printings"
+          )}
 
-            value:
-              printings.length,
+          ${snapshotButton(
+            "cheapest",
+            priceLabel(data.cheapest),
+            "Cheapest",
+            !data.cheapest
+          )}
 
-            label:
-              "Printings"
-          })}
+          ${snapshotButton(
+            "most-expensive",
+            priceLabel(data["most-expensive"]),
+            "Most expensive",
+            !data["most-expensive"]
+          )}
 
+          ${snapshotButton(
+            "cheapest-foil",
+            priceLabel(data["cheapest-foil"]),
+            "Cheapest foil",
+            !data["cheapest-foil"]
+          )}
 
-          ${snapshotButton({
-            action:
-              "cheapest",
+          ${snapshotButton(
+            "most-expensive-foil",
+            priceLabel(data["most-expensive-foil"]),
+            "Most expensive foil",
+            !data["most-expensive-foil"]
+          )}
 
-            value:
-              data.cheapest
-                ? `£${data.cheapest.price.toFixed(
-                    2
-                  )}`
-                : "—",
+          ${snapshotButton(
+            "oldest",
+            data.oldest || "—",
+            "Oldest",
+            !data.oldest
+          )}
 
-            label:
-              "Cheapest",
+          ${snapshotButton(
+            "newest",
+            data.newest || "—",
+            "Newest",
+            !data.newest
+          )}
 
-            disabled:
-              !data.cheapest
-          })}
+          ${snapshotButton(
+            "foil",
+            data.foil.length,
+            "Foil versions",
+            !data.foil.length
+          )}
 
-
-          ${snapshotButton({
-            action:
-              "most-expensive",
-
-            value:
-              data.mostExpensive
-                ? `£${data.mostExpensive.price.toFixed(
-                    2
-                  )}`
-                : "—",
-
-            label:
-              "Most expensive",
-
-            disabled:
-              !data.mostExpensive
-          })}
-
-
-          ${snapshotButton({
-            action:
-              "cheapest-foil",
-
-            value:
-              data.cheapestFoil
-                ? `£${data.cheapestFoil.price.toFixed(
-                    2
-                  )}`
-                : "—",
-
-            label:
-              "Cheapest foil",
-
-            disabled:
-              !data.cheapestFoil
-          })}
-
-
-          ${snapshotButton({
-            action:
-              "most-expensive-foil",
-
-            value:
-              data.mostExpensiveFoil
-                ? `£${data.mostExpensiveFoil.price.toFixed(
-                    2
-                  )}`
-                : "—",
-
-            label:
-              "Most expensive foil",
-
-            disabled:
-              !data.mostExpensiveFoil
-          })}
-
-
-          ${snapshotButton({
-            action:
-              "oldest",
-
-            value:
-              data.oldest ||
-              "—",
-
-            label:
-              "Oldest",
-
-            disabled:
-              !data.oldest
-          })}
-
-
-          ${snapshotButton({
-            action:
-              "newest",
-
-            value:
-              data.newest ||
-              "—",
-
-            label:
-              "Newest",
-
-            disabled:
-              !data.newest
-          })}
-
-
-          ${snapshotButton({
-            action:
-              "foil",
-
-            value:
-              data.foilPrintings
-                .length,
-
-            label:
-              "Foil versions",
-
-            disabled:
-              !data.foilPrintings
-                .length
-          })}
-
-
-          ${snapshotButton({
-            action:
-              "etched",
-
-            value:
-              data.etchedPrintings
-                .length,
-
-            label:
-              "Etched versions",
-
-            disabled:
-              !data.etchedPrintings
-                .length
-          })}
+          ${snapshotButton(
+            "etched",
+            data.etched.length,
+            "Etched versions",
+            !data.etched.length
+          )}
 
         </div>
 
-
         <p class="snapshot-note">
-          Tap a Snapshot tile to explore matching printings. GBP figures are approximate conversions from available Scryfall price data.
+          Select a tile to browse matching printings.
+          GBP estimates are converted from available
+          Scryfall price data; these are not live shop quotes.
         </p>
 
       </section>
@@ -3096,97 +1787,231 @@
 
 
   /* ========================================
-     NETWORK
+     PRINTING ROWS
      ======================================== */
 
-  async function fetchJson(
-    url,
-    signal
-  ) {
-    const response =
-      await fetch(
-        url,
-        {
-          signal,
+  function printingRow(card, selected, fx) {
+    const thumb = imageFor(card, "small");
+    const isSelected = selected?.id === card.id;
 
-          headers: {
-            Accept:
-              "application/json"
-          }
-        }
-      );
+    const art =
+      card.artist || "Artist not listed";
 
+    const finish = treatmentText(card);
+    const selector = html(card.id);
 
-    if (!response.ok) {
-      const error =
-        new Error(
-          `HTTP ${response.status}`
-        );
+    return `
+      <tr
+        class="${isSelected ? "is-selected-printing" : ""}"
+        data-row-id="${selector}"
+      >
 
+        <td class="printing-image-cell">
 
-      error.status =
-        response.status;
+          <div class="ms-thumbnail">
 
+            <button
+              type="button"
+              class="printing-select-button printing-image-button"
+              data-print-id="${selector}"
+              aria-label="Select ${html(card.set_name)} ${html(card.collector_number)}"
+            >
 
-      throw error;
-    }
+              <img
+                class="printing-card-image"
+                src="${html(thumb)}"
+                loading="lazy"
+                decoding="async"
+                alt="${html(card.name)} — ${html(card.set_name)} #${html(card.collector_number)}"
+              >
 
+            </button>
 
-    return response.json();
+            ${foilOn(card) ? `
+              <span
+                class="ms-foil-glint"
+                aria-hidden="true"
+              ></span>
+            ` : ""}
+
+            ${foilButton(card, true)}
+
+          </div>
+
+        </td>
+
+        <td>
+
+          <button
+            type="button"
+            class="printing-select-button printing-name-button"
+            data-print-id="${selector}"
+          >
+            <span class="set-name">
+              ${html(card.set_name || "—")}
+            </span>
+          </button>
+
+          <br>
+
+          <span class="muted">
+            ${html(String(card.set || "").toUpperCase())}
+          </span>
+
+          <span class="ms-printing-note">
+            ${html(art)}
+          </span>
+
+          ${isSelected ? `
+            <span class="ms-printing-note">
+              ◇ SELECTED
+            </span>
+          ` : ""}
+
+        </td>
+
+        <td>
+          ${html(card.released_at || "—")}
+        </td>
+
+        <td>
+          ${html(card.collector_number || "—")}
+        </td>
+
+        <td>
+          ${html(title(card.rarity) || "—")}
+        </td>
+
+        <td>
+
+          <span class="ms-table-information">
+            ${html(finishText(card))}
+          </span>
+
+          <span class="ms-printing-note ms-treatments">
+            ${html(finish)}
+          </span>
+
+        </td>
+
+        <td>
+          ${displayPrice(card, "nonfoil", fx)}
+        </td>
+
+        <td>
+          ${displayPrice(card, "foil", fx)}
+        </td>
+
+        <td>
+          ${displayPrice(card, "etched", fx)}
+        </td>
+
+      </tr>
+    `;
   }
 
 
-  async function namedCard(
-    name,
-    signal
-  ) {
-    const exact =
-      `${API}/cards/named?exact=${encodeURIComponent(
-        name
-      )}`;
+  /* ========================================
+     PRINTING FILTERS
+     ======================================== */
 
-
-    try {
-      return await fetchJson(
-        exact,
-        signal
-      );
-
-    } catch (error) {
-      if (
-        error.name ===
-          "AbortError" ||
-        error.status !==
-          404
-      ) {
-        throw error;
-      }
-
-
-      const fuzzy =
-        `${API}/cards/named?fuzzy=${encodeURIComponent(
-          name
-        )}`;
-
-
-      return fetchJson(
-        fuzzy,
-        signal
-      );
-    }
-  }
-
-
-  async function cardById(
-    printingId,
-    signal
-  ) {
-    return fetchJson(
-      `${API}/cards/${encodeURIComponent(
-        printingId
-      )}`,
-      signal
+  function printingControls(cards) {
+    const uniqueSets = [
+      ...new Map(
+        cards.map(card => [
+          card.set,
+          card.set_name
+        ])
+      ).entries()
+    ].sort((a, b) =>
+      String(a[1]).localeCompare(String(b[1]))
     );
+
+    return `
+      <div class="ms-controls printing-controls">
+
+        <label>
+          Search printings
+
+          <input
+            id="ms-print-search"
+            type="search"
+            placeholder="Set, artist, number…"
+            autocomplete="off"
+          >
+        </label>
+
+        <label>
+          Set
+
+          <select id="ms-print-set">
+            <option value="all">
+              All sets
+            </option>
+
+            ${uniqueSets.map(([code, name]) => `
+              <option value="${html(code)}">
+                ${html(name)}
+              </option>
+            `).join("")}
+          </select>
+
+        </label>
+
+        <label>
+          Finish
+
+          <select id="printing-finish-filter">
+            <option value="all">All finishes</option>
+            <option value="nonfoil">Nonfoil</option>
+            <option value="foil">Foil</option>
+            <option value="etched">Etched</option>
+          </select>
+
+        </label>
+
+        <label>
+          Treatment
+
+          <select id="ms-print-treatment">
+            <option value="all">All treatments</option>
+            <option value="borderless">Borderless</option>
+            <option value="showcase">Showcase</option>
+            <option value="extendedart">Extended art</option>
+            <option value="fullart">Full art</option>
+            <option value="surgefoil">Surge foil</option>
+            <option value="galaxyfoil">Galaxy foil</option>
+            <option value="halofoil">Halo foil</option>
+            <option value="textured">Textured foil</option>
+            <option value="serialized">Serialized</option>
+            <option value="promo">Promo</option>
+          </select>
+
+        </label>
+
+        <label>
+          Sort
+
+          <select id="printing-sort">
+            <option value="newest">Newest</option>
+            <option value="oldest">Oldest</option>
+            <option value="price-asc">£ Low → High</option>
+            <option value="price-desc">£ High → Low</option>
+            <option value="name">Set A–Z</option>
+            <option value="collector">Collector #</option>
+          </select>
+
+        </label>
+
+        <button
+          type="button"
+          id="ms-reset-filters"
+        >
+          Reset
+        </button>
+
+      </div>
+    `;
   }
 
 
@@ -3194,1423 +2019,864 @@
      PRINTING TABLE
      ======================================== */
 
-  async function renderPrintings(
-    initialCard,
-    token,
-    signal,
-    options = {}
-  ) {
-    if (
-      !els.status ||
-      !els.printings
-    ) {
-      return;
-    }
-
-
-    const uri =
-      safeUrl(
-        initialCard
-          .prints_search_uri
-      );
-
-
-    if (!uri) {
-      els.status.textContent =
-        "Printing information is not available for this card.";
-
-      return;
-    }
-
-
-    els.status.textContent =
-      "Loading printings…";
-
-
-    const fetchedPrintings = [];
-
-
-    let next =
-      uri;
-
-    let pages =
-      0;
-
-
-    try {
-      while (
-        next &&
-        pages < 40
-      ) {
-        const page =
-          await fetchJson(
-            next,
-            signal
-          );
-
-
-        if (
-          token !==
-          searchToken
-        ) {
-          return;
-        }
-
-
-        if (
-          Array.isArray(
-            page.data
-          )
-        ) {
-          fetchedPrintings.push(
-            ...page.data
-          );
-        }
-
-
-        next =
-          safeUrl(
-            page.next_page ||
-            ""
-          );
-
-
-        pages +=
-          1;
-
-
-        /*
-         * Scryfall asks clients not to hammer
-         * requests. Printing pagination rarely
-         * needs many pages, but pause briefly.
-         */
-
-        if (next) {
-          await sleep(
-            80
-          );
-        }
-      }
-
-    } catch (error) {
-      if (
-        error.name ===
-        "AbortError"
-      ) {
-        return;
-      }
-
-
-      console.warn(
-        "ManaScout printing fetch incomplete:",
-        error
-      );
-
-
-      if (
-        !fetchedPrintings.length
-      ) {
-        els.status.textContent =
-          "Printing data could not be loaded.";
-
-        return;
-      }
-    }
-
-
-    if (
-      token !==
-      searchToken
-    ) {
-      return;
-    }
-
-
-    const all =
-      meaningfulPrintings(
-        fetchedPrintings
-      );
-
-
-    all.sort(
-      (a, b) =>
-        String(
-          b.released_at ||
-          ""
-        ).localeCompare(
-          String(
-            a.released_at ||
-            ""
-          )
-        )
-    );
-
-
-    let rates =
-      null;
-
-
-    try {
-      rates =
-        await getFxRates();
-
-    } catch (error) {
-      console.warn(
-        "GBP conversion unavailable:",
-        error
-      );
-    }
-
-
-    if (
-      token !==
-      searchToken
-    ) {
-      return;
-    }
-
-
-    /*
-     * selectedCard belongs to THIS rendering
-     * session.
-     *
-     * Updating this local variable means the
-     * highlighted table row correctly follows
-     * the printing the user selects.
-     */
-
-    let selectedCard =
-      initialCard;
-
-
-    /*
-     * Automatic ManaScout Pick only happens when
-     * an explicit printing has NOT been requested.
-     */
-
-    if (
-      options.choosePreferred
-    ) {
-      const preferred =
-        preferredPrinting(
-          all,
-          rates
-        );
-
-
-      if (preferred) {
-        selectedCard =
-          preferred;
-
-
-        renderCard(
-          selectedCard,
-          {
-            manaScoutPick:
-              true
-          }
-        );
-
-
-        replacePreferredPrintingInUrl(
-          selectedCard
-        );
-      }
-    }
-
-
-    const snapshotData =
-      getSnapshotData(
-        all,
-        rates
-      );
-
-
-    let snapshotMode =
-      "all";
-
-
-    function normalStatusText() {
-      const count =
-        all.length;
-
-
-      if (rates) {
-        return `${count} printing${
-          count === 1
-            ? ""
-            : "s"
-        } found · GBP estimates`;
-      }
-
-
-      return `${count} printing${
-        count === 1
-          ? ""
-          : "s"
-      } found · source currencies`;
-    }
-
-
-    function buildRows(
-      printings
-    ) {
-      return printings
-        .map(
-          print => `
-            <tr
-              ${
-                print.id ===
-                selectedCard.id
-                  ? 'class="is-selected-printing"'
-                  : ""
-              }
-            >
-
-              <td class="printing-image-cell">
-
-                ${
-                  printingImage(
-                    print
-                  )
-                    ? `
-                      <button
-                        class="printing-select-button printing-image-button"
-                        type="button"
-                        data-print-id="${escapeHtml(
-                          print.id ||
-                          ""
-                        )}"
-                        aria-label="Select ${escapeHtml(
-                          print.set_name ||
-                          print.name ||
-                          "this"
-                        )} printing"
-                        title="Select this printing"
-                      >
-
-                        <img
-                          class="printing-card-image"
-                          src="${escapeHtml(
-                            printingImage(
-                              print
-                            )
-                          )}"
-                          alt="${escapeHtml(
-                            print.name ||
-                            "Magic card"
-                          )} — ${escapeHtml(
-                            print.set_name ||
-                            "printing"
-                          )}"
-                          loading="lazy"
-                          decoding="async"
-                        >
-
-                      </button>
-                    `
-                    : `
-                      <span class="muted">
-                        —
-                      </span>
-                    `
-                }
-
-              </td>
-
-
-              <td>
-
-                <button
-                  class="printing-select-button printing-name-button"
-                  type="button"
-                  data-print-id="${escapeHtml(
-                    print.id ||
-                    ""
-                  )}"
-                >
-
-                  <span class="set-name">
-                    ${escapeHtml(
-                      print.set_name ||
-                      "—"
-                    )}
-                  </span>
-
-                </button>
-
-                <br>
-
-                <span class="muted">
-                  ${escapeHtml(
-                    String(
-                      print.set ||
-                      ""
-                    ).toUpperCase()
-                  )}
-                </span>
-
-              </td>
-
-
-              <td>
-                ${escapeHtml(
-                  print.released_at ||
-                  "—"
-                )}
-              </td>
-
-
-              <td>
-                ${escapeHtml(
-                  print.collector_number ||
-                  "—"
-                )}
-              </td>
-
-
-              <td>
-                ${escapeHtml(
-                  titleCase(
-                    print.rarity ||
-                    "—"
-                  )
-                )}
-              </td>
-
-
-              <td>
-                ${escapeHtml(
-                  finishText(
-                    print
-                  )
-                )}
-              </td>
-
-
-              <td>
-                ${regularPriceCell(
-                  print,
-                  rates
-                )}
-              </td>
-
-
-              <td>
-                ${foilPriceCell(
-                  print,
-                  rates
-                )}
-              </td>
-
-
-              <td>
-                ${etchedPriceCell(
-                  print,
-                  rates
-                )}
-              </td>
-
-            </tr>
-          `
-        )
-        .join("");
-    }
-
-
-    const showFilters =
-      all.length >=
-      8;
-
-
-    const filterControls =
-      showFilters
-        ? `
-          <div class="printing-controls">
-
-            <label>
-              Finish
-
-              <select
-                id="printing-finish-filter"
-                aria-label="Filter printings by finish"
-              >
-                <option value="all">
-                  All
-                </option>
-
-                <option value="nonfoil">
-                  Nonfoil
-                </option>
-
-                <option value="foil">
-                  Foil
-                </option>
-
-                <option value="etched">
-                  Etched
-                </option>
-              </select>
-            </label>
-
-
-            <label>
-              Sort
-
-              <select
-                id="printing-sort"
-                aria-label="Sort printings"
-              >
-                <option value="newest">
-                  Newest
-                </option>
-
-                <option value="oldest">
-                  Oldest
-                </option>
-
-                <option value="price-asc">
-                  £ Low → High
-                </option>
-
-                <option value="price-desc">
-                  £ High → Low
-                </option>
-              </select>
-            </label>
-
-          </div>
-        `
-        : "";
-
-
-    els.printings.innerHTML = `
-      ${buildSnapshot(
-        all,
-        rates
-      )}
-
-      ${filterControls}
-
-
+  function tableMarkup() {
+    return `
       <div class="table-wrap">
 
         <table class="printings-table">
 
           <thead>
-
             <tr>
-              <th scope="col">
-                Card
-              </th>
-
-              <th scope="col">
-                Set
-              </th>
-
-              <th scope="col">
-                Released
-              </th>
-
-              <th scope="col">
-                Collector #
-              </th>
-
-              <th scope="col">
-                Rarity
-              </th>
-
-              <th scope="col">
-                Finishes
-              </th>
-
-              <th scope="col">
-                Price
-              </th>
-
-              <th scope="col">
-                Foil
-              </th>
-
-              <th scope="col">
-                Etched
-              </th>
+              <th scope="col">Card</th>
+              <th scope="col">Set / Artist</th>
+              <th scope="col">Released</th>
+              <th scope="col">Collector #</th>
+              <th scope="col">Rarity</th>
+              <th scope="col">Finishes / Treatments</th>
+              <th scope="col">Price</th>
+              <th scope="col">Foil</th>
+              <th scope="col">Etched</th>
             </tr>
-
           </thead>
 
-
-          <tbody>
-            ${
-              buildRows(
-                all
-              ) ||
-              `
-                <tr>
-                  <td colspan="9">
-                    No printings returned.
-                  </td>
-                </tr>
-              `
-            }
-          </tbody>
+          <tbody id="ms-print-body"></tbody>
 
         </table>
 
       </div>
+
+      <div
+        id="ms-pagination"
+        class="ms-print-pagination"
+      ></div>
     `;
+  }
 
 
-    els.status.textContent =
-      normalStatusText();
+  /* ========================================
+     PRINTING ARCHIVE CONTROLLER
+     ======================================== */
+
+  function renderPrintingArchive(cards, fx, token) {
+    if (
+      !els.printings ||
+      !els.status ||
+      token !== searchToken
+    ) {
+      return;
+    }
+
+    const data = snapshotData(cards, fx);
+
+    const st = {
+      cards,
+      fx,
+      data,
+      snapshot: "all",
+      selected: currentCard,
+      pageSize: 50,
+      limit: 50,
+      token
+    };
+
+    printingState = st;
+
+    els.printings.innerHTML =
+      snapshotHtml(cards, fx, data) +
+      printingControls(cards) +
+      tableMarkup();
+
+    const controls = {
+      find: $("ms-print-search"),
+      set: $("ms-print-set"),
+      finish: $("printing-finish-filter"),
+      treatment: $("ms-print-treatment"),
+      sort: $("printing-sort"),
+      body: $("ms-print-body"),
+      pagination: $("ms-pagination")
+    };
 
 
-    const tbody =
-      els.printings.querySelector(
-        "tbody"
-      );
+    /* Snapshot matching */
 
+    function snapshotCards() {
+      const key = st.snapshot;
 
-    const finishFilter =
-      els.printings.querySelector(
-        "#printing-finish-filter"
-      );
-
-
-    const sortSelect =
-      els.printings.querySelector(
-        "#printing-sort"
-      );
-
-
-    const tableWrap =
-      els.printings.querySelector(
-        ".table-wrap"
-      );
-
-
-    function snapshotResults() {
-      if (
-        snapshotMode ===
-        "cheapest"
-      ) {
-        return snapshotData
-          .cheapest
-          ? [
-              snapshotData
-                .cheapest
-                .print
-            ]
-          : [];
+      if (key === "all") {
+        return cards;
       }
 
-
-      if (
-        snapshotMode ===
-        "most-expensive"
-      ) {
-        return snapshotData
-          .mostExpensive
-          ? [
-              snapshotData
-                .mostExpensive
-                .print
-            ]
-          : [];
-      }
-
-
-      if (
-        snapshotMode ===
-        "cheapest-foil"
-      ) {
-        return snapshotData
-          .cheapestFoil
-          ? [
-              snapshotData
-                .cheapestFoil
-                .print
-            ]
-          : [];
-      }
-
-
-      if (
-        snapshotMode ===
+      if ([
+        "cheapest",
+        "most-expensive",
+        "cheapest-foil",
         "most-expensive-foil"
-      ) {
-        return snapshotData
-          .mostExpensiveFoil
-          ? [
-              snapshotData
-                .mostExpensiveFoil
-                .print
-            ]
+      ].includes(key)) {
+        return data[key]?.card
+          ? [data[key].card]
           : [];
       }
 
+      if (
+        key === "foil" ||
+        key === "etched"
+      ) {
+        return data[key];
+      }
 
       if (
-        snapshotMode ===
-        "oldest"
+        key === "oldest" ||
+        key === "newest"
       ) {
-        return all.filter(
-          print =>
-            String(
-              print.released_at ||
-              ""
-            ).startsWith(
-              snapshotData
-                .oldest ||
-              "----"
-            )
+        return cards.filter(card =>
+          String(
+            card.released_at || ""
+          ).startsWith(data[key])
         );
       }
 
-
-      if (
-        snapshotMode ===
-        "newest"
-      ) {
-        return all.filter(
-          print =>
-            String(
-              print.released_at ||
-              ""
-            ).startsWith(
-              snapshotData
-                .newest ||
-              "----"
-            )
-        );
-      }
-
-
-      if (
-        snapshotMode ===
-        "foil"
-      ) {
-        return all.filter(
-          print =>
-            hasFinish(
-              print,
-              "foil"
-            )
-        );
-      }
-
-
-      if (
-        snapshotMode ===
-        "etched"
-      ) {
-        return all.filter(
-          print =>
-            hasFinish(
-              print,
-              "etched"
-            )
-        );
-      }
-
-
-      return [
-        ...all
-      ];
+      return cards;
     }
 
 
-    function updateActiveSnapshotButton() {
-      const buttons =
-        els.printings
-          .querySelectorAll(
-            "[data-snapshot-action]"
+    /* Filters and sorting */
+
+    function visibleCards() {
+      let list = snapshotCards();
+
+      const q = (
+        controls.find?.value || ""
+      ).trim().toLowerCase();
+
+      const set = controls.set?.value || "all";
+      const finish = controls.finish?.value || "all";
+      const treatment =
+        controls.treatment?.value || "all";
+      const sort = controls.sort?.value || "newest";
+
+      if (q) {
+        list = list.filter(card =>
+          [
+            card.name,
+            card.set_name,
+            card.artist,
+            card.collector_number,
+            card.set,
+            treatmentText(card)
+          ]
+            .join(" ")
+            .toLowerCase()
+            .includes(q)
+        );
+      }
+
+      if (set !== "all") {
+        list = list.filter(card =>
+          card.set === set
+        );
+      }
+
+      if (finish !== "all") {
+        list = list.filter(card =>
+          finishHas(card, finish)
+        );
+      }
+
+      if (treatment !== "all") {
+        list = list.filter(card =>
+          treatment === "promo"
+            ? card.promo
+            : treatment === "borderless"
+              ? card.border_color === "borderless"
+              : treatment === "fullart"
+                ? card.full_art
+                : (
+                  (card.frame_effects || [])
+                    .includes(treatment) ||
+                  (card.promo_types || [])
+                    .includes(treatment)
+                )
+        );
+      }
+
+      const result = [...list];
+
+      result.sort((a, b) => {
+        if (sort === "oldest") {
+          return String(a.released_at || "")
+            .localeCompare(
+              String(b.released_at || "")
+            );
+        }
+
+        if (sort === "name") {
+          return String(a.set_name || "")
+            .localeCompare(
+              String(b.set_name || "")
+            );
+        }
+
+        if (sort === "collector") {
+          return String(a.collector_number || "")
+            .localeCompare(
+              String(b.collector_number || ""),
+              undefined,
+              { numeric: true }
+            );
+        }
+
+        if (
+          sort === "price-asc" ||
+          sort === "price-desc"
+        ) {
+          const x = priceValue(
+            a,
+            "nonfoil",
+            fx
           );
 
+          const y = priceValue(
+            b,
+            "nonfoil",
+            fx
+          );
 
-      buttons.forEach(
-        button => {
+          if (
+            x === null &&
+            y === null
+          ) {
+            return 0;
+          }
+
+          if (x === null) {
+            return 1;
+          }
+
+          if (y === null) {
+            return -1;
+          }
+
+          return sort === "price-asc"
+            ? x - y
+            : y - x;
+        }
+
+        return String(b.released_at || "")
+          .localeCompare(
+            String(a.released_at || "")
+          );
+      });
+
+      return result;
+    }
+
+
+    /* Update visible rows */
+
+    function update() {
+      if (
+        token !== searchToken ||
+        printingState !== st
+      ) {
+        return;
+      }
+
+      const cardsShown = visibleCards();
+      const page = cardsShown.slice(0, st.limit);
+
+      controls.body.innerHTML = page
+        .map(card =>
+          printingRow(card, st.selected, fx)
+        )
+        .join("") || `
+          <tr>
+            <td
+              colspan="9"
+              class="ms-table-empty"
+            >
+              No printings match these filters.
+            </td>
+          </tr>
+        `;
+
+      els.status.textContent =
+        `${cardsShown.length} of ${cards.length} printings matching · ` +
+        (fx
+          ? "GBP estimates"
+          : "available source currencies"
+        );
+
+      controls.pagination.replaceChildren();
+
+      const count = document.createElement("span");
+
+      count.textContent =
+        `Showing ${page.length} of ${cardsShown.length}`;
+
+      controls.pagination.appendChild(count);
+
+      if (cardsShown.length > st.limit) {
+        const more = document.createElement("button");
+
+        more.type = "button";
+
+        more.textContent =
+          `Load next ${Math.min(
+            st.pageSize,
+            cardsShown.length - st.limit
+          )} printings`;
+
+        more.addEventListener(
+          "click",
+          () => {
+            st.limit += st.pageSize;
+            update();
+          }
+        );
+
+        controls.pagination.appendChild(more);
+      }
+
+      els.printings
+        .querySelectorAll("[data-snapshot-action]")
+        .forEach(button => {
           const active =
-            button.dataset
-              .snapshotAction ===
-            snapshotMode;
-
+            button.dataset.snapshotAction === st.snapshot;
 
           button.classList.toggle(
             "is-active",
             active
           );
 
-
           button.setAttribute(
             "aria-pressed",
-            active
-              ? "true"
-              : "false"
+            String(active)
+          );
+        });
+    }
+
+
+    /* Select an exact printing */
+
+    function selectCard(
+      card,
+      {
+        scroll = true,
+        finish = null
+      } = {}
+    ) {
+      if (
+        !card ||
+        token !== searchToken
+      ) {
+        return;
+      }
+
+      if (finish === "nonfoil") {
+        foilDisabled.add(card.id);
+      }
+
+      if (
+        finish === "foil" ||
+        finish === "etched"
+      ) {
+        foilDisabled.delete(card.id);
+      }
+
+      st.selected = card;
+
+      renderCard(card);
+
+      updateUrl(
+        card.name,
+        card.id,
+        true
+      );
+
+      update();
+
+      if (scroll) {
+        scrollTo(els.details);
+      }
+    }
+
+
+    /* Per-printing image and foil buttons */
+
+    controls.body.addEventListener(
+      "click",
+      event => {
+        const toggle = event.target.closest(
+          "[data-foil-toggle]"
+        );
+
+        if (toggle) {
+          const id = toggle.dataset.foilToggle;
+
+          if (foilDisabled.has(id)) {
+            foilDisabled.delete(id);
+          } else {
+            foilDisabled.add(id);
+          }
+
+          if (st.selected?.id === id) {
+            renderCard(st.selected);
+          }
+
+          update();
+          return;
+        }
+
+        const button = event.target.closest(
+          "[data-print-id]"
+        );
+
+        if (button) {
+          selectCard(
+            cards.find(card =>
+              card.id === button.dataset.printId
+            )
           );
         }
-      );
-    }
-
-
-    function updateStatus(
-      displayed
-    ) {
-      if (!els.status) {
-        return;
       }
+    );
 
 
-      if (
-        snapshotMode ===
-        "all"
-      ) {
-        els.status.textContent =
-          normalStatusText();
+    /* Snapshot shortcuts */
 
-        return;
-      }
+    els.printings
+      .querySelector(".snapshot")
+      ?.addEventListener(
+        "click",
+        event => {
+          const button = event.target.closest(
+            "[data-snapshot-action]"
+          );
 
-
-      const labels = {
-        cheapest:
-          "cheapest printing",
-
-        "most-expensive":
-          "most expensive printing",
-
-        "cheapest-foil":
-          "cheapest foil printing",
-
-        "most-expensive-foil":
-          "most expensive foil printing",
-
-        oldest:
-          "oldest printings",
-
-        newest:
-          "newest printings",
-
-        foil:
-          "foil printings",
-
-        etched:
-          "etched printings"
-      };
-
-
-      els.status.textContent =
-        `${displayed.length} ${
-          labels[
-            snapshotMode
-          ] ||
-          "printing"
-        } shown`;
-    }
-
-
-    function applyFinishFilter(
-      printings
-    ) {
-      const finish =
-        finishFilter?.value ||
-        "all";
-
-
-      if (
-        finish ===
-        "all"
-      ) {
-        return [
-          ...printings
-        ];
-      }
-
-
-      return printings.filter(
-        print =>
-          hasFinish(
-            print,
-            finish
-          )
-      );
-    }
-
-
-    function sortPrintings(
-      printings
-    ) {
-      const sort =
-        sortSelect?.value ||
-        "newest";
-
-
-      return [
-        ...printings
-      ].sort(
-        (a, b) => {
           if (
-            sort ===
-            "oldest"
+            !button ||
+            button.disabled
           ) {
-            return String(
-              a.released_at ||
-              ""
-            ).localeCompare(
-              String(
-                b.released_at ||
-                ""
-              )
+            return;
+          }
+
+          st.snapshot =
+            button.dataset.snapshotAction;
+
+          st.limit = st.pageSize;
+
+          controls.finish.value = "all";
+          controls.set.value = "all";
+          controls.treatment.value = "all";
+          controls.find.value = "";
+
+          const focused = snapshotCards();
+
+          if (focused.length === 1) {
+            selectCard(
+              focused[0],
+              {
+                scroll: false,
+                finish: st.snapshot.includes("foil")
+                  ? "foil"
+                  : null
+              }
             );
           }
 
+          update();
 
-          if (
-            sort ===
-              "price-asc" ||
-            sort ===
-              "price-desc"
-          ) {
-            const aPrice =
-              regularGbpValue(
-                a,
-                rates
-              );
-
-
-            const bPrice =
-              regularGbpValue(
-                b,
-                rates
-              );
-
-
-            if (
-              aPrice === null &&
-              bPrice === null
-            ) {
-              return 0;
-            }
-
-
-            if (
-              aPrice === null
-            ) {
-              return 1;
-            }
-
-
-            if (
-              bPrice === null
-            ) {
-              return -1;
-            }
-
-
-            return sort ===
-              "price-asc"
-              ? aPrice -
-                bPrice
-              : bPrice -
-                aPrice;
-          }
-
-
-          return String(
-            b.released_at ||
-            ""
-          ).localeCompare(
-            String(
-              a.released_at ||
-              ""
+          scrollTo(
+            els.printings.querySelector(
+              ".table-wrap"
             )
           );
         }
       );
-    }
 
 
-    function displayedPrintings() {
-      return sortPrintings(
-        applyFinishFilter(
-          snapshotResults()
-        )
-      );
-    }
-
-
-    function updatePrintings() {
-      const displayed =
-        displayedPrintings();
-
-
-      if (tbody) {
-        tbody.innerHTML =
-          buildRows(
-            displayed
-          ) ||
-          `
-            <tr>
-              <td colspan="9">
-                No printings match these filters.
-              </td>
-            </tr>
-          `;
-      }
-
-
-      updateActiveSnapshotButton();
-
-      updateStatus(
-        displayed
-      );
-    }
-
-
-    function selectPrinting(
-      print,
-      {
-        scrollToCard =
-          true,
-        replaceUrl =
-          true
-      } = {}
-    ) {
-      if (!print) {
-        return;
-      }
-
-
-      selectedCard =
-        print;
-
-
-      renderCard(
-        selectedCard
-      );
-
-
-      if (replaceUrl) {
-        setQuery(
-          selectedCard.name,
-          true,
-          selectedCard.id
-        );
-      }
-
-
-      updatePrintings();
-
-
-      if (scrollToCard) {
-        scrollToElement(
-          els.details
-        );
-      }
-    }
-
-
-    /*
-     * Filters are attached to elements created
-     * during this render. They disappear when the
-     * next card replaces the printing area, so no
-     * event handlers accumulate across searches.
-     */
-
-    finishFilter?.addEventListener(
-      "change",
-      updatePrintings
-    );
-
-
-    sortSelect?.addEventListener(
-      "change",
-      updatePrintings
-    );
-
-
-    /*
-     * Snapshot controls.
-     */
-
-    const snapshotButtons =
-      [
-        ...els.printings
-          .querySelectorAll(
-            "[data-snapshot-action]"
-          )
-      ];
-
-
-    snapshotButtons.forEach(
-      button => {
-        button.addEventListener(
-          "click",
-          () => {
-            if (
-              button.disabled
-            ) {
-              return;
-            }
-
-
-            snapshotMode =
-              button.dataset
-                .snapshotAction ||
-              "all";
-
-
-            if (
-              finishFilter
-            ) {
-              finishFilter.value =
-                "all";
-            }
-
-
-            const exactPricePrintings = {
-              cheapest:
-                snapshotData
-                  .cheapest
-                  ?.print,
-
-              "most-expensive":
-                snapshotData
-                  .mostExpensive
-                  ?.print,
-
-              "cheapest-foil":
-                snapshotData
-                  .cheapestFoil
-                  ?.print,
-
-              "most-expensive-foil":
-                snapshotData
-                  .mostExpensiveFoil
-                  ?.print
-            };
-
-
-            const exactPrinting =
-              exactPricePrintings[
-                snapshotMode
-              ];
-
-
-            if (
-              exactPrinting
-            ) {
-              selectedCard =
-                exactPrinting;
-
-
-              renderCard(
-                selectedCard
-              );
-
-
-              setQuery(
-                selectedCard.name,
-                true,
-                selectedCard.id
-              );
-            }
-
-
-            const matches =
-              snapshotResults();
-
-
-            if (
-              ![
-                "cheapest",
-                "most-expensive",
-                "cheapest-foil",
-                "most-expensive-foil",
-                "all"
-              ].includes(
-                snapshotMode
-              ) &&
-              matches.length ===
-                1
-            ) {
-              selectedCard =
-                matches[0];
-
-
-              renderCard(
-                selectedCard
-              );
-
-
-              setQuery(
-                selectedCard.name,
-                true,
-                selectedCard.id
-              );
-            }
-
-
-            updatePrintings();
-
-
-            scrollToElement(
-              tableWrap
-            );
-          }
-        );
-      }
-    );
-
-
-    /*
-     * Exact printing selection.
-     *
-     * One listener is attached to this freshly
-     * generated tbody only. This fixes the old
-     * behaviour where every card search added
-     * another delegated handler to the permanent
-     * #printings-container element.
-     */
-
-    tbody?.addEventListener(
-      "click",
-      event => {
-        const trigger =
-          event.target.closest(
-            "[data-print-id]"
-          );
-
-
-        if (!trigger) {
-          return;
+    /* Input filtering */
+
+    for (const input of [
+      controls.find,
+      controls.set,
+      controls.finish,
+      controls.treatment,
+      controls.sort
+    ]) {
+      input?.addEventListener(
+        input === controls.find
+          ? "input"
+          : "change",
+        () => {
+          st.limit = st.pageSize;
+          update();
         }
+      );
+    }
 
 
-        const selected =
-          all.find(
-            print =>
-              print.id ===
-              trigger.dataset
-                .printId
-          );
+    /* Reset all filters */
 
+    $("ms-reset-filters")
+      ?.addEventListener(
+        "click",
+        () => {
+          st.snapshot = "all";
 
-        if (!selected) {
-          return;
+          controls.find.value = "";
+          controls.set.value = "all";
+          controls.finish.value = "all";
+          controls.treatment.value = "all";
+          controls.sort.value = "newest";
+
+          st.limit = st.pageSize;
+
+          update();
         }
+      );
 
-
-        selectPrinting(
-          selected
-        );
-      }
-    );
-
-
-    updateActiveSnapshotButton();
+    update();
   }
 
 
   /* ========================================
-     LOAD CARD
+     SELECTED CARD FOIL TOGGLE
      ======================================== */
 
-  async function loadCard(
-    name,
-    options = {}
-  ) {
-    const query =
-      String(
-        name || ""
-      ).trim();
+  document.addEventListener(
+    "click",
+    async event => {
+      const finishToggle = event.target.closest(
+        ".ms-card-image [data-foil-toggle]"
+      );
 
+      if (
+        finishToggle &&
+        currentCard?.id ===
+          finishToggle.dataset.foilToggle
+      ) {
+        const id = currentCard.id;
+
+        if (foilDisabled.has(id)) {
+          foilDisabled.delete(id);
+        } else {
+          foilDisabled.add(id);
+        }
+
+        renderCard(currentCard);
+
+        if (printingState) {
+          const active = printingState.cards.find(
+            card => card.id === id
+          );
+
+          const row = active &&
+            els.printings?.querySelector(
+              `[data-row-id="${id}"]`
+            );
+
+          if (row) {
+            const oldThumb = row.querySelector(
+              ".ms-thumbnail"
+            );
+
+            if (oldThumb) {
+              const fresh = document.createElement(
+                "div"
+              );
+
+              fresh.innerHTML = printingRow(
+                active,
+                currentCard,
+                printingState.fx
+              );
+
+              const newThumb = fresh.querySelector(
+                ".ms-thumbnail"
+              );
+
+              if (newThumb) {
+                oldThumb.replaceWith(newThumb);
+              }
+            }
+          }
+        }
+
+        return;
+      }
+
+
+      /* ========================================
+         KEEP SCOUTING
+         ======================================== */
+
+      const button = event.target.closest(
+        "[data-discovery-mode]"
+      );
+
+      if (
+        !button ||
+        !currentCard ||
+        !els.details?.contains(button)
+      ) {
+        return;
+      }
+
+      const previous = currentCard;
+      const mode = button.dataset.discoveryMode;
+      const currentId = previous.oracle_id;
+
+      const exclude = currentId
+        ? ` -oracleid:${currentId}`
+        : "";
+
+      let query = "game:paper";
+
+      if (mode === "colour") {
+        const colours = (
+          previous.color_identity || []
+        ).join("") || "c";
+
+        query += ` id:${colours}`;
+
+      } else if (mode === "type") {
+        const type = [
+          "Creature",
+          "Artifact",
+          "Enchantment",
+          "Instant",
+          "Sorcery",
+          "Planeswalker",
+          "Land",
+          "Battle"
+        ].find(t =>
+          (previous.type_line || "").includes(t)
+        );
+
+        if (type) {
+          query += ` t:${type.toLowerCase()}`;
+        }
+      }
+
+      query += exclude;
+
+      const allButtons = [
+        ...els.details.querySelectorAll(
+          "[data-discovery-mode]"
+        )
+      ];
+
+      allButtons.forEach(b => {
+        b.disabled = true;
+      });
+
+      const status = els.details.querySelector(
+        ".ms-actions-status"
+      );
+
+      if (status) {
+        status.textContent =
+          "Scouting another card…";
+      }
+
+      try {
+        const card = await json(
+          `${API}/cards/random?q=${encodeURIComponent(query)}`
+        );
+
+        if (!card?.name) {
+          throw new Error(
+            "No card returned"
+          );
+        }
+
+        await loadCard(card.name);
+
+      } catch (error) {
+        console.warn(
+          "Keep scouting failed:",
+          error
+        );
+
+        if (status?.isConnected) {
+          status.textContent =
+            "Could not find another card. Try again.";
+        }
+
+      } finally {
+        allButtons.forEach(b => {
+          if (b.isConnected) {
+            b.disabled = false;
+          }
+        });
+      }
+    }
+  );
+
+
+  /* ========================================
+     SEARCH AND EXACT PRINTING LOAD
+     ======================================== */
+
+  async function loadCard(name, options = {}) {
+    const query = String(name || "").trim();
 
     if (!query) {
       return null;
     }
 
+    stopRequests();
 
-    const requestedPrintingId =
-      String(
-        options.printingId ||
-        (
-          options.fromHistory
-            ? getPrintingId()
-            : ""
-        ) ||
-        ""
-      ).trim();
+    const token = searchToken;
 
-
-    const token =
-      ++searchToken;
-
-
-    searchController?.abort();
-
-    autocompleteController?.abort();
-
-
-    searchController =
+    requestController =
       new AbortController();
 
+    const signal =
+      requestController.signal;
 
-    if (
-      !options.fromHistory
-    ) {
-      setQuery(
+    const requested = String(
+      options.printingId || ""
+    ).trim();
+
+    if (!options.fromHistory) {
+      updateUrl(
         query,
-        Boolean(
-          options.replace
-        ),
-        requestedPrintingId
+        requested,
+        Boolean(options.replace)
       );
     }
 
-
     if (els.input) {
-      els.input.value =
-        query;
+      els.input.value = query;
     }
 
+    clearSuggestions();
 
-    clearAutocomplete();
-
-
-    emitManaScoutState(
-      "loading",
-      {
-        cardName:
-          query
-      }
-    );
-
+    announce("loading", {
+      cardName: query
+    });
 
     setLoading();
 
-
     try {
-      let card;
+      let card = null;
+      let exact = false;
 
-      let exactPrintingResolved =
-        false;
-
-
-      if (
-        requestedPrintingId
-      ) {
+      if (requested) {
         try {
-          card =
-            await cardById(
-              requestedPrintingId,
-              searchController
-                .signal
-            );
-
-
-          /*
-           * A printing= URL must belong to the
-           * card being requested.
-           */
+          const candidate = await cardId(
+            requested,
+            signal
+          );
 
           if (
-            !card?.name ||
-            card.name
-              .toLowerCase() !==
-            query
-              .toLowerCase()
+            sameCardName(candidate.name, query)
           ) {
-            card =
-              await namedCard(
-                query,
-                searchController
-                  .signal
-              );
-
-          } else {
-            exactPrintingResolved =
-              true;
+            card = candidate;
+            exact = true;
           }
 
         } catch (error) {
-          if (
-            error.name ===
-            "AbortError"
-          ) {
+          if (error.name === "AbortError") {
             throw error;
           }
-
-
-          card =
-            await namedCard(
-              query,
-              searchController
-                .signal
-            );
         }
-
-      } else {
-        card =
-          await namedCard(
-            query,
-            searchController
-              .signal
-          );
       }
 
+      if (!card) {
+        card = await cardNamed(
+          query,
+          signal
+        );
+      }
 
-      if (
-        token !==
-        searchToken
-      ) {
+      if (token !== searchToken) {
         return null;
       }
 
+      renderCard(card);
 
-      renderCard(
-        card
-      );
-
-
-      await renderPrintings(
+      const cards = await allPrintings(
         card,
         token,
-        searchController
-          .signal,
-        {
-          choosePreferred:
-            !exactPrintingResolved
-        }
+        signal
       );
 
+      if (token !== searchToken) {
+        return null;
+      }
+
+      let fx = null;
+
+      try {
+        fx = await rates();
+
+      } catch (error) {
+        console.warn(
+          "GBP estimate currently unavailable:",
+          error
+        );
+      }
+
+      if (token !== searchToken) {
+        return null;
+      }
+
+      if (
+        !exact &&
+        cards.length
+      ) {
+        const pick = choosePick(
+          cards,
+          fx
+        );
+
+        if (pick) {
+          card = pick;
+
+          renderCard(card, {
+            isPick: true
+          });
+
+          updateUrl(
+            card.name,
+            card.id,
+            true
+          );
+        }
+      }
+
+      renderPrintingArchive(
+        cards,
+        fx,
+        token
+      );
+
+      document.title =
+        `${card.name} Printings, Foils & Art | ManaScout`;
 
       return card;
 
     } catch (error) {
       if (
-        error.name ===
-          "AbortError" ||
-        token !==
-          searchToken
+        error.name === "AbortError" ||
+        token !== searchToken
       ) {
         return null;
       }
 
-
       console.error(
-        "ManaScout card load failed:",
+        "ManaScout card load error:",
         error
       );
 
-
       setError(
-        error.status ===
-          404
-          ? `No card matched “${query}”. Try the card's full name.`
-          : "Scryfall could not be reached. Please try again."
+        error.status === 404
+          ? `No card matched “${query}”. Check the spelling and try again.`
+          : "Could not reach Scryfall. Please try again."
       );
-
 
       return null;
     }
@@ -4621,242 +2887,105 @@
      AUTOCOMPLETE
      ======================================== */
 
-  function clearAutocomplete() {
-    if (
-      !els.autocomplete ||
-      !els.input
-    ) {
-      return;
-    }
-
-
-    els.autocomplete.hidden =
-      true;
-
-
-    els.autocomplete.innerHTML =
-      "";
-
-
-    els.input.setAttribute(
-      "aria-expanded",
-      "false"
-    );
-
-
-    els.input.removeAttribute(
-      "aria-activedescendant"
-    );
-
-
-    activeAutocompleteIndex =
-      -1;
-  }
-
-
-  function autocompleteItems() {
-    if (
-      !els.autocomplete
-    ) {
-      return [];
-    }
-
-
+  function suggestionItems() {
     return [
-      ...els.autocomplete
-        .querySelectorAll(
+      ...(
+        els.autocomplete?.querySelectorAll(
           ".autocomplete-item"
-        )
+        ) || []
+      )
     ];
   }
 
+  function markSuggestion(index) {
+    const items = suggestionItems();
 
-  function setActiveAutocomplete(
-    index
-  ) {
-    const items =
-      autocompleteItems();
-
-
-    if (
-      !items.length
-    ) {
+    if (!items.length) {
       return;
     }
 
+    activeSuggestion =
+      (index + items.length) % items.length;
 
-    if (
-      index < 0
-    ) {
-      index =
-        items.length - 1;
-    }
-
-
-    if (
-      index >=
-      items.length
-    ) {
-      index =
-        0;
-    }
-
-
-    activeAutocompleteIndex =
-      index;
-
-
-    items.forEach(
-      (item, itemIndex) => {
-        const active =
-          itemIndex ===
-          index;
-
-
-        item.setAttribute(
-          "aria-selected",
-          active
-            ? "true"
-            : "false"
-        );
-      }
+    items.forEach((item, i) =>
+      item.setAttribute(
+        "aria-selected",
+        String(i === activeSuggestion)
+      )
     );
 
+    const active = items[activeSuggestion];
 
-    const activeItem =
-      items[
-        index
-      ];
+    els.input.setAttribute(
+      "aria-activedescendant",
+      active.id
+    );
 
-
-    if (
-      activeItem?.id &&
-      els.input
-    ) {
-      els.input.setAttribute(
-        "aria-activedescendant",
-        activeItem.id
-      );
-    }
-
-
-    activeItem?.scrollIntoView({
-      block:
-        "nearest"
+    active.scrollIntoView({
+      block: "nearest"
     });
   }
 
+  async function suggest(query) {
+    suggestController?.abort();
 
-  function renderAutocomplete(
-    names
-  ) {
-    if (
-      !els.autocomplete ||
-      !els.input
-    ) {
-      return;
-    }
-
-
-    activeAutocompleteIndex =
-      -1;
-
-
-    els.input.removeAttribute(
-      "aria-activedescendant"
-    );
-
-
-    if (
-      !names.length
-    ) {
-      clearAutocomplete();
-
-      return;
-    }
-
-
-    els.autocomplete.innerHTML =
-      names
-        .map(
-          (
-            name,
-            index
-          ) => `
-            <button
-              id="autocomplete-option-${index}"
-              class="autocomplete-item"
-              type="button"
-              role="option"
-              aria-selected="false"
-              data-name="${escapeHtml(
-                name
-              )}"
-            >
-              <span>
-                ${escapeHtml(
-                  name
-                )}
-              </span>
-            </button>
-          `
-        )
-        .join("");
-
-
-    els.autocomplete.hidden =
-      false;
-
-
-    els.input.setAttribute(
-      "aria-expanded",
-      "true"
-    );
-  }
-
-
-  async function autocomplete(
-    query
-  ) {
-    autocompleteController?.abort();
-
-
-    autocompleteController =
+    suggestController =
       new AbortController();
 
+    const signal =
+      suggestController.signal;
 
     try {
-      const url =
-        `${API}/cards/autocomplete?q=${encodeURIComponent(
-          query
-        )}`;
+      const results = await json(
+        `${API}/cards/autocomplete?q=${encodeURIComponent(query)}`,
+        signal
+      );
 
+      if (
+        els.input?.value.trim() !== query
+      ) {
+        return;
+      }
 
-      const data =
-        await fetchJson(
-          url,
-          autocompleteController
-            .signal
-        );
+      const names = (
+        results.data || []
+      ).slice(0, 8);
 
+      if (!names.length) {
+        clearSuggestions();
+        return;
+      }
 
-      renderAutocomplete(
-        Array.isArray(
-          data.data
-        )
-          ? data.data.slice(
-              0,
-              8
-            )
-          : []
+      activeSuggestion = -1;
+
+      els.autocomplete.innerHTML =
+        names.map((name, i) => `
+          <button
+            type="button"
+            role="option"
+            aria-selected="false"
+            id="ms-autocomplete-${i}"
+            class="autocomplete-item"
+            data-name="${html(name)}"
+          >
+            ${html(name)}
+          </button>
+        `).join("");
+
+      els.autocomplete.hidden = false;
+
+      els.input.setAttribute(
+        "aria-expanded",
+        "true"
+      );
+
+      els.input.removeAttribute(
+        "aria-activedescendant"
       );
 
     } catch (error) {
-      if (
-        error.name !==
-        "AbortError"
-      ) {
-        clearAutocomplete();
+      if (error.name !== "AbortError") {
+        clearSuggestions();
       }
     }
   }
@@ -4866,168 +2995,104 @@
      SEARCH EVENTS
      ======================================== */
 
-  if (
-    els.form &&
-    els.input
-  ) {
+  if (els.form && els.input) {
     els.form.addEventListener(
       "submit",
       event => {
         event.preventDefault();
 
+        const selected =
+          suggestionItems()[activeSuggestion];
 
-        const value =
-          els.input.value
-            .trim();
+        const query =
+          selected?.dataset.name ||
+          els.input.value.trim();
 
-
-        if (value) {
-          loadCard(
-            value
-          );
+        if (query) {
+          void loadCard(query);
         }
       }
     );
-
 
     els.input.addEventListener(
       "input",
       () => {
-        const query =
-          els.input.value
-            .trim();
-
+        const q = els.input.value.trim();
 
         window.clearTimeout(
-          autocompleteTimer
+          suggestTimer
         );
 
-
-        if (
-          query.length <
-          2
-        ) {
-          autocompleteController
-            ?.abort();
-
-          clearAutocomplete();
-
+        if (q.length < 2) {
+          suggestController?.abort();
+          clearSuggestions();
           return;
         }
 
-
-        autocompleteTimer =
-          window.setTimeout(
-            () =>
-              autocomplete(
-                query
-              ),
-            180
-          );
+        suggestTimer = window.setTimeout(
+          () => void suggest(q),
+          220
+        );
       }
     );
-
 
     els.input.addEventListener(
       "keydown",
       event => {
-        const items =
-          autocompleteItems();
-
+        const items = suggestionItems();
 
         if (
-          event.key ===
-            "ArrowDown" &&
+          event.key === "ArrowDown" &&
           items.length
         ) {
           event.preventDefault();
 
-
-          setActiveAutocomplete(
-            activeAutocompleteIndex +
-            1
+          markSuggestion(
+            activeSuggestion + 1
           );
 
-
         } else if (
-          event.key ===
-            "ArrowUp" &&
+          event.key === "ArrowUp" &&
           items.length
         ) {
           event.preventDefault();
 
-
-          setActiveAutocomplete(
-            activeAutocompleteIndex -
-            1
+          markSuggestion(
+            activeSuggestion - 1
           );
 
-
         } else if (
-          event.key ===
-            "Enter" &&
-          activeAutocompleteIndex >=
-            0 &&
-          items[
-            activeAutocompleteIndex
-          ]
+          event.key === "Escape"
         ) {
-          event.preventDefault();
-
-
-          loadCard(
-            items[
-              activeAutocompleteIndex
-            ].dataset.name
-          );
-
-
-        } else if (
-          event.key ===
-          "Escape"
-        ) {
-          clearAutocomplete();
+          clearSuggestions();
         }
       }
     );
-  }
 
-
-  if (
-    els.autocomplete
-  ) {
-    els.autocomplete.addEventListener(
+    els.autocomplete?.addEventListener(
       "click",
       event => {
-        const item =
-          event.target.closest(
-            "[data-name]"
-          );
-
+        const item = event.target.closest(
+          "[data-name]"
+        );
 
         if (item) {
-          loadCard(
+          void loadCard(
             item.dataset.name
           );
         }
       }
     );
-  }
 
-
-  document.addEventListener(
-    "click",
-    event => {
-      if (
-        els.form &&
-        !els.form.contains(
-          event.target
-        )
-      ) {
-        clearAutocomplete();
+    document.addEventListener(
+      "click",
+      event => {
+        if (!els.form.contains(event.target)) {
+          clearSuggestions();
+        }
       }
-    }
-  );
+    );
+  }
 
 
   /* ========================================
@@ -5037,100 +3102,68 @@
   window.addEventListener(
     "popstate",
     () => {
-      const query =
-        getQueryName();
+      const params = urlParams();
 
+      const name =
+        params.get("q")?.trim();
 
-      const printingId =
-        getPrintingId();
-
-
-      if (query) {
-        loadCard(
-          query,
-          {
-            fromHistory:
-              true,
-
-            printingId
-          }
-        );
+      if (name) {
+        void loadCard(name, {
+          fromHistory: true,
+          printingId:
+            params.get("printing") || ""
+        });
 
       } else {
-        searchController
-          ?.abort();
-
-
-        ++searchToken;
-
-
-        setHomeState();
+        setHome();
       }
     }
   );
 
 
   /* ========================================
-     PUBLIC MANASCOUT API
+     PUBLIC API
+     Used by homepage and guide pages
      ======================================== */
 
-  window.ManaScout =
-    Object.freeze({
-      loadCard,
+  window.ManaScout = Object.freeze({
+    loadCard,
 
+    scoutRandom: async () => {
+      const card = await json(
+        `${API}/cards/random?q=${encodeURIComponent("game:paper")}`
+      );
 
-      scoutRandom:
-        async () => {
-          const randomCard =
-            await fetchJson(
-              `${API}/cards/random?q=${encodeURIComponent(
-                "game:paper"
-              )}`
-            );
+      if (!card?.name) {
+        throw new Error(
+          "Random card unavailable"
+        );
+      }
 
+      await loadCard(card.name);
 
-          if (
-            !randomCard?.name
-          ) {
-            throw new Error(
-              "Random card unavailable."
-            );
-          }
-
-
-          await loadCard(
-            randomCard.name
-          );
-
-
-          return randomCard;
-        }
-    });
+      return card;
+    }
+  });
 
 
   /* ========================================
-     INITIAL URL STATE
+     INITIALISE
      ======================================== */
 
-  const initial =
-    getQueryName();
+  installStyles();
 
+  const initial = urlParams();
 
-  const initialPrintingId =
-    getPrintingId();
+  const initialName =
+    initial.get("q")?.trim();
 
-
-  if (initial) {
-    loadCard(
-      initial,
-      {
-        fromHistory:
-          true,
-
-        printingId:
-          initialPrintingId
-      }
-    );
+  if (initialName) {
+    void loadCard(initialName, {
+      fromHistory: true,
+      printingId:
+        initial.get("printing") || ""
+    });
   }
 
 })();
