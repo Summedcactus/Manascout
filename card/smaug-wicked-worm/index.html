@@ -1,3 +1,4 @@
+
 <!doctype html>
 <html lang="en">
 
@@ -14,6 +15,11 @@
     content="Compare Smaug, Wicked Worm MTG printings, artwork, foils and special versions from The Hobbit. Explore all available versions and find the Smaug printing you actually want."
   >
 
+  <meta
+    name="robots"
+    content="index,follow,max-image-preview:large"
+  >
+
   <meta name="theme-color" content="#09090b">
 
   <link
@@ -22,6 +28,11 @@
   >
 
   <meta property="og:type" content="article">
+
+  <meta
+    property="og:site_name"
+    content="ManaScout"
+  >
 
   <meta
     property="og:title"
@@ -92,7 +103,7 @@
 </head>
 
 
-<body>
+<body data-card-name="Smaug, Wicked Worm">
 
   <header class="site-header">
 
@@ -135,6 +146,7 @@
   <main class="container">
 
     <!-- HERO -->
+
     <section class="hero compact">
 
       <p class="eyebrow">
@@ -155,9 +167,11 @@
 
 
     <!-- LIVE CARD DATA -->
+
     <section
       class="results"
       aria-live="polite"
+      aria-label="Smaug, Wicked Worm card information"
     >
 
       <div
@@ -165,8 +179,8 @@
         class="card-details"
       >
 
-        <div class="loading-state">
-          Loading card data…
+        <div class="loading-state" role="status">
+          Loading current Smaug, Wicked Worm card data…
         </div>
 
       </div>
@@ -175,6 +189,7 @@
 
 
     <!-- PRINTING HISTORY -->
+
     <section
       class="printings-section"
       aria-labelledby="smaug-history-heading"
@@ -210,7 +225,8 @@
 
           <p>
             <strong>
-              Smaug, Wicked Worm debuted in The Hobbit in 2026.
+              Smaug, Wicked Worm debuted in The Hobbit
+              in 2026.
             </strong>
             Unlike long-running Magic staples with decades of
             reprints, Smaug currently has a compact printing history
@@ -237,6 +253,7 @@
 
 
     <!-- VERSIONS -->
+
     <section
       class="printings-section"
       aria-labelledby="smaug-versions-heading"
@@ -297,6 +314,7 @@
 
 
     <!-- WHICH ONE -->
+
     <section
       class="printings-section"
       aria-labelledby="smaug-choice-heading"
@@ -373,6 +391,7 @@
 
 
     <!-- MANASCOUT PICK -->
+
     <section
       class="printings-section"
       aria-labelledby="smaug-pick-heading"
@@ -432,6 +451,7 @@
 
 
     <!-- PRINTINGS -->
+
     <section
       class="printings-section"
       aria-labelledby="printings-heading"
@@ -454,6 +474,8 @@
         <p
           id="printings-status"
           class="status"
+          role="status"
+          aria-live="polite"
         ></p>
 
       </div>
@@ -465,6 +487,7 @@
 
 
     <!-- SCOUT MORE -->
+
     <section
       class="featured-section"
       aria-labelledby="scout-more-heading"
@@ -552,6 +575,8 @@
   </main>
 
 
+  <!-- FOOTER -->
+
   <footer class="footer">
 
     <div class="container footer-inner">
@@ -571,6 +596,7 @@
 
       <div>
         <a href="/card/">Card Guides</a>
+        <a href="/">Search</a>
         <a href="/privacy/">Privacy</a>
         <a href="/terms/">Terms</a>
       </div>
@@ -580,21 +606,11 @@
   </footer>
 
 
+  <!-- SHARED SEARCH AND PRINTING ENGINE -->
   <script src="/assets/js/app.js"></script>
 
-  <script>
-    window.addEventListener(
-      "DOMContentLoaded",
-      function () {
-        window.ManaScout.loadCard(
-          "Smaug, Wicked Worm",
-          {
-            fromHistory: true
-          }
-        );
-      }
-    );
-  </script>
+  <!-- SHARED PERMANENT GUIDE CONTROLLER -->
+  <script src="/assets/js/card-page.js"></script>
 
 </body>
 

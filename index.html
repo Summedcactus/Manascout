@@ -1,17 +1,21 @@
+
 <!doctype html>
 <html lang="en">
 
 <head>
-  <meta name="google-adsense-account" content="ca-pub-2249291081711812">
-
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
-  <title>MTG Card Printing Explorer & Version Finder | ManaScout</title>
+  <meta
+    name="google-adsense-account"
+    content="ca-pub-2249291081711812"
+  >
+
+  <title>MTG Card Printings, Foils & Versions | ManaScout</title>
 
   <meta
     name="description"
-    content="Search Magic: The Gathering cards and compare printings, artwork, foils, special treatments and available Scryfall price data. Find the MTG version you actually want."
+    content="Find every Magic: The Gathering card printing with ManaScout. Explore MTG artwork, foil versions, collector numbers, special treatments and available Scryfall prices."
   >
 
   <meta
@@ -19,31 +23,39 @@
     content="index,follow,max-image-preview:large"
   >
 
-  <meta name="theme-color" content="#09090b">
+  <meta
+    name="theme-color"
+    content="#09090b"
+  >
 
   <link
     rel="canonical"
     href="https://manascout.co.uk/"
   >
 
-  <meta
-    property="og:type"
-    content="website"
+  <link
+    rel="preconnect"
+    href="https://api.scryfall.com"
+    crossorigin
   >
 
-  <meta
-    property="og:site_name"
-    content="ManaScout"
+  <link
+    rel="preconnect"
+    href="https://cards.scryfall.io"
+    crossorigin
   >
+
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="ManaScout">
 
   <meta
     property="og:title"
-    content="MTG Card Printing Explorer & Version Finder | ManaScout"
+    content="MTG Card Printings, Foils & Versions | ManaScout"
   >
 
   <meta
     property="og:description"
-    content="Find the card. Find the version. Find the one. Compare MTG printings, artwork, finishes and available price data with ManaScout."
+    content="Find the card. Compare the printings. Discover artwork, collector treatments, foil versions and prices with ManaScout."
   >
 
   <meta
@@ -58,35 +70,37 @@
 
   <meta
     name="twitter:title"
-    content="MTG Card Printing Explorer & Version Finder | ManaScout"
+    content="MTG Card Printings, Foils & Versions | ManaScout"
   >
 
   <meta
     name="twitter:description"
-    content="Search Magic cards and compare printings, artwork, foils, treatments and available price data."
+    content="Explore Magic card printings, artwork, foil treatments and collector versions."
   >
 
-  <link
-    rel="stylesheet"
-    href="/assets/css/style.css"
-  >
+  <link rel="stylesheet" href="/assets/css/style.css">
+  <link rel="stylesheet" href="/assets/css/home.css">
 
-  <link
-    rel="stylesheet"
-    href="/assets/css/home.css"
-  >
-
-
+  <!-- Structured data -->
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
     "@graph": [
       {
+        "@type": "Organization",
+        "@id": "https://manascout.co.uk/#organization",
+        "name": "ManaScout",
+        "url": "https://manascout.co.uk/"
+      },
+      {
         "@type": "WebSite",
         "@id": "https://manascout.co.uk/#website",
         "name": "ManaScout",
         "url": "https://manascout.co.uk/",
-        "description": "A Magic: The Gathering card and printing discovery tool for comparing artwork, finishes, versions and available price data.",
+        "description": "Magic: The Gathering card printing and artwork discovery.",
+        "publisher": {
+          "@id": "https://manascout.co.uk/#organization"
+        },
         "potentialAction": {
           "@type": "SearchAction",
           "target": {
@@ -100,24 +114,519 @@
         "@type": "WebPage",
         "@id": "https://manascout.co.uk/#webpage",
         "url": "https://manascout.co.uk/",
-        "name": "MTG Card Printing Explorer & Version Finder | ManaScout",
-        "description": "Search Magic: The Gathering cards and compare printings, artwork, foils, special treatments and available Scryfall price data.",
+        "name": "MTG Card Printings, Foils & Versions | ManaScout",
+        "description": "Search and compare Magic: The Gathering printings, collector numbers, artwork, foils and special card treatments.",
         "isPartOf": {
           "@id": "https://manascout.co.uk/#website"
+        },
+        "about": {
+          "@type": "Thing",
+          "name": "Magic: The Gathering card printings"
         }
+      },
+      {
+        "@type": "ItemList",
+        "name": "Featured ManaScout printing guides",
+        "itemListElement": [
+          {
+            "@type": "ListItem",
+            "position": 1,
+            "name": "Rhystic Study",
+            "url": "https://manascout.co.uk/card/rhystic-study/"
+          },
+          {
+            "@type": "ListItem",
+            "position": 2,
+            "name": "Sol Ring",
+            "url": "https://manascout.co.uk/card/sol-ring/"
+          },
+          {
+            "@type": "ListItem",
+            "position": 3,
+            "name": "The One Ring",
+            "url": "https://manascout.co.uk/card/the-one-ring/"
+          },
+          {
+            "@type": "ListItem",
+            "position": 4,
+            "name": "Force of Will",
+            "url": "https://manascout.co.uk/card/force-of-will/"
+          }
+        ]
       }
     ]
   }
   </script>
 
-</head>
+  <!--
+    DEVELOPMENT-2
+    Minas Morgul COTW animation.
 
+    Kept inside index.html so the weekly feature
+    works before the other stylesheet upgrades.
+  -->
+  <style>
+
+    /* Homepage presentation */
+
+    .scoutboard-panel + .scoutboard-panel {
+      border-top: 1px solid rgba(255,255,255,.075);
+    }
+
+    .home-section-intro {
+      max-width: 760px;
+    }
+
+    .home-section-intro p {
+      line-height: 1.7;
+    }
+
+    .home-editorial {
+      margin: 3rem 0;
+      padding: clamp(1.4rem,4vw,2.8rem);
+      border: 1px solid rgba(255,255,255,.08);
+      border-radius: 18px;
+      background:
+        radial-gradient(
+          circle at 95% 0%,
+          rgba(153,71,56,.07),
+          transparent 45%
+        ),
+        rgba(255,255,255,.015);
+    }
+
+    .home-editorial h2 {
+      margin: .3rem 0 1.2rem;
+      font-size: clamp(1.5rem,3vw,2.4rem);
+      letter-spacing: -.04em;
+    }
+
+    .home-editorial-grid {
+      display: grid;
+      grid-template-columns: repeat(3,minmax(0,1fr));
+      gap: 1rem;
+    }
+
+    .home-editorial-card {
+      padding: 1.2rem;
+      border: 1px solid rgba(255,255,255,.075);
+      border-radius: 12px;
+      background: rgba(255,255,255,.018);
+    }
+
+    .home-editorial-card h3 {
+      margin: 0 0 .65rem;
+      font-size: 1rem;
+    }
+
+    .home-editorial-card p,
+    .home-editorial-card a {
+      font-size: .78rem;
+      line-height: 1.7;
+    }
+
+    .home-editorial-card p {
+      color: #a6a0a5;
+    }
+
+    .home-editorial-card a {
+      color: #e5b9ab;
+      text-decoration: underline;
+      text-underline-offset: 3px;
+    }
+
+    .home-guide-cta {
+      display: inline-block;
+      margin-top: 1.3rem;
+      color: #f0d8ce;
+      font-weight: 700;
+      text-decoration: none;
+    }
+
+    .home-guide-cta:hover {
+      text-decoration: underline;
+    }
+
+    /* Minas Morgul palette */
+
+    .weekly-theme-morgul {
+      --morgul-green: #73e3a0;
+
+      background:
+        radial-gradient(
+          ellipse at 21% 54%,
+          rgba(33,114,73,.33),
+          transparent 46%
+        ),
+        radial-gradient(
+          ellipse at 75% 10%,
+          rgba(41,86,63,.16),
+          transparent 44%
+        ),
+        linear-gradient(
+          140deg,
+          #07110d 0%,
+          #0b1610 40%,
+          #05090a 100%
+        );
+
+      border-color: rgba(93,205,132,.27);
+    }
+
+    .weekly-theme-morgul::before {
+      background:
+        linear-gradient(
+          180deg,
+          rgba(109,218,145,.035),
+          transparent 34%,
+          rgba(0,0,0,.30)
+        );
+    }
+
+    .weekly-theme-morgul::after {
+      opacity: .18;
+      background:
+        linear-gradient(
+          115deg,
+          transparent 30%,
+          rgba(117,223,150,.15) 50%,
+          transparent 70%
+        );
+    }
+
+    /* Animated atmospheric shadows */
+
+    .morgul-scene {
+      position: absolute;
+      inset: 0;
+      overflow: hidden;
+      pointer-events: none;
+    }
+
+    .weekly-theme-morgul .weekly-scene::before {
+      inset: 0;
+      opacity: .8;
+      filter: blur(25px);
+
+      background:
+        radial-gradient(
+          ellipse at 24% 54%,
+          rgba(55,184,99,.22),
+          transparent 55%
+        );
+
+      animation: morgulPulse 8s ease-in-out infinite alternate;
+    }
+
+    .weekly-theme-morgul .weekly-scene::after {
+      inset: -20%;
+      opacity: .5;
+      filter: blur(24px);
+
+      background:
+        linear-gradient(
+          115deg,
+          transparent 18%,
+          rgba(0,0,0,.50) 38%,
+          rgba(14,49,26,.28) 52%,
+          transparent 75%
+        );
+
+      animation: morgulShadow 17s ease-in-out infinite alternate;
+    }
+
+    .morgul-mist {
+      position: absolute;
+      inset: -25%;
+      border-radius: 50%;
+      pointer-events: none;
+      filter: blur(32px);
+      will-change: transform;
+    }
+
+    .morgul-mist-one {
+      opacity: .45;
+
+      background:
+        radial-gradient(
+          ellipse at 30% 55%,
+          rgba(55,167,88,.35),
+          transparent 54%
+        );
+
+      animation: morgulMistOne 18s ease-in-out infinite alternate;
+    }
+
+    .morgul-mist-two {
+      opacity: .26;
+
+      background:
+        radial-gradient(
+          ellipse at 70% 35%,
+          rgba(75,150,99,.28),
+          transparent 58%
+        );
+
+      animation: morgulMistTwo 24s ease-in-out infinite alternate;
+    }
+
+    .morgul-darkness {
+      position: absolute;
+      inset: -20%;
+      opacity: .75;
+
+      background:
+        radial-gradient(
+          ellipse at 65% 70%,
+          rgba(0,0,0,.55),
+          transparent 58%
+        );
+
+      animation: morgulShadow 14s ease-in-out infinite alternate-reverse;
+    }
+
+    .morgul-sparks {
+      position: absolute;
+      inset: 0;
+
+      background:
+        radial-gradient(
+          circle at 16% 34%,
+          rgba(137,255,170,.65) 0 1px,
+          transparent 3px
+        ),
+        radial-gradient(
+          circle at 48% 72%,
+          rgba(118,238,153,.50) 0 1px,
+          transparent 3px
+        ),
+        radial-gradient(
+          circle at 84% 42%,
+          rgba(144,243,166,.45) 0 1px,
+          transparent 3px
+        );
+
+      animation: morgulPulse 6s ease-in-out infinite alternate;
+    }
+
+    /* Card presentation */
+
+    .weekly-theme-morgul .weekly-card-halo {
+      background:
+        radial-gradient(
+          ellipse,
+          rgba(74,196,102,.32),
+          rgba(17,79,43,.14) 48%,
+          transparent 74%
+        );
+    }
+
+    .weekly-theme-morgul .weekly-card-shell {
+      background: #07110b;
+
+      box-shadow:
+        0 28px 74px rgba(0,0,0,.72),
+        0 0 48px rgba(57,190,91,.28),
+        0 0 0 1px rgba(135,231,158,.15);
+    }
+
+    .weekly-theme-morgul .weekly-card-shell:hover {
+      box-shadow:
+        0 35px 86px rgba(0,0,0,.78),
+        0 0 68px rgba(68,224,110,.42),
+        0 0 0 1px rgba(154,255,179,.24);
+    }
+
+    .weekly-theme-morgul .weekly-card-image {
+      position: relative;
+      z-index: 1;
+    }
+
+    /* Simulated surge foil light */
+    .morgul-foil-sheen {
+      position: absolute;
+      inset: 0;
+      z-index: 3;
+      pointer-events: none;
+      border-radius: inherit;
+
+      background:
+        linear-gradient(
+          112deg,
+          transparent 18%,
+          rgba(94,219,154,.09) 33%,
+          rgba(181,130,239,.16) 44%,
+          rgba(221,255,235,.29) 49%,
+          rgba(113,228,161,.20) 55%,
+          transparent 75%
+        );
+
+      background-size: 250% 100%;
+      mix-blend-mode: screen;
+      opacity: .35;
+
+      animation: morgulFoil 8s ease-in-out infinite;
+      transition: opacity .35s ease;
+    }
+
+    .morgul-shadow-frame {
+      position: absolute;
+      inset: 0;
+      z-index: 4;
+      pointer-events: none;
+      border-radius: inherit;
+
+      box-shadow:
+        inset 0 0 35px rgba(0,0,0,.55),
+        inset 0 0 10px rgba(51,157,75,.17);
+    }
+
+    .weekly-theme-morgul
+    .weekly-card-shell:hover
+    .morgul-foil-sheen {
+      opacity: .65;
+      animation-duration: 3.5s;
+    }
+
+    /* Editorial colour */
+
+    .weekly-theme-morgul .weekly-kicker {
+      color: #79e3a3;
+    }
+
+    .weekly-theme-morgul .weekly-story h3 {
+      text-shadow: 0 0 38px rgba(75,205,115,.18);
+    }
+
+    .weekly-theme-morgul .weekly-story::before {
+      background:
+        linear-gradient(
+          90deg,
+          rgba(112,230,149,.75),
+          transparent
+        );
+    }
+
+    .weekly-theme-morgul .weekly-fact {
+      border-color: rgba(79,195,109,.27);
+
+      background:
+        linear-gradient(
+          135deg,
+          rgba(25,89,48,.19),
+          rgba(255,255,255,.01)
+        );
+    }
+
+    .weekly-theme-morgul .weekly-fact small,
+    .weekly-theme-morgul .weekly-fact-mark {
+      color: #81e5a6;
+    }
+
+    .weekly-theme-morgul .weekly-link {
+      border-color: rgba(92,204,127,.48);
+      background: rgba(30,99,51,.22);
+    }
+
+    .weekly-theme-morgul .weekly-link:hover {
+      border-color: rgba(137,246,165,.75);
+      background: rgba(38,117,60,.34);
+    }
+
+    .weekly-theme-morgul .weekly-link span {
+      color: #8debaa;
+    }
+
+    .morgul-printing-detail {
+      margin: .3rem 0 0;
+      color: #8cc9a0;
+      font-size: .64rem;
+      font-weight: 800;
+      letter-spacing: .06em;
+      text-align: center;
+      text-transform: uppercase;
+    }
+
+    /* Motion */
+
+    @keyframes morgulPulse {
+      from { opacity: .25; }
+      to { opacity: .8; }
+    }
+
+    @keyframes morgulShadow {
+      from {
+        transform: translate(-5%,2%) scale(1.06);
+      }
+
+      to {
+        transform: translate(5%,-3%) scale(1.17);
+      }
+    }
+
+    @keyframes morgulMistOne {
+      from {
+        transform: translate(-6%,3%) scale(1);
+      }
+
+      to {
+        transform: translate(7%,-4%) scale(1.13);
+      }
+    }
+
+    @keyframes morgulMistTwo {
+      from {
+        transform: translate(7%,-3%) scale(1.1);
+      }
+
+      to {
+        transform: translate(-6%,4%) scale(.96);
+      }
+    }
+
+    @keyframes morgulFoil {
+      0%,100% {
+        background-position: 100% 0;
+      }
+
+      50% {
+        background-position: 0 0;
+      }
+    }
+
+    @media (max-width: 760px) {
+      .home-editorial-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .home-editorial {
+        margin: 1.7rem 0;
+      }
+
+      .morgul-mist {
+        filter: blur(20px);
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .weekly-theme-morgul::after,
+      .weekly-theme-morgul .weekly-scene::before,
+      .weekly-theme-morgul .weekly-scene::after,
+      .morgul-mist,
+      .morgul-darkness,
+      .morgul-sparks,
+      .morgul-foil-sheen {
+        animation: none !important;
+      }
+    }
+
+  </style>
+
+</head>
 
 <body>
 
-  <!-- ========================================
-       HEADER
-       ======================================== -->
+  <!-- HEADER -->
 
   <header class="site-header">
 
@@ -131,11 +640,7 @@
         Mana<span>Scout</span>
       </a>
 
-
-      <nav
-        class="nav"
-        aria-label="Primary navigation"
-      >
+      <nav class="nav" aria-label="Primary navigation">
 
         <a
           class="active"
@@ -158,19 +663,13 @@
 
   <main class="container">
 
-    <!-- ========================================
-         HERO / SEARCH
-         ======================================== -->
+    <!-- HERO -->
 
-    <section
-      class="hero home-hero"
-      id="search"
-    >
+    <section class="hero home-hero" id="search">
 
       <p class="eyebrow">
-        MTG CARD & PRINTING DISCOVERY
+        MAGIC: THE GATHERING CARD & PRINTING DISCOVERY
       </p>
-
 
       <h1>
         Find the card.<br>
@@ -178,14 +677,14 @@
         <span>Find the one.</span>
       </h1>
 
-
       <p class="hero-copy">
-        Search Magic: The Gathering cards, compare their available
-        printings, artwork, finishes and price data, then scout the
-        version you actually want.
+        Discover Magic: The Gathering cards and compare
+        their printings, artwork, collector numbers,
+        foil treatments and available prices.
+        Find the exact version that belongs in your collection.
       </p>
 
-
+      <!-- Keep these IDs for app.js -->
       <form
         id="search-form"
         class="search-form"
@@ -193,13 +692,9 @@
         autocomplete="off"
       >
 
-        <label
-          class="sr-only"
-          for="search-input"
-        >
-          Search Magic: The Gathering card name
+        <label class="sr-only" for="search-input">
+          Search Magic: The Gathering card names
         </label>
-
 
         <div class="search-box">
 
@@ -214,11 +709,9 @@
             aria-expanded="false"
           >
 
-
           <button type="submit">
             Search
           </button>
-
 
           <div
             id="autocomplete-list"
@@ -232,11 +725,11 @@
       </form>
 
 
+      <!-- Popular searches -->
+
       <div class="try-row">
 
-        <span>
-          Try
-        </span>
+        <span>Try</span>
 
         <a href="/?q=Sol%20Ring">
           Sol Ring
@@ -263,9 +756,7 @@
 
       <div class="home-hero-value">
 
-        <span aria-hidden="true">
-          ◇
-        </span>
+        <span aria-hidden="true">◇</span>
 
         <p>
           Search the card.
@@ -276,6 +767,8 @@
       </div>
 
 
+      <!-- Existing Discover behaviour retained -->
+
       <div class="home-discover">
 
         <button
@@ -283,10 +776,7 @@
           class="home-discover-button"
           type="button"
         >
-          <span aria-hidden="true">
-            ◇
-          </span>
-
+          <span aria-hidden="true">◇</span>
           Discover a Card
         </button>
 
@@ -295,9 +785,8 @@
     </section>
 
 
-    <!-- ========================================
-         SEARCH RESULT
-         ======================================== -->
+    <!-- SEARCH RESULTS -->
+    <!-- app.js controls this section -->
 
     <section
       id="card-details-section"
@@ -313,9 +802,8 @@
     </section>
 
 
-    <!-- ========================================
-         SCOUTBOARD
-         ======================================== -->
+    <!-- HOMEPAGE DISCOVERY -->
+    <!-- All homepage sections now appear without roulette or tabs -->
 
     <section
       class="scoutboard"
@@ -325,171 +813,38 @@
 
       <div class="scoutboard-heading">
 
-        <div>
+        <div class="home-section-intro">
 
           <p class="eyebrow">
-            THE SCOUTBOARD
+            THE MANASCOUT ARCHIVE
           </p>
 
           <h2 id="scoutboard-heading">
-            Pick a path
+            More than just a card name
           </h2>
 
           <p>
-            A smaller home for ManaScout's discovery tools.
-            Explore standout printings, open the weekly archive,
-            spin the wheel or head into the permanent card guides.
+            The same Magic card can have dozens of versions.
+            Discover their artwork, release history, collector
+            numbers and premium treatments, then explore
+            the printing that catches your eye.
           </p>
 
         </div>
 
-
         <span class="scoutboard-status">
-          ◇ DISCOVERY ARCHIVE
+          ◇ PRINTING DISCOVERY
         </span>
 
       </div>
 
 
-      <!-- TABS -->
+      <!-- FEATURED PRINTINGS -->
 
-      <div
-        class="scoutboard-tabs"
-        role="tablist"
-        aria-label="ManaScout discovery modes"
-      >
-
-        <button
-          class="scoutboard-tab is-active"
-          id="scoutboard-tab-explore"
-          type="button"
-          role="tab"
-          aria-selected="true"
-          aria-controls="scoutboard-panel-explore"
-          data-scoutboard-tab="explore"
-        >
-
-          <span class="scoutboard-tab-number">
-            01
-          </span>
-
-          <span>
-
-            <strong>
-              Explore
-            </strong>
-
-            <small>
-              Standout printings
-            </small>
-
-          </span>
-
-        </button>
-
-
-        <button
-          class="scoutboard-tab"
-          id="scoutboard-tab-weekly"
-          type="button"
-          role="tab"
-          aria-selected="false"
-          aria-controls="scoutboard-panel-weekly"
-          data-scoutboard-tab="weekly"
-          tabindex="-1"
-        >
-
-          <span class="scoutboard-tab-number">
-            02
-          </span>
-
-          <span>
-
-            <strong>
-              This Week
-            </strong>
-
-            <small>
-              Mystic Sanctuary
-            </small>
-
-          </span>
-
-        </button>
-
-
-        <button
-          class="scoutboard-tab"
-          id="scoutboard-tab-roulette"
-          type="button"
-          role="tab"
-          aria-selected="false"
-          aria-controls="scoutboard-panel-roulette"
-          data-scoutboard-tab="roulette"
-          tabindex="-1"
-        >
-
-          <span class="scoutboard-tab-number">
-            03
-          </span>
-
-          <span>
-
-            <strong>
-              Roulette
-            </strong>
-
-            <small>
-              Let fate choose
-            </small>
-
-          </span>
-
-        </button>
-
-
-        <button
-          class="scoutboard-tab"
-          id="scoutboard-tab-guides"
-          type="button"
-          role="tab"
-          aria-selected="false"
-          aria-controls="scoutboard-panel-guides"
-          data-scoutboard-tab="guides"
-          tabindex="-1"
-        >
-
-          <span class="scoutboard-tab-number">
-            04
-          </span>
-
-          <span>
-
-            <strong>
-              Guides
-            </strong>
-
-            <small>
-              The archive
-            </small>
-
-          </span>
-
-        </button>
-
-      </div>
-
-
-      <!-- ========================================
-           EXPLORE
-           ======================================== -->
-
-      <div
+      <section
         class="scoutboard-panel"
         id="scoutboard-panel-explore"
-        role="tabpanel"
-        aria-labelledby="scoutboard-tab-explore"
-        data-scoutboard-panel="explore"
+        aria-labelledby="featured-heading"
       >
 
         <div class="scoutboard-panel-heading">
@@ -500,26 +855,24 @@
               FEATURED PRINTINGS
             </p>
 
-            <h3>
+            <h3 id="featured-heading">
               Cards worth scouting
             </h3>
 
             <p>
-              Four cards where choosing the printing can matter
-              almost as much as choosing the card.
+              Iconic spells, Commander staples and collectable
+              printings. Start with these cards and see how
+              differently the same card can be presented.
             </p>
 
           </div>
-
 
           <a
             class="scoutboard-heading-link"
             href="/card/"
           >
-            All 26 guides
-            <span aria-hidden="true">
-              →
-            </span>
+            All card guides
+            <span aria-hidden="true">→</span>
           </a>
 
         </div>
@@ -527,7 +880,7 @@
 
         <div class="scoutboard-feature-grid">
 
-          <!-- RHYSTIC -->
+          <!-- RHYSTIC STUDY -->
 
           <article
             class="scoutboard-feature-card"
@@ -536,13 +889,10 @@
           >
 
             <div class="scoutboard-feature-art">
-
               <div class="scoutboard-feature-placeholder">
                 ◇
               </div>
-
             </div>
-
 
             <div class="scoutboard-feature-copy">
 
@@ -555,18 +905,17 @@
               </h4>
 
               <p>
-                From Prophecy to wildly different modern art
-                and premium collector treatments.
+                Explore the Prophecy original, Enchanting Tales
+                artwork, foil versions and collector treatments
+                of this famous blue enchantment.
               </p>
 
               <a
                 class="scoutboard-feature-link"
                 href="/card/rhystic-study/"
               >
-                Scout the printings
-                <span aria-hidden="true">
-                  →
-                </span>
+                Explore Rhystic Study
+                <span aria-hidden="true">→</span>
               </a>
 
             </div>
@@ -583,13 +932,10 @@
           >
 
             <div class="scoutboard-feature-art">
-
               <div class="scoutboard-feature-placeholder">
                 ◇
               </div>
-
             </div>
-
 
             <div class="scoutboard-feature-copy">
 
@@ -602,18 +948,17 @@
               </h4>
 
               <p>
-                Decades of releases, frames, artwork and
-                premium versions of the Commander staple.
+                A Commander staple with decades of different
+                artwork, promotional releases, frames
+                and highly collectable versions.
               </p>
 
               <a
                 class="scoutboard-feature-link"
                 href="/card/sol-ring/"
               >
-                Scout the printings
-                <span aria-hidden="true">
-                  →
-                </span>
+                Explore Sol Ring
+                <span aria-hidden="true">→</span>
               </a>
 
             </div>
@@ -621,7 +966,7 @@
           </article>
 
 
-          <!-- ONE RING -->
+          <!-- THE ONE RING -->
 
           <article
             class="scoutboard-feature-card"
@@ -630,13 +975,10 @@
           >
 
             <div class="scoutboard-feature-art">
-
               <div class="scoutboard-feature-placeholder">
                 ◇
               </div>
-
             </div>
-
 
             <div class="scoutboard-feature-copy">
 
@@ -649,18 +991,17 @@
               </h4>
 
               <p>
-                Standard releases meet borderless and
-                collector-focused treatments.
+                Discover Lord of the Rings releases,
+                alternative frames, borderless artwork
+                and collector-focused printings.
               </p>
 
               <a
                 class="scoutboard-feature-link"
                 href="/card/the-one-ring/"
               >
-                Scout the printings
-                <span aria-hidden="true">
-                  →
-                </span>
+                Explore The One Ring
+                <span aria-hidden="true">→</span>
               </a>
 
             </div>
@@ -668,7 +1009,7 @@
           </article>
 
 
-          <!-- FORCE -->
+          <!-- FORCE OF WILL -->
 
           <article
             class="scoutboard-feature-card"
@@ -677,13 +1018,10 @@
           >
 
             <div class="scoutboard-feature-art">
-
               <div class="scoutboard-feature-placeholder">
                 ◇
               </div>
-
             </div>
-
 
             <div class="scoutboard-feature-copy">
 
@@ -696,18 +1034,17 @@
               </h4>
 
               <p>
-                The Alliances original against some of
-                Magic's strongest modern alternative artwork.
+                Compare the original Alliances artwork with
+                modern premium treatments, alternate art
+                and reprinted versions.
               </p>
 
               <a
                 class="scoutboard-feature-link"
                 href="/card/force-of-will/"
               >
-                Scout the printings
-                <span aria-hidden="true">
-                  →
-                </span>
+                Explore Force of Will
+                <span aria-hidden="true">→</span>
               </a>
 
             </div>
@@ -716,20 +1053,15 @@
 
         </div>
 
-      </div>
+      </section>
 
 
-      <!-- ========================================
-           CARD OF THE WEEK — MYSTIC SANCTUARY
-           ======================================== -->
+      <!-- CARD OF THE WEEK -->
 
-      <div
+      <section
         class="scoutboard-panel"
         id="scoutboard-panel-weekly"
-        role="tabpanel"
-        aria-labelledby="scoutboard-tab-weekly"
-        data-scoutboard-panel="weekly"
-        hidden
+        aria-labelledby="weekly-heading"
       >
 
         <div class="scoutboard-panel-heading">
@@ -737,85 +1069,59 @@
           <div>
 
             <p class="scoutboard-kicker">
-              CARD OF THE WEEK · WEEK 005
+              CARD OF THE WEEK · WEEK 006
             </p>
 
-            <h3>
-              A sanctuary beneath the surface
+            <h3 id="weekly-heading">
+              The Tower of Sorcery
             </h3>
 
             <p>
-              One card. One printing. One corner of Magic
-              worth opening the archive for.
+              One extraordinary printing.
+              Its history, artwork and place in Magic.
             </p>
 
           </div>
 
-
           <span class="weekly-edition-badge">
-            WEEK 005
+            WEEK 006
           </span>
 
         </div>
 
 
         <article
-          class="weekly-card-feature weekly-theme-sanctuary"
+          class="weekly-card-feature weekly-theme-morgul"
           id="card-of-the-week"
-          data-weekly-card="Mystic Sanctuary"
-          data-weekly-set="sld"
-          data-weekly-number="2143"
-          data-weekly-theme="sanctuary-tide"
+          data-weekly-card="Cabal Coffers"
+          data-weekly-set="ltc"
+          data-weekly-number="390"
+          data-weekly-theme="morgul-shadow"
         >
 
-          <!-- ATMOSPHERE -->
+          <!-- SHADOW ATMOSPHERE -->
 
           <div
-            class="weekly-scene"
+            class="weekly-scene morgul-scene"
             aria-hidden="true"
           >
 
-            <div class="weekly-water-glow"></div>
+            <div class="morgul-mist morgul-mist-one"></div>
 
-            <div class="weekly-caustics">
-              <span></span>
-              <span></span>
-              <span></span>
-            </div>
+            <div class="morgul-mist morgul-mist-two"></div>
 
-            <div class="weekly-ripple weekly-ripple-one"></div>
-            <div class="weekly-ripple weekly-ripple-two"></div>
-            <div class="weekly-ripple weekly-ripple-three"></div>
+            <div class="morgul-darkness"></div>
 
-            <div class="weekly-bubbles">
-
-              <i></i>
-              <i></i>
-              <i></i>
-              <i></i>
-              <i></i>
-              <i></i>
-              <i></i>
-              <i></i>
-              <i></i>
-              <i></i>
-              <i></i>
-              <i></i>
-
-            </div>
-
-            <div class="weekly-drift weekly-drift-one"></div>
-            <div class="weekly-drift weekly-drift-two"></div>
+            <div class="morgul-sparks"></div>
 
           </div>
 
 
-          <!-- CARD -->
+          <!-- PRINTING ARTWORK -->
 
           <div class="weekly-card-column">
 
             <div class="weekly-card-halo"></div>
-
 
             <div
               class="weekly-card-shell"
@@ -826,34 +1132,31 @@
                 class="weekly-card-placeholder"
                 id="card-week-placeholder"
               >
-                <span>
-                  ◇
-                </span>
+                <span>◇</span>
 
                 <small>
-                  DESCENDING INTO THE SANCTUARY…
+                  THE SHADOWS ARE GATHERING…
                 </small>
               </div>
-
 
               <img
                 id="card-week-image"
                 class="weekly-card-image"
-                src="https://api.scryfall.com/cards/sld/2143?format=image&version=normal"
-                alt="Mystic Sanctuary — Secret Lair Dandân printing #2143"
+                src="https://api.scryfall.com/cards/ltc/390?format=image&amp;version=normal"
+                alt="Minas Morgul — Cabal Coffers, Tales of Middle-earth Commander, surge foil collector number 390"
                 loading="lazy"
                 decoding="async"
+                width="488"
+                height="680"
               >
 
-
               <div
-                class="weekly-aqua-wash"
+                class="morgul-foil-sheen"
                 aria-hidden="true"
               ></div>
 
-
               <div
-                class="weekly-water-sheen"
+                class="morgul-shadow-frame"
                 aria-hidden="true"
               ></div>
 
@@ -864,51 +1167,59 @@
               class="weekly-printing"
               id="card-week-printing"
             >
-              SECRET LAIR DROP · DANDÂN · #2143
+              TALES OF MIDDLE-EARTH COMMANDER · #390
+            </p>
+
+            <p class="morgul-printing-detail">
+              MINAS MORGUL · SURGE FOIL · SEAN VO
             </p>
 
           </div>
 
 
-          <!-- STORY -->
+          <!-- EDITORIAL -->
 
           <div class="weekly-story">
 
             <p class="weekly-kicker">
-              ISLAND · SPELL RECURSION · UNDERWATER SANCTUARY
+              CABAL COFFERS · REALMS AND RELICS · SURGE FOIL
             </p>
-
 
             <h3>
-              Mystic Sanctuary
+              Minas Morgul
             </h3>
 
-
             <p class="weekly-intro">
-              Sometimes the most dangerous spell in your graveyard
-              is only one land drop away from being drawn again.
+              A city once claimed by Gondor, transformed into
+              a place of darkness — and one of Magic's
+              most striking land treatments.
             </p>
-
 
             <p>
-              <strong>Mystic Sanctuary</strong> looks like an Island,
-              but in the right deck it behaves like a piece of spell
-              recursion hidden inside the mana base. If it enters untapped
-              while you control three or more other Islands, it can put
-              an instant or sorcery from your graveyard back on top
-              of your library.
+              <strong>Minas Morgul</strong> is the
+              <strong>Lord of the Rings-themed version of Cabal Coffers</strong>,
+              one of black mana's most famous lands.
+              For two mana and a tap, Cabal Coffers
+              produces one black mana for each Swamp
+              you control.
             </p>
-
 
             <p>
-              First printed in <strong>Throne of Eldraine</strong>,
-              Mystic Sanctuary later received one of its most distinctive
-              visual treatments through the Secret Lair Dandân release.
-              This borderless foil version, illustrated by
-              <strong>Amélie Fléchais</strong>, pushes the card fully
-              into its underwater identity.
+              The card rewards a mana base built around Swamps,
+              making it especially powerful in mono-black
+              Commander decks. What begins as an ordinary
+              land can become a source of enormous mana
+              as the game progresses.
             </p>
 
+            <p>
+              The original Cabal Coffers appeared in
+              <strong>Torment</strong> in 2002.
+              Its Minas Morgul interpretation arrived in
+              <strong>The Lord of the Rings: Tales of Middle-earth Commander</strong>.
+              This borderless Realms and Relics treatment
+              was illustrated by <strong>Sean Vo</strong>.
+            </p>
 
             <div class="weekly-fact">
 
@@ -919,7 +1230,6 @@
                 ◇
               </span>
 
-
               <div>
 
                 <small>
@@ -927,32 +1237,36 @@
                 </small>
 
                 <p>
-                  Secret Lair #2143 gets the pick this week.
-                  The submerged architecture, luminous water and
-                  dreamlike depth turn Mystic Sanctuary from a useful
-                  blue land into something that genuinely feels like
-                  a hidden place beneath the sea.
+                  LTC #390 is the surge foil version of
+                  Minas Morgul / Cabal Coffers. Its
+                  spectral architecture and ominous atmosphere
+                  make it a natural choice for this week's
+                  shadow-themed feature.
+                </p>
+
+                <p>
+                  The drifting shadows and simulated foil
+                  reflections on this page are ManaScout
+                  presentation effects, not animations
+                  on the physical card.
                 </p>
 
               </div>
 
             </div>
 
-
             <a
               class="weekly-link"
               id="card-week-link"
-              href="/card/mystic-sanctuary/"
+              href="/?q=Cabal%20Coffers&amp;printing=cce035f4-5ba4-4e9d-ab26-d5d0290de74d"
             >
-              Scout Mystic Sanctuary
-              <span aria-hidden="true">
-                →
-              </span>
+              Scout this printing
+              <span aria-hidden="true">→</span>
             </a>
 
-
             <p class="weekly-source">
-              Printing and card data supplied by Scryfall.
+              Card information and artwork supplied by Scryfall.
+              Collector number LTC #390.
             </p>
 
           </div>
@@ -960,14 +1274,15 @@
         </article>
 
 
-        <!-- COTW ARCHIVE DATA -->
+        <!-- WEEKLY ARCHIVE -->
+        <!-- Future JS can use this JSON for weekly navigation -->
 
         <script
           id="card-week-archive-data"
           type="application/json"
         >
         {
-          "currentWeek": 5,
+          "currentWeek": 6,
           "entries": [
             {
               "week": 1,
@@ -1006,256 +1321,33 @@
               "collectorNumber": "2143",
               "artist": "Amélie Fléchais",
               "theme": "sanctuary-tide",
+              "status": "archived"
+            },
+            {
+              "week": 6,
+              "card": "Cabal Coffers",
+              "displayName": "Minas Morgul",
+              "set": "Tales of Middle-earth Commander",
+              "setCode": "ltc",
+              "collectorNumber": "390",
+              "artist": "Sean Vo",
+              "treatment": "Surge Foil",
+              "theme": "morgul-shadow",
               "status": "current"
             }
           ]
         }
         </script>
 
-      </div>
+      </section>
 
 
-      <!-- ========================================
-           ROULETTE
-           ======================================== -->
+      <!-- PERMANENT CARD GUIDES -->
 
-      <div
-        class="scoutboard-panel"
-        id="scoutboard-panel-roulette"
-        role="tabpanel"
-        aria-labelledby="scoutboard-tab-roulette"
-        data-scoutboard-panel="roulette"
-        hidden
-      >
-
-        <div class="scoutboard-panel-heading">
-
-          <div>
-
-            <p class="scoutboard-kicker">
-              SCOUT ROULETTE
-            </p>
-
-            <h3>
-              Let fate choose
-            </h3>
-
-            <p>
-              Seven paths. One spin.
-              ManaScout chooses the category and finds the card.
-            </p>
-
-          </div>
-
-        </div>
-
-
-        <div class="scout-roulette-panel">
-
-          <div class="scout-roulette-stage">
-
-            <div class="scout-wheel-wrap">
-
-              <div
-                class="scout-wheel-pointer"
-                aria-hidden="true"
-              ></div>
-
-
-              <div
-                class="scout-wheel"
-                id="scout-wheel"
-                aria-hidden="true"
-              >
-
-                <span class="scout-wheel-label">
-                  Legendary
-                </span>
-
-                <span class="scout-wheel-label">
-                  Artifact
-                </span>
-
-                <span class="scout-wheel-label">
-                  Creature
-                </span>
-
-                <span class="scout-wheel-label">
-                  Spell
-                </span>
-
-                <span class="scout-wheel-label">
-                  Enchantment
-                </span>
-
-                <span class="scout-wheel-label">
-                  Land
-                </span>
-
-                <span class="scout-wheel-label">
-                  Wild
-                </span>
-
-              </div>
-
-
-              <button
-                class="scout-wheel-hub"
-                id="scout-roulette-spin"
-                type="button"
-              >
-                SPIN
-              </button>
-
-            </div>
-
-          </div>
-
-
-          <div class="scout-roulette-content">
-
-            <div
-              class="scout-roulette-idle"
-              id="scout-roulette-idle"
-            >
-
-              <p class="scout-roulette-kicker">
-                SEVEN PATHS · ONE CARD
-              </p>
-
-
-              <h3>
-                What will<br>
-                you scout?
-              </h3>
-
-
-              <p class="scout-roulette-copy">
-                Legendary. Artifact. Creature. Spell.
-                Enchantment. Land. Wild.
-              </p>
-
-
-              <span
-                class="scout-roulette-category"
-                id="scout-roulette-status"
-              >
-                Awaiting your spin
-              </span>
-
-
-              <p
-                class="scout-roulette-error"
-                id="scout-roulette-error"
-                role="status"
-                aria-live="polite"
-                hidden
-              ></p>
-
-            </div>
-
-
-            <div
-              class="scout-roulette-result"
-              id="scout-roulette-result"
-              hidden
-            >
-
-              <div class="scout-roulette-reveal">
-
-                <div
-                  class="scout-roulette-card-shell"
-                  id="scout-roulette-card-shell"
-                >
-
-                  <img
-                    class="scout-roulette-card"
-                    id="scout-roulette-card"
-                    alt=""
-                    loading="lazy"
-                    decoding="async"
-                  >
-
-                </div>
-
-
-                <div>
-
-                  <p
-                    class="scout-roulette-kicker"
-                    id="scout-roulette-result-category"
-                  >
-                    SCOUT ROULETTE
-                  </p>
-
-
-                  <h3 id="scout-roulette-card-name">
-                    Your card
-                  </h3>
-
-
-                  <p
-                    class="scout-roulette-meta"
-                    id="scout-roulette-card-meta"
-                  ></p>
-
-
-                  <p
-                    class="scout-roulette-copy"
-                    id="scout-roulette-card-copy"
-                  >
-                    Fate has spoken.
-                  </p>
-
-
-                  <div class="scout-roulette-actions">
-
-                    <a
-                      class="scout-roulette-action"
-                      id="scout-roulette-action"
-                      href="/"
-                    >
-                      Scout This Card
-                      <span aria-hidden="true">
-                        →
-                      </span>
-                    </a>
-
-
-                    <button
-                      class="scout-roulette-again"
-                      id="scout-roulette-again"
-                      type="button"
-                    >
-                      Spin Again
-                    </button>
-
-                  </div>
-
-                </div>
-
-              </div>
-
-            </div>
-
-          </div>
-
-        </div>
-
-      </div>
-
-
-      <!-- ========================================
-           GUIDES
-           ======================================== -->
-
-      <div
+      <section
         class="scoutboard-panel"
         id="scoutboard-panel-guides"
-        role="tabpanel"
-        aria-labelledby="scoutboard-tab-guides"
-        data-scoutboard-panel="guides"
-        hidden
+        aria-labelledby="guides-heading"
       >
 
         <div class="scoutboard-panel-heading">
@@ -1263,30 +1355,27 @@
           <div>
 
             <p class="scoutboard-kicker">
-              PRINTING GUIDES
+              THE PRINTING ARCHIVE
             </p>
 
-            <h3>
-              Open the archive
+            <h3 id="guides-heading">
+              Explore the card guides
             </h3>
 
             <p>
-              Permanent guides for cards where artwork,
-              release history and treatment choice deserve more
-              than a simple database row.
+              Browse individual Magic card guides covering
+              printing history, card artwork, collectors'
+              versions and notable treatments.
             </p>
 
           </div>
-
 
           <a
             class="scoutboard-heading-link"
             href="/card/"
           >
-            Browse all 26
-            <span aria-hidden="true">
-              →
-            </span>
+            Browse the archive
+            <span aria-hidden="true">→</span>
           </a>
 
         </div>
@@ -1300,9 +1389,8 @@
           >
             <small>COMMANDER ICON</small>
             <strong>Sol Ring</strong>
-            <span>Open guide →</span>
+            <span>Explore printings →</span>
           </a>
-
 
           <a
             class="scoutboard-guide"
@@ -1310,9 +1398,8 @@
           >
             <small>CARD ADVANTAGE</small>
             <strong>Rhystic Study</strong>
-            <span>Open guide →</span>
+            <span>Explore printings →</span>
           </a>
-
 
           <a
             class="scoutboard-guide"
@@ -1320,9 +1407,8 @@
           >
             <small>BLACK TUTOR</small>
             <strong>Demonic Tutor</strong>
-            <span>Open guide →</span>
+            <span>Explore printings →</span>
           </a>
-
 
           <a
             class="scoutboard-guide"
@@ -1330,9 +1416,8 @@
           >
             <small>COLLECTOR FAVOURITE</small>
             <strong>The One Ring</strong>
-            <span>Open guide →</span>
+            <span>Explore printings →</span>
           </a>
-
 
           <a
             class="scoutboard-guide"
@@ -1340,9 +1425,8 @@
           >
             <small>BLUE ICON</small>
             <strong>Force of Will</strong>
-            <span>Open guide →</span>
+            <span>Explore printings →</span>
           </a>
-
 
           <a
             class="scoutboard-guide"
@@ -1350,9 +1434,8 @@
           >
             <small>SECRET LAIR PICK</small>
             <strong>Mystic Sanctuary</strong>
-            <span>Open guide →</span>
+            <span>Explore printings →</span>
           </a>
-
 
           <a
             class="scoutboard-guide"
@@ -1360,9 +1443,8 @@
           >
             <small>COMMANDER STAPLE</small>
             <strong>Cyclonic Rift</strong>
-            <span>Open guide →</span>
+            <span>Explore printings →</span>
           </a>
-
 
           <a
             class="scoutboard-guide"
@@ -1370,7 +1452,7 @@
           >
             <small>WHITE ICON</small>
             <strong>Swords to Plowshares</strong>
-            <span>Open guide →</span>
+            <span>Explore printings →</span>
           </a>
 
         </div>
@@ -1379,9 +1461,8 @@
         <div class="scoutboard-guide-footer">
 
           <span>
-            26 permanent printing guides
+            Permanent MTG printing guides
           </span>
-
 
           <a href="/card/">
             View the complete directory →
@@ -1389,15 +1470,103 @@
 
         </div>
 
-      </div>
+      </section>
 
     </section>
 
 
-    <!-- ========================================
-         PRINTINGS
-         app.js owns the contents
-         ======================================== -->
+    <!-- EDITORIAL CONTENT -->
+    <!-- Helpful for visitors and crawlable page context -->
+
+    <section
+      class="home-editorial"
+      aria-labelledby="how-printings-work"
+    >
+
+      <p class="eyebrow">
+        UNDERSTANDING MAGIC PRINTINGS
+      </p>
+
+      <h2 id="how-printings-work">
+        One card. Many different versions.
+      </h2>
+
+      <div class="home-editorial-grid">
+
+        <article class="home-editorial-card">
+
+          <h3>
+            What is an MTG printing?
+          </h3>
+
+          <p>
+            A printing is a particular release of a Magic:
+            The Gathering card. The same card can appear
+            across multiple sets with different artwork,
+            collector numbers, frames and rarities.
+          </p>
+
+          <a href="/card/rhystic-study/">
+            See Rhystic Study printings →
+          </a>
+
+        </article>
+
+
+        <article class="home-editorial-card">
+
+          <h3>
+            What makes a foil version different?
+          </h3>
+
+          <p>
+            Foil cards use reflective treatments.
+            Depending on the release, a card may have
+            traditional foil, surge foil, etched foil
+            or another special finish. Not every
+            treatment exists for every printing.
+          </p>
+
+          <a href="/card/the-one-ring/">
+            Explore collector treatments →
+          </a>
+
+        </article>
+
+
+        <article class="home-editorial-card">
+
+          <h3>
+            How do I find the exact version?
+          </h3>
+
+          <p>
+            Search for the card name, then compare the
+            available printings. Set codes, collector
+            numbers, artwork and treatment details
+            help distinguish one release from another.
+          </p>
+
+          <a href="#search">
+            Search for a card →
+          </a>
+
+        </article>
+
+      </div>
+
+      <a
+        class="home-guide-cta"
+        href="/card/"
+      >
+        Explore all ManaScout card guides →
+      </a>
+
+    </section>
+
+
+    <!-- LIVE PRINTINGS -->
+    <!-- app.js populates these containers -->
 
     <section
       class="printings-section"
@@ -1409,7 +1578,7 @@
         <div>
 
           <p class="eyebrow">
-            PRINTINGS
+            CARD PRINTINGS
           </p>
 
           <h2 id="printings-heading">
@@ -1417,7 +1586,6 @@
           </h2>
 
         </div>
-
 
         <p
           id="printings-status"
@@ -1428,7 +1596,6 @@
 
       </div>
 
-
       <div id="printings-container"></div>
 
     </section>
@@ -1436,63 +1603,17 @@
   </main>
 
 
-  <!-- ========================================
-       QUICK DOCK
-       ======================================== -->
-
-  <nav
-    class="home-dock"
-    id="home-dock"
-    aria-label="ManaScout homepage shortcuts"
-    hidden
-  >
-
-    <a href="#search">
-      Search
-    </a>
-
-    <button
-      type="button"
-      data-scoutboard-open="explore"
-    >
-      Explore
-    </button>
-
-    <button
-      type="button"
-      data-scoutboard-open="weekly"
-    >
-      Weekly
-    </button>
-
-    <button
-      type="button"
-      data-scoutboard-open="roulette"
-    >
-      Roulette
-    </button>
-
-    <button
-      type="button"
-      data-scoutboard-open="guides"
-    >
-      Guides
-    </button>
-
-  </nav>
-
-
-  <!-- ========================================
-       FOOTER
-       ======================================== -->
+  <!-- FOOTER -->
 
   <footer class="footer">
 
     <div class="container footer-inner">
 
       <p>
-        ManaScout is an independent MTG discovery tool.
-        Card data, images and price fields are supplied by
+        ManaScout is an independent Magic: The Gathering
+        card discovery and printing comparison website.
+        Card data, images and available price fields
+        are supplied by
         <a
           href="https://scryfall.com/"
           target="_blank"
@@ -1500,11 +1621,11 @@
         >
           Scryfall
         </a>.
-        Magic: The Gathering is a trademark of Wizards of the Coast LLC.
-        ManaScout is not affiliated with or endorsed by Wizards of the
-        Coast or Scryfall.
+        Magic: The Gathering is a trademark of
+        Wizards of the Coast LLC.
+        ManaScout is not affiliated with or endorsed
+        by Wizards of the Coast or Scryfall.
       </p>
-
 
       <div>
 
@@ -1531,8 +1652,10 @@
   </footer>
 
 
-  <script src="/assets/js/app.js"></script>
+  <!-- EXISTING SCRIPT FILES -->
+  <!-- Keep these until their full replacements are ready -->
 
+  <script src="/assets/js/app.js"></script>
   <script src="/assets/js/scoutboard.js"></script>
 
 </body>
