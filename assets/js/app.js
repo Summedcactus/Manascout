@@ -1,173 +1,318 @@
 
-/*
- * ManaScout — Complete card-search engine
- * File: assets/js/app.js
- * Branch: DEVELOPMENT
- *
- * Search, autocomplete, printing selection, ManaScout Pick,
- * finish previews, printings archive, GBP estimates and discovery.
- * No roulette and no change to main/dev branches.
- */
+/* ManaScout search and printings — DEVELOPMENT full replacement */
 (() => {
   "use strict";
 
   const API = "https://api.scryfall.com";
-  const FX_API = "https://api.frankfurter.dev/v2/rate";
+  const FX = "https://api.frankfurter.dev/v2/rate";
   const $ = id => document.getElementById(id);
 
-  const els = {
+  const ui = {
     form: $("search-form"),
     input: $("search-input"),
-    autocomplete: $("autocomplete-list"),
+    suggestions: $("autocomplete-list"),
     details: $("card-details"),
-    status: $("printings-status"),
-    printings: $("printings-container")
+    printings: $("printings-container"),
+    status: $("printings-status")
   };
 
+  const guideName =
+    document.body?.dataset?.cardName?.trim() || "";
+
   const GUIDE_SLUGS = new Set([
-    "ancient-tomb", "birds-of-paradise", "black-lotus",
-    "counterspell", "cyclonic-rift", "deflecting-swat",
-    "demonic-consultation", "demonic-tutor",
-    "dockside-extortionist", "force-of-will",
-    "jace-the-mind-sculptor", "jeskas-will",
-    "lightning-greaves", "mana-crypt", "mana-drain",
-    "mystic-remora", "rhystic-study", "smaug-wicked-worm",
-    "smothering-tithe", "sol-ring", "swords-to-plowshares",
-    "teferis-protection", "the-one-ring",
-    "the-theorist-jace-beleren", "vampiric-tutor",
-    "mana-vault", "arcane-signet", "esper-sentinel",
-    "doubling-season", "path-to-exile", "lightning-bolt",
-    "mystic-sanctuary"
+    "ancient-tomb",
+    "arcane-signet",
+    "birds-of-paradise",
+    "black-lotus",
+    "counterspell",
+    "cyclonic-rift",
+    "deflecting-swat",
+    "demonic-consultation",
+    "demonic-tutor",
+    "dockside-extortionist",
+    "doubling-season",
+    "esper-sentinel",
+    "force-of-will",
+    "jace-the-mind-sculptor",
+    "jeskas-will",
+    "lightning-bolt",
+    "lightning-greaves",
+    "mana-crypt",
+    "mana-drain",
+    "mana-vault",
+    "mystic-remora",
+    "mystic-sanctuary",
+    "path-to-exile",
+    "rhystic-study",
+    "smaug-wicked-worm",
+    "smothering-tithe",
+    "sol-ring",
+    "swords-to-plowshares",
+    "teferis-protection",
+    "the-one-ring",
+    "the-theorist-jace-beleren",
+    "vampiric-tutor"
   ]);
 
-  const TREATMENT_LABELS = {
+  const TREATMENT = {
     surgefoil: "Surge foil",
     galaxyfoil: "Galaxy foil",
     halofoil: "Halo foil",
-    textured: "Textured foil",
     rainbowfoil: "Rainbow foil",
+    textured: "Textured foil",
     stepandcompleat: "Step-and-Compleat foil",
     serialized: "Serialized",
-    boosterfun: "Booster Fun",
-    etched: "Etched",
     extendedart: "Extended art",
     showcase: "Showcase",
-    fullart: "Full art",
-    borderless: "Borderless",
-    inverted: "Inverted"
+    inverted: "Inverted",
+    boosterfun: "Booster Fun",
+    etched: "Etched foil",
+    confettifoil: "Confetti foil"
   };
 
-  let requestController = null;
+  const LANGS = {
+    en: "English",
+    es: "Spanish",
+    fr: "French",
+    de: "German",
+    it: "Italian",
+    pt: "Portuguese",
+    ja: "Japanese",
+    ko: "Korean",
+    ru: "Russian",
+    zhs: "Simplified Chinese",
+    zht: "Traditional Chinese",
+    he: "Hebrew",
+    la: "Latin",
+    grc: "Ancient Greek",
+    ar: "Arabic",
+    sa: "Sanskrit",
+    ph: "Phyrexian"
+  };
+
+  const previews = new Map();
+  const pickCache = new Map();
+
+  let controller = null;
   let suggestController = null;
   let suggestTimer = 0;
-  let searchToken = 0;
+  let generation = 0;
   let activeSuggestion = -1;
-  let ratesPromise = null;
+  let fxPromise = null;
   let currentCard = null;
-  let printingState = null;
-
-  const pickCache = new Map();
-  const foilDisabled = new Set();
+  let currentPick = false;
+  let archive = null;
 
 
   /* ========================================
-     HELPERS
+     BASIC UTILITIES
      ======================================== */
 
-  const html = value => String(value ?? "")
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;")
-    .replace(/'/g, "&#39;");
+  const esc = x =>
+    String(x ?? "")
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;")
+      .replace(/'/g, "&#39;");
 
-  const asNumber = value => {
-    const n = Number.parseFloat(value);
-    return Number.isFinite(n) && n >= 0 ? n : null;
-  };
+  const pretty = x =>
+    String(x || "")
+      .replace(/_/g, " ")
+      .replace(/\b\w/g, x => x.toUpperCase());
 
-  const title = value => String(value || "")
-    .replace(/_/g, " ")
-    .replace(/\b\w/g, c => c.toUpperCase());
+  const norm = x =>
+    String(x || "")
+      .trim()
+      .toLowerCase();
 
-  const slug = name => String(name || "")
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, "-")
-    .replace(/^-|-$/g, "");
-
-  const safeUrl = value => {
+  const safe = x => {
     try {
-      const url = new URL(value);
-      return /^https?:$/.test(url.protocol)
-        ? url.href
+      const u = new URL(x);
+      return /^https?:$/.test(u.protocol)
+        ? u.href
         : "";
     } catch {
       return "";
     }
   };
 
-  const imageFor = (card, size = "normal") => safeUrl(
-    card?.image_uris?.[size] ||
-    card?.image_uris?.normal ||
-    card?.card_faces?.[0]?.image_uris?.[size] ||
-    card?.card_faces?.[0]?.image_uris?.normal ||
-    ""
-  );
+  const slug = x =>
+    norm(x)
+      .replace(/[^a-z0-9]+/g, "-")
+      .replace(/^-|-$/g, "");
 
-  const finishHas = (card, finish) =>
-    (card?.finishes || []).includes(finish);
+  const img = (c, size = "normal") =>
+    safe(
+      c?.image_uris?.[size] ||
+      c?.image_uris?.normal ||
+      c?.card_faces?.[0]?.image_uris?.[size] ||
+      c?.card_faces?.[0]?.image_uris?.normal ||
+      ""
+    );
 
-  const prefersReducedMotion = () =>
+  const has = (c, finish) =>
+    (c?.finishes || []).includes(finish);
+
+  const number = x =>
+    x == null || x === ""
+      ? null
+      : Number.isFinite(Number(x))
+        ? Number(x)
+        : null;
+
+  const paper = c =>
+    (c?.games || []).includes("paper");
+
+  const motion = () =>
     window.matchMedia(
       "(prefers-reduced-motion: reduce)"
-    ).matches;
+    ).matches
+      ? "auto"
+      : "smooth";
 
-  const scrollTo = element =>
-    element?.scrollIntoView({
-      behavior: prefersReducedMotion() ? "auto" : "smooth",
+  const scrollTo = e =>
+    e?.scrollIntoView({
+      behavior: motion(),
       block: "start"
     });
 
-  const wait = ms =>
-    new Promise(resolve => window.setTimeout(resolve, ms));
+  const delay = ms =>
+    new Promise(resolve =>
+      setTimeout(resolve, ms)
+    );
+
+  const params = () =>
+    new URLSearchParams(
+      window.location.search
+    );
+
+  const readPrinting = () =>
+    params().get("printing")?.trim() || "";
+
+  const readFinish = () =>
+    params().get("finish")?.trim() || "";
+
+  const sameName = (a, b) =>
+    norm(a) === norm(b);
+
+  const announce = (state, extra = {}) =>
+    window.dispatchEvent(
+      new CustomEvent(
+        "manascout:statechange",
+        {
+          detail: {
+            state,
+            ...extra
+          }
+        }
+      )
+    );
 
 
   /* ========================================
-     PAGE STATE AND HISTORY
+     URL AND HISTORY MANAGEMENT
+
+     Permanent guide pages retain their
+     canonical URL without adding q=.
+
+     Homepage searches retain q= so results
+     can be restored on refresh.
      ======================================== */
 
-  function announce(state, extra = {}) {
-    window.dispatchEvent(
-      new CustomEvent("manascout:statechange", {
-        detail: {
-          state,
-          ...extra
-        }
-      })
-    );
-  }
+  function pageUrl(card, finish = "") {
+    const url =
+      new URL(window.location.href);
 
-  function urlParams() {
-    return new URLSearchParams(window.location.search);
-  }
-
-  function updateUrl(name, printingId = "", replace = false) {
-    const url = new URL(window.location.href);
-
-    if (name) {
-      url.searchParams.set("q", name);
+    if (
+      guideName &&
+      sameName(guideName, card?.name)
+    ) {
+      url.searchParams.delete("q");
+    } else if (card?.name) {
+      url.searchParams.set(
+        "q",
+        card.name
+      );
     } else {
       url.searchParams.delete("q");
     }
 
-    if (printingId) {
-      url.searchParams.set("printing", printingId);
+    if (card?.id) {
+      url.searchParams.set(
+        "printing",
+        card.id
+      );
     } else {
       url.searchParams.delete("printing");
     }
 
+    if (finish) {
+      url.searchParams.set(
+        "finish",
+        finish
+      );
+    } else {
+      url.searchParams.delete("finish");
+    }
+
+    return url;
+  }
+
+  function replaceUrl(card, replace = true) {
+    const finish = card
+      ? selectedFinish(card)
+      : "";
+
+    const url = pageUrl(
+      card,
+      finish
+    );
+
     history[
-      replace ? "replaceState" : "pushState"
+      replace
+        ? "replaceState"
+        : "pushState"
+    ]({}, "", url);
+  }
+
+  function startUrl(
+    name,
+    printingId = "",
+    replace = false
+  ) {
+    const url =
+      new URL(window.location.href);
+
+    if (
+      guideName &&
+      sameName(guideName, name)
+    ) {
+      url.searchParams.delete("q");
+    } else {
+      url.searchParams.set(
+        "q",
+        name
+      );
+    }
+
+    if (printingId) {
+      url.searchParams.set(
+        "printing",
+        printingId
+      );
+    } else {
+      url.searchParams.delete("printing");
+    }
+
+    if (!printingId) {
+      url.searchParams.delete("finish");
+    }
+
+    history[
+      replace
+        ? "replaceState"
+        : "pushState"
     ]({}, "", url);
   }
 
@@ -176,29 +321,35 @@
      NETWORK REQUESTS
      ======================================== */
 
-  async function json(url, signal) {
-    const response = await fetch(url, {
-      signal,
-      headers: {
-        Accept: "application/json"
+  async function readJson(url, signal) {
+    const response = await fetch(
+      url,
+      {
+        signal,
+        headers: {
+          Accept: "application/json"
+        }
       }
-    });
+    );
 
     if (!response.ok) {
-      const error = new Error(
-        `Scryfall returned HTTP ${response.status}`
-      );
+      const error =
+        new Error(
+          `HTTP ${response.status}`
+        );
 
-      error.status = response.status;
+      error.status =
+        response.status;
+
       throw error;
     }
 
     return response.json();
   }
 
-  async function cardNamed(name, signal) {
+  async function namedCard(name, signal) {
     try {
-      return await json(
+      return await readJson(
         `${API}/cards/named?exact=${encodeURIComponent(name)}`,
         signal
       );
@@ -207,7 +358,7 @@
         throw error;
       }
 
-      return json(
+      return readJson(
         `${API}/cards/named?fuzzy=${encodeURIComponent(name)}`,
         signal
       );
@@ -215,750 +366,309 @@
   }
 
   async function cardId(id, signal) {
-    return json(
+    return readJson(
       `${API}/cards/${encodeURIComponent(id)}`,
       signal
     );
   }
 
-  function sameCardName(a, b) {
-    return String(a || "").trim().toLowerCase() ===
-      String(b || "").trim().toLowerCase();
+  function cancelActive() {
+    controller?.abort();
+    suggestController?.abort();
+    clearTimeout(suggestTimer);
+
+    generation++;
+    archive = null;
   }
 
-
-  /* ========================================
-     CLEAR SEARCH / AUTOCOMPLETE
-     ======================================== */
-
   function clearSuggestions() {
-    if (!els.autocomplete || !els.input) {
+    if (
+      !ui.suggestions ||
+      !ui.input
+    ) {
       return;
     }
 
-    els.autocomplete.replaceChildren();
-    els.autocomplete.hidden = true;
+    ui.suggestions.hidden = true;
+    ui.suggestions.replaceChildren();
 
-    els.input.setAttribute(
+    ui.input.setAttribute(
       "aria-expanded",
       "false"
     );
 
-    els.input.removeAttribute(
+    ui.input.removeAttribute(
       "aria-activedescendant"
     );
 
     activeSuggestion = -1;
   }
 
-  function stopRequests() {
-    requestController?.abort();
-    suggestController?.abort();
-
-    window.clearTimeout(suggestTimer);
-
-    ++searchToken;
-    printingState = null;
-  }
-
   function setHome() {
-    stopRequests();
+    cancelActive();
+
     currentCard = null;
+    currentPick = false;
 
-    if (els.input) {
-      els.input.value = "";
+    if (ui.input) {
+      ui.input.value = "";
     }
 
-    if (els.details) {
-      els.details.replaceChildren();
-    }
+    ui.details?.replaceChildren();
+    ui.printings?.replaceChildren();
 
-    if (els.printings) {
-      els.printings.replaceChildren();
-    }
-
-    if (els.status) {
-      els.status.textContent = "";
+    if (ui.status) {
+      ui.status.textContent = "";
     }
 
     clearSuggestions();
 
-    document.title =
-      "MTG Card Printings, Foils & Versions | ManaScout";
+    if (!guideName) {
+      document.title =
+        "MTG Card Printings, Foils & Versions | ManaScout";
+    }
 
     announce("home");
   }
 
-  function setLoading() {
-    if (els.details) {
-      els.details.innerHTML = `
-        <div class="empty-state" role="status">
-          Scouting this card and its printings…
+  function errorState(message) {
+    if (ui.details) {
+      ui.details.innerHTML = `
+        <div
+          class="empty-state"
+          role="alert"
+        >
+          ${esc(message)}
         </div>
       `;
     }
 
-    if (els.printings) {
-      els.printings.replaceChildren();
+    if (ui.status) {
+      ui.status.textContent = "";
     }
 
-    if (els.status) {
-      els.status.textContent =
-        "Loading printing data…";
-    }
-  }
-
-  function setError(message) {
-    if (els.details) {
-      els.details.innerHTML = `
-        <div class="empty-state" role="alert">
-          ${html(message)}
-        </div>
-      `;
-    }
-
-    if (els.printings) {
-      els.printings.replaceChildren();
-    }
-
-    if (els.status) {
-      els.status.textContent = "";
-    }
+    ui.printings?.replaceChildren();
 
     announce("home");
   }
 
 
   /* ========================================
-     ADDITIONAL COMPONENT STYLING
-     Bundled for single-file replacement
+     PRINTING FINISHES
      ======================================== */
 
-  function installStyles() {
-    if ($("manascout-app-extras")) {
-      return;
-    }
-
-    const style = document.createElement("style");
-    style.id = "manascout-app-extras";
-
-    style.textContent = `
-      .ms-preview {
-        position:relative;
-        display:inline-block;
-        max-width:100%;
-        isolation:isolate
-      }
-
-      .ms-preview>img {
-        display:block;
-        max-width:100%;
-        height:auto
-      }
-
-      .ms-foil-glint {
-        position:absolute;
-        inset:0;
-        border-radius:inherit;
-        pointer-events:none;
-        mix-blend-mode:screen;
-        opacity:.39;
-        background:linear-gradient(
-          110deg,
-          transparent 22%,
-          rgba(102,241,194,.1) 37%,
-          rgba(182,142,249,.18) 46%,
-          rgba(255,255,255,.33) 51%,
-          rgba(248,170,220,.15) 57%,
-          transparent 72%
-        );
-        background-size:250% 100%;
-        animation:msFoil 7s ease-in-out infinite
-      }
-
-      @keyframes msFoil {
-        0%,100% {background-position:100% 0}
-        50% {background-position:0 0}
-      }
-
-      .ms-finish-control {
-        position:absolute;
-        right:7px;
-        top:7px;
-        z-index:5;
-        max-width:calc(100% - 14px);
-        background:rgba(11,11,14,.89);
-        border:1px solid #bc4b5f;
-        border-radius:7px;
-        padding:5px 7px;
-        color:#f4d8de;
-        font-size:11px;
-        cursor:pointer;
-        box-shadow:0 4px 15px #0007
-      }
-
-      .ms-finish-control:focus-visible {
-        outline:2px solid #fff;
-        outline-offset:3px
-      }
-
-      .ms-finish-control[aria-pressed="true"] {
-        border-color:#6baa80;
-        color:#c9f0d6
-      }
-
-      .ms-card-image {
-        border-radius:12px;
-        overflow:hidden
-      }
-
-      .ms-card-image>.card-image {
-        width:100%;
-        display:block
-      }
-
-      .ms-card-extra {
-        display:flex;
-        flex-wrap:wrap;
-        gap:7px;
-        margin:12px 0
-      }
-
-      .ms-pill {
-        display:inline-flex;
-        align-items:center;
-        gap:4px;
-        border:1px solid #ffffff22;
-        background:#ffffff08;
-        border-radius:20px;
-        padding:5px 9px;
-        color:#c3bec1;
-        font-size:11px;
-        line-height:1.4
-      }
-
-      .ms-pill strong {
-        color:#f2e9eb
-      }
-
-      .ms-card-extra .ms-pill {
-        font-size:12px
-      }
-
-      .ms-card-actions {
-        display:flex;
-        flex-wrap:wrap;
-        gap:8px;
-        margin:13px 0
-      }
-
-      .ms-card-actions button,
-      .ms-card-actions a {
-        border:1px solid #ffffff28;
-        border-radius:8px;
-        background:#ffffff07;
-        color:#f1e6e8;
-        text-decoration:none;
-        padding:8px 10px;
-        font:inherit;
-        font-size:12px;
-        cursor:pointer;
-        line-height:1.4
-      }
-
-      .ms-card-actions button:hover,
-      .ms-card-actions a:hover {
-        border-color:#c75a69
-      }
-
-      .ms-card-actions button:disabled {
-        opacity:.55;
-        cursor:wait
-      }
-
-      .ms-help {
-        color:#a59aa0;
-        font-size:12px;
-        line-height:1.65
-      }
-
-      .ms-headline {
-        margin:10px 0 7px;
-        font-size:16px;
-        color:#f1e7ea
-      }
-
-      .ms-controls {
-        display:flex;
-        flex-wrap:wrap;
-        align-items:flex-end;
-        gap:11px;
-        margin:17px 0
-      }
-
-      .ms-controls label {
-        display:flex;
-        flex-direction:column;
-        gap:5px;
-        font-size:12px;
-        color:#ddd3d7
-      }
-
-      .ms-controls select,
-      .ms-controls input {
-        min-height:40px;
-        max-width:100%;
-        border:1px solid #ffffff32;
-        border-radius:8px;
-        background:#171519;
-        color:#f7edf0;
-        padding:8px;
-        font:inherit;
-        font-size:13px
-      }
-
-      .ms-controls input {
-        width:min(250px,85vw)
-      }
-
-      .ms-controls button {
-        min-height:40px;
-        padding:8px 12px;
-        border:1px solid #ffffff32;
-        border-radius:8px;
-        background:#ffffff0a;
-        color:#f2e7ea;
-        cursor:pointer
-      }
-
-      .ms-treatments {
-        max-width:300px;
-        line-height:1.5
-      }
-
-      .ms-printing-note {
-        display:block;
-        margin-top:5px;
-        color:#aaa0a5;
-        font-size:11px;
-        line-height:1.5
-      }
-
-      .ms-thumbnail {
-        position:relative;
-        display:inline-block;
-        max-width:100%;
-        border-radius:8px;
-        overflow:hidden
-      }
-
-      .ms-thumbnail img {
-        display:block;
-        width:64px;
-        height:auto;
-        border-radius:7px
-      }
-
-      .ms-thumbnail .ms-foil-glint {
-        opacity:.32
-      }
-
-      .ms-thumb-toggle {
-        position:absolute;
-        right:1px;
-        top:1px;
-        z-index:3;
-        width:22px;
-        height:22px;
-        border:1px solid #d65b69;
-        border-radius:50%;
-        background:#190f14dc;
-        color:#ffcad2;
-        font-size:12px;
-        cursor:pointer
-      }
-
-      .ms-table-information {
-        font-size:11px;
-        line-height:1.45;
-        color:#a99fa3
-      }
-
-      .ms-print-pagination {
-        display:flex;
-        justify-content:center;
-        align-items:center;
-        gap:12px;
-        margin:18px 0;
-        color:#c5bec1;
-        font-size:12px
-      }
-
-      .ms-print-pagination button {
-        border:1px solid #ffffff35;
-        background:#ffffff0b;
-        border-radius:8px;
-        padding:9px 13px;
-        color:#eee;
-        cursor:pointer
-      }
-
-      .ms-price-source {
-        display:block;
-        font-size:10px;
-        color:#9c9197
-      }
-
-      .ms-selection-banner {
-        padding:10px 12px;
-        margin:14px 0;
-        border:1px solid #6d9d7d66;
-        border-radius:9px;
-        color:#c9ead0;
-        background:#21533218;
-        font-size:12px;
-        line-height:1.5
-      }
-
-      .ms-table-empty {
-        padding:20px;
-        text-align:center;
-        color:#a99fa3
-      }
-
-      .ms-dfc-gallery {
-        display:flex;
-        flex-wrap:wrap;
-        gap:10px;
-        margin-top:12px
-      }
-
-      .ms-dfc-gallery img {
-        width:min(180px,45%);
-        height:auto;
-        border-radius:9px
-      }
-
-      .ms-actions-status {
-        font-size:12px;
-        color:#b9adad
-      }
-
-      .ms-card-image .ms-finish-control {
-        font-size:12px
-      }
-
-      @media(max-width:600px) {
-        .ms-thumbnail img {width:52px}
-        .ms-controls {gap:8px}
-        .ms-controls label {flex:1 1 120px}
-        .ms-controls select {width:100%}
-        .ms-card-extra {gap:5px}
-      }
-
-      @media(prefers-reduced-motion:reduce) {
-        .ms-foil-glint {animation:none!important}
-      }
-    `;
-
-    document.head.appendChild(style);
+  function finishes(card) {
+    return Array.isArray(card?.finishes)
+      ? card.finishes
+      : [];
   }
 
+  function selectedFinish(card) {
+    const options =
+      finishes(card);
 
-  /* ========================================
-     FINISHES AND TREATMENTS
-     ======================================== */
-
-  function treatments(card) {
-    const values = [];
-    const effects = card?.frame_effects || [];
-    const promos = card?.promo_types || [];
-
-    if (card?.border_color === "borderless") {
-      values.push("Borderless");
-    }
-
-    if (card?.full_art) {
-      values.push("Full art");
-    }
-
-    if (card?.textless) {
-      values.push("Textless");
-    }
-
-    if (card?.promo) {
-      values.push("Promo");
-    }
-
-    for (const item of effects) {
-      values.push(
-        TREATMENT_LABELS[item] || title(item)
-      );
-    }
-
-    for (const item of promos) {
-      values.push(
-        TREATMENT_LABELS[item] || title(item)
-      );
-    }
-
-    return [...new Set(values)];
-  }
-
-  function treatmentText(card) {
-    return treatments(card).join(" · ") ||
-      "Standard treatment";
-  }
-
-  function finishText(card) {
-    const names = {
-      nonfoil: "Nonfoil",
-      foil: "Foil",
-      etched: "Etched foil"
-    };
-
-    return (card?.finishes || [])
-      .map(f => names[f] || title(f))
-      .join(", ") || "—";
-  }
-
-  function legalFormats(card) {
-    const labels = {
-      predh: "PreDH",
-      paupercommander: "Pauper Commander",
-      standardbrawl: "Standard Brawl",
-      oldschool: "Old School"
-    };
-
-    return Object.entries(card?.legalities || {})
-      .filter(([, value]) => value === "legal")
-      .map(([format]) =>
-        labels[format] || title(format)
-      )
-      .join(", ") || "None listed";
-  }
-
-  function oracleHtml(card) {
-    const faces = card?.card_faces?.length > 1
-      ? card.card_faces
-      : [card];
-
-    return `
-      <div class="oracle">
-        ${faces.map(face => `
-          <div class="oracle-face">
-            ${faces.length > 1 ? `
-              <strong class="oracle-face-name">
-                ${html(face.name)}
-              </strong>
-            ` : ""}
-
-            ${String(
-              face.oracle_text ||
-              "No oracle text available."
-            )
-              .split("\n")
-              .filter(Boolean)
-              .map(line => `
-                <p>${html(line)}</p>
-              `)
-              .join("")}
-          </div>
-        `).join("")}
-      </div>
-    `;
-  }
-
-
-  /* ========================================
-     CARD GUIDES
-     ======================================== */
-
-  function guideLink(card) {
-    const nameSlug = slug(card?.name);
-
-    const path = nameSlug === "the-theorist"
-      ? "the-theorist-jace-beleren"
-      : nameSlug;
+    const requested =
+      previews.get(card?.id);
 
     if (
-      !GUIDE_SLUGS.has(path) ||
-      window.location.pathname.replace(/\/+$/, "") ===
-      `/card/${path}`
+      requested &&
+      options.includes(requested)
     ) {
-      return "";
+      return requested;
     }
 
-    return `
-      <div class="manascout-guide-link">
-        <a href="/card/${html(path)}/">
-          ◇ View ManaScout Guide →
-        </a>
-      </div>
-    `;
-  }
-
-
-  /* ========================================
-     MARKETPLACE LINKS
-     ======================================== */
-
-  function marketplaceLinks(card) {
-    const query = encodeURIComponent(
-      card?.name || ""
-    );
-
-    const scryfall = safeUrl(
-      card?.scryfall_uri
-    );
-
-    return `
-      <div class="marketplace-links">
-
-        <a
-          href="https://www.cardmarket.com/en/Magic/Products/Search?searchString=${query}"
-          target="_blank"
-          rel="noopener noreferrer sponsored"
-        >
-          Search Cardmarket
-        </a>
-
-        <a
-          href="https://www.tcgplayer.com/search/magic/product?q=${query}"
-          target="_blank"
-          rel="noopener noreferrer sponsored"
-        >
-          Search TCGplayer
-        </a>
-
-        ${scryfall ? `
-          <a
-            href="${html(scryfall)}"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Scryfall details
-          </a>
-        ` : ""}
-
-      </div>
-    `;
-  }
-
-
-  /* ========================================
-     FOIL PREVIEW
-     ======================================== */
-
-  function isFoilCapable(card) {
-    return (
-      finishHas(card, "foil") ||
-      finishHas(card, "etched")
-    );
-  }
-
-  function foilOn(card) {
-    return (
-      isFoilCapable(card) &&
-      !foilDisabled.has(card.id)
-    );
-  }
-
-  function selectPreviewFinish(card) {
-    if (!card) {
-      return "nonfoil";
-    }
-
-    if (
-      !foilOn(card) &&
-      finishHas(card, "nonfoil")
-    ) {
-      return "nonfoil";
-    }
-
-    if (
-      foilOn(card) &&
-      finishHas(card, "foil")
-    ) {
+    if (options.includes("foil")) {
       return "foil";
     }
 
-    if (
-      foilOn(card) &&
-      finishHas(card, "etched")
-    ) {
+    if (options.includes("etched")) {
       return "etched";
     }
 
-    return (card.finishes || ["nonfoil"])[0];
+    return options.includes("nonfoil")
+      ? "nonfoil"
+      : options[0] || "";
   }
 
-  function foilButton(card, small = false) {
-    if (!isFoilCapable(card)) {
+  function finishLabel(finish) {
+    return {
+      nonfoil: "Nonfoil",
+      foil: "Foil",
+      etched: "Etched foil"
+    }[finish] ||
+      pretty(finish) ||
+      "Unknown";
+  }
+
+  function finishText(card) {
+    return finishes(card)
+      .map(finishLabel)
+      .join(", ") || "—";
+  }
+
+  function shimmer(card) {
+    return [
+      "foil",
+      "etched"
+    ].includes(
+      selectedFinish(card)
+    );
+  }
+
+  function chooseFinish(card, requested) {
+    if (
+      !card?.id ||
+      !finishes(card).includes(requested)
+    ) {
+      return false;
+    }
+
+    previews.set(
+      card.id,
+      requested
+    );
+
+    return true;
+  }
+
+  function toggleFinish(card) {
+    if (!card?.id) {
+      return;
+    }
+
+    const available =
+      finishes(card);
+
+    const current =
+      selectedFinish(card);
+
+    const next =
+      current === "nonfoil"
+        ? available.includes("foil")
+          ? "foil"
+          : available.includes("etched")
+            ? "etched"
+            : "nonfoil"
+        : available.includes("nonfoil")
+          ? "nonfoil"
+          : current === "foil" &&
+            available.includes("etched")
+            ? "etched"
+            : available.includes("foil")
+              ? "foil"
+              : current;
+
+    chooseFinish(
+      card,
+      next
+    );
+  }
+
+  function foilControl(
+    card,
+    small = false
+  ) {
+    if (
+      !has(card, "foil") &&
+      !has(card, "etched")
+    ) {
       return "";
     }
 
-    const active = foilOn(card);
-    const hasNonfoil = finishHas(card, "nonfoil");
+    const canNonfoil =
+      has(card, "nonfoil");
 
-    const label = active
-      ? (hasNonfoil ? "✕ Nonfoil" : "✕ Hide shimmer")
+    const canSwapFoil =
+      has(card, "foil") &&
+      has(card, "etched");
+
+    if (
+      !canNonfoil &&
+      !canSwapFoil
+    ) {
+      return "";
+    }
+
+    const on = shimmer(card);
+
+    const label = on
+      ? canNonfoil
+        ? "✕ Nonfoil"
+        : "✦ Change foil"
       : "✦ Show foil";
 
     return `
       <button
         type="button"
-        ${small
-          ? 'class="ms-thumb-toggle"'
-          : 'class="ms-finish-control"'
-        }
-        data-foil-toggle="${html(card.id)}"
-        aria-pressed="${active ? "true" : "false"}"
-        aria-label="${html(label)}"
-        title="${html(label)}"
+        class="${small
+          ? "ms-thumb-toggle"
+          : "ms-finish-control"}"
+        data-ms-finish-toggle="${esc(card.id)}"
+        aria-label="${esc(label)}"
+        aria-pressed="${on}"
+        title="${esc(label)}"
       >
         ${small
-          ? (active ? "✕" : "✦")
-          : html(label)
-        }
+          ? canNonfoil
+            ? on
+              ? "✕"
+              : "✦"
+            : "↔"
+          : esc(label)}
       </button>
     `;
   }
 
-  function cardImageMarkup(card) {
-    const src = imageFor(card);
-
-    const image = src ? `
-      <img
-        class="card-image"
-        src="${html(src)}"
-        alt="${html(card.name)} — ${html(card.set_name)} printing #${html(card.collector_number)}"
-        decoding="async"
-        width="488"
-        height="680"
-      >
-    ` : `
-      <div class="empty-state">
-        Image unavailable.
-      </div>
-    `;
+  function previewImage(
+    card,
+    small = false
+  ) {
+    const src =
+      img(
+        card,
+        small
+          ? "small"
+          : "normal"
+      );
 
     return `
-      <div class="card-image-wrap">
-        <div class="ms-preview ms-card-image">
+      <div
+        class="ms-preview ${small
+          ? "ms-thumb"
+          : "ms-card-image"}"
+        data-ms-preview="${esc(card.id || "")}"
+      >
+        ${src
+          ? `
+            <img
+              class="${small
+                ? "printing-card-image"
+                : "card-image"}"
+              src="${esc(src)}"
+              alt="${esc(card?.name)} — ${esc(card?.set_name)} #${esc(card?.collector_number)}"
+              ${small ? 'loading="lazy"' : ""}
+              decoding="async"
+            >
+          `
+          : `
+            <span class="muted">
+              Image unavailable
+            </span>
+          `}
 
-          ${image}
-
-          ${foilOn(card) ? `
+        ${shimmer(card) && src
+          ? `
             <span
               class="ms-foil-glint"
               aria-hidden="true"
             ></span>
-          ` : ""}
+          `
+          : ""}
 
-          ${foilButton(card)}
-
-        </div>
+        ${foilControl(
+          card,
+          small
+        )}
       </div>
     `;
   }
@@ -968,197 +678,353 @@
      CARD DETAILS
      ======================================== */
 
-  function detailTile(label, value) {
+  function treatments(card) {
+    const tags = [];
+
+    if (
+      card?.border_color === "borderless"
+    ) {
+      tags.push("Borderless");
+    }
+
+    if (card?.full_art) {
+      tags.push("Full art");
+    }
+
+    if (card?.textless) {
+      tags.push("Textless");
+    }
+
+    if (card?.promo) {
+      tags.push("Promo");
+    }
+
+    for (
+      const x of [
+        ...(card?.frame_effects || []),
+        ...(card?.promo_types || [])
+      ]
+    ) {
+      tags.push(
+        TREATMENT[x] ||
+        pretty(x)
+      );
+    }
+
+    return [
+      ...new Set(tags)
+    ];
+  }
+
+  function treatmentText(card) {
+    return treatments(card)
+      .join(" · ") ||
+      "Standard frame";
+  }
+
+  function legalFormats(card) {
+    const special = {
+      predh: "PreDH",
+      paupercommander: "Pauper Commander",
+      standardbrawl: "Standard Brawl",
+      oldschool: "Old School",
+      penny: "Penny Dreadful"
+    };
+
+    return Object.entries(
+      card?.legalities || {}
+    )
+      .filter(
+        ([, status]) =>
+          status === "legal"
+      )
+      .map(
+        ([name]) =>
+          special[name] ||
+          pretty(name)
+      )
+      .join(", ") ||
+      "No current legal formats listed";
+  }
+
+  function oracleHtml(card) {
+    const faces =
+      card?.card_faces?.length > 1
+        ? card.card_faces
+        : [card];
+
     return `
-      <div class="detail">
-        <strong>${html(label)}</strong>
-        ${html(value || "—")}
+      <div class="oracle">
+        ${faces.map(
+          face => `
+            <div class="oracle-face">
+              ${faces.length > 1
+                ? `
+                  <strong class="oracle-face-name">
+                    ${esc(face?.name)}
+                  </strong>
+                `
+                : ""}
+
+              ${String(
+                face?.oracle_text ||
+                "No Oracle text supplied."
+              )
+                .split("\n")
+                .filter(Boolean)
+                .map(
+                  line => `
+                    <p>${esc(line)}</p>
+                  `
+                )
+                .join("")}
+            </div>
+          `
+        ).join("")}
       </div>
     `;
   }
 
-  function renderCard(card, { isPick = false } = {}) {
-    if (!els.details || !card) {
+  function guideLink(card) {
+    const path =
+      slug(card?.name);
+
+    if (
+      !GUIDE_SLUGS.has(path) ||
+      window.location.pathname.replace(
+        /\/+$/,
+        ""
+      ) === `/card/${path}`
+    ) {
+      return "";
+    }
+
+    return `
+      <div class="manascout-guide-link">
+        <a href="/card/${esc(path)}/">
+          ◇ View ManaScout Guide →
+        </a>
+      </div>
+    `;
+  }
+
+  function marketplace(card) {
+    const name =
+      encodeURIComponent(
+        card?.name || ""
+      );
+
+    const buy =
+      card?.purchase_uris || {};
+
+    const urls = {
+      market:
+        safe(buy.cardmarket) ||
+        `https://www.cardmarket.com/en/Magic/Products/Search?searchString=${name}`,
+
+      tcg:
+        safe(buy.tcgplayer) ||
+        `https://www.tcgplayer.com/search/magic/product?q=${name}`,
+
+      scryfall:
+        safe(card?.scryfall_uri)
+    };
+
+    return `
+      <div class="marketplace-links">
+
+        <a
+          href="${esc(urls.market)}"
+          target="_blank"
+          rel="noopener noreferrer sponsored"
+        >
+          ${buy.cardmarket
+            ? "View this printing on Cardmarket"
+            : "Search Cardmarket"}
+        </a>
+
+        <a
+          href="${esc(urls.tcg)}"
+          target="_blank"
+          rel="noopener noreferrer sponsored"
+        >
+          ${buy.tcgplayer
+            ? "View this printing on TCGplayer"
+            : "Search TCGplayer"}
+        </a>
+
+        ${urls.scryfall
+          ? `
+            <a
+              href="${esc(urls.scryfall)}"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Verify on Scryfall
+            </a>
+          `
+          : ""}
+
+      </div>
+    `;
+  }
+
+  function stat(label, value) {
+    return `
+      <div class="detail">
+        <strong>${esc(label)}</strong>
+        ${esc(value || "—")}
+      </div>
+    `;
+  }
+
+  function renderCard(
+    card,
+    isPick = false
+  ) {
+    if (
+      !ui.details ||
+      !card
+    ) {
       return;
     }
 
     currentCard = card;
+    currentPick = isPick;
 
-    const finish = selectPreviewFinish(card);
+    const artwork = (
+      card.card_faces || []
+    ).filter(
+      face =>
+        face.image_uris?.normal
+    );
 
-    const dfc = (card.card_faces || [])
-      .filter(face => face.image_uris?.normal)
-      .map(face => `
-        <img
-          loading="lazy"
-          decoding="async"
-          src="${html(safeUrl(face.image_uris.normal))}"
-          alt="${html(face.name)} card face"
-        >
-      `)
-      .join("");
-
-    els.details.innerHTML = `
-
+    ui.details.innerHTML = `
       <article class="card-display">
 
-        ${cardImageMarkup(card)}
+        <div class="card-image-wrap">
+          ${previewImage(card)}
+        </div>
 
         <div class="card-text-details">
 
           <p class="eyebrow">
             ${isPick
               ? "◇ MANASCOUT PICK · FEATURED PRINTING"
-              : "CARD & PRINTING"
-            }
+              : "CARD & PRINTING"}
           </p>
 
           <h2>
-            ${html(card.name || "Unknown card")}
+            ${esc(card.name || "Unknown card")}
           </h2>
 
           <p class="card-subtitle">
-            ${html(card.type_line || "")}
-
-            ${card.mana_cost ? `
-              <span class="mana-cost">
-                · ${html(card.mana_cost)}
-              </span>
-            ` : ""}
+            ${esc(card.type_line)}
+            ${card.mana_cost
+              ? `
+                <span class="mana-cost">
+                  · ${esc(card.mana_cost)}
+                </span>
+              `
+              : ""}
           </p>
 
-          ${isPick ? `
-            <div class="ms-selection-banner">
-              ◇ ManaScout Pick — selected for distinctive
-              artwork or collector treatment. Use the
-              printings table to choose any other version.
-            </div>
-          ` : ""}
+          ${isPick
+            ? `
+              <div class="ms-selection-banner">
+                ◇ ManaScout Pick — selected for its artwork
+                or distinctive collector treatment.
+                Select any other version below.
+              </div>
+            `
+            : ""}
 
           <div class="detail-grid">
-
-            ${detailTile("Set", card.set_name)}
-            ${detailTile(
-              "Set code",
-              String(card.set || "").toUpperCase()
-            )}
-            ${detailTile(
-              "Collector number",
-              card.collector_number
-            )}
-            ${detailTile("Released", card.released_at)}
-            ${detailTile("Rarity", title(card.rarity))}
-            ${detailTile("Artist", card.artist)}
-            ${detailTile("Frame", card.frame)}
-            ${detailTile("Finishes", finishText(card))}
-            ${detailTile("Preview finish", title(finish))}
-            ${detailTile("Treatments", treatmentText(card))}
-
+            ${stat("Set", card.set_name)}
+            ${stat("Set code", String(card.set || "").toUpperCase())}
+            ${stat("Collector number", card.collector_number)}
+            ${stat("Released", card.released_at)}
+            ${stat("Rarity", pretty(card.rarity))}
+            ${stat("Artist", card.artist)}
+            ${stat("Language", LANGS[card.lang] || String(card.lang || "").toUpperCase())}
+            ${stat("Available finishes", finishText(card))}
+            ${stat("Preview finish", finishLabel(selectedFinish(card)))}
+            ${stat("Treatments", treatmentText(card))}
           </div>
 
           <div class="ms-card-extra">
 
-            ${card.lang ? `
-              <span class="ms-pill">
-                Language
-                <strong>
-                  ${html(String(card.lang).toUpperCase())}
-                </strong>
-              </span>
-            ` : ""}
+            ${card.reserved
+              ? '<span class="ms-pill">Reserved List</span>'
+              : ""}
 
-            ${card.reserved ? `
-              <span class="ms-pill">
-                Reserved List
-              </span>
-            ` : ""}
+            ${card.reprint
+              ? '<span class="ms-pill">Reprint</span>'
+              : '<span class="ms-pill">Original card release / first-series printing</span>'}
 
-            ${card.reprint ? `
-              <span class="ms-pill">
-                Reprint
-              </span>
-            ` : `
-              <span class="ms-pill">
-                First printing
-              </span>
-            `}
+            ${card.promo
+              ? '<span class="ms-pill">Promo</span>'
+              : ""}
 
-            ${card.promo ? `
-              <span class="ms-pill">
-                Promo
-              </span>
-            ` : ""}
-
-            ${card.security_stamp ? `
-              <span class="ms-pill">
-                Stamp: ${html(card.security_stamp)}
-              </span>
-            ` : ""}
-
-            ${card.illustration_id ? `
-              <span class="ms-pill">
-                Unique artwork identifiable
-              </span>
-            ` : ""}
-
+            ${card.security_stamp
+              ? `
+                <span class="ms-pill">
+                  Stamp: ${esc(card.security_stamp)}
+                </span>
+              `
+              : ""}
           </div>
 
           <p class="ms-help">
             <strong>Legal in:</strong>
-            ${html(legalFormats(card))}
+            ${esc(legalFormats(card))}
           </p>
 
           ${oracleHtml(card)}
 
-          ${dfc ? `
-            <details>
-              <summary>
-                View card faces
-              </summary>
+          ${artwork.length > 1
+            ? `
+              <details class="ms-faces">
+                <summary>View all card faces</summary>
 
-              <div class="ms-dfc-gallery">
-                ${dfc}
-              </div>
-            </details>
-          ` : ""}
+                <div class="ms-face-gallery">
+                  ${artwork.map(
+                    face => `
+                      <img
+                        src="${esc(safe(face.image_uris.normal))}"
+                        alt="${esc(face.name)} card face"
+                        loading="lazy"
+                      >
+                    `
+                  ).join("")}
+                </div>
+              </details>
+            `
+            : ""}
 
           ${guideLink(card)}
 
-          ${marketplaceLinks(card)}
+          ${marketplace(card)}
 
           <div
             class="ms-card-actions"
-            aria-label="Keep scouting"
+            aria-label="Explore more cards"
           >
-
-            <button
-              type="button"
-              data-discovery-mode="wild"
-            >
+            <button type="button" data-discovery="wild">
               ◇ Surprise me
             </button>
 
-            <button
-              type="button"
-              data-discovery-mode="colour"
-            >
+            <button type="button" data-discovery="colour">
               Same colour identity
             </button>
 
-            <button
-              type="button"
-              data-discovery-mode="type"
-            >
+            <button type="button" data-discovery="type">
               Same card type
             </button>
 
-            <button
-              type="button"
-              data-copy-link
-            >
+            <button type="button" data-copy-printing>
               Copy this printing link
             </button>
-
           </div>
 
           <p
@@ -1167,186 +1033,192 @@
             aria-live="polite"
           ></p>
 
+          <p class="ms-help">
+            Shimmer is a visual preview, not a photograph
+            of the physical foil finish. Actual finishes
+            vary by edition.
+          </p>
+
         </div>
 
       </article>
     `;
 
-    els.details
-      .querySelector("[data-copy-link]")
-      ?.addEventListener("click", async () => {
-        const url = new URL(window.location.href);
-
-        url.searchParams.set(
-          "q",
-          card.name
-        );
-
-        url.searchParams.set(
-          "printing",
-          card.id
-        );
-
-        try {
-          await navigator.clipboard.writeText(
-            url.href
-          );
-
-          const status = els.details.querySelector(
-            ".ms-actions-status"
-          );
-
-          if (status) {
-            status.textContent =
-              "Printing link copied.";
-          }
-
-        } catch {
-          const status = els.details.querySelector(
-            ".ms-actions-status"
-          );
-
-          if (status) {
-            status.textContent =
-              "Copy the URL from your browser address bar.";
-          }
-        }
-      });
-
-    announce("card", {
-      cardName: card.name,
-      printingId: card.id
-    });
+    announce(
+      "card",
+      {
+        cardName: card.name || "",
+        printingId: card.id || ""
+      }
+    );
   }
 
 
   /* ========================================
-     PRICE AND GBP ESTIMATES
+     CURRENCY AND PRICE DATA
      ======================================== */
 
-  async function getRate(base) {
-    const response = await fetch(
-      `${FX_API}/${base}/GBP`,
-      {
-        headers: {
-          Accept: "application/json"
-        }
-      }
-    );
-
-    if (!response.ok) {
-      throw new Error(
-        "Exchange rate unavailable"
+  async function fetchRate(currency) {
+    const data =
+      await readJson(
+        `${FX}/${encodeURIComponent(currency)}/GBP`
       );
-    }
-
-    const data = await response.json();
-
-    const rate = Number(data.rate);
 
     if (
-      !Number.isFinite(rate) ||
-      rate <= 0
+      !Number.isFinite(Number(data.rate)) ||
+      Number(data.rate) <= 0
     ) {
       throw new Error(
-        "Invalid exchange rate"
+        "FX rate invalid"
       );
     }
 
-    return rate;
+    return Number(data.rate);
   }
 
-  function rates() {
-    if (!ratesPromise) {
-      ratesPromise = Promise.all([
-        getRate("EUR"),
-        getRate("USD")
+  function exchangeRates() {
+    if (!fxPromise) {
+      fxPromise = Promise.all([
+        fetchRate("EUR"),
+        fetchRate("USD")
       ])
-        .then(([eur, usd]) => ({
-          eur,
-          usd
-        }))
-        .catch(error => {
-          ratesPromise = null;
-          throw error;
-        });
+        .then(
+          ([eur, usd]) => ({
+            eur,
+            usd
+          })
+        )
+        .catch(
+          error => {
+            fxPromise = null;
+            throw error;
+          }
+        );
     }
 
-    return ratesPromise;
+    return fxPromise;
   }
 
-  function gbpPrice(card, kind, fx) {
-    const prices = card?.prices || {};
-
-    const eurKey = kind === "foil"
-      ? "eur_foil"
-      : "eur";
-
-    const usdKey = kind === "foil"
-      ? "usd_foil"
-      : kind === "etched"
-        ? "usd_etched"
-        : "usd";
-
-    if (kind !== "etched") {
-      const eur = asNumber(prices[eurKey]);
-
-      if (
-        eur !== null &&
-        fx?.eur
-      ) {
-        return eur * fx.eur;
-      }
+  function gbp(
+    c,
+    finish,
+    rates
+  ) {
+    if (!rates) {
+      return null;
     }
 
-    const usd = asNumber(prices[usdKey]);
+    const prices =
+      c?.prices || {};
+
+    const eur =
+      number(
+        prices[
+          finish === "foil"
+            ? "eur_foil"
+            : "eur"
+        ]
+      );
+
+    const usd =
+      number(
+        prices[
+          finish === "foil"
+            ? "usd_foil"
+            : finish === "etched"
+              ? "usd_etched"
+              : "usd"
+        ]
+      );
 
     if (
-      usd !== null &&
-      fx?.usd
+      finish !== "etched" &&
+      eur !== null &&
+      rates.eur
     ) {
-      return usd * fx.usd;
+      return eur * rates.eur;
     }
 
-    return null;
+    return usd !== null &&
+      rates.usd
+        ? usd * rates.usd
+        : null;
   }
 
-  function displayPrice(card, kind, fx) {
-    const gbp = gbpPrice(card, kind, fx);
+  function priceValue(
+    c,
+    finish,
+    rates
+  ) {
+    const value =
+      gbp(c, finish, rates);
 
-    if (gbp !== null) {
+    return value !== null &&
+      value > 0
+        ? value
+        : null;
+  }
+
+  function priceHtml(
+    c,
+    finish,
+    rates
+  ) {
+    const converted =
+      gbp(c, finish, rates);
+
+    if (converted !== null) {
       return `
         <span class="price">
-          <strong>£${gbp.toFixed(2)}</strong>
+          <strong>
+            £${converted.toFixed(2)}
+          </strong>
         </span>
       `;
     }
 
-    const eur = kind === "foil"
-      ? card.prices?.eur_foil
-      : card.prices?.eur;
+    const prices =
+      c?.prices || {};
 
-    const usd = kind === "foil"
-      ? card.prices?.usd_foil
-      : kind === "etched"
-        ? card.prices?.usd_etched
-        : card.prices?.usd;
+    const eur =
+      number(
+        prices[
+          finish === "foil"
+            ? "eur_foil"
+            : "eur"
+        ]
+      );
+
+    const usd =
+      number(
+        prices[
+          finish === "foil"
+            ? "usd_foil"
+            : finish === "etched"
+              ? "usd_etched"
+              : "usd"
+        ]
+      );
 
     if (
-      kind !== "etched" &&
-      asNumber(eur) !== null
+      finish !== "etched" &&
+      eur !== null
     ) {
       return `
         <span class="price">
-          <strong>€${html(eur)}</strong>
+          <strong>
+            €${eur.toFixed(2)}
+          </strong>
         </span>
       `;
     }
 
-    if (asNumber(usd) !== null) {
+    if (usd !== null) {
       return `
         <span class="price">
-          <strong>$${html(usd)}</strong>
+          <strong>
+            $${usd.toFixed(2)}
+          </strong>
         </span>
       `;
     }
@@ -1354,164 +1226,288 @@
     return '<span class="muted">—</span>';
   }
 
-  function priceValue(card, kind, fx) {
-    const value = gbpPrice(card, kind, fx);
-
-    return Number.isFinite(value) && value > 0
-      ? value
-      : null;
-  }
-
 
   /* ========================================
-     COLLECT ALL PRINTINGS
+     ALL PRINTINGS
+
+     Request Scryfall's variation, extras
+     and multilingual options.
+
+     Do not collapse records by card name.
      ======================================== */
 
-  function usablePrintings(cards) {
-    const images = cards.filter(card =>
-      imageFor(card, "small")
-    );
+  async function fetchPrintings(
+    card,
+    token,
+    signal
+  ) {
+    let first =
+      safe(
+        card.prints_search_uri
+      );
 
-    const standard = images.filter(card =>
-      ![
-        "art_series",
-        "token",
-        "emblem"
-      ].includes(card.layout) &&
-      !card.oversized
-    );
+    if (first) {
+      const url =
+        new URL(first);
 
-    const paper = standard.filter(card =>
-      (card.games || []).includes("paper")
-    );
+      url.searchParams.set(
+        "unique",
+        "prints"
+      );
 
-    const english = paper.filter(card =>
-      card.lang === "en"
-    );
+      url.searchParams.set(
+        "include_extras",
+        "true"
+      );
 
-    return english.length
-      ? english
-      : paper.length
-        ? paper
-        : standard.length
-          ? standard
-          : images;
-  }
+      url.searchParams.set(
+        "include_multilingual",
+        "true"
+      );
 
-  async function allPrintings(card, token, signal) {
-    let next = safeUrl(card.prints_search_uri);
+      url.searchParams.set(
+        "include_variations",
+        "true"
+      );
 
-    if (!next) {
-      return [card];
+      first = url.href;
+
+    } else if (card.oracle_id) {
+      const q =
+        new URLSearchParams({
+          q: `oracleid:${card.oracle_id}`,
+          unique: "prints",
+          include_extras: "true",
+          include_multilingual: "true",
+          include_variations: "true"
+        });
+
+      first =
+        `${API}/cards/search?${q}`;
     }
 
-    const found = [];
-    const seen = new Set();
+    if (!first) {
+      return {
+        cards: [card],
+        complete: true,
+        notice:
+          "Scryfall did not provide a printing search."
+      };
+    }
 
+    const result = [];
+    const ids = new Set();
+
+    let next = first;
     let pages = 0;
+    let complete = true;
+    let notice = "";
 
     while (
       next &&
-      pages < 40
+      pages < 70
     ) {
-      const page = await json(next, signal);
+      let data;
 
-      if (token !== searchToken) {
-        return [];
-      }
+      try {
+        data =
+          await readJson(
+            next,
+            signal
+          );
 
-      for (const item of page.data || []) {
+      } catch (error) {
         if (
-          item?.id &&
-          !seen.has(item.id)
+          error.name === "AbortError"
         ) {
-          seen.add(item.id);
-          found.push(item);
+          throw error;
         }
+
+        complete = false;
+
+        notice =
+          "Some printings could not be loaded; the results below may be incomplete.";
+
+        if (!result.length) {
+          throw error;
+        }
+
+        break;
       }
 
-      next = page.has_more
-        ? safeUrl(page.next_page)
-        : "";
+      if (
+        token !== generation
+      ) {
+        return {
+          cards: [],
+          complete: false,
+          notice: ""
+        };
+      }
+
+      for (
+        const item of data.data || []
+      ) {
+        if (
+          !item?.id ||
+          ids.has(item.id)
+        ) {
+          continue;
+        }
+
+        ids.add(item.id);
+        result.push(item);
+      }
+
+      next =
+        data.has_more
+          ? safe(data.next_page)
+          : "";
 
       pages++;
 
+      if (
+        ui.status &&
+        token === generation
+      ) {
+        ui.status.textContent =
+          `Loading printings… ${result.length} found`;
+      }
+
       if (next) {
-        await wait(110);
+        await delay(110);
       }
     }
 
     if (next) {
-      console.warn(
-        "ManaScout: Scryfall printings exceeded 40 pages."
-      );
+      complete = false;
+
+      notice =
+        "This card has an unusually large printing history. Only the first 70 Scryfall pages are shown.";
     }
 
-    return usablePrintings(
-      found.length ? found : [card]
+    if (
+      !ids.has(card.id)
+    ) {
+      result.push(card);
+    }
+
+    const normal =
+      result.filter(
+        c =>
+          ![
+            "art_series",
+            "token",
+            "emblem",
+            "double_faced_token"
+          ].includes(c.layout) &&
+          !c.oversized
+      );
+
+    const visible =
+      normal.length
+        ? normal
+        : result;
+
+    visible.sort(
+      (a, b) =>
+        String(
+          b.released_at || ""
+        ).localeCompare(
+          String(
+            a.released_at || ""
+          )
+        )
     );
+
+    return {
+      cards: visible,
+      complete,
+      notice
+    };
   }
 
 
   /* ========================================
-     MANASCOUT PICK SCORING
+     MANASCOUT PICK
      ======================================== */
 
-  function pickScore(card, fx) {
-    if (!imageFor(card)) {
-      return -9999;
+  function pickScore(
+    card,
+    rates
+  ) {
+    if (!img(card)) {
+      return -10000;
     }
 
-    const frames = card.frame_effects || [];
-    const promos = card.promo_types || [];
+    const frames =
+      card.frame_effects || [];
 
-    let score = 0;
+    const promos =
+      card.promo_types || [];
 
-    if ((card.games || []).includes("paper")) {
-      score += 30;
-    }
+    let score =
+      paper(card)
+        ? 30
+        : -120;
 
-    if (card.lang === "en") {
-      score += 15;
-    }
+    score +=
+      card.lang === "en"
+        ? 15
+        : -25;
 
-    if (frames.includes("showcase")) {
+    if (
+      frames.includes("showcase")
+    ) {
       score += 70;
     }
 
-    if (card.border_color === "borderless") {
+    if (
+      card.border_color === "borderless"
+    ) {
       score += 60;
     }
 
     if (card.full_art) {
-      score += 50;
+      score += 52;
     }
 
-    if (frames.includes("extendedart")) {
+    if (
+      frames.includes("extendedart")
+    ) {
       score += 45;
     }
 
+    if (
+      frames.includes("inverted")
+    ) {
+      score += 32;
+    }
+
     for (
-      const [type, bonus] of Object.entries({
+      const [key, value] of
+      Object.entries({
         boosterfun: 35,
         textured: 34,
         galaxyfoil: 30,
-        surgefoil: 29,
+        surgefoil: 28,
         rainbowfoil: 28,
-        halofoil: 27,
-        stepandcompleat: 26
+        stepandcompleat: 26,
+        halofoil: 26
       })
     ) {
-      if (promos.includes(type)) {
-        score += bonus;
+      if (
+        promos.includes(key)
+      ) {
+        score += value;
       }
     }
 
-    if (finishHas(card, "etched")) {
+    if (has(card, "etched")) {
       score += 16;
     }
 
-    if (finishHas(card, "foil")) {
+    if (has(card, "foil")) {
       score += 9;
     }
 
@@ -1519,14 +1515,25 @@
       score += 5;
     }
 
-    if (promos.includes("serialized")) {
+    if (
+      promos.includes("serialized")
+    ) {
       score -= 12;
     }
 
-    const price = Math.max(
-      priceValue(card, "nonfoil", fx) || 0,
-      priceValue(card, "foil", fx) || 0
-    );
+    const price =
+      Math.max(
+        priceValue(
+          card,
+          "nonfoil",
+          rates
+        ) || 0,
+        priceValue(
+          card,
+          "foil",
+          rates
+        ) || 0
+      );
 
     if (price) {
       score += Math.min(
@@ -1538,41 +1545,81 @@
     return score;
   }
 
-  function choosePick(cards, fx) {
-    const key =
-      cards[0]?.oracle_id ||
-      cards[0]?.name ||
-      "";
-
-    const previous = pickCache.get(key);
-
-    if (previous) {
-      const chosen = cards.find(
-        c => c.id === previous
+  function pickPrinting(
+    cards,
+    rates
+  ) {
+    const candidates =
+      cards.filter(
+        c =>
+          img(c) &&
+          paper(c) &&
+          c.lang === "en"
       );
 
-      if (chosen) {
-        return chosen;
-      }
+    const usable =
+      candidates.length
+        ? candidates
+        : cards.filter(
+          c =>
+            img(c) &&
+            paper(c)
+        );
+
+    const eligible =
+      usable.length
+        ? usable
+        : cards.filter(
+          c =>
+            img(c)
+        );
+
+    const key =
+      eligible[0]?.oracle_id ||
+      norm(
+        eligible[0]?.name
+      );
+
+    const cached =
+      eligible.find(
+        c =>
+          c.id === pickCache.get(key)
+      );
+
+    if (cached) {
+      return cached;
     }
 
-    const chosen = [...cards].sort((a, b) =>
-      pickScore(b, fx) -
-      pickScore(a, fx) ||
+    const chosen =
+      [...eligible]
+        .sort(
+          (a, b) =>
+            pickScore(b, rates) -
+              pickScore(a, rates) ||
+            String(
+              b.released_at || ""
+            ).localeCompare(
+              String(
+                a.released_at || ""
+              )
+            ) ||
+            String(
+              a.collector_number || ""
+            ).localeCompare(
+              String(
+                b.collector_number || ""
+              )
+            )
+        )[0] || null;
 
-      String(b.released_at || "")
-        .localeCompare(
-          String(a.released_at || "")
-        ) ||
-
-      String(a.collector_number || "")
-        .localeCompare(
-          String(b.collector_number || "")
-        )
-    )[0];
-
-    if (chosen?.id) {
-      pickCache.set(key, chosen.id);
+    if (
+      key &&
+      chosen
+    ) {
+      pickCache.set(
+        key,
+        chosen.id
+      );
     }
 
     return chosen;
@@ -1580,106 +1627,139 @@
 
 
   /* ========================================
-     PRINTING SNAPSHOTS
+     SNAPSHOT
      ======================================== */
 
-  function priceExtreme(
+  function extreme(
     cards,
-    kind,
-    fx,
+    rates,
+    finish,
     highest = false
   ) {
-    const list = cards
-      .map(card => ({
-        card,
-        price: priceValue(card, kind, fx)
-      }))
-      .filter(item => item.price !== null)
-      .sort((a, b) =>
-        highest
-          ? b.price - a.price
-          : a.price - b.price
-      );
+    const priced =
+      cards
+        .map(
+          c => ({
+            card: c,
+            price:
+              priceValue(
+                c,
+                finish,
+                rates
+              )
+          })
+        )
+        .filter(
+          item =>
+            item.price !== null
+        )
+        .sort(
+          (a, b) =>
+            highest
+              ? b.price - a.price
+              : a.price - b.price
+        );
 
-    return list[0] || null;
+    return priced[0] || null;
   }
 
-  function snapshotData(cards, fx) {
-    const years = cards
-      .map(card =>
-        String(
-          card.released_at || ""
-        ).slice(0, 4)
-      )
-      .filter(year =>
-        /^\d{4}$/.test(year)
-      )
-      .sort();
+  function snapshot(
+    cards,
+    rates
+  ) {
+    const years =
+      cards
+        .map(
+          c =>
+            String(
+              c.released_at || ""
+            ).slice(0, 4)
+        )
+        .filter(
+          y =>
+            /^\d{4}$/.test(y)
+        )
+        .sort();
 
     return {
-      oldest: years[0] || "",
-      newest: years[years.length - 1] || "",
+      oldest:
+        years[0] || "",
 
-      foil: cards.filter(card =>
-        finishHas(card, "foil")
-      ),
+      newest:
+        years.at(-1) || "",
 
-      etched: cards.filter(card =>
-        finishHas(card, "etched")
-      ),
+      foil:
+        cards.filter(
+          c =>
+            has(c, "foil")
+        ),
 
-      cheapest: priceExtreme(
-        cards,
-        "nonfoil",
-        fx
-      ),
+      etched:
+        cards.filter(
+          c =>
+            has(c, "etched")
+        ),
 
-      "most-expensive": priceExtreme(
-        cards,
-        "nonfoil",
-        fx,
-        true
-      ),
+      cheapest:
+        extreme(
+          cards,
+          rates,
+          "nonfoil"
+        ),
 
-      "cheapest-foil": priceExtreme(
-        cards,
-        "foil",
-        fx
-      ),
+      "most-expensive":
+        extreme(
+          cards,
+          rates,
+          "nonfoil",
+          true
+        ),
 
-      "most-expensive-foil": priceExtreme(
-        cards,
-        "foil",
-        fx,
-        true
-      )
+      "cheapest-foil":
+        extreme(
+          cards,
+          rates,
+          "foil"
+        ),
+
+      "most-expensive-foil":
+        extreme(
+          cards,
+          rates,
+          "foil",
+          true
+        )
     };
   }
 
   function snapshotButton(
-    action,
+    key,
     value,
     label,
     disabled = false
   ) {
     return `
       <button
-        class="snapshot-stat"
         type="button"
-        data-snapshot-action="${html(action)}"
-        aria-pressed="${action === "all" ? "true" : "false"}"
+        class="snapshot-stat"
+        data-snapshot="${esc(key)}"
+        aria-pressed="${key === "all"}"
         ${disabled ? "disabled" : ""}
       >
-        <strong>${html(value)}</strong>
-        <span>${html(label)}</span>
+        <strong>${esc(value)}</strong>
+        <span>${esc(label)}</span>
       </button>
     `;
   }
 
-  function snapshotHtml(cards, fx, data) {
-    const priceLabel = entry =>
-      entry
-        ? `£${entry.price.toFixed(2)}`
+  function snapshotMarkup(
+    cards,
+    rates,
+    s
+  ) {
+    const fmt = x =>
+      x
+        ? `£${x.price.toFixed(2)}`
         : "—";
 
     return `
@@ -1687,7 +1767,6 @@
         class="snapshot"
         aria-label="ManaScout printing snapshot"
       >
-
         <div class="snapshot-heading">
 
           <div>
@@ -1719,123 +1798,130 @@
 
           ${snapshotButton(
             "cheapest",
-            priceLabel(data.cheapest),
+            fmt(s.cheapest),
             "Cheapest",
-            !data.cheapest
+            !s.cheapest
           )}
 
           ${snapshotButton(
             "most-expensive",
-            priceLabel(data["most-expensive"]),
+            fmt(s["most-expensive"]),
             "Most expensive",
-            !data["most-expensive"]
+            !s["most-expensive"]
           )}
 
           ${snapshotButton(
             "cheapest-foil",
-            priceLabel(data["cheapest-foil"]),
+            fmt(s["cheapest-foil"]),
             "Cheapest foil",
-            !data["cheapest-foil"]
+            !s["cheapest-foil"]
           )}
 
           ${snapshotButton(
             "most-expensive-foil",
-            priceLabel(data["most-expensive-foil"]),
+            fmt(s["most-expensive-foil"]),
             "Most expensive foil",
-            !data["most-expensive-foil"]
+            !s["most-expensive-foil"]
           )}
 
           ${snapshotButton(
             "oldest",
-            data.oldest || "—",
+            s.oldest || "—",
             "Oldest",
-            !data.oldest
+            !s.oldest
           )}
 
           ${snapshotButton(
             "newest",
-            data.newest || "—",
+            s.newest || "—",
             "Newest",
-            !data.newest
+            !s.newest
           )}
 
           ${snapshotButton(
             "foil",
-            data.foil.length,
+            s.foil.length,
             "Foil versions",
-            !data.foil.length
+            !s.foil.length
           )}
 
           ${snapshotButton(
             "etched",
-            data.etched.length,
+            s.etched.length,
             "Etched versions",
-            !data.etched.length
+            !s.etched.length
           )}
 
         </div>
 
         <p class="snapshot-note">
-          Select a tile to browse matching printings.
-          GBP estimates are converted from available
-          Scryfall price data; these are not live shop quotes.
+          Tap a tile to explore matching printings.
+          GBP prices are approximate conversions
+          from available Scryfall data,
+          not live shop quotations.
         </p>
-
       </section>
     `;
   }
 
 
   /* ========================================
-     PRINTING ROWS
+     PRINTING TABLE
      ======================================== */
 
-  function printingRow(card, selected, fx) {
-    const thumb = imageFor(card, "small");
-    const isSelected = selected?.id === card.id;
-
-    const art =
-      card.artist || "Artist not listed";
-
-    const finish = treatmentText(card);
-    const selector = html(card.id);
+  function row(
+    card,
+    selected,
+    rates
+  ) {
+    const chosen =
+      card.id === selected?.id;
 
     return `
       <tr
-        class="${isSelected ? "is-selected-printing" : ""}"
-        data-row-id="${selector}"
+        class="${chosen
+          ? "is-selected-printing"
+          : ""}"
       >
 
         <td class="printing-image-cell">
 
-          <div class="ms-thumbnail">
+          <div class="ms-thumb-frame">
 
             <button
-              type="button"
               class="printing-select-button printing-image-button"
-              data-print-id="${selector}"
-              aria-label="Select ${html(card.set_name)} ${html(card.collector_number)}"
+              type="button"
+              data-print-id="${esc(card.id)}"
+              title="Select this exact printing"
+              aria-label="Select ${esc(card.set_name)} number ${esc(card.collector_number)}"
             >
-
-              <img
-                class="printing-card-image"
-                src="${html(thumb)}"
-                loading="lazy"
-                decoding="async"
-                alt="${html(card.name)} — ${html(card.set_name)} #${html(card.collector_number)}"
-              >
-
+              ${img(card, "small")
+                ? `
+                  <img
+                    class="printing-card-image"
+                    src="${esc(img(card, "small"))}"
+                    alt="${esc(card.name)} — ${esc(card.set_name)}"
+                    loading="lazy"
+                    decoding="async"
+                  >
+                `
+                : "—"}
             </button>
 
-            ${foilOn(card) ? `
-              <span
-                class="ms-foil-glint"
-                aria-hidden="true"
-              ></span>
-            ` : ""}
+            ${shimmer(card) &&
+              img(card, "small")
+                ? `
+                  <span
+                    class="ms-foil-glint"
+                    aria-hidden="true"
+                  ></span>
+                `
+                : ""}
 
-            ${foilButton(card, true)}
-
+            ${foilControl(
+              card,
+              true
+            )}
           </div>
 
         </td>
@@ -1843,164 +1929,308 @@
         <td>
 
           <button
-            type="button"
             class="printing-select-button printing-name-button"
-            data-print-id="${selector}"
+            type="button"
+            data-print-id="${esc(card.id)}"
           >
             <span class="set-name">
-              ${html(card.set_name || "—")}
+              ${esc(card.set_name || "—")}
             </span>
           </button>
 
           <br>
 
           <span class="muted">
-            ${html(String(card.set || "").toUpperCase())}
+            ${esc(String(card.set || "").toUpperCase())}
           </span>
 
-          <span class="ms-printing-note">
-            ${html(art)}
+          <span class="ms-note">
+            ${esc(card.artist || "Artist not listed")}
           </span>
 
-          ${isSelected ? `
-            <span class="ms-printing-note">
-              ◇ SELECTED
-            </span>
-          ` : ""}
-
-        </td>
-
-        <td>
-          ${html(card.released_at || "—")}
-        </td>
-
-        <td>
-          ${html(card.collector_number || "—")}
-        </td>
-
-        <td>
-          ${html(title(card.rarity) || "—")}
-        </td>
-
-        <td>
-
-          <span class="ms-table-information">
-            ${html(finishText(card))}
+          <span class="ms-note">
+            ${esc(LANGS[card.lang] || card.lang || "Unknown language")}
           </span>
 
-          <span class="ms-printing-note ms-treatments">
-            ${html(finish)}
+          ${chosen
+            ? `
+              <span class="ms-note">
+                ◇ SELECTED
+              </span>
+            `
+            : ""}
+
+        </td>
+
+        <td>
+          ${esc(card.released_at || "—")}
+        </td>
+
+        <td>
+          ${esc(card.collector_number || "—")}
+        </td>
+
+        <td>
+          ${esc(pretty(card.rarity) || "—")}
+        </td>
+
+        <td>
+
+          <span class="ms-note">
+            ${esc(finishText(card))}
+          </span>
+
+          <span class="ms-note">
+            ${esc(treatmentText(card))}
           </span>
 
         </td>
 
         <td>
-          ${displayPrice(card, "nonfoil", fx)}
+          ${priceHtml(card, "nonfoil", rates)}
         </td>
 
         <td>
-          ${displayPrice(card, "foil", fx)}
+          ${priceHtml(card, "foil", rates)}
         </td>
 
         <td>
-          ${displayPrice(card, "etched", fx)}
+          ${priceHtml(card, "etched", rates)}
         </td>
 
       </tr>
     `;
   }
 
+  function selectOptions(
+    items,
+    label,
+    allValue = "all"
+  ) {
+    return `
+      <option value="${esc(allValue)}">
+        ${esc(label)}
+      </option>
+    ` + items.map(
+      ([id, name]) => `
+        <option value="${esc(id)}">
+          ${esc(name)}
+        </option>
+      `
+    ).join("");
+  }
+
 
   /* ========================================
-     PRINTING FILTERS
+     PRINTING ARCHIVE AND FILTERS
      ======================================== */
 
-  function printingControls(cards) {
-    const uniqueSets = [
+  function renderArchive(
+    result,
+    rates,
+    token
+  ) {
+    if (
+      !ui.printings ||
+      !ui.status ||
+      token !== generation
+    ) {
+      return;
+    }
+
+    const cards =
+      result.cards;
+
+    const s =
+      snapshot(
+        cards,
+        rates
+      );
+
+    const sets = [
       ...new Map(
-        cards.map(card => [
-          card.set,
-          card.set_name
-        ])
+        cards.map(
+          c => [
+            c.set,
+            c.set_name
+          ]
+        )
       ).entries()
-    ].sort((a, b) =>
-      String(a[1]).localeCompare(String(b[1]))
+    ].sort(
+      (a, b) =>
+        String(a[1]).localeCompare(
+          String(b[1])
+        )
     );
 
-    return `
+    const langs = [
+      ...new Set(
+        cards
+          .map(c => c.lang)
+          .filter(Boolean)
+      )
+    ]
+      .sort()
+      .map(
+        id => [
+          id,
+          LANGS[id] ||
+          id.toUpperCase()
+        ]
+      );
+
+    const state = {
+      cards,
+      rates,
+      token,
+      selected: currentCard,
+      snapshot: "all",
+      pageSize: 50,
+      limit: 50
+    };
+
+    archive = state;
+
+    ui.printings.innerHTML = `
+      ${snapshotMarkup(cards, rates, s)}
+
+      ${result.notice
+        ? `
+          <p
+            class="ms-alert"
+            role="status"
+          >
+            ${esc(result.notice)}
+          </p>
+        `
+        : ""}
+
       <div class="ms-controls printing-controls">
 
         <label>
           Search printings
-
           <input
             id="ms-print-search"
             type="search"
-            placeholder="Set, artist, number…"
+            placeholder="Set, artist, number, treatment…"
             autocomplete="off"
           >
         </label>
 
         <label>
           Set
-
           <select id="ms-print-set">
-            <option value="all">
-              All sets
-            </option>
-
-            ${uniqueSets.map(([code, name]) => `
-              <option value="${html(code)}">
-                ${html(name)}
-              </option>
-            `).join("")}
+            ${selectOptions(
+              sets,
+              "All sets"
+            )}
           </select>
+        </label>
 
+        <label>
+          Language
+          <select id="ms-print-lang">
+            ${selectOptions(
+              langs,
+              "All languages"
+            )}
+          </select>
+        </label>
+
+        <label>
+          Game
+          <select id="ms-print-game">
+            <option value="paper">
+              Paper printings
+            </option>
+            <option value="all">
+              All platforms
+            </option>
+            <option value="digital">
+              Digital only
+            </option>
+          </select>
         </label>
 
         <label>
           Finish
-
           <select id="printing-finish-filter">
-            <option value="all">All finishes</option>
-            <option value="nonfoil">Nonfoil</option>
-            <option value="foil">Foil</option>
-            <option value="etched">Etched</option>
+            <option value="all">
+              All finishes
+            </option>
+            <option value="nonfoil">
+              Nonfoil
+            </option>
+            <option value="foil">
+              Foil
+            </option>
+            <option value="etched">
+              Etched
+            </option>
           </select>
-
         </label>
 
         <label>
           Treatment
-
           <select id="ms-print-treatment">
-            <option value="all">All treatments</option>
-            <option value="borderless">Borderless</option>
-            <option value="showcase">Showcase</option>
-            <option value="extendedart">Extended art</option>
-            <option value="fullart">Full art</option>
-            <option value="surgefoil">Surge foil</option>
-            <option value="galaxyfoil">Galaxy foil</option>
-            <option value="halofoil">Halo foil</option>
-            <option value="textured">Textured foil</option>
-            <option value="serialized">Serialized</option>
-            <option value="promo">Promo</option>
+            <option value="all">
+              All treatments
+            </option>
+            <option value="borderless">
+              Borderless
+            </option>
+            <option value="showcase">
+              Showcase
+            </option>
+            <option value="extendedart">
+              Extended art
+            </option>
+            <option value="fullart">
+              Full art
+            </option>
+            <option value="surgefoil">
+              Surge foil
+            </option>
+            <option value="galaxyfoil">
+              Galaxy foil
+            </option>
+            <option value="halofoil">
+              Halo foil
+            </option>
+            <option value="textured">
+              Textured foil
+            </option>
+            <option value="serialized">
+              Serialized
+            </option>
+            <option value="promo">
+              Promo
+            </option>
           </select>
-
         </label>
 
         <label>
           Sort
-
           <select id="printing-sort">
-            <option value="newest">Newest</option>
-            <option value="oldest">Oldest</option>
-            <option value="price-asc">£ Low → High</option>
-            <option value="price-desc">£ High → Low</option>
-            <option value="name">Set A–Z</option>
-            <option value="collector">Collector #</option>
+            <option value="newest">
+              Newest
+            </option>
+            <option value="oldest">
+              Oldest
+            </option>
+            <option value="price-asc">
+              £ Low → High
+            </option>
+            <option value="price-desc">
+              £ High → Low
+            </option>
+            <option value="name">
+              Set A–Z
+            </option>
+            <option value="collector">
+              Collector #
+            </option>
           </select>
-
         </label>
 
         <button
@@ -2011,16 +2241,7 @@
         </button>
 
       </div>
-    `;
-  }
 
-
-  /* ========================================
-     PRINTING TABLE
-     ======================================== */
-
-  function tableMarkup() {
-    return `
       <div class="table-wrap">
 
         <table class="printings-table">
@@ -2028,7 +2249,7 @@
           <thead>
             <tr>
               <th scope="col">Card</th>
-              <th scope="col">Set / Artist</th>
+              <th scope="col">Set / Artist / Language</th>
               <th scope="col">Released</th>
               <th scope="col">Collector #</th>
               <th scope="col">Rarity</th>
@@ -2046,249 +2267,271 @@
       </div>
 
       <div
-        id="ms-pagination"
-        class="ms-print-pagination"
+        class="ms-pagination"
+        id="ms-print-pages"
       ></div>
+
+      <p class="ms-help">
+        These are Scryfall printing records.
+        A printing can have multiple available
+        physical finishes, shown as separate
+        price columns. The foil shimmer is illustrative.
+      </p>
     `;
-  }
 
-
-  /* ========================================
-     PRINTING ARCHIVE CONTROLLER
-     ======================================== */
-
-  function renderPrintingArchive(cards, fx, token) {
-    if (
-      !els.printings ||
-      !els.status ||
-      token !== searchToken
-    ) {
-      return;
-    }
-
-    const data = snapshotData(cards, fx);
-
-    const st = {
-      cards,
-      fx,
-      data,
-      snapshot: "all",
-      selected: currentCard,
-      pageSize: 50,
-      limit: 50,
-      token
-    };
-
-    printingState = st;
-
-    els.printings.innerHTML =
-      snapshotHtml(cards, fx, data) +
-      printingControls(cards) +
-      tableMarkup();
-
-    const controls = {
+    const c = {
       find: $("ms-print-search"),
       set: $("ms-print-set"),
+      lang: $("ms-print-lang"),
+      game: $("ms-print-game"),
       finish: $("printing-finish-filter"),
       treatment: $("ms-print-treatment"),
       sort: $("printing-sort"),
       body: $("ms-print-body"),
-      pagination: $("ms-pagination")
+      pages: $("ms-print-pages")
     };
 
-
-    /* Snapshot matching */
-
-    function snapshotCards() {
-      const key = st.snapshot;
-
-      if (key === "all") {
-        return cards;
-      }
-
-      if ([
-        "cheapest",
-        "most-expensive",
-        "cheapest-foil",
-        "most-expensive-foil"
-      ].includes(key)) {
-        return data[key]?.card
-          ? [data[key].card]
-          : [];
-      }
-
-      if (
-        key === "foil" ||
-        key === "etched"
-      ) {
-        return data[key];
-      }
-
-      if (
-        key === "oldest" ||
-        key === "newest"
-      ) {
-        return cards.filter(card =>
-          String(
-            card.released_at || ""
-          ).startsWith(data[key])
-        );
-      }
-
-      return cards;
+    if (
+      !cards.some(paper)
+    ) {
+      c.game.value = "all";
     }
 
+    if (
+      currentCard &&
+      !paper(currentCard)
+    ) {
+      c.game.value = "all";
+    }
 
-    /* Filters and sorting */
+    function matchesTreatment(
+      card,
+      key
+    ) {
+      if (key === "all") {
+        return true;
+      }
 
-    function visibleCards() {
-      let list = snapshotCards();
+      if (key === "borderless") {
+        return card.border_color === "borderless";
+      }
 
-      const q = (
-        controls.find?.value || ""
-      ).trim().toLowerCase();
+      if (key === "fullart") {
+        return Boolean(card.full_art);
+      }
 
-      const set = controls.set?.value || "all";
-      const finish = controls.finish?.value || "all";
-      const treatment =
-        controls.treatment?.value || "all";
-      const sort = controls.sort?.value || "newest";
+      if (key === "promo") {
+        return Boolean(card.promo);
+      }
 
-      if (q) {
-        list = list.filter(card =>
-          [
+      return [
+        ...(card.frame_effects || []),
+        ...(card.promo_types || [])
+      ].includes(key);
+    }
+
+    function filtered() {
+      const q =
+        norm(c.find.value);
+
+      let list =
+        state.snapshot === "all"
+          ? cards
+          : ["foil", "etched"].includes(
+              state.snapshot
+            )
+            ? s[state.snapshot]
+            : ["oldest", "newest"].includes(
+                state.snapshot
+              )
+              ? cards.filter(
+                  card =>
+                    String(
+                      card.released_at || ""
+                    ).startsWith(
+                      s[state.snapshot]
+                    )
+                )
+              : s[state.snapshot]?.card
+                ? [s[state.snapshot].card]
+                : [];
+
+      list = list.filter(
+        card => {
+          const haystack = [
             card.name,
+            card.printed_name,
             card.set_name,
+            card.set,
             card.artist,
             card.collector_number,
-            card.set,
+            card.lang,
+            LANGS[card.lang],
             treatmentText(card)
           ]
             .join(" ")
-            .toLowerCase()
-            .includes(q)
-        );
-      }
+            .toLowerCase();
 
-      if (set !== "all") {
-        list = list.filter(card =>
-          card.set === set
-        );
-      }
+          return (
+            (!q || haystack.includes(q)) &&
 
-      if (finish !== "all") {
-        list = list.filter(card =>
-          finishHas(card, finish)
-        );
-      }
+            (
+              c.set.value === "all" ||
+              card.set === c.set.value
+            ) &&
 
-      if (treatment !== "all") {
-        list = list.filter(card =>
-          treatment === "promo"
-            ? card.promo
-            : treatment === "borderless"
-              ? card.border_color === "borderless"
-              : treatment === "fullart"
-                ? card.full_art
-                : (
-                  (card.frame_effects || [])
-                    .includes(treatment) ||
-                  (card.promo_types || [])
-                    .includes(treatment)
-                )
-        );
-      }
+            (
+              c.lang.value === "all" ||
+              card.lang === c.lang.value
+            ) &&
 
-      const result = [...list];
+            (
+              c.game.value === "all" ||
+              (
+                c.game.value === "paper"
+                  ? paper(card)
+                  : !paper(card)
+              )
+            ) &&
 
-      result.sort((a, b) => {
-        if (sort === "oldest") {
-          return String(a.released_at || "")
-            .localeCompare(
-              String(b.released_at || "")
-            );
-        }
+            (
+              c.finish.value === "all" ||
+              has(
+                card,
+                c.finish.value
+              )
+            ) &&
 
-        if (sort === "name") {
-          return String(a.set_name || "")
-            .localeCompare(
-              String(b.set_name || "")
-            );
-        }
-
-        if (sort === "collector") {
-          return String(a.collector_number || "")
-            .localeCompare(
-              String(b.collector_number || ""),
-              undefined,
-              { numeric: true }
-            );
-        }
-
-        if (
-          sort === "price-asc" ||
-          sort === "price-desc"
-        ) {
-          const x = priceValue(
-            a,
-            "nonfoil",
-            fx
+            matchesTreatment(
+              card,
+              c.treatment.value
+            )
           );
+        }
+      );
 
-          const y = priceValue(
-            b,
-            "nonfoil",
-            fx
-          );
+      return [...list].sort(
+        (a, b) => {
+          if (
+            c.sort.value === "oldest"
+          ) {
+            return String(
+              a.released_at || ""
+            ).localeCompare(
+              String(
+                b.released_at || ""
+              )
+            );
+          }
 
           if (
-            x === null &&
-            y === null
+            c.sort.value === "name"
           ) {
-            return 0;
+            return String(
+              a.set_name || ""
+            ).localeCompare(
+              String(
+                b.set_name || ""
+              )
+            );
           }
 
-          if (x === null) {
-            return 1;
+          if (
+            c.sort.value === "collector"
+          ) {
+            return String(
+              a.collector_number || ""
+            ).localeCompare(
+              String(
+                b.collector_number || ""
+              ),
+              undefined,
+              {numeric: true}
+            );
           }
 
-          if (y === null) {
-            return -1;
+          if (
+            [
+              "price-asc",
+              "price-desc"
+            ].includes(c.sort.value)
+          ) {
+            const aPrice =
+              priceValue(
+                a,
+                "nonfoil",
+                rates
+              ) ??
+              priceValue(
+                a,
+                "foil",
+                rates
+              );
+
+            const bPrice =
+              priceValue(
+                b,
+                "nonfoil",
+                rates
+              ) ??
+              priceValue(
+                b,
+                "foil",
+                rates
+              );
+
+            if (aPrice == null) {
+              return bPrice == null
+                ? 0
+                : 1;
+            }
+
+            if (bPrice == null) {
+              return -1;
+            }
+
+            return c.sort.value === "price-asc"
+              ? aPrice - bPrice
+              : bPrice - aPrice;
           }
 
-          return sort === "price-asc"
-            ? x - y
-            : y - x;
-        }
-
-        return String(b.released_at || "")
-          .localeCompare(
-            String(a.released_at || "")
+          return String(
+            b.released_at || ""
+          ).localeCompare(
+            String(
+              a.released_at || ""
+            )
           );
-      });
-
-      return result;
+        }
+      );
     }
-
-
-    /* Update visible rows */
 
     function update() {
       if (
-        token !== searchToken ||
-        printingState !== st
+        token !== generation ||
+        archive !== state
       ) {
         return;
       }
 
-      const cardsShown = visibleCards();
-      const page = cardsShown.slice(0, st.limit);
+      const list = filtered();
 
-      controls.body.innerHTML = page
-        .map(card =>
-          printingRow(card, st.selected, fx)
-        )
-        .join("") || `
+      const page =
+        list.slice(
+          0,
+          state.limit
+        );
+
+      c.body.innerHTML =
+        page.map(
+          item =>
+            row(
+              item,
+              state.selected,
+              rates
+            )
+        ).join("") ||
+        `
           <tr>
             <td
               colspan="9"
@@ -2299,238 +2542,271 @@
           </tr>
         `;
 
-      els.status.textContent =
-        `${cardsShown.length} of ${cards.length} printings matching · ` +
-        (fx
-          ? "GBP estimates"
-          : "available source currencies"
-        );
+      ui.status.textContent =
+        `${list.length} matching printings · ` +
+        `${cards.length} Scryfall records loaded · ` +
+        `${rates ? "GBP estimates" : "source currencies"}` +
+        `${result.complete ? "" : " · partial data"}`;
 
-      controls.pagination.replaceChildren();
+      c.pages.innerHTML = `
+        <span>
+          Showing ${page.length} of ${list.length}
+        </span>
+      `;
 
-      const count = document.createElement("span");
-
-      count.textContent =
-        `Showing ${page.length} of ${cardsShown.length}`;
-
-      controls.pagination.appendChild(count);
-
-      if (cardsShown.length > st.limit) {
-        const more = document.createElement("button");
+      if (
+        list.length > state.limit
+      ) {
+        const more =
+          document.createElement("button");
 
         more.type = "button";
 
         more.textContent =
-          `Load next ${Math.min(
-            st.pageSize,
-            cardsShown.length - st.limit
-          )} printings`;
+          `Show next ${Math.min(
+            state.pageSize,
+            list.length - state.limit
+          )}`;
 
         more.addEventListener(
           "click",
           () => {
-            st.limit += st.pageSize;
+            state.limit += state.pageSize;
             update();
           }
         );
 
-        controls.pagination.appendChild(more);
+        c.pages.appendChild(more);
       }
 
-      els.printings
-        .querySelectorAll("[data-snapshot-action]")
-        .forEach(button => {
-          const active =
-            button.dataset.snapshotAction === st.snapshot;
+      ui.printings
+        .querySelectorAll(
+          "[data-snapshot]"
+        )
+        .forEach(
+          b => {
+            const active =
+              b.dataset.snapshot ===
+              state.snapshot;
 
-          button.classList.toggle(
-            "is-active",
-            active
-          );
+            b.classList.toggle(
+              "is-active",
+              active
+            );
 
-          button.setAttribute(
-            "aria-pressed",
-            String(active)
-          );
-        });
+            b.setAttribute(
+              "aria-pressed",
+              String(active)
+            );
+          }
+        );
     }
-
-
-    /* Select an exact printing */
 
     function selectCard(
       card,
-      {
-        scroll = true,
-        finish = null
-      } = {}
+      finish = "",
+      scroll = true
     ) {
       if (
         !card ||
-        token !== searchToken
+        token !== generation
       ) {
         return;
       }
 
-      if (finish === "nonfoil") {
-        foilDisabled.add(card.id);
+      if (finish) {
+        chooseFinish(
+          card,
+          finish
+        );
       }
 
-      if (
-        finish === "foil" ||
-        finish === "etched"
-      ) {
-        foilDisabled.delete(card.id);
-      }
+      state.selected = card;
 
-      st.selected = card;
-
-      renderCard(card);
-
-      updateUrl(
-        card.name,
-        card.id,
-        true
+      renderCard(
+        card,
+        false
       );
 
+      replaceUrl(card);
       update();
 
       if (scroll) {
-        scrollTo(els.details);
+        scrollTo(ui.details);
       }
     }
 
-
-    /* Per-printing image and foil buttons */
-
-    controls.body.addEventListener(
+    c.body.addEventListener(
       "click",
       event => {
-        const toggle = event.target.closest(
-          "[data-foil-toggle]"
-        );
+        const toggle =
+          event.target.closest(
+            "[data-ms-finish-toggle]"
+          );
 
         if (toggle) {
-          const id = toggle.dataset.foilToggle;
+          const target =
+            cards.find(
+              x =>
+                x.id ===
+                toggle.dataset.msFinishToggle
+            );
 
-          if (foilDisabled.has(id)) {
-            foilDisabled.delete(id);
-          } else {
-            foilDisabled.add(id);
+          if (target) {
+            toggleFinish(target);
+
+            if (
+              state.selected?.id ===
+              target.id
+            ) {
+              renderCard(
+                target,
+                currentPick
+              );
+
+              replaceUrl(target);
+            }
+
+            update();
           }
 
-          if (st.selected?.id === id) {
-            renderCard(st.selected);
-          }
-
-          update();
           return;
         }
 
-        const button = event.target.closest(
-          "[data-print-id]"
-        );
+        const button =
+          event.target.closest(
+            "[data-print-id]"
+          );
 
         if (button) {
           selectCard(
-            cards.find(card =>
-              card.id === button.dataset.printId
+            cards.find(
+              x =>
+                x.id ===
+                button.dataset.printId
             )
           );
         }
       }
     );
 
-
-    /* Snapshot shortcuts */
-
-    els.printings
+    ui.printings
       .querySelector(".snapshot")
       ?.addEventListener(
         "click",
         event => {
-          const button = event.target.closest(
-            "[data-snapshot-action]"
-          );
+          const b =
+            event.target.closest(
+              "[data-snapshot]"
+            );
 
           if (
-            !button ||
-            button.disabled
+            !b ||
+            b.disabled
           ) {
             return;
           }
 
-          st.snapshot =
-            button.dataset.snapshotAction;
+          state.snapshot =
+            b.dataset.snapshot;
 
-          st.limit = st.pageSize;
+          state.limit =
+            state.pageSize;
 
-          controls.finish.value = "all";
-          controls.set.value = "all";
-          controls.treatment.value = "all";
-          controls.find.value = "";
+          c.find.value = "";
+          c.set.value = "all";
+          c.lang.value = "all";
+          c.finish.value = "all";
+          c.treatment.value = "all";
 
-          const focused = snapshotCards();
+          const chosen = [
+            "cheapest",
+            "most-expensive",
+            "cheapest-foil",
+            "most-expensive-foil"
+          ].includes(
+            state.snapshot
+          )
+            ? s[state.snapshot]?.card
+            : null;
 
-          if (focused.length === 1) {
+          if (chosen) {
+            if (
+              state.snapshot.includes(
+                "foil"
+              )
+            ) {
+              chooseFinish(
+                chosen,
+                "foil"
+              );
+            }
+
+            if (!paper(chosen)) {
+              c.game.value = "all";
+            }
+
             selectCard(
-              focused[0],
-              {
-                scroll: false,
-                finish: st.snapshot.includes("foil")
-                  ? "foil"
-                  : null
-              }
+              chosen,
+              "",
+              false
             );
           }
 
           update();
 
           scrollTo(
-            els.printings.querySelector(
+            ui.printings.querySelector(
               ".table-wrap"
             )
           );
         }
       );
 
-
-    /* Input filtering */
-
-    for (const input of [
-      controls.find,
-      controls.set,
-      controls.finish,
-      controls.treatment,
-      controls.sort
-    ]) {
-      input?.addEventListener(
-        input === controls.find
+    for (
+      const element of [
+        c.find,
+        c.set,
+        c.lang,
+        c.game,
+        c.finish,
+        c.treatment,
+        c.sort
+      ]
+    ) {
+      element.addEventListener(
+        element === c.find
           ? "input"
           : "change",
         () => {
-          st.limit = st.pageSize;
+          state.limit =
+            state.pageSize;
+
           update();
         }
       );
     }
 
-
-    /* Reset all filters */
-
     $("ms-reset-filters")
       ?.addEventListener(
         "click",
         () => {
-          st.snapshot = "all";
+          state.snapshot = "all";
 
-          controls.find.value = "";
-          controls.set.value = "all";
-          controls.finish.value = "all";
-          controls.treatment.value = "all";
-          controls.sort.value = "newest";
+          c.find.value = "";
+          c.set.value = "all";
+          c.lang.value = "all";
+          c.finish.value = "all";
+          c.treatment.value = "all";
+          c.sort.value = "newest";
 
-          st.limit = st.pageSize;
+          c.game.value =
+            cards.some(paper)
+              ? "paper"
+              : "all";
+
+          state.limit =
+            state.pageSize;
 
           update();
         }
@@ -2541,341 +2817,276 @@
 
 
   /* ========================================
-     SELECTED CARD FOIL TOGGLE
+     CARD LOADING AND EXACT-ID RESTORATION
+
+     A requested printing ID takes precedence
+     over a ManaScout Pick.
      ======================================== */
 
-  document.addEventListener(
-    "click",
-    async event => {
-      const finishToggle = event.target.closest(
-        ".ms-card-image [data-foil-toggle]"
-      );
-
-      if (
-        finishToggle &&
-        currentCard?.id ===
-          finishToggle.dataset.foilToggle
-      ) {
-        const id = currentCard.id;
-
-        if (foilDisabled.has(id)) {
-          foilDisabled.delete(id);
-        } else {
-          foilDisabled.add(id);
-        }
-
-        renderCard(currentCard);
-
-        if (printingState) {
-          const active = printingState.cards.find(
-            card => card.id === id
-          );
-
-          const row = active &&
-            els.printings?.querySelector(
-              `[data-row-id="${id}"]`
-            );
-
-          if (row) {
-            const oldThumb = row.querySelector(
-              ".ms-thumbnail"
-            );
-
-            if (oldThumb) {
-              const fresh = document.createElement(
-                "div"
-              );
-
-              fresh.innerHTML = printingRow(
-                active,
-                currentCard,
-                printingState.fx
-              );
-
-              const newThumb = fresh.querySelector(
-                ".ms-thumbnail"
-              );
-
-              if (newThumb) {
-                oldThumb.replaceWith(newThumb);
-              }
-            }
-          }
-        }
-
-        return;
-      }
-
-
-      /* ========================================
-         KEEP SCOUTING
-         ======================================== */
-
-      const button = event.target.closest(
-        "[data-discovery-mode]"
-      );
-
-      if (
-        !button ||
-        !currentCard ||
-        !els.details?.contains(button)
-      ) {
-        return;
-      }
-
-      const previous = currentCard;
-      const mode = button.dataset.discoveryMode;
-      const currentId = previous.oracle_id;
-
-      const exclude = currentId
-        ? ` -oracleid:${currentId}`
-        : "";
-
-      let query = "game:paper";
-
-      if (mode === "colour") {
-        const colours = (
-          previous.color_identity || []
-        ).join("") || "c";
-
-        query += ` id:${colours}`;
-
-      } else if (mode === "type") {
-        const type = [
-          "Creature",
-          "Artifact",
-          "Enchantment",
-          "Instant",
-          "Sorcery",
-          "Planeswalker",
-          "Land",
-          "Battle"
-        ].find(t =>
-          (previous.type_line || "").includes(t)
-        );
-
-        if (type) {
-          query += ` t:${type.toLowerCase()}`;
-        }
-      }
-
-      query += exclude;
-
-      const allButtons = [
-        ...els.details.querySelectorAll(
-          "[data-discovery-mode]"
-        )
-      ];
-
-      allButtons.forEach(b => {
-        b.disabled = true;
-      });
-
-      const status = els.details.querySelector(
-        ".ms-actions-status"
-      );
-
-      if (status) {
-        status.textContent =
-          "Scouting another card…";
-      }
-
-      try {
-        const card = await json(
-          `${API}/cards/random?q=${encodeURIComponent(query)}`
-        );
-
-        if (!card?.name) {
-          throw new Error(
-            "No card returned"
-          );
-        }
-
-        await loadCard(card.name);
-
-      } catch (error) {
-        console.warn(
-          "Keep scouting failed:",
-          error
-        );
-
-        if (status?.isConnected) {
-          status.textContent =
-            "Could not find another card. Try again.";
-        }
-
-      } finally {
-        allButtons.forEach(b => {
-          if (b.isConnected) {
-            b.disabled = false;
-          }
-        });
-      }
-    }
-  );
-
-
-  /* ========================================
-     SEARCH AND EXACT PRINTING LOAD
-     ======================================== */
-
-  async function loadCard(name, options = {}) {
-    const query = String(name || "").trim();
+  async function loadCard(
+    name,
+    opts = {}
+  ) {
+    const query =
+      String(name || "").trim();
 
     if (!query) {
       return null;
     }
 
-    stopRequests();
+    cancelActive();
 
-    const token = searchToken;
+    const token =
+      generation;
 
-    requestController =
+    controller =
       new AbortController();
 
     const signal =
-      requestController.signal;
+      controller.signal;
 
-    const requested = String(
-      options.printingId || ""
-    ).trim();
+    const requestedId =
+      String(
+        opts.printingId ||
+        (
+          opts.fromHistory
+            ? readPrinting()
+            : ""
+        )
+      ).trim();
 
-    if (!options.fromHistory) {
-      updateUrl(
+    const requestedFinish =
+      String(
+        opts.finish ||
+        (
+          opts.fromHistory
+            ? readFinish()
+            : ""
+        )
+      ).trim();
+
+    if (!opts.fromHistory) {
+      startUrl(
         query,
-        requested,
-        Boolean(options.replace)
+        requestedId,
+        Boolean(opts.replace)
       );
     }
 
-    if (els.input) {
-      els.input.value = query;
+    if (ui.input) {
+      ui.input.value = query;
     }
 
     clearSuggestions();
 
-    announce("loading", {
-      cardName: query
-    });
+    announce(
+      "loading",
+      {
+        cardName: query
+      }
+    );
 
-    setLoading();
+    if (ui.details) {
+      ui.details.innerHTML = `
+        <div
+          class="empty-state"
+          role="status"
+        >
+          Scouting card details and printings…
+        </div>
+      `;
+    }
+
+    ui.printings?.replaceChildren();
+
+    if (ui.status) {
+      ui.status.textContent =
+        "Loading printings…";
+    }
 
     try {
       let card = null;
       let exact = false;
 
-      if (requested) {
+      if (requestedId) {
         try {
-          const candidate = await cardId(
-            requested,
-            signal
-          );
+          const candidate =
+            await cardId(
+              requestedId,
+              signal
+            );
 
           if (
-            sameCardName(candidate.name, query)
+            sameName(
+              candidate?.name,
+              query
+            )
           ) {
             card = candidate;
             exact = true;
           }
 
         } catch (error) {
-          if (error.name === "AbortError") {
+          if (
+            error.name === "AbortError"
+          ) {
             throw error;
           }
         }
       }
 
       if (!card) {
-        card = await cardNamed(
-          query,
-          signal
-        );
+        card =
+          await namedCard(
+            query,
+            signal
+          );
       }
 
-      if (token !== searchToken) {
-        return null;
-      }
-
-      renderCard(card);
-
-      const cards = await allPrintings(
-        card,
-        token,
-        signal
-      );
-
-      if (token !== searchToken) {
-        return null;
-      }
-
-      let fx = null;
-
-      try {
-        fx = await rates();
-
-      } catch (error) {
-        console.warn(
-          "GBP estimate currently unavailable:",
-          error
-        );
-      }
-
-      if (token !== searchToken) {
+      if (
+        token !== generation
+      ) {
         return null;
       }
 
       if (
-        !exact &&
-        cards.length
+        exact &&
+        requestedFinish
       ) {
-        const pick = choosePick(
-          cards,
-          fx
+        chooseFinish(
+          card,
+          requestedFinish
+        );
+      }
+
+      renderCard(
+        card,
+        false
+      );
+
+      let result;
+
+      try {
+        result =
+          await fetchPrintings(
+            card,
+            token,
+            signal
+          );
+
+      } catch (error) {
+        if (
+          error.name === "AbortError"
+        ) {
+          throw error;
+        }
+
+        console.warn(
+          "ManaScout: printing lookup failed",
+          error
         );
 
-        if (pick) {
-          card = pick;
+        result = {
+          cards: [card],
+          complete: false,
+          notice:
+            "Scryfall's printing archive is unavailable. Showing the selected printing only."
+        };
+      }
 
-          renderCard(card, {
-            isPick: true
-          });
+      if (
+        token !== generation
+      ) {
+        return null;
+      }
 
-          updateUrl(
-            card.name,
-            card.id,
+      let rates = null;
+
+      try {
+        rates =
+          await Promise.race([
+            exchangeRates(),
+            delay(4500)
+              .then(() => null)
+          ]);
+
+      } catch (error) {
+        console.warn(
+          "GBP conversions unavailable",
+          error
+        );
+      }
+
+      if (
+        token !== generation
+      ) {
+        return null;
+      }
+
+      if (
+        !result.cards.some(
+          c =>
+            c.id === card.id
+        )
+      ) {
+        result.cards.unshift(card);
+      }
+
+      if (
+        !exact &&
+        result.cards.length
+      ) {
+        const best =
+          pickPrinting(
+            result.cards,
+            rates
+          );
+
+        if (best) {
+          card = best;
+
+          renderCard(
+            card,
             true
           );
         }
       }
 
-      renderPrintingArchive(
-        cards,
-        fx,
+      replaceUrl(
+        card,
+        true
+      );
+
+      renderArchive(
+        result,
+        rates,
         token
       );
 
-      document.title =
-        `${card.name} Printings, Foils & Art | ManaScout`;
+      if (!guideName) {
+        document.title =
+          `${card.name} Printings, Foils & Art | ManaScout`;
+      }
 
       return card;
 
     } catch (error) {
       if (
         error.name === "AbortError" ||
-        token !== searchToken
+        token !== generation
       ) {
         return null;
       }
 
       console.error(
-        "ManaScout card load error:",
+        "ManaScout card load failed",
         error
       );
 
-      setError(
+      errorState(
         error.status === 404
           ? `No card matched “${query}”. Check the spelling and try again.`
-          : "Could not reach Scryfall. Please try again."
+          : "Scryfall could not be reached. Please try again."
       );
 
       return null;
@@ -2887,69 +3098,79 @@
      AUTOCOMPLETE
      ======================================== */
 
-  function suggestionItems() {
+  function suggestions() {
     return [
       ...(
-        els.autocomplete?.querySelectorAll(
-          ".autocomplete-item"
-        ) || []
+        ui.suggestions
+          ?.querySelectorAll(
+            ".autocomplete-item"
+          ) || []
       )
     ];
   }
 
-  function markSuggestion(index) {
-    const items = suggestionItems();
+  function activateSuggestion(index) {
+    const items =
+      suggestions();
 
-    if (!items.length) {
+    if (
+      !items.length ||
+      !ui.input
+    ) {
       return;
     }
 
     activeSuggestion =
-      (index + items.length) % items.length;
+      (
+        index +
+        items.length
+      ) % items.length;
 
-    items.forEach((item, i) =>
-      item.setAttribute(
-        "aria-selected",
-        String(i === activeSuggestion)
-      )
+    items.forEach(
+      (item, i) =>
+        item.setAttribute(
+          "aria-selected",
+          String(
+            i === activeSuggestion
+          )
+        )
     );
 
-    const active = items[activeSuggestion];
-
-    els.input.setAttribute(
+    ui.input.setAttribute(
       "aria-activedescendant",
-      active.id
+      items[activeSuggestion].id
     );
 
-    active.scrollIntoView({
-      block: "nearest"
-    });
+    items[activeSuggestion]
+      .scrollIntoView({
+        block: "nearest"
+      });
   }
 
-  async function suggest(query) {
+  async function autocomplete(query) {
     suggestController?.abort();
 
     suggestController =
       new AbortController();
 
-    const signal =
-      suggestController.signal;
-
     try {
-      const results = await json(
-        `${API}/cards/autocomplete?q=${encodeURIComponent(query)}`,
-        signal
-      );
+      const response =
+        await readJson(
+          `${API}/cards/autocomplete?q=${encodeURIComponent(query)}`,
+          suggestController.signal
+        );
 
       if (
-        els.input?.value.trim() !== query
+        norm(ui.input?.value) !==
+          norm(query) ||
+        !ui.suggestions
       ) {
         return;
       }
 
-      const names = (
-        results.data || []
-      ).slice(0, 8);
+      const names =
+        (response.data || [])
+          .slice(0, 8);
 
       if (!names.length) {
         clearSuggestions();
@@ -2958,88 +3179,95 @@
 
       activeSuggestion = -1;
 
-      els.autocomplete.innerHTML =
-        names.map((name, i) => `
-          <button
-            type="button"
-            role="option"
-            aria-selected="false"
-            id="ms-autocomplete-${i}"
-            class="autocomplete-item"
-            data-name="${html(name)}"
-          >
-            ${html(name)}
-          </button>
-        `).join("");
+      ui.suggestions.innerHTML =
+        names.map(
+          (name, i) => `
+            <button
+              type="button"
+              class="autocomplete-item"
+              id="ms-autocomplete-${i}"
+              role="option"
+              aria-selected="false"
+              data-name="${esc(name)}"
+            >
+              ${esc(name)}
+            </button>
+          `
+        ).join("");
 
-      els.autocomplete.hidden = false;
+      ui.suggestions.hidden = false;
 
-      els.input.setAttribute(
+      ui.input.setAttribute(
         "aria-expanded",
         "true"
       );
 
-      els.input.removeAttribute(
+      ui.input.removeAttribute(
         "aria-activedescendant"
       );
 
     } catch (error) {
-      if (error.name !== "AbortError") {
+      if (
+        error.name !== "AbortError"
+      ) {
         clearSuggestions();
       }
     }
   }
 
-
-  /* ========================================
-     SEARCH EVENTS
-     ======================================== */
-
-  if (els.form && els.input) {
-    els.form.addEventListener(
+  if (
+    ui.form &&
+    ui.input
+  ) {
+    ui.form.addEventListener(
       "submit",
       event => {
         event.preventDefault();
 
-        const selected =
-          suggestionItems()[activeSuggestion];
+        const name =
+          suggestions()[
+            activeSuggestion
+          ]?.dataset.name ||
+          ui.input.value.trim();
 
-        const query =
-          selected?.dataset.name ||
-          els.input.value.trim();
-
-        if (query) {
-          void loadCard(query);
+        if (name) {
+          void loadCard(name);
         }
       }
     );
 
-    els.input.addEventListener(
+    ui.input.addEventListener(
       "input",
       () => {
-        const q = els.input.value.trim();
-
-        window.clearTimeout(
+        clearTimeout(
           suggestTimer
         );
 
-        if (q.length < 2) {
+        const query =
+          ui.input.value.trim();
+
+        if (
+          query.length < 2
+        ) {
           suggestController?.abort();
           clearSuggestions();
           return;
         }
 
-        suggestTimer = window.setTimeout(
-          () => void suggest(q),
-          220
-        );
+        suggestTimer =
+          setTimeout(
+            () =>
+              void autocomplete(query),
+            200
+          );
       }
     );
 
-    els.input.addEventListener(
+    ui.input.addEventListener(
       "keydown",
       event => {
-        const items = suggestionItems();
+        const items =
+          suggestions();
 
         if (
           event.key === "ArrowDown" &&
@@ -3047,7 +3275,7 @@
         ) {
           event.preventDefault();
 
-          markSuggestion(
+          activateSuggestion(
             activeSuggestion + 1
           );
 
@@ -3057,7 +3285,7 @@
         ) {
           event.preventDefault();
 
-          markSuggestion(
+          activateSuggestion(
             activeSuggestion - 1
           );
 
@@ -3069,30 +3297,247 @@
       }
     );
 
-    els.autocomplete?.addEventListener(
-      "click",
-      event => {
-        const item = event.target.closest(
-          "[data-name]"
-        );
+    ui.suggestions
+      ?.addEventListener(
+        "click",
+        event => {
+          const item =
+            event.target.closest(
+              "[data-name]"
+            );
 
-        if (item) {
-          void loadCard(
-            item.dataset.name
-          );
+          if (item) {
+            void loadCard(
+              item.dataset.name
+            );
+          }
         }
-      }
-    );
+      );
 
     document.addEventListener(
       "click",
       event => {
-        if (!els.form.contains(event.target)) {
+        if (
+          !ui.form.contains(
+            event.target
+          ) &&
+          !ui.suggestions?.contains(
+            event.target
+          )
+        ) {
           clearSuggestions();
         }
       }
     );
   }
+
+
+  /* ========================================
+     PRINTING BUTTONS AND DISCOVERY
+     ======================================== */
+
+  function showAction(message) {
+    const status =
+      ui.details?.querySelector(
+        ".ms-actions-status"
+      );
+
+    if (status) {
+      status.textContent =
+        message;
+    }
+  }
+
+  document.addEventListener(
+    "click",
+    async event => {
+      const finish =
+        event.target.closest(
+          ".ms-card-image [data-ms-finish-toggle]"
+        );
+
+      if (
+        finish &&
+        currentCard?.id ===
+          finish.dataset.msFinishToggle
+      ) {
+        const card =
+          currentCard;
+
+        const pick =
+          currentPick;
+
+        toggleFinish(card);
+
+        renderCard(
+          card,
+          pick
+        );
+
+        replaceUrl(card);
+
+        if (archive) {
+          const target = [
+            ...ui.printings.querySelectorAll(
+              ".is-selected-printing"
+            )
+          ][0];
+
+          if (target) {
+            target.outerHTML =
+              row(
+                card,
+                card,
+                archive.rates
+              );
+          }
+        }
+
+        return;
+      }
+
+      const copy =
+        event.target.closest(
+          "[data-copy-printing]"
+        );
+
+      if (
+        copy &&
+        ui.details?.contains(copy) &&
+        currentCard
+      ) {
+        try {
+          await navigator.clipboard.writeText(
+            pageUrl(
+              currentCard,
+              selectedFinish(currentCard)
+            ).href
+          );
+
+          showAction(
+            "Exact printing link copied."
+          );
+
+        } catch {
+          showAction(
+            "Copy the current URL from your browser's address bar."
+          );
+        }
+
+        return;
+      }
+
+      const button =
+        event.target.closest(
+          "[data-discovery]"
+        );
+
+      if (
+        !button ||
+        !ui.details?.contains(button) ||
+        !currentCard
+      ) {
+        return;
+      }
+
+      const old =
+        currentCard;
+
+      const type =
+        button.dataset.discovery;
+
+      const excluded =
+        old.oracle_id
+          ? ` -oracleid:${old.oracle_id}`
+          : "";
+
+      let q =
+        "game:paper";
+
+      if (
+        type === "colour"
+      ) {
+        q +=
+          ` id:${(old.color_identity || []).join("") || "c"}`;
+      }
+
+      if (
+        type === "type"
+      ) {
+        const major = [
+          "Creature",
+          "Artifact",
+          "Enchantment",
+          "Instant",
+          "Sorcery",
+          "Planeswalker",
+          "Land",
+          "Battle"
+        ].find(
+          x =>
+            (old.type_line || "").includes(x)
+        );
+
+        if (major) {
+          q +=
+            ` t:${major.toLowerCase()}`;
+        }
+      }
+
+      q += excluded;
+
+      const buttons = [
+        ...ui.details.querySelectorAll(
+          "[data-discovery]"
+        )
+      ];
+
+      buttons.forEach(
+        b =>
+          b.disabled = true
+      );
+
+      showAction(
+        "Finding another card…"
+      );
+
+      try {
+        const item =
+          await readJson(
+            `${API}/cards/random?q=${encodeURIComponent(q)}`
+          );
+
+        if (!item?.name) {
+          throw new Error(
+            "No card found"
+          );
+        }
+
+        await loadCard(
+          item.name
+        );
+
+      } catch (error) {
+        console.warn(
+          "Keep scouting failed",
+          error
+        );
+
+        showAction(
+          "Couldn't scout another card. Please try again."
+        );
+
+      } finally {
+        buttons.forEach(
+          b => {
+            if (b.isConnected) {
+              b.disabled = false;
+            }
+          }
+        );
+      }
+    }
+  );
 
 
   /* ========================================
@@ -3102,18 +3547,19 @@
   window.addEventListener(
     "popstate",
     () => {
-      const params = urlParams();
+      const query =
+        params().get("q")?.trim() ||
+        guideName;
 
-      const name =
-        params.get("q")?.trim();
-
-      if (name) {
-        void loadCard(name, {
-          fromHistory: true,
-          printingId:
-            params.get("printing") || ""
-        });
-
+      if (query) {
+        void loadCard(
+          query,
+          {
+            fromHistory: true,
+            printingId: readPrinting(),
+            finish: readFinish()
+          }
+        );
       } else {
         setHome();
       }
@@ -3123,47 +3569,352 @@
 
   /* ========================================
      PUBLIC API
-     Used by homepage and guide pages
      ======================================== */
 
-  window.ManaScout = Object.freeze({
-    loadCard,
+  window.ManaScout =
+    Object.freeze({
+      loadCard,
 
-    scoutRandom: async () => {
-      const card = await json(
-        `${API}/cards/random?q=${encodeURIComponent("game:paper")}`
-      );
+      scoutRandom: async () => {
+        const result =
+          await readJson(
+            `${API}/cards/random?q=${encodeURIComponent("game:paper")}`
+          );
 
-      if (!card?.name) {
-        throw new Error(
-          "Random card unavailable"
+        if (!result?.name) {
+          throw new Error(
+            "Random card unavailable"
+          );
+        }
+
+        await loadCard(
+          result.name
         );
+
+        return result;
       }
-
-      await loadCard(card.name);
-
-      return card;
-    }
-  });
+    });
 
 
   /* ========================================
-     INITIALISE
+     ADDITIONAL SHARED STYLES
      ======================================== */
+
+  function installStyles() {
+    if (
+      $("ms-search-upgrade-styles")
+    ) {
+      return;
+    }
+
+    const style =
+      document.createElement(
+        "style"
+      );
+
+    style.id =
+      "ms-search-upgrade-styles";
+
+    style.textContent = `
+      .ms-preview {
+        position: relative;
+        isolation: isolate;
+        display: inline-block;
+        max-width: 100%;
+        border-radius: 11px;
+        overflow: hidden;
+      }
+
+      .ms-preview > img {
+        display: block;
+        max-width: 100%;
+        height: auto;
+        border-radius: inherit;
+      }
+
+      .ms-card-image > .card-image {
+        width: 100%;
+        display: block;
+      }
+
+      .ms-foil-glint {
+        position: absolute;
+        inset: 0;
+        pointer-events: none;
+        border-radius: inherit;
+        mix-blend-mode: screen;
+        opacity: .38;
+        background:
+          linear-gradient(
+            110deg,
+            transparent 23%,
+            rgba(110,237,194,.12) 36%,
+            rgba(185,136,246,.22) 47%,
+            rgba(255,255,255,.35) 51%,
+            rgba(243,162,215,.16) 60%,
+            transparent 74%
+          );
+        background-size: 250% 100%;
+        animation:
+          msFoil 7s ease-in-out infinite;
+      }
+
+      @keyframes msFoil {
+        0%, 100% {
+          background-position: 100% 0;
+        }
+
+        50% {
+          background-position: 0 0;
+        }
+      }
+
+      .ms-finish-control,
+      .ms-thumb-toggle {
+        position: absolute;
+        z-index: 5;
+        cursor: pointer;
+        color: #ffd6dc;
+        background: rgba(17,10,15,.9);
+        border: 1px solid #cc6574;
+        box-shadow: 0 3px 12px #0008;
+      }
+
+      .ms-finish-control {
+        right: 7px;
+        top: 7px;
+        border-radius: 7px;
+        padding: 6px 8px;
+        font-size: 11px;
+      }
+
+      .ms-thumb-toggle {
+        right: 2px;
+        top: 2px;
+        border-radius: 50%;
+        width: 22px;
+        height: 22px;
+        font-size: 12px;
+      }
+
+      .ms-finish-control:disabled,
+      .ms-thumb-toggle:disabled {
+        cursor: default;
+        opacity: .8;
+      }
+
+      .ms-finish-control:focus-visible,
+      .ms-thumb-toggle:focus-visible {
+        outline: 2px solid #fff;
+        outline-offset: 2px;
+      }
+
+      .ms-thumb-frame {
+        position: relative;
+        display: inline-block;
+        max-width: 100%;
+        border-radius: 7px;
+        overflow: hidden;
+      }
+
+      .ms-thumb-frame img {
+        display: block;
+        width: 64px;
+        height: auto;
+        border-radius: 7px;
+      }
+
+      .ms-thumb-frame .ms-foil-glint {
+        opacity: .3;
+      }
+
+      .ms-card-extra,
+      .ms-card-actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin: 13px 0;
+      }
+
+      .ms-pill {
+        display: inline-flex;
+        border: 1px solid #ffffff25;
+        padding: 5px 9px;
+        border-radius: 30px;
+        color: #cdc0c5;
+        font-size: 11px;
+      }
+
+      .ms-card-actions button {
+        border: 1px solid #ffffff2b;
+        border-radius: 8px;
+        padding: 8px 10px;
+        background: #ffffff09;
+        color: #f4e9ec;
+        font: inherit;
+        font-size: 12px;
+        cursor: pointer;
+      }
+
+      .ms-card-actions button:hover {
+        border-color: #cd6977;
+      }
+
+      .ms-card-actions button:disabled {
+        opacity: .55;
+        cursor: wait;
+      }
+
+      .ms-help,
+      .ms-note,
+      .ms-actions-status {
+        display: block;
+        color: #a79da2;
+        font-size: 11px;
+        line-height: 1.65;
+      }
+
+      .ms-selection-banner {
+        padding: 10px 12px;
+        margin: 13px 0;
+        background: #28523b20;
+        border: 1px solid #70a17d55;
+        border-radius: 9px;
+        color: #c7e8d2;
+        font-size: 12px;
+        line-height: 1.55;
+      }
+
+      .ms-face-gallery {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+        margin: 12px 0;
+      }
+
+      .ms-face-gallery img {
+        width: min(180px,45%);
+        height: auto;
+        border-radius: 8px;
+      }
+
+      .ms-controls {
+        display: flex;
+        align-items: flex-end;
+        flex-wrap: wrap;
+        gap: 10px;
+        margin: 17px 0;
+      }
+
+      .ms-controls label {
+        display: flex;
+        flex-direction: column;
+        gap: 5px;
+        color: #d9ced2;
+        font-size: 12px;
+      }
+
+      .ms-controls select,
+      .ms-controls input {
+        min-height: 40px;
+        max-width: 100%;
+        border: 1px solid #ffffff32;
+        border-radius: 8px;
+        background: #171519;
+        color: #f3e9ed;
+        padding: 8px;
+        font: inherit;
+        font-size: 12px;
+      }
+
+      .ms-controls input {
+        width: min(245px,85vw);
+      }
+
+      .ms-controls button,
+      .ms-pagination button {
+        min-height: 40px;
+        padding: 8px 11px;
+        border: 1px solid #ffffff32;
+        border-radius: 8px;
+        background: #ffffff0c;
+        color: #f3e9ed;
+        cursor: pointer;
+      }
+
+      .ms-pagination {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 12px;
+        margin: 18px 0;
+        color: #bfb3b9;
+        font-size: 12px;
+      }
+
+      .ms-table-empty {
+        text-align: center;
+        color: #afa6a8;
+        padding: 18px;
+      }
+
+      .ms-alert {
+        padding: 12px;
+        border: 1px solid #b88c4766;
+        border-radius: 8px;
+        color: #edcf9a;
+        font-size: 12px;
+        line-height: 1.5;
+      }
+
+      .ms-note {
+        margin-top: 4px;
+      }
+
+      .ms-actions-status {
+        min-height: 16px;
+      }
+
+      @media (max-width:600px) {
+        .ms-thumb-frame img {
+          width: 52px;
+        }
+
+        .ms-controls label {
+          flex: 1 1 130px;
+        }
+
+        .ms-controls select {
+          width: 100%;
+        }
+      }
+
+      @media (prefers-reduced-motion:reduce) {
+        .ms-foil-glint {
+          animation: none !important;
+        }
+      }
+    `;
+
+    document.head.appendChild(
+      style
+    );
+  }
 
   installStyles();
 
-  const initial = urlParams();
+  const first =
+    params().get("q")?.trim();
 
-  const initialName =
-    initial.get("q")?.trim();
-
-  if (initialName) {
-    void loadCard(initialName, {
-      fromHistory: true,
-      printingId:
-        initial.get("printing") || ""
-    });
+  if (first) {
+    void loadCard(
+      first,
+      {
+        fromHistory: true,
+        printingId: readPrinting(),
+        finish: readFinish()
+      }
+    );
   }
 
 })();
