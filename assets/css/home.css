@@ -1832,3 +1832,477 @@
 /* ========================================
    END OF HOMEPAGE STYLES
    ======================================== */
+
+
+/* ==============================================
+   MINAS MORGUL — SHADOWS OF THE DARK TOWER
+   Darker atmosphere, roaming shadows and bats
+   ============================================== */
+
+.weekly-theme-morgul.weekly-card-feature {
+  background:
+    radial-gradient(
+      ellipse at 70% 65%,
+      rgba(25,43,30,.12),
+      transparent 58%
+    ),
+    linear-gradient(
+      143deg,
+      #030504 0%,
+      #0a0d0b 52%,
+      #020303 100%
+    );
+
+  border-color: rgba(92,119,94,.22);
+
+  box-shadow:
+    0 28px 80px rgba(0,0,0,.63),
+    inset 0 0 90px rgba(0,0,0,.62);
+}
+
+.weekly-theme-morgul.weekly-card-feature::before {
+  opacity: 1;
+
+  background:
+    linear-gradient(
+      90deg,
+      rgba(0,0,0,.49),
+      transparent 35%,
+      rgba(0,0,0,.4)
+    ),
+    linear-gradient(
+      0deg,
+      rgba(0,0,0,.65),
+      transparent 43%,
+      rgba(0,0,0,.36)
+    );
+}
+
+.weekly-theme-morgul.weekly-card-feature::after {
+  opacity: .1;
+
+  background:
+    linear-gradient(
+      120deg,
+      transparent 35%,
+      rgba(73,113,78,.18) 52%,
+      transparent 74%
+    );
+
+  animation:
+    msMorgulLastLight 17s ease-in-out infinite alternate;
+}
+
+/* MOVING BLACK SHADOWS */
+
+.weekly-theme-morgul.weekly-card-feature
+.weekly-scene::before,
+.weekly-theme-morgul.weekly-card-feature
+.weekly-scene::after {
+  content: "";
+  position: absolute;
+  inset: -20%;
+  pointer-events: none;
+}
+
+.weekly-theme-morgul.weekly-card-feature
+.weekly-scene::before {
+  z-index: 1;
+  opacity: .78;
+  filter: blur(28px);
+
+  background:
+    radial-gradient(
+      ellipse at 15% 58%,
+      rgba(0,0,0,.94),
+      transparent 53%
+    ),
+    radial-gradient(
+      ellipse at 82% 24%,
+      rgba(0,0,0,.66),
+      transparent 48%
+    );
+
+  animation:
+    msMorgulBlackVeil 19s ease-in-out infinite alternate;
+}
+
+.weekly-theme-morgul.weekly-card-feature
+.weekly-scene::after {
+  z-index: 2;
+  opacity: .66;
+  filter: blur(25px);
+
+  background:
+    linear-gradient(
+      108deg,
+      transparent 10%,
+      rgba(0,0,0,.86) 36%,
+      rgba(0,0,0,.18) 52%,
+      rgba(0,0,0,.74) 80%,
+      transparent
+    );
+
+  animation:
+    msMorgulShadowPass 24s ease-in-out infinite alternate-reverse;
+}
+
+/* DARK FOG */
+
+.weekly-theme-morgul.weekly-card-feature
+.morgul-mist {
+  filter: blur(35px);
+}
+
+.weekly-theme-morgul.weekly-card-feature
+.morgul-mist-one {
+  z-index: 2;
+  opacity: .82;
+
+  background:
+    radial-gradient(
+      ellipse at 25% 55%,
+      rgba(0,0,0,.91),
+      rgba(10,19,12,.65) 37%,
+      transparent 69%
+    );
+
+  animation:
+    msMorgulBlackVeil 23s ease-in-out infinite alternate-reverse;
+}
+
+.weekly-theme-morgul.weekly-card-feature
+.morgul-mist-two {
+  z-index: 2;
+  opacity: .75;
+
+  background:
+    radial-gradient(
+      ellipse at 73% 39%,
+      rgba(0,0,0,.92),
+      rgba(13,25,16,.4) 43%,
+      transparent 71%
+    );
+
+  animation:
+    msMorgulShadowPass 28s ease-in-out infinite alternate;
+}
+
+.weekly-theme-morgul.weekly-card-feature
+.morgul-darkness {
+  z-index: 3;
+  opacity: .88;
+
+  background:
+    radial-gradient(
+      ellipse at 57% 80%,
+      rgba(0,0,0,.82),
+      transparent 65%
+    ),
+    radial-gradient(
+      ellipse at 10% 15%,
+      rgba(0,0,0,.68),
+      transparent 47%
+    );
+
+  animation:
+    msMorgulBlackVeil 25s ease-in-out infinite alternate;
+}
+
+/* SMALL FLYING BATS */
+
+.weekly-theme-morgul.weekly-card-feature
+.morgul-sparks {
+  z-index: 5;
+  opacity: 1;
+  background: none;
+  animation: none;
+}
+
+.weekly-theme-morgul.weekly-card-feature
+.morgul-sparks::before,
+.weekly-theme-morgul.weekly-card-feature
+.morgul-sparks::after,
+.weekly-theme-morgul.weekly-card-feature
+.morgul-darkness::before,
+.weekly-theme-morgul.weekly-card-feature
+.morgul-darkness::after {
+  content: "";
+  position: absolute;
+
+  left: 100%;
+  width: 30px;
+  height: 17px;
+
+  background: #293a2d;
+
+  clip-path: polygon(
+    0% 41%,
+    10% 12%,
+    23% 19%,
+    32% 45%,
+    42% 24%,
+    47% 4%,
+    50% 20%,
+    53% 4%,
+    58% 24%,
+    68% 45%,
+    77% 19%,
+    90% 12%,
+    100% 41%,
+    87% 37%,
+    78% 53%,
+    65% 49%,
+    57% 73%,
+    50% 58%,
+    43% 73%,
+    35% 49%,
+    22% 53%,
+    13% 37%
+  );
+
+  pointer-events: none;
+  opacity: 0;
+
+  animation:
+    msMorgulBatFlight 21s linear infinite;
+}
+
+.weekly-theme-morgul.weekly-card-feature
+.morgul-sparks::before {
+  top: 19%;
+  animation-delay: -9s;
+}
+
+.weekly-theme-morgul.weekly-card-feature
+.morgul-sparks::after {
+  top: 38%;
+  width: 22px;
+  height: 13px;
+
+  animation-duration: 27s;
+  animation-delay: -17s;
+}
+
+.weekly-theme-morgul.weekly-card-feature
+.morgul-darkness::before {
+  top: 61%;
+  width: 25px;
+  height: 14px;
+  background: #202e24;
+
+  animation-duration: 25s;
+  animation-delay: -4s;
+}
+
+.weekly-theme-morgul.weekly-card-feature
+.morgul-darkness::after {
+  top: 79%;
+  width: 18px;
+  height: 11px;
+  background: #324436;
+
+  animation-duration: 31s;
+  animation-delay: -23s;
+}
+
+/* REDUCE GREEN CARD GLOW */
+
+.weekly-theme-morgul.weekly-card-feature
+.weekly-card-column {
+  background:
+    radial-gradient(
+      ellipse at center,
+      rgba(14,30,18,.11),
+      transparent 72%
+    );
+}
+
+.weekly-theme-morgul.weekly-card-feature
+.weekly-card-column::before {
+  background:
+    radial-gradient(
+      ellipse,
+      rgba(22,48,27,.06),
+      transparent 73%
+    );
+}
+
+.weekly-theme-morgul.weekly-card-feature
+.weekly-card-halo {
+  background:
+    radial-gradient(
+      ellipse,
+      rgba(29,69,37,.15),
+      rgba(0,0,0,.17) 50%,
+      transparent 75%
+    );
+
+  opacity: .31;
+  animation: none;
+}
+
+.weekly-theme-morgul.weekly-card-feature
+.weekly-card-shell {
+  box-shadow:
+    0 30px 80px rgba(0,0,0,.92),
+    0 0 16px rgba(52,96,59,.09),
+    0 0 0 1px rgba(129,154,131,.13);
+}
+
+.weekly-theme-morgul.weekly-card-feature
+.weekly-card-shell:hover {
+  box-shadow:
+    0 35px 90px rgba(0,0,0,.95),
+    0 0 24px rgba(55,98,62,.13),
+    0 0 0 1px rgba(146,171,148,.19);
+}
+
+/* SUBTLE FOIL REFLECTIONS */
+
+.weekly-theme-morgul.weekly-card-feature
+.morgul-foil-sheen {
+  opacity: .12;
+
+  background:
+    linear-gradient(
+      115deg,
+      transparent 28%,
+      rgba(66,104,70,.05) 42%,
+      rgba(196,211,194,.12) 50%,
+      transparent 67%
+    );
+
+  background-size: 250% 100%;
+
+  animation:
+    morgulFoil 12s ease-in-out infinite;
+}
+
+.weekly-theme-morgul.weekly-card-feature
+.weekly-card-shell:hover .morgul-foil-sheen {
+  opacity: .2;
+  animation-duration: 9s;
+}
+
+/* SHADOWS PASSING ACROSS THE CARD */
+
+.weekly-theme-morgul.weekly-card-feature
+.morgul-shadow-frame {
+  box-shadow:
+    inset 0 0 48px rgba(0,0,0,.76),
+    inset 0 0 10px rgba(0,0,0,.52);
+}
+
+.weekly-theme-morgul.weekly-card-feature
+.morgul-shadow-frame::after {
+  content: "";
+  position: absolute;
+  inset: -25%;
+
+  background:
+    linear-gradient(
+      106deg,
+      transparent 25%,
+      rgba(0,0,0,.39) 47%,
+      transparent 68%
+    );
+
+  animation:
+    msMorgulShadowPass 18s ease-in-out infinite alternate;
+}
+
+/* ANIMATIONS */
+
+@keyframes msMorgulBlackVeil {
+  from {
+    transform: translate3d(-5%,2%,0) scale(1.04);
+  }
+
+  to {
+    transform: translate3d(6%,-4%,0) scale(1.17);
+  }
+}
+
+@keyframes msMorgulShadowPass {
+  from {
+    transform: translate3d(8%,-2%,0) rotate(-3deg);
+  }
+
+  to {
+    transform: translate3d(-9%,4%,0) rotate(3deg);
+  }
+}
+
+@keyframes msMorgulLastLight {
+  from {
+    opacity: .05;
+  }
+
+  to {
+    opacity: .13;
+  }
+}
+
+@keyframes msMorgulBatFlight {
+  0% {
+    transform:
+      translate3d(4vw,14px,0)
+      rotate(9deg)
+      scale(.75,.7);
+    opacity: 0;
+  }
+
+  12% {
+    opacity: .78;
+  }
+
+  30% {
+    transform:
+      translate3d(-26vw,-8px,0)
+      rotate(-5deg)
+      scale(.84,1);
+  }
+
+  56% {
+    transform:
+      translate3d(-55vw,13px,0)
+      rotate(4deg)
+      scale(.8,.65);
+    opacity: .82;
+  }
+
+  86% {
+    opacity: .6;
+  }
+
+  100% {
+    transform:
+      translate3d(calc(-100vw - 135px),-38px,0)
+      rotate(-11deg)
+      scale(.65,.85);
+    opacity: 0;
+  }
+}
+
+/* ACCESSIBILITY */
+
+@media (prefers-reduced-motion: reduce) {
+  .weekly-theme-morgul.weekly-card-feature::after,
+  .weekly-theme-morgul.weekly-card-feature .weekly-scene::before,
+  .weekly-theme-morgul.weekly-card-feature .weekly-scene::after,
+  .weekly-theme-morgul.weekly-card-feature .morgul-mist,
+  .weekly-theme-morgul.weekly-card-feature .morgul-darkness,
+  .weekly-theme-morgul.weekly-card-feature .morgul-foil-sheen,
+  .weekly-theme-morgul.weekly-card-feature .morgul-shadow-frame::after {
+    animation: none !important;
+  }
+
+  .weekly-theme-morgul.weekly-card-feature .morgul-sparks::before,
+  .weekly-theme-morgul.weekly-card-feature .morgul-sparks::after,
+  .weekly-theme-morgul.weekly-card-feature .morgul-darkness::before,
+  .weekly-theme-morgul.weekly-card-feature .morgul-darkness::after {
+    display: none;
+    animation: none !important;
+  }
+}
