@@ -364,7 +364,7 @@
 
 /* Format controls stay within the existing workspace and palette. */
 .deck-studio .ds-format { flex-wrap: wrap; flex: 1; min-width: 0; }
-.deck-studio .ds-primary-formats { display: flex; gap: 6px; flex-basis: 100%; }
+.deck-studio .ds-primary-formats { display: flex; flex-wrap: wrap; gap: 6px; flex-basis: 100%; }
 .deck-studio .ds-primary-formats button { min-height: 44px; padding: 7px 12px; background: var(--ds-slate); border: 1px solid var(--ds-line); border-radius: 8px; color: var(--ds-linen); font: inherit; cursor: pointer; }
 .deck-studio .ds-primary-formats button[aria-pressed="true"] { color: var(--ds-sage); border-color: var(--ds-sage); background: #8EA99A0D; }
 .deck-studio .ds-format select { max-width: min(100%, 260px); min-height: 44px; flex: 1; }

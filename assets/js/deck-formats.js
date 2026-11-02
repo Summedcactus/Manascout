@@ -27,6 +27,7 @@
     { name: "Explorer", reason: "No separately verified current queue/pool profile; use the verified Pioneer Arena profile where appropriate." },
     { name: "Duel Commander / Pauper Commander / PreDH", reason: "Distinct commander eligibility, ban/role or historical rules are not implemented." },
     { name: "Penny Dreadful / Premodern / Old School", reason: "Complete current pool, platform and variant rules were not verified for this release." },
+    { name: "Attraction / Contraption / other special-card decks", reason: "Separate special-card pools/zones are not implemented; these are rejected as ordinary deck entries." },
     { name: "Companions / special events / custom Rule 0", reason: "No outside-game companion assignment or custom event-rule workflow." }
   ]);
   function supportedLegality(card, profile) {

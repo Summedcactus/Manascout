@@ -110,3 +110,13 @@ test('search profiles scope actual printing availability and cache each platform
  assert.equal(new URL(calls[0]).searchParams.get('q'),'(Fixture) game:paper');assert.equal(new URL(calls[1]).searchParams.get('q'),'(Fixture) game:arena');
  await assert.rejects(client.search('Fixture',{format:'draft'}),/Unsupported/);
 });
+test('outside-game special cards cannot pass as ordinary Constructed deck entries',()=>{
+ const d=complete(formats.get('legacy'));
+ for(const type of ['Artifact — Attraction','Artifact — Contraption','Dungeon','Conspiracy','Stickers']){const result=rules.validate(model.add(d,card(10,{type_line:type})),checked);assert.equal(result.complete,false);assert.equal(result.issues.some(i=>i.code==='special-deck'),true);}
+});
+test('meld front parts are playable but meld results and unverified legacy component data cannot pass',()=>{
+ const d=complete(formats.get('legacy')),parts=[{id:id(10),component:'meld_part'},{id:id(11),component:'meld_result'}];
+ assert.equal(rules.validate(model.add(d,card(10,{layout:'meld',all_parts:parts})),checked).complete,true);
+ assert.equal(has(model.add(d,card(11,{layout:'meld',all_parts:parts})),'meld'),true);
+ assert.equal(has(model.add(d,card(10,{layout:'meld'})),'meld'),true);
+});

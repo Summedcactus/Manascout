@@ -229,7 +229,7 @@
     $("preview-remove").disabled = !entry;
     $("preview-remove").textContent = entry?.zone === "commander" ? `Remove ${formats.get(deck.format).leaderLabel?.toLowerCase() || "leader"}` : entry?.zone === "signature" ? "Remove signature spell" : "Remove one";
     $("preview-add").disabled = !current.availableFinishes.includes(currentFinish);
-    $("preview-context").textContent = entry?.zone === "commander" ? "This exact printing and finish is assigned as a commander. Add to deck places any additional copies in the main deck." : entry ? `${entry.quantity} ${entry.quantity === 1 ? "copy" : "copies"} of this printing and finish in ${zone === "main" ? "the main deck" : "the sideboard"}.` : "Selected printing. This version has not been added to this section.";
+    $("preview-context").textContent = entry?.zone === "commander" ? "This exact printing and finish is assigned as a leader. Additional copies go into the main deck." : entry?.zone === "signature" ? "This printing is a signature spell. Additional copies go into the main deck; owner and copy restrictions still apply." : entry ? `${entry.quantity} ${entry.quantity === 1 ? "copy" : "copies"} of this printing and finish in ${zone === "main" ? "the main deck" : "the sideboard"}.` : "Selected printing. This version has not been added to this section.";
     renderCommanderAction();
   }
   function previewEntry() {

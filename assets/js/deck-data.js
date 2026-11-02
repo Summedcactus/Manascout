@@ -57,6 +57,7 @@
       legalities: Object.fromEntries(formats.legalityKeys.map(key => [key, statuses.has(card.legalities?.[key]) ? card.legalities[key] : "unknown"])),
       hasPrintedPT: typeof front.power === "string" && typeof front.toughness === "string",
       isRebalanced: /^A-/.test(card.name),
+      meldEntry: card.layout === "meld" ? card.all_parts?.find(part => part.id === card.id)?.component || "unknown" : "not_meld",
       games: Array.isArray(card.games) ? card.games : [], layout: card.layout || "", oversized: !!card.oversized,
       borderColor: card.border_color || "", securityStamp: card.security_stamp || "",
       printingDataComplete: typeof card.oversized === "boolean" && typeof card.layout === "string" && !!card.layout && typeof card.border_color === "string" && !!card.border_color && Array.isArray(card.games) && typeof card.set === "string" && !!card.set && typeof card.collector_number === "string" && !!card.collector_number,

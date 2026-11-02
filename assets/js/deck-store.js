@@ -35,7 +35,8 @@
       finish: source.finish === "" || finishes.has(source.finish) ? source.finish : "",
       finishNotice: string(source.finishNotice, 1000, true), layout: string(source.layout, 80, true), borderColor: string(source.borderColor, 30, true),
       securityStamp: string(source.securityStamp, 40, true), oversized: source.oversized === true, printingDataComplete: source.printingDataComplete === true,
-      hasPrintedPT: typeof source.hasPrintedPT === "boolean" ? source.hasPrintedPT : null, isRebalanced: source.isRebalanced === true || /^A-/.test(source.name) };
+      hasPrintedPT: typeof source.hasPrintedPT === "boolean" ? source.hasPrintedPT : null, isRebalanced: source.isRebalanced === true || /^A-/.test(source.name),
+      meldEntry: ["meld_part", "meld_result", "not_meld"].includes(source.meldEntry) ? source.meldEntry : source.layout === "meld" ? "unknown" : "not_meld" };
     c.colorIdentity = Array.isArray(source.colorIdentity) && source.colorIdentity.every(x => /^[WUBRG]$/.test(x)) ? [...new Set(source.colorIdentity)] : null;
     c.colors = Array.isArray(source.colors) ? source.colors.filter(x => /^[WUBRG]$/.test(x)) : [];
     c.games = Array.isArray(source.games) ? source.games.filter(x => ["paper", "mtgo", "arena"].includes(x)) : [];
