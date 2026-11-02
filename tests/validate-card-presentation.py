@@ -1,5 +1,6 @@
 """Focused, dependency-free structural checks; never a visual/browser claim."""
 from pathlib import Path
+from html.parser import HTMLParser
 import re
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -7,6 +8,33 @@ html = (ROOT / 'index.html').read_text()
 home = (ROOT / 'assets/css/home.css').read_text()
 app = (ROOT / 'assets/js/app.js').read_text()
 css = app.split('    style.textContent = `', 1)[1].split('    `;', 1)[0]
+
+
+class ArtworkStructure(HTMLParser):
+    def __init__(self, source):
+        super().__init__()
+        self.stack, self.image_urls, self.layers = [], {}, set()
+        self.feed(source)
+
+    def handle_starttag(self, tag, attrs):
+        attrs = dict(attrs)
+        ancestors = [item[1] for item in self.stack]
+        if attrs.get('id') in ['card-week-image', 'card-week-light-map']:
+            self.image_urls[attrs['id']] = attrs.get('src') or attrs.get('href')
+        if set(attrs.get('class', '').split()) & {'morgul-art-glow', 'morgul-foil-sheen', 'morgul-shadow-frame'}:
+            assert any(a.get('id') == 'weekly-card-shell' for a in ancestors)
+            assert any('weekly-card-float' in a.get('class', '').split() for a in ancestors)
+            self.layers.update(attrs['class'].split())
+        if tag not in {'area', 'base', 'br', 'col', 'embed', 'hr', 'img', 'input', 'link', 'meta', 'param', 'source', 'track', 'wbr'}:
+            self.stack.append((tag, attrs))
+
+    def handle_endtag(self, tag):
+        assert self.stack and self.stack.pop()[0] == tag
+
+
+structure = ArtworkStructure(html)
+assert structure.image_urls['card-week-image'] == structure.image_urls['card-week-light-map']
+assert {'morgul-art-glow', 'morgul-foil-sheen', 'morgul-shadow-frame'} <= structure.layers
 
 
 def validate_css(text):
@@ -44,14 +72,17 @@ assert 'perspective(1100px)' in home and 'rotateX(var(--weekly-rx))' in home and
 morgul = home.split('/* Week 006', 1)[1]
 for selector in re.findall(r'([^{}]+)\{', morgul):
     if '.morgul-' in selector and '@media' not in selector and not selector.lstrip().startswith('/*'):
-        assert 'data-weekly-' in selector or 'prefers-reduced-motion' in selector or '.weekly-theme-morgul *' in selector or '.weekly-theme-morgul .morgul-' in selector, selector
+        assert selector.strip() == '.morgul-art-glow' or 'data-weekly-' in selector or 'prefers-reduced-motion' in selector or '.weekly-theme-morgul *' in selector or '.weekly-theme-morgul .morgul-' in selector, selector
 assert 'saturate(' not in morgul and 'brightness(' not in morgul and 'blur(' not in morgul
-assert 'morgul-window' not in html and 'morgul-sky' not in html, 'Unverified artwork coordinates must not ship'
+assert 'morgul-window' not in html, 'Unverified window coordinates must not ship'
+assert 'class="morgul-art-glow"' in html and 'id="morgul-green-light"' in html
+assert 'id="card-week-light-map"' in html and 'feColorMatrix' in html
 assert 'animation-play-state: paused' in home and 'animation-play-state: paused' in css
+assert 'data-weekly-effects-paused="true"' not in html
 assert 'data-weekly-art-ready="false"' in html and 'data-ms-image-ready="false"' in css
 assert 'prefers-reduced-motion:reduce' in css and '.ms-face-turner { transition: none !important; }' in css
 assert 'backface-visibility: hidden' in css and 'rotateY(180deg)' in css
 assert 'width: 44px; height: 44px;' in css and ':focus-visible' in css
 assert 'ms-finish-control' not in app and 'ms-thumb-toggle' not in app and 'data-ms-finish-toggle' not in app
 print('PASS homepage/shared-preview CSS structure, unique keyframes, exact featured printing, preserved 3D, conditional overlays, motion and touch/focus structure')
-print('LIMITATION: no pixels, image alignment, native 3D compositing or Android performance are verified here. Sky/window masks are intentionally absent.')
+print('LIMITATION: no pixels, native 3D compositing or Android performance are verified here. Individual window/sky coordinates remain unverified; the green light map is image-derived.')

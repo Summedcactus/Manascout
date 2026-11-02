@@ -79,7 +79,7 @@
   >
 
   <link rel="stylesheet" href="/assets/css/style.css">
-  <link rel="stylesheet" href="/assets/css/home.css?v=5e1">
+  <link rel="stylesheet" href="/assets/css/home.css?v=5f1">
 
   <!-- Structured data -->
   <script type="application/ld+json">
@@ -638,7 +638,6 @@
           data-weekly-number="390"
           data-weekly-theme="morgul-shadow"
           data-weekly-art-ready="false"
-          data-weekly-effects-paused="true"
         >
 
           <!-- SHADOW ATMOSPHERE -->
@@ -665,6 +664,7 @@
 
             <div class="weekly-card-halo"></div>
 
+            <div class="weekly-card-float">
             <div
               class="weekly-card-shell"
               id="weekly-card-shell"
@@ -692,6 +692,20 @@
                 height="680"
               >
 
+              <!-- Pixel-derived green light: same image, no guessed sky/window coordinates. -->
+              <svg class="morgul-art-glow" width="0" height="0" viewBox="0 0 488 680" preserveAspectRatio="none" aria-hidden="true" focusable="false">
+                <defs>
+                  <filter id="morgul-green-light" x="0" y="0" width="100%" height="100%" color-interpolation-filters="sRGB">
+                    <feColorMatrix type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  -0.5 1 -0.5 0 -0.015" result="greenKey"></feColorMatrix>
+                    <feComponentTransfer in="greenKey" result="greenMask"><feFuncA type="linear" slope="7" intercept="0"></feFuncA></feComponentTransfer>
+                    <feGaussianBlur in="greenMask" stdDeviation="0.65" result="softMask"></feGaussianBlur>
+                    <feFlood flood-color="#80c990" result="spectralGreen"></feFlood>
+                    <feComposite in="spectralGreen" in2="softMask" operator="in"></feComposite>
+                  </filter>
+                </defs>
+                <image id="card-week-light-map" href="https://api.scryfall.com/cards/ltc/390?format=image&amp;version=normal" x="0" y="0" width="488" height="680" preserveAspectRatio="none" filter="url(#morgul-green-light)"></image>
+              </svg>
+
               <div
                 class="morgul-foil-sheen"
                 aria-hidden="true"
@@ -702,6 +716,7 @@
                 aria-hidden="true"
               ></div>
 
+            </div>
             </div>
 
 
@@ -1198,7 +1213,7 @@
   <!-- Keep these until their full replacements are ready -->
 
   <script src="/assets/js/app.js?v=5e1"></script>
-  <script src="/assets/js/scoutboard.js?v=5e1"></script>
+  <script src="/assets/js/scoutboard.js?v=5f1"></script>
 
 </body>
 
