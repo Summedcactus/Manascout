@@ -4,21 +4,24 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#0D1117">
-  <title>Deck Studio — A New Space for Your Cards | ManaScout</title>
-  <meta name="description" content="Preview ManaScout Deck Studio: an artwork-first workspace for your next deck. Bring an exact printing from ManaScout Search and inspect its art and details.">
+  <title>Deck Studio — Build Your MTG Deck | ManaScout</title>
+  <meta name="description" content="Build an MTG deck with ManaScout Deck Studio. Search cards, Quick Add exact printings and edit quantities in artwork or compact list views.">
   <meta name="robots" content="index,follow">
   <link rel="canonical" href="https://manascout.co.uk/deck/">
   <meta property="og:type" content="website">
   <meta property="og:title" content="Deck Studio | ManaScout">
-  <meta property="og:description" content="Find the spark for your next deck. Preview exact card printings in ManaScout's new artwork-first workspace.">
+  <meta property="og:description" content="Find the spark for your next deck. Build around exact printings in ManaScout's artwork-first workspace.">
   <meta property="og:url" content="https://manascout.co.uk/deck/">
   <meta property="og:site_name" content="ManaScout">
   <meta name="twitter:card" content="summary">
   <link rel="stylesheet" href="/assets/css/deck-studio.css">
   <script type="application/ld+json">
-  {"@context":"https://schema.org","@type":"WebPage","name":"ManaScout Deck Studio","url":"https://manascout.co.uk/deck/","description":"A preview of ManaScout's artwork-first deck workspace, with exact-printing inspection. Deck construction is not yet available.","isPartOf":{"@type":"WebSite","name":"ManaScout","url":"https://manascout.co.uk/"}}
+  {"@context":"https://schema.org","@type":"WebPage","name":"ManaScout Deck Studio","url":"https://manascout.co.uk/deck/","description":"ManaScout's artwork-first deck workspace with exact-printing card search and manual deck editing.","isPartOf":{"@type":"WebSite","name":"ManaScout","url":"https://manascout.co.uk/"}}
   </script>
   <script src="/assets/js/deck-data.js" defer></script>
+  <script src="/assets/js/deck-model.js" defer></script>
+  <script src="/assets/js/deck-client.js" defer></script>
+  <script src="/assets/js/deck-view.js" defer></script>
   <script src="/assets/js/deck-studio.js" defer></script>
 </head>
 <body class="deck-studio" data-active-panel="deck">
@@ -34,7 +37,7 @@
 
   <div class="ds-intro">
     <div><p class="ds-eyebrow">THE NEXT CHAPTER OF YOUR COLLECTION</p><h1>Deck Studio<span aria-hidden="true">.</span></h1></div>
-    <p class="ds-preview-label"><span aria-hidden="true">◇</span> Workspace preview</p>
+    <p class="ds-preview-label"><span aria-hidden="true">◇</span> Your cards. Your deck.</p>
   </div>
 
   <nav class="ds-mobile-nav" aria-label="Workspace sections" hidden>
@@ -47,10 +50,16 @@
     <section class="ds-panel ds-discover" id="studio-discover" aria-labelledby="discover-heading">
       <div class="ds-panel-top"><div><p class="ds-eyebrow">01 / FIND THE SPARK</p><h2 id="discover-heading" tabindex="-1">Discover</h2></div><button class="ds-icon ds-collapse" type="button" data-collapse="discover-body" aria-expanded="true" aria-controls="discover-body" aria-label="Collapse Discover panel" hidden>−</button></div>
       <div id="discover-body" class="ds-panel-body">
-        <label class="ds-label" for="studio-search">Card search</label>
-        <div class="ds-search-field"><span aria-hidden="true">⌕</span><input id="studio-search" type="search" placeholder="Find your next card…" disabled aria-describedby="discover-note"></div>
-        <p class="ds-note" id="discover-note">Studio search is coming next. For now, choose a printing in ManaScout Search, then select <strong>Build a Deck</strong>.</p>
-        <a class="ds-button ds-primary" href="/">Search cards <span aria-hidden="true">↗</span></a>
+        <form id="studio-search-form" role="search" autocomplete="off">
+          <label class="ds-label" for="studio-search">Card search</label>
+          <div class="ds-search-field"><span aria-hidden="true">⌕</span><input id="studio-search" type="search" placeholder="Find your next card…" list="studio-suggestions" maxlength="300" aria-describedby="discover-note"><button class="ds-search-submit" type="submit" aria-label="Search cards">→</button></div>
+          <datalist id="studio-suggestions"></datalist>
+        </form>
+        <p class="ds-note" id="discover-note">Search names or Scryfall syntax. Quick Add keeps your place; select artwork for details.</p>
+        <label class="ds-label ds-search-zone" for="search-zone">Add to <select id="search-zone"><option value="main">Main deck</option><option value="sideboard" disabled>Sideboard (Pauper)</option></select></label>
+        <p class="ds-note ds-search-status" id="search-status" role="status" aria-live="polite">Type at least two characters, or press Search.</p>
+        <div id="search-results" class="ds-search-results" aria-label="Card search results"></div>
+        <button class="ds-button ds-secondary" id="search-more" type="button" hidden>Show more results</button>
 
         <div class="ds-discover-selection" id="discover-selection" hidden>
           <p class="ds-eyebrow">YOUR SELECTED PRINTING</p>
@@ -66,10 +75,11 @@
 
     <section class="ds-panel ds-deck" id="studio-deck" aria-labelledby="deck-heading">
       <div class="ds-deck-top"><div class="ds-deck-title"><p class="ds-eyebrow">YOUR WORKSPACE</p><h2 id="deck-heading" class="ds-sr-only" tabindex="-1">Deck workspace</h2><label class="ds-sr-only" for="deck-name">Deck name, not saved</label><input id="deck-name" type="text" value="Untitled deck" maxlength="80" spellcheck="false" aria-describedby="deck-state"></div><span class="ds-unsaved" id="deck-state">Not saved</span></div>
-      <div class="ds-deck-toolbar"><div class="ds-format"><label for="deck-format">Format</label><select id="deck-format" disabled aria-describedby="format-note"><option>Not selected</option></select></div><div class="ds-view-controls" role="group" aria-label="Future deck views"><button class="ds-icon" type="button" disabled aria-label="Artwork view, coming soon" title="Artwork view coming soon">▦</button><button class="ds-icon" type="button" disabled aria-label="List view, coming soon" title="List view coming soon">☷</button></div></div>
-      <p class="ds-sr-only" id="format-note">Format selection and legality validation are not yet available.</p>
+      <div class="ds-deck-toolbar"><div class="ds-format"><label for="deck-format">Format</label><select id="deck-format" aria-describedby="format-note"><option value="commander">Commander</option><option value="pauper">Pauper</option></select></div><div class="ds-view-controls" role="group" aria-label="Deck view"><button class="ds-icon" type="button" id="view-artwork" aria-pressed="true" aria-label="Artwork view" title="Artwork view">▦</button><button class="ds-icon" type="button" id="view-list" aria-pressed="false" aria-label="List view" title="List view">☷</button></div></div>
+      <p class="ds-sr-only" id="format-note">Changing format preserves every card. Construction checks are not yet available in this milestone.</p>
 
       <div class="ds-canvas">
+        <p class="ds-deck-message" id="deck-message" role="status" aria-live="polite"></p>
         <div class="ds-selection-status" id="selection-status" role="status" aria-live="polite">No printing selected. Bring a card from ManaScout Search to preview it here.</div>
         <div class="ds-error" id="selection-error" role="alert" hidden><h3>We couldn’t load that printing.</h3><p id="selection-error-message"></p><div class="ds-error-actions"><button type="button" class="ds-button ds-secondary" id="retry-printing" hidden>Try again</button><a class="ds-text-link" href="/">Back to Search →</a></div></div>
 
@@ -82,18 +92,19 @@
           <div class="ds-card-silhouettes" aria-hidden="true"><span></span><span><b>◇</b></span><span></span></div>
           <p class="ds-eyebrow">A BLANK CANVAS. A THOUSAND POSSIBILITIES.</p>
           <h3>Every deck starts<br>with a little inspiration.</h3>
-          <p>Bring a printing you love into the studio.<br>Deck editing and card additions are coming next.</p>
+          <p>Search for a card you love.<br>Quick Add a printing, then make this deck your own.</p>
           <button type="button" class="ds-button ds-primary ds-discover-action" id="show-discover" hidden>Discover a card <span aria-hidden="true">→</span></button>
           <a class="ds-text-link ds-nojs-discover" href="/">Discover a card →</a>
         </div>
+        <div id="deck-entries" hidden></div>
       </div>
-      <div class="ds-canvas-foot"><span><span class="ds-sage-dot" aria-hidden="true"></span> No cards added</span><span>Made for the art. Built around you.</span></div>
+      <div class="ds-canvas-foot"><span><span class="ds-sage-dot" aria-hidden="true"></span><span id="deck-count">No cards added</span></span><span>Made for the art. Built around you.</span></div>
     </section>
 
     <section class="ds-panel ds-stats" id="studio-stats" aria-labelledby="stats-heading">
       <div class="ds-panel-top"><div><p class="ds-eyebrow">02 / THE BIG PICTURE</p><h2 id="stats-heading" tabindex="-1">Deck insights</h2></div><button class="ds-icon ds-collapse" type="button" data-collapse="stats-body" aria-expanded="true" aria-controls="stats-body" aria-label="Collapse Deck insights panel" hidden>−</button></div>
       <div class="ds-panel-body" id="stats-body">
-        <p class="ds-note">Insights will appear here when deck construction is available. A previewed printing is not part of a deck.</p>
+        <p class="ds-note">The live card count is shown below your deck. Detailed insights and format checks are being added in the next development milestone.</p>
         <dl class="ds-stat-list"><div><dt>Deck size</dt><dd>—<span class="ds-sr-only">Not available</span></dd></div><div><dt>Average mana value</dt><dd>—<span class="ds-sr-only">Not available</span></dd></div><div><dt>Estimated value</dt><dd>—<span class="ds-sr-only">Not available</span></dd></div></dl>
         <div class="ds-curve-empty"><span aria-hidden="true">◇</span><p>Your mana curve, when it’s ready.</p><small>No deck data to chart.</small></div>
         <div class="ds-tools"><h3>Deck tools</h3><p class="ds-note" id="tools-note">Saving, import and export are not available yet.</p><div class="ds-tool-buttons"><button class="ds-button ds-secondary" type="button" disabled aria-describedby="tools-note">Save deck</button><button class="ds-button ds-secondary" type="button" disabled aria-describedby="tools-note">Import</button><button class="ds-button ds-secondary" type="button" disabled aria-describedby="tools-note">Export</button></div></div>
@@ -103,20 +114,22 @@
   </main>
 
   <footer class="ds-footer"><span>ManaScout <span aria-hidden="true">◇</span> Deck Studio</span><span>Card data and images: Scryfall · Magic: The Gathering © Wizards of the Coast</span><a href="/privacy/">Privacy</a></footer>
-  <noscript><p class="ds-noscript">Enable JavaScript to preview your selected printing. <a href="/">Return to ManaScout Search</a>. Deck construction is not yet available.</p></noscript>
+  <noscript><p class="ds-noscript">Enable JavaScript to build a deck and preview selected printings. <a href="/">Return to ManaScout Search</a>.</p></noscript>
 
   <dialog class="ds-card-drawer" id="card-preview" aria-labelledby="preview-name" aria-describedby="preview-context">
     <div class="ds-drawer-handle" aria-hidden="true"></div>
     <div class="ds-drawer-top"><span class="ds-eyebrow">SELECTED PRINTING</span><button class="ds-icon" id="close-preview" type="button" aria-label="Close card preview" autofocus>×</button></div>
     <div class="ds-drawer-scroll">
-      <p class="ds-note" id="preview-context">An inspiration for your next deck. This card has not been added.</p>
+      <p class="ds-note" id="preview-context">Selected printing. Choose Add to deck to include it.</p>
       <div class="ds-card-art"><img id="preview-image" width="280" height="392" alt="" hidden><p class="ds-note" id="image-status" role="status" hidden></p><button class="ds-face-button" id="flip-preview" type="button" hidden>View other face</button></div>
       <h2 id="preview-name">Card preview</h2><p class="ds-card-type" id="preview-type"></p>
       <p class="ds-card-brief"><span>Rules excerpt</span><span id="preview-brief"></span></p>
       <dl class="ds-printing-facts"><div><dt>Mana value</dt><dd id="preview-mv"></dd></div><div><dt>Printing</dt><dd id="preview-printing"></dd></div><div><dt>Artist</dt><dd id="preview-artist"></dd></div><div><dt>Preview finish</dt><dd id="preview-finish"></dd></div></dl>
       <p class="ds-note" id="preview-note"></p>
-      <div class="ds-preview-actions"><button class="ds-button ds-primary" type="button" disabled aria-describedby="preview-actions-note">Add to deck <span aria-hidden="true">+</span></button><button class="ds-button ds-secondary" type="button" disabled aria-describedby="preview-actions-note">Change printing</button></div>
-      <p class="ds-note" id="preview-actions-note">Adding cards and changing printings inside the studio are coming next.</p>
+      <div class="ds-preview-quantity"><label for="preview-quantity">Copies to add</label><input id="preview-quantity" type="number" value="1" min="1" max="10000" inputmode="numeric"><label for="preview-zone">Section</label><select id="preview-zone"><option value="main">Main deck</option><option value="sideboard" disabled>Sideboard (Pauper)</option></select></div>
+      <div class="ds-preview-actions"><button class="ds-button ds-primary" type="button" id="preview-add">Add to deck +</button><button class="ds-button ds-secondary" type="button" id="preview-remove" disabled>Remove one</button></div>
+      <button class="ds-button ds-secondary ds-future-printing" type="button" disabled aria-describedby="preview-actions-note">Change printing · coming later</button>
+      <p class="ds-note" id="preview-actions-note">Adds this exact printing and selected finish. Format checks are not yet available in this milestone.</p>
       <details class="ds-card-more"><summary>Rules &amp; printing details</summary><p class="ds-oracle" id="preview-oracle"></p><dl class="ds-extra-facts"><div><dt>Available finishes</dt><dd id="preview-finishes"></dd></div><div><dt>Language</dt><dd id="preview-language"></dd></div><div><dt>Released</dt><dd id="preview-released"></dd></div><div><dt>Scryfall printing ID</dt><dd id="preview-id"></dd></div></dl><p class="ds-note">No format or commander legality has been verified.</p></details>
       <div class="ds-source-links"><a class="ds-text-link" id="preview-guide" hidden>Full ManaScout guide ↗</a><a class="ds-text-link" id="preview-source" target="_blank" rel="noopener noreferrer" hidden>Printing on Scryfall ↗</a></div>
       <button class="ds-back-button" id="back-to-workspace" type="button">← Back to workspace</button>

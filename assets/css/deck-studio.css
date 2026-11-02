@@ -246,3 +246,63 @@
 @media (prefers-reduced-motion: reduce) {
   .deck-studio *, .deck-studio *::before, .deck-studio *::after { animation: none !important; transition: none !important; scroll-behavior: auto !important; }
 }
+
+/* Manual editing: compact controls build on the original studio layout. */
+.deck-studio .ds-search-submit { min-height: 44px; min-width: 32px; padding: 0; border: 0; color: var(--ds-sage); background: transparent; }
+.deck-studio .ds-search-zone { display: flex; align-items: center; gap: 8px; margin: 14px 0 8px; }
+.deck-studio :is(.ds-search-zone,.ds-preview-quantity) select { min-height: 44px; min-width: 0; max-width: 100%; border: 1px solid var(--ds-line); border-radius: 7px; background: var(--ds-midnight); color: var(--ds-linen); font-size: 11px; padding: 8px; }
+.deck-studio .ds-search-status { margin: 12px 0; font-size: 11px; }
+.deck-studio .ds-search-results { display: grid; gap: 10px; }
+.deck-studio .ds-search-result { display: flex; align-items: center; gap: 6px; padding: 8px 0; border-bottom: 1px solid var(--ds-line); }
+.deck-studio .ds-search-preview { display: flex; align-items: center; gap: 9px; flex: 1; min-width: 0; padding: 0; border: 0; text-align: left; background: transparent; color: var(--ds-linen); }
+.deck-studio .ds-search-preview img { width: 42px; height: auto; border-radius: 4px; flex-shrink: 0; }
+.deck-studio .ds-search-preview > span { min-width: 0; }
+.deck-studio .ds-search-preview strong { display: block; font-size: 11px; line-height: 1.5; overflow-wrap: anywhere; }
+.deck-studio .ds-search-preview small { display: block; font-size: 9px; line-height: 1.6; color: var(--ds-muted); }
+.deck-studio .ds-quick-add { width: 40px; min-height: 44px; flex-shrink: 0; border: 1px solid #9B283A88; border-radius: 8px; background: var(--ds-crimson); color: var(--ds-linen); font-size: 20px; }
+.deck-studio .ds-quick-add:disabled { background: transparent; color: var(--ds-muted); }
+.deck-studio #search-more { width: 100%; margin-top: 14px; }
+.deck-studio .ds-deck-message { color: var(--ds-sage); font-size: 11px; line-height: 1.7; margin-bottom: 12px; overflow-wrap: anywhere; }
+.deck-studio .ds-deck-message:empty { display: none; }
+.deck-studio .ds-canvas:has(#deck-entries:not([hidden])) { justify-content: flex-start; }
+.deck-studio #deck-entries { width: 100%; }
+.deck-studio .ds-zone-heading { padding-bottom: 12px; margin-top: 12px; font-size: 12px; font-weight: 600; color: var(--ds-sage); }
+.deck-studio .ds-card-grid { display: grid; grid-template-columns: repeat(auto-fill,minmax(126px,1fr)); gap: 14px; margin-bottom: 24px; }
+.deck-studio .ds-deck-entry { min-width: 0; padding: 8px; background: var(--ds-slate); border: 1px solid var(--ds-line); border-radius: 10px; }
+.deck-studio .ds-entry-preview { display: block; width: 100%; min-width: 0; border: 0; padding: 0; color: var(--ds-linen); background: transparent; text-align: left; }
+.deck-studio .ds-entry-preview img { display: block; width: 100%; height: auto; border-radius: 7px; }
+.deck-studio .ds-entry-name { display: block; font-size: 11px; line-height: 1.45; overflow-wrap: anywhere; margin-top: 7px; }
+.deck-studio .ds-entry-meta { margin: 4px 0 8px; color: var(--ds-muted); font-size: 9px; overflow-wrap: anywhere; }
+.deck-studio .ds-entry-controls { display: flex; align-items: center; justify-content: space-between; gap: 2px; }
+.deck-studio .ds-entry-controls button { min-width: 28px; min-height: 36px; border: 1px solid var(--ds-line); border-radius: 6px; background: var(--ds-midnight); color: var(--ds-linen); font-size: 16px; }
+.deck-studio .ds-entry-controls button:hover { border-color: var(--ds-sage); }
+.deck-studio .ds-entry-quantity { min-width: 16px; text-align: center; font-size: 12px; }
+.deck-studio .ds-entry-move { min-height: 36px; margin-top: 5px; padding: 3px; border: 0; background: transparent; color: var(--ds-sage); font-size: 10px; }
+.deck-studio .ds-art-missing { display: grid; place-items: center; min-height: 70px; color: var(--ds-sage); }
+.deck-studio .ds-card-grid[data-view="list"] { display: grid; grid-template-columns: minmax(0,1fr); gap: 6px; }
+.deck-studio .ds-card-grid[data-view="list"] .ds-deck-entry { display: grid; grid-template-columns: minmax(0,1fr) auto; align-items: center; gap: 4px 10px; }
+.deck-studio .ds-card-grid[data-view="list"] .ds-entry-preview { display: flex; align-items: center; gap: 10px; }
+.deck-studio .ds-card-grid[data-view="list"] .ds-entry-preview img { width: 36px; flex-shrink: 0; }
+.deck-studio .ds-card-grid[data-view="list"] .ds-entry-name { margin: 0; }
+.deck-studio .ds-card-grid[data-view="list"] .ds-entry-meta { grid-column: 1; margin: 0 0 0 46px; }
+.deck-studio .ds-card-grid[data-view="list"] .ds-entry-controls { grid-column: 2; grid-row: 1 / 3; min-width: 114px; }
+.deck-studio .ds-card-grid[data-view="list"] .ds-entry-move { grid-column: 1 / -1; justify-self: start; margin-left: 46px; }
+.deck-studio .ds-view-controls button[aria-pressed="true"] { color: var(--ds-sage); border-color: var(--ds-sage); background: #8EA99A12; }
+.deck-studio .ds-preview-quantity { display: grid; grid-template-columns: auto minmax(50px,1fr); gap: 8px; align-items: center; margin: 16px 0; }
+.deck-studio .ds-preview-quantity label { font-size: 11px; color: var(--ds-muted); }
+.deck-studio .ds-preview-quantity input { width: 100%; min-width: 0; min-height: 44px; padding: 8px; background: var(--ds-midnight); color: var(--ds-linen); border: 1px solid var(--ds-line); border-radius: 7px; }
+.deck-studio .ds-future-printing { width: 100%; }
+@media (max-width: 820px) {
+  .deck-studio .ds-card-grid { grid-template-columns: repeat(auto-fill,minmax(130px,1fr)); gap: 10px; }
+  .deck-studio .ds-entry-controls button { min-width: 30px; min-height: 44px; }
+  .deck-studio .ds-entry-move { min-height: 44px; }
+  .deck-studio .ds-search-preview strong { font-size: 13px; }
+  .deck-studio .ds-search-preview small { font-size: 10px; }
+}
+@media (max-width: 360px) {
+  .deck-studio .ds-card-grid { grid-template-columns: repeat(2,minmax(0,1fr)); gap: 6px; }
+  .deck-studio .ds-deck-entry { padding: 5px; }
+  .deck-studio .ds-entry-controls button { min-width: 24px; padding: 0; }
+  .deck-studio .ds-card-grid[data-view="list"] { grid-template-columns: minmax(0,1fr); }
+  .deck-studio .ds-card-grid[data-view="list"] .ds-entry-controls { min-width: 100px; }
+}

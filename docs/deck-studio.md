@@ -1,37 +1,23 @@
-# Deck Studio — 5A checkpoint
+# Deck Studio — manual editing milestone
 
-The studio is a workspace preview with exact-printing inspection. No selected card is a deck entry. Search inside the studio, deck construction, legality, prices, statistics, saving and sharing are intentionally unavailable.
+Stage A of 5B + 5C implements card searching, Quick Add, exact-printing entries, quantities, main/sideboard moves, deck naming and artwork/list views. Rules/statistics and persistence are the next internal milestones. The existing premium palette, desktop rails, mobile navigation and native card drawer remain in place.
 
-## Files and boundaries
+## Boundaries
 
-- `deck/index.html`: permanent page, empty workspace, disabled future controls and native preview dialog.
-- `assets/css/deck-studio.css`: all page styles and palette variables scoped to `.deck-studio`; desktop three-column layout and a single active mobile panel at 820px and below.
-- `assets/js/deck-data.js`: URL parsing, one Scryfall request, validation and a compact display model. No HTML rendering, deck model or storage. It also exports to CommonJS for dependency-free Node tests.
-- `assets/js/deck-studio.js`: panel navigation, per-panel scroll position, desktop collapse state, preview rendering, two-sided artwork and explicit error/retry handling. Values from the API are assigned through `textContent`; image and source URLs are restricted to Scryfall hosts.
-- `assets/js/app.js`: the shared `renderCard` calls `deckLink`. The existing search, printing selection, guide rendering and foil code stay in place.
+- `deck-data.js`: validates Scryfall records and builds one display/rules record per printing. No prices or fabricated legality values.
+- `deck-client.js`: paced sequential API requests (at least 130ms between starts), 12-second timeout, cancellation and bounded query caches. Search uses `unique=cards`; exact handoffs always use the supplied printing UUID. Autocomplete is optional and never replaces explicit search. No automatic network retries.
+- `deck-model.js`: immutable deck operations. Card records are keyed by printing UUID; entries refer to an ID, finish, quantity and zone. Changing format never deletes cards.
+- `deck-view.js`: DOM renderers using `textContent`, with stable search-result DOM during Quick Add.
+- `deck-studio.js`: event/controller integration and 5A navigation/preview. Debounce is 180ms for autocomplete and 350ms for result search. New queries cancel obsolete requests and use generation tokens against late responses. Results are revealed in groups of 24; further Scryfall pages are requested only on demand.
 
-## Handoff contract
+URL handoff remains `/deck/?card=<name>&printing=<UUID>&finish=<finish>&guide=<optional-guide-path>`. The UUID is authoritative; a failed request never silently substitutes a named printing. Previewed cards are separate from deck entries. Card rules remain expandable, and changing printings inside the studio remains a disabled future feature.
 
-`/deck/?card=<encoded-name>&printing=<Scryfall-UUID>&finish=<nonfoil|foil|etched>&guide=<optional-local-guide-path>`
+## Focused verification
 
-`printing` is authoritative. The name is descriptive, never a fallback search. Missing or invalid printing IDs show an actionable error without an API call. A valid ID makes one GET to `https://api.scryfall.com/cards/{id}` with a 12-second timeout. Response IDs must match. There is no automatic retry, pagination or search. Retries require a user action. If a requested finish is absent from the record, an available finish is labelled with an explanatory notice. This does not change the printing ID.
+Run `node tests/deck-studio.test.cjs`, `node tests/deck-editing.test.cjs`, `python tests/validate-deck-studio.py`, and `node --check` on affected JavaScript. Tests use synthetic records and a limited DOM double, never production card content. They cover handoff, client failure/cancellation/cache, model operations and controller editing/navigation. They cannot verify actual layout, native dialog focus containment or live API behaviour.
 
-Guide links are supplied only for names in the shared explorer's guide registry and displayed only when the path matches the returned card's slug. Scryfall supplies identifying information and artwork at runtime; production has no hardcoded card or price records. Format and commander eligibility are not inferred from the type line.
+The current environment previously blocked Chromium launch and Scryfall socket access. Those operations are not repeatedly retried. Desktop/mobile visual, live search, image and native-dialog tests remain unverified.
 
-## Accessibility and navigation
+## Rules and storage milestones
 
-Mobile Deck / Discover / Stats buttons preserve the same panel DOM, entered deck name, loaded printing and panel scroll offsets. Arrow keys, Home and End also switch sections. Desktop side panels collapse to narrow rails. Native `dialog.showModal()` provides modality, focus containment and Escape; close/back/backdrop actions return focus to the visible trigger or active panel heading. Browsers without native modal support retain the workspace identification and get an explicit limitation message. No drag gesture is needed to close the bottom sheet. Reduced motion disables transitions and drawer animation.
-
-The deck name is a temporary field only. Nothing is persisted or exported. The studio states this near the field and in the insights panel.
-
-## Validation
-
-Run `node --test tests/deck-studio.test.cjs`, `python tests/validate-deck-studio.py` and `node --check` for affected scripts. Tests use explicitly synthetic records and a DOM test double; they require no dependencies or network and never provide production content. They verify the data boundary, shared-renderer handoff, controller state, rendering and error handling. They do not replace browser accessibility, layout, focus-trap or live Scryfall tests.
-
-Before release, manually check `/deck/` at 320px, 390px, 820px, 1024px and wide desktop widths, keyboard-only navigation, native dialog Escape/focus return, 200% zoom and reduced motion. Exercise Build a Deck from homepage search, Discover and a permanent guide; change the printing/finish before following the link. Check both sides of a double-faced card and offline/404/image errors. Environment restrictions can prevent these checks; report them as unverified.
-
-## Next authorised phase
-
-5B can introduce a separate in-memory deck model, Scryfall searching, Quick Add, quantity/removal operations and functional artwork/list views. It should distinguish a preview selection from an added entry. Search will need cancellation/debounce and Scryfall-friendly pacing. Keep those operations separate from the preview controller.
-
-5C can add format rules, legality validation, real statistics and mana curves, then versioned local saving/autosave/recovery. No 5B or 5C system is implemented in this checkpoint.
+Stage B will add current-data Commander/Pauper checks and real statistics. Stage C will add versioned local drafts, autosave/recovery, multiple-deck management and JSON backups. Until then the page states that changes are not saved and does not declare a deck legal.

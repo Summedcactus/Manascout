@@ -44,6 +44,17 @@
     const firstLine = briefSource.split("\n").find(line => line.trim()) || "Rules text not supplied.";
     return {
       id: selection.id, name: card.name, type: card.type_line || "Type not supplied",
+      oracleId: uuid.test(card.oracle_id || "") ? card.oracle_id.toLowerCase() : "",
+      frontType: card.card_faces?.[0]?.type_line || card.type_line || "",
+      frontText: card.card_faces?.[0]?.oracle_text || card.oracle_text || "",
+      rulesText: card.oracle_text || (card.card_faces || []).map(face => face.oracle_text || "").join("\n\n"),
+      colors: Array.isArray(card.colors) ? card.colors.filter(c => /^[WUBRG]$/.test(c)) : [],
+      colorIdentity: Array.isArray(card.color_identity) ? card.color_identity.filter(c => /^[WUBRG]$/.test(c)) : null,
+      keywords: Array.isArray(card.keywords) ? card.keywords.filter(k => typeof k === "string") : [],
+      legalities: { commander: card.legalities?.commander || "unknown", pauper: card.legalities?.pauper || "unknown" },
+      games: Array.isArray(card.games) ? card.games : [], layout: card.layout || "", oversized: !!card.oversized,
+      borderColor: card.border_color || "", securityStamp: card.security_stamp || "",
+      availableFinishes: finishes,
       manaValue: typeof card.cmc === "number" && Number.isFinite(card.cmc) ? String(card.cmc) : "Not supplied",
       setName: card.set_name || "Set not supplied", setCode: String(card.set || "").toUpperCase(),
       collectorNumber: String(card.collector_number ?? "Not supplied"),

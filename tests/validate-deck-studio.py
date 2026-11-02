@@ -67,7 +67,7 @@ for relative in ['deck/index.html', 'index.html']:
         for required in ['card-preview', 'preview-name', 'preview-id', 'studio-deck', 'studio-discover', 'studio-stats']:
             assert required in page.ids
         for required in ['studio-search', 'deck-format']:
-            assert any(attrs.get('id') == required and 'disabled' in attrs for _, attrs in page.tags)
+            assert any(attrs.get('id') == required and 'disabled' not in attrs for _, attrs in page.tags)
         assert any(tag == 'dialog' and attrs.get('aria-labelledby') == 'preview-name' for tag, attrs in page.tags)
     print('PASS', relative, 'nesting, unique IDs, labels/ARIA references, local links/assets and JSON-LD')
 

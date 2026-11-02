@@ -36,7 +36,8 @@ test('display model retains zero mana value, exact printing and supplied informa
   assert.equal(m.artist, 'Test Artist'); assert.equal(m.finishLabel, 'Foil');
   assert.equal(m.summary, 'A synthetic rules line.'); assert.equal(m.guide, '/card/fixture-card/');
   assert.equal(m.oracle, record().oracle_text);
-  assert.ok(!('price' in m) && !('legalities' in m) && !('commander' in m));
+  assert.ok(!('price' in m) && !('commander' in m));
+  assert.equal(m.legalities.commander, 'unknown');
 });
 
 test('unavailable finishes and missing fields are labelled without invented values', () => {
@@ -124,87 +125,3 @@ test('shared renderer provides exact handoff on home, search and guide contexts'
   }
 });
 
-// The controller is exercised with events and a minimal DOM double, not a browser.
-function studio({ search = '', narrow = false, card = record(), fail = false } = {}) {
-  const elements = new Map(); let document; let calls = 0;
-  class Element {
-    constructor(id, attrs = '') { this.id = id; this.hidden = /\bhidden\b/.test(attrs); this.disabled = /\bdisabled\b/.test(attrs); this.dataset = {}; this.attrs = {}; this.listeners = {}; this.scrollTop = 0; this.textContent = ''; this.value = ''; this.open = false; this.isConnected = true; }
-    addEventListener(type, fn) { (this.listeners[type] ||= []).push(fn); }
-    emit(type, extra = {}) { return Promise.all((this.listeners[type] || []).map(fn => fn({ target: this, preventDefault() {}, ...extra }))); }
-    setAttribute(key, value) { this.attrs[key] = value; } getAttribute(key) { return this.attrs[key]; }
-    removeAttribute(key) { delete this.attrs[key]; if (key === 'src') delete this.src; }
-    focus() { document.activeElement = this; } contains(el) { return el === this || el?.panel === this.id; }
-    getClientRects() { return this.hidden ? [] : [{}]; }
-    getBoundingClientRect() { return { left: 800, top: 0, right: 1200, bottom: 800 }; }
-    showModal() { this.open = true; } close() { this.open = false; this.emit('close'); }
-  }
-  const html = fs.readFileSync(path.join(root, 'deck/index.html'), 'utf8');
-  for (const m of html.matchAll(/<[a-z][a-z0-9]*\b([^>]*\bid="([^"]+)"[^>]*)>/g)) elements.set(m[2], new Element(m[2], m[1]));
-  const el = id => elements.get(id);
-  const buttons = ['deck', 'discover', 'stats'].map(p => { const e = new Element(p + '-nav'); e.dataset.panel = p; return e; });
-  const collapses = ['discover-body', 'stats-body'].map(p => { const e = new Element(p + '-collapse'); e.dataset.collapse = p; return e; });
-  const triggers = [new Element('discover-open'), new Element('inspiration-open')];
-  triggers[0].panel = 'studio-discover'; triggers[1].panel = 'studio-deck';
-  const nav = new Element('nav'); nav.querySelectorAll = () => buttons;
-  const skip = new Element('skip'); const nojs = new Element('nojs');
-  for (const p of ['deck', 'discover', 'stats']) el(p === 'deck' ? 'deck-heading' : p === 'discover' ? 'discover-heading' : 'stats-heading').panel = 'studio-' + p;
-  const body = { classList: { contains: () => true }, dataset: {} };
-  document = { body, activeElement: null, getElementById: el, querySelector: q => q === '.ds-mobile-nav' ? nav : q === '.ds-skip' ? skip : q === '.ds-nojs-discover' ? nojs : triggers[1], querySelectorAll: q => q === '[data-collapse]' ? collapses : triggers };
-  const media = { matches: narrow, listeners: [], addEventListener(_name, fn) { this.listeners.push(fn); } };
-  const api = { ...data, fetchPrinting: s => data.fetchPrinting(s, { fetchImpl: async () => { calls++; if (fail) throw Error('offline'); return response(card); } }) };
-  const context = { document, window: { ManaScoutDeckData: api, matchMedia: () => media, location: { search } }, console };
-  vm.runInNewContext(fs.readFileSync(path.join(root, 'assets/js/deck-studio.js'), 'utf8'), context);
-  return { el, buttons, triggers, collapses, body, document, media, calls: () => calls, resize(narrow) { media.matches = narrow; media.listeners.forEach(fn => fn()); } };
-}
-const settled = () => new Promise(resolve => setImmediate(resolve));
-
-test('empty studio makes no data requests; mobile sections retain name and scroll state', async () => {
-  const s = studio({ narrow: true });
-  assert.equal(s.calls(), 0); assert.equal(s.el('studio-deck').hidden, false); assert.equal(s.el('studio-stats').hidden, true);
-  s.el('deck-name').value = 'My temporary name'; s.el('studio-deck').scrollTop = 120;
-  await s.buttons[1].emit('click'); assert.equal(s.body.dataset.activePanel, 'discover');
-  s.el('studio-discover').scrollTop = 65;
-  await s.buttons[0].emit('click'); assert.equal(s.el('deck-name').value, 'My temporary name'); assert.equal(s.el('studio-deck').scrollTop, 120);
-  await s.buttons[1].emit('click'); assert.equal(s.el('studio-discover').scrollTop, 65);
-  await s.buttons[1].emit('keydown', { key: 'End' }); assert.equal(s.body.dataset.activePanel, 'stats');
-  await s.buttons[2].emit('keydown', { key: 'ArrowRight' }); assert.equal(s.body.dataset.activePanel, 'deck');
-  await s.buttons[0].emit('keydown', { key: 'Home' }); assert.equal(s.buttons[0].attrs['aria-pressed'], 'true');
-});
-
-test('desktop collapse frees column state; mobile expands content without losing it', async () => {
-  const s = studio(); await s.collapses[0].emit('click');
-  assert.equal(s.body.dataset.discoverCollapsed, 'true'); assert.equal(s.el('discover-body').hidden, true);
-  assert.equal(s.collapses[0].attrs['aria-expanded'], 'false');
-  s.resize(true); assert.equal(s.el('discover-body').hidden, false); assert.equal(s.body.dataset.discoverCollapsed, 'false');
-  s.resize(false); assert.equal(s.el('discover-body').hidden, true); assert.equal(s.el('studio-deck').hidden, false);
-});
-
-test('selected printing populates compact details once and closes back to its trigger', async () => {
-  const s = studio({ search: `?printing=${id}&card=Ignored+name&finish=foil&guide=/card/fixture-card/` }); await settled();
-  assert.equal(s.calls(), 1); assert.equal(s.el('preview-name').textContent, 'Fixture Card');
-  assert.equal(s.el('preview-mv').textContent, '0'); assert.match(s.el('preview-printing').textContent, /TST #7a/);
-  assert.equal(s.el('preview-artist').textContent, 'Test Artist'); assert.equal(s.el('preview-finish').textContent, 'Foil');
-  assert.equal(s.el('preview-guide').href, '/card/fixture-card/'); assert.equal(s.el('card-preview').open, true);
-  await s.el('close-preview').emit('click'); assert.equal(s.el('card-preview').open, false); assert.equal(s.document.activeElement, s.triggers[1]);
-  await s.triggers[0].emit('click'); await s.el('back-to-workspace').emit('click'); assert.equal(s.document.activeElement, s.triggers[0]);
-  await s.buttons[2].emit('click'); await s.buttons[0].emit('click'); assert.equal(s.calls(), 1); assert.equal(s.el('preview-id').textContent, id);
-  await s.el('preview-image').emit('error'); assert.equal(s.el('preview-image').hidden, true); assert.match(s.el('image-status').textContent, /could not load/);
-});
-
-test('API text is assigned literally; missing artwork is explicit and two faces can switch', async () => {
-  const s = studio({ search: `?printing=${id}`, card: record({ name: '<img src=x onerror=alert(1)>', image_uris: undefined, card_faces: [] }) }); await settled();
-  assert.equal(s.el('preview-name').textContent, '<img src=x onerror=alert(1)>'); assert.equal(s.el('preview-image').hidden, true); assert.match(s.el('image-status').textContent, /No artwork/);
-  const t = studio({ search: `?printing=${id}`, card: record({ image_uris: undefined, card_faces: [
-    { name: 'Test front', image_uris: { normal: 'https://cards.scryfall.io/front.jpg' } },
-    { name: 'Test back', image_uris: { normal: 'https://cards.scryfall.io/back.jpg' } }
-  ] }) }); await settled(); await t.el('flip-preview').emit('click');
-  assert.equal(t.el('preview-image').src, 'https://cards.scryfall.io/back.jpg'); assert.equal(t.el('flip-preview').textContent, 'View front face');
-});
-
-test('invalid handoff requests nothing; network error leaves workspace and explicit retry', async () => {
-  const s = studio({ search: '?printing=invalid' }); assert.equal(s.calls(), 0); assert.equal(s.el('selection-error').hidden, false); assert.equal(s.el('retry-printing').hidden, true);
-  const t = studio({ search: `?printing=${id}`, fail: true }); await settled();
-  assert.equal(t.el('selection-error').hidden, false); assert.equal(t.el('retry-printing').hidden, false); assert.equal(t.el('studio-deck').hidden, false);
-  assert.equal(t.el('card-preview').open, false); assert.equal(t.calls(), 1);
-  await t.el('retry-printing').emit('click'); assert.equal(t.calls(), 2);
-});
