@@ -14,18 +14,18 @@
   <meta property="og:url" content="https://manascout.co.uk/deck/">
   <meta property="og:site_name" content="ManaScout">
   <meta name="twitter:card" content="summary">
-  <link rel="stylesheet" href="/assets/css/deck-studio.css?v=5d1">
+  <link rel="stylesheet" href="/assets/css/deck-studio.css?v=5g1">
   <script type="application/ld+json">
   {"@context":"https://schema.org","@type":"WebPage","name":"ManaScout Deck Studio","url":"https://manascout.co.uk/deck/","description":"ManaScout's artwork-first deck workspace with exact-printing card search and manual deck editing.","isPartOf":{"@type":"WebSite","name":"ManaScout","url":"https://manascout.co.uk/"}}
   </script>
   <script src="/assets/js/deck-formats.js?v=5d1" defer></script>
   <script src="/assets/js/deck-data.js?v=5d1" defer></script>
   <script src="/assets/js/deck-model.js?v=5d1" defer></script>
-  <script src="/assets/js/deck-client.js?v=5d1" defer></script>
+  <script src="/assets/js/deck-client.js?v=5g1" defer></script>
   <script src="/assets/js/deck-rules.js?v=5d1" defer></script>
   <script src="/assets/js/deck-view.js?v=5d1" defer></script>
   <script src="/assets/js/deck-store.js?v=5d1" defer></script>
-  <script src="/assets/js/deck-studio.js?v=5d1" defer></script>
+  <script src="/assets/js/deck-studio.js?v=5g1" defer></script>
 </head>
 <body class="deck-studio" data-active-panel="deck">
   <a class="ds-skip" href="#deck-heading">Skip to deck workspace</a>
@@ -55,10 +55,11 @@
       <div id="discover-body" class="ds-panel-body">
         <form id="studio-search-form" role="search" autocomplete="off">
           <label class="ds-label" for="studio-search">Card search</label>
-          <div class="ds-search-field"><span aria-hidden="true">⌕</span><input id="studio-search" type="search" placeholder="Find your next card…" list="studio-suggestions" maxlength="300" aria-describedby="discover-note"><button class="ds-search-submit" type="submit" aria-label="Search cards">→</button></div>
+          <div class="ds-search-row"><div class="ds-search-field"><span aria-hidden="true">⌕</span><input id="studio-search" type="search" placeholder="Find your next card…" list="studio-suggestions" maxlength="300" aria-describedby="discover-note"><button class="ds-search-submit" type="submit" aria-label="Search cards">→</button></div><button class="ds-discover-random" id="studio-discover-random" type="button" aria-label="Discover a random card for the selected format" aria-describedby="discovery-status"><span id="discover-random-label">Discover</span><span aria-hidden="true">✦</span></button></div>
           <datalist id="studio-suggestions"></datalist>
         </form>
         <p class="ds-note" id="discover-note">Search names or Scryfall syntax. Quick Add keeps your place; select artwork for details.</p>
+        <p class="ds-note ds-discovery-status" id="discovery-status" role="status" aria-live="polite">Discover selects a random printing to inspect. Add it only when you choose.</p>
         <label class="ds-label ds-search-zone" for="search-zone">Add to <select id="search-zone"><option value="main">Main deck</option><option value="sideboard" disabled>Sideboard</option></select></label>
         <p class="ds-note ds-search-status" id="search-status" role="status" aria-live="polite">Type at least two characters, or press Search.</p>
         <div id="search-results" class="ds-search-results" aria-label="Card search results"></div>
