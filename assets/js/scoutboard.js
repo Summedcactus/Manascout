@@ -1119,6 +1119,8 @@
         if (weeklyImage.src !== art) weekly.dataset.weeklyArtReady = "false";
         weeklyImage.src =
           art;
+        document.getElementById("card-week-light-map")?.setAttribute("href", art);
+        weekly.dataset.weeklyArtReady = String(!!(weeklyImage.complete && weeklyImage.naturalWidth));
 
         weeklyImage.alt =
           "Minas Morgul (Cabal Coffers) — " +
@@ -1492,55 +1494,99 @@
   void loadArchive();
 
 
-  /* Event-driven tilt; CSS owns the slow surface movement. No continuous JS loop. */
+  /* Event-driven tilt plus CSS idle motion; no perpetual JavaScript loop. */
   if (weekly && weeklyShell) {
-    let visible = typeof IntersectionObserver !== "function";
+    let visible = false;
     let homeVisible = !initialQuery?.trim();
+    let touchPointer = null;
     const exactMorgul = () => weekly.dataset.weeklySet === "ltc" && weekly.dataset.weeklyNumber === "390" && weekly.dataset.weeklyCard === "Cabal Coffers";
     const syncEffects = () => {
       weekly.dataset.weeklyEffectsPaused = String(!visible || !homeVisible || document.hidden || reducedMotion.matches);
     };
     const reset = () => {
-      for (const [name, value] of Object.entries({ "--weekly-x": "50%", "--weekly-y": "42%", "--weekly-rx": "0deg", "--weekly-ry": "0deg", "--morgul-reflection": ".26", "--morgul-light-x": "0%", "--morgul-light-y": "0%" })) weekly.style.setProperty(name, value);
+      touchPointer = null;
+      weekly.dataset.weeklyInteracting = "false";
+      const values = { "--weekly-x": "50%", "--weekly-y": "42%", "--weekly-rx": "0deg", "--weekly-ry": "0deg" };
+      if (exactMorgul()) Object.assign(values, { "--morgul-reflection": ".68", "--morgul-light-x": "0%", "--morgul-light-y": "0%" });
+      for (const [name, value] of Object.entries(values)) weekly.style.setProperty(name, value);
     };
-    const artReady = () => { weekly.dataset.weeklyArtReady = String(!!weeklyImage?.naturalWidth); };
+    const checkVisibility = () => {
+      const rect = weeklyShell.getBoundingClientRect();
+      const viewportHeight = window.innerHeight || document.documentElement?.clientHeight || 0;
+      const viewportWidth = window.innerWidth || document.documentElement?.clientWidth || 0;
+      const rendered = !weeklyShell.getClientRects || weeklyShell.getClientRects().length > 0;
+      visible = !!(rendered && rect.width && rect.height && rect.top < viewportHeight && rect.top + rect.height > 0 && rect.left < viewportWidth && rect.left + rect.width > 0);
+      if (!visible) reset();
+      syncEffects();
+    };
+    const artReady = () => {
+      weekly.dataset.weeklyArtReady = String(!!(weeklyImage?.complete && weeklyImage.naturalWidth));
+      checkVisibility();
+    };
     weeklyImage?.addEventListener("load", artReady);
     weeklyImage?.addEventListener("error", () => { weekly.dataset.weeklyArtReady = "false"; });
-    if (weeklyImage?.complete) artReady();
+    artReady(); // Also repairs cached images whose load event happened before this script.
     if (typeof IntersectionObserver === "function") {
       const observer = new IntersectionObserver(entries => {
-        visible = entries.some(entry => entry.target === weekly && entry.isIntersecting);
+        const entry = entries.find(entry => entry.target === weeklyShell);
+        if (!entry) return;
+        visible = entry.isIntersecting;
         if (!visible) reset();
         syncEffects();
-      }, { rootMargin: "80px" });
-      observer.observe(weekly);
+      }, { threshold: 0 });
+      observer.observe(weeklyShell);
     }
-    document.addEventListener("visibilitychange", () => { if (document.hidden) reset(); syncEffects(); });
+    // A bounded scroll/resize fallback also recovers a missed observer callback.
+    let visibilityFrame = null;
+    const scheduleVisibility = () => {
+      if (typeof window.requestAnimationFrame !== "function") { checkVisibility(); return; }
+      if (visibilityFrame !== null) return;
+      visibilityFrame = window.requestAnimationFrame(() => { visibilityFrame = null; checkVisibility(); });
+    };
+    window.addEventListener("scroll", scheduleVisibility, { passive: true });
+    window.addEventListener("resize", scheduleVisibility, { passive: true });
+    window.addEventListener("pageshow", () => { artReady(); checkVisibility(); });
+    document.addEventListener("visibilitychange", () => { if (document.hidden) reset(); artReady(); checkVisibility(); });
     window.addEventListener("manascout:statechange", event => {
-      if (["home", "loading", "card"].includes(event.detail?.state)) { homeVisible = event.detail.state === "home"; if (!homeVisible) reset(); syncEffects(); }
+      if (["home", "loading", "card"].includes(event.detail?.state)) {
+        homeVisible = event.detail.state === "home";
+        if (!homeVisible) reset();
+        checkVisibility();
+      }
     });
-    reducedMotion.addEventListener("change", () => { reset(); syncEffects(); });
+    reducedMotion.addEventListener("change", () => { reset(); checkVisibility(); });
     finePointer.addEventListener("change", reset);
-    weeklyShell.addEventListener("pointermove", event => {
-      if (!finePointer.matches || reducedMotion.matches || !visible || !homeVisible || document.hidden) return;
+    const canTilt = () => !reducedMotion.matches && visible && homeVisible && !document.hidden;
+    const tilt = event => {
+      if (!canTilt()) return;
       const rect = weeklyShell.getBoundingClientRect();
       if (!rect.width || !rect.height) return;
       const x = Math.max(0, Math.min(100, (event.clientX - rect.left) / rect.width * 100));
       const y = Math.max(0, Math.min(100, (event.clientY - rect.top) / rect.height * 100));
+      weekly.dataset.weeklyInteracting = "true";
       weekly.style.setProperty("--weekly-x", `${x}%`);
       weekly.style.setProperty("--weekly-y", `${y}%`);
-      weekly.style.setProperty("--weekly-rx", `${(50 - y) * .045}deg`);
-      weekly.style.setProperty("--weekly-ry", `${(x - 50) * .05}deg`);
+      weekly.style.setProperty("--weekly-rx", `${(50 - y) * .10}deg`);
+      weekly.style.setProperty("--weekly-ry", `${(x - 50) * .12}deg`);
       if (exactMorgul()) {
-        const intensity = .2 + .12 * (1 - Math.min(1, Math.hypot(x - 30, y - 25) / 100));
+        const intensity = .48 + .36 * (1 - Math.min(1, Math.hypot(x - 30, y - 25) / 100));
         weekly.style.setProperty("--morgul-reflection", intensity.toFixed(3));
-        weekly.style.setProperty("--morgul-light-x", `${((x - 50) * .06).toFixed(2)}%`);
-        weekly.style.setProperty("--morgul-light-y", `${((y - 50) * .05).toFixed(2)}%`);
+        weekly.style.setProperty("--morgul-light-x", `${((x - 50) * .10).toFixed(2)}%`);
+        weekly.style.setProperty("--morgul-light-y", `${((y - 50) * .08).toFixed(2)}%`);
       }
+    };
+    weeklyShell.addEventListener("pointerdown", event => {
+      if (event.pointerType !== "touch" || !event.isPrimary || !canTilt()) return;
+      touchPointer = event.pointerId;
+      tilt(event); // Passive: page scrolling and pinch zoom remain available.
     }, { passive: true });
-    weeklyShell.addEventListener("pointerleave", reset);
-    weeklyShell.addEventListener("pointercancel", reset);
-    syncEffects();
+    weeklyShell.addEventListener("pointermove", event => {
+      if (event.pointerType === "touch") { if (event.pointerId === touchPointer) tilt(event); }
+      else if (finePointer.matches) tilt(event);
+    }, { passive: true });
+    for (const name of ["pointerleave", "pointercancel", "pointerup"]) weeklyShell.addEventListener(name, reset);
+    reset();
+    checkVisibility();
   }
 
 
