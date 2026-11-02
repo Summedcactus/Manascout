@@ -29,7 +29,7 @@
         return value;
       });
     }
-    function request(url, { signal, method = "GET", body } = {}) {
+    function request(url, { signal, method = "GET", body, cache } = {}) {
       if (!fetchImpl) return Promise.reject(new data.SelectionError("Scryfall requests are not supported by this browser.", true));
       const task = async () => {
         if (signal?.aborted) throw abortError();
@@ -41,7 +41,7 @@
         const timer = setTimeout(abort, timeout);
         try {
           lastStart = now();
-          const response = await fetchImpl(url, { method, headers: { Accept: "application/json", ...(body ? { "Content-Type": "application/json" } : {}) }, ...(body ? { body: JSON.stringify(body) } : {}), signal: controller.signal });
+          const response = await fetchImpl(url, { method, headers: { Accept: "application/json", ...(body ? { "Content-Type": "application/json" } : {}) }, ...(body ? { body: JSON.stringify(body) } : {}), ...(cache ? { cache } : {}), signal: controller.signal });
           if (!response.ok) {
             const error = new data.SelectionError(response.status === 404 ? "No matching card was found." : response.status === 429 ? "Scryfall is busy. Wait a moment before trying again." : "Scryfall could not complete this request. Try again later.", response.status !== 404);
             error.status = response.status; throw error;
@@ -59,6 +59,9 @@
     }
     function remember(raw, selection = {}) {
       const card = data.normaliseCard(raw, { id: raw.id?.toLowerCase(), ...selection });
+      return verify(card);
+    }
+    function verify(card) {
       latest.delete(card.id); latest.set(card.id, ++generation);
       verified.set(card, { generation, time: now() });
       while (latest.size > 20000) latest.delete(latest.keys().next().value);
@@ -83,6 +86,26 @@
           return { cards: result.data.map(raw => remember(raw)), nextPage: result.has_more ? result.next_page || "" : "", total: result.total_cards || result.data.length };
         } catch (error) { if (error.status === 404) return { cards: [], nextPage: "", total: 0 }; throw error; }
       });
+    }
+    async function random({ format = "commander", signal, excludeOracleId = "" } = {}) {
+      const profile = formats.get(format);
+      if (!profile) throw new data.SelectionError("Choose a supported format before discovering a card.");
+      if (excludeOracleId && !/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(excludeOracleId)) throw new data.SelectionError("The previous card identity is invalid.");
+      const query = [`f:${profile.legalityKey}`, `game:${profile.platform}`];
+      if (excludeOracleId) query.push(`-oracleid:${excludeOracleId}`);
+      if (profile.originalVersions) query.push("-is:rebalanced");
+      const raw = await request(`${API}/cards/random?${new URLSearchParams({ q: query.join(" ") })}`, { signal, cache: "no-store" });
+      if (signal?.aborted) throw abortError();
+      if (raw?.object !== "card" || typeof raw.id !== "string") throw new data.SelectionError("Scryfall returned an incomplete random-card response. Try Discover again.");
+      const identity = data.parseSelection(`?printing=${encodeURIComponent(raw.id)}`);
+      if (!identity) throw new data.SelectionError("Scryfall returned a printing without an identity. Try Discover again.");
+      const card = data.normaliseCard(raw, identity);
+      if (!formats.supportedLegality(card, profile) || !card.games.includes(profile.platform)) throw new data.SelectionError("Scryfall returned a card whose format or platform could not be verified. Try Discover again.");
+      if (!card.oracleId || !card.frontType || card.manaValue === "Not supplied" || !Array.isArray(card.colorIdentity) || !card.printingDataComplete || !card.images.length || !card.availableFinishes.length || !["black", "white", "borderless"].includes(card.borderColor)) throw new data.SelectionError("The discovered printing has incomplete card information. Try Discover again.");
+      if (card.oversized || ["gold", "silver"].includes(card.borderColor) || card.securityStamp === "acorn" || ["token", "double_faced_token", "emblem", "art_series", "scheme", "planar", "vanguard"].includes(card.layout) || /\bAttraction\b|\bContraption\b|\bDungeon\b|\bConspiracy\b|\bStickers\b/.test(card.frontType) || (card.layout === "meld" && card.meldEntry !== "meld_part")) throw new data.SelectionError("This printing needs a special-card workflow. Try Discover again for a supported game card.");
+      if (profile.originalVersions && card.isRebalanced) throw new data.SelectionError("Gladiator discovery requires an original, unrebalanced card.");
+      if (card.oracleId === excludeOracleId) throw new data.SelectionError("Scryfall repeated the previous card. Try Discover again.");
+      return verify(card);
     }
     async function autocomplete(query, { signal } = {}) {
       const q = String(query).trim().slice(0, 200);
@@ -125,7 +148,7 @@
       }
       return updated;
     }
-    return { search, autocomplete, printing, commanderEligibility, refresh,
+    return { search, random, autocomplete, printing, commanderEligibility, refresh,
       isVerified: card => { const check = verified.get(card); return !!check && latest.get(card.id) === check.generation && now() - check.time < 900000; },
       proof: card => { const p = proofs.get(card.oracleId); return p && now() - p.time < 900000 ? p.eligible : null; },
       clearProofs: () => proofs.clear() };

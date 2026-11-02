@@ -27,6 +27,8 @@
   let currentFinish = "";
   let face = 0;
   let loading = false;
+  let discoveryJob = null;
+  let lastDiscoveredOracle = "";
   let returnFocus = null;
   let returnFocusKey = null;
   const eligibilityJobs = new Map();
@@ -102,6 +104,7 @@
 
   function closePreview() { if (preview.open) preview.close(); }
   function openPreview(trigger) {
+    cancelDiscovery("Discovery cancelled while another printing was opened.");
     if (!current) return;
     if (typeof preview.showModal !== "function") {
       $("selection-status").textContent = "This browser cannot open the card drawer. The selected printing is shown in the workspace; use a current browser for full preview details.";
@@ -153,6 +156,7 @@
   $("flip-preview").addEventListener("click", () => { face = (face + 1) % current.images.length; showFace(); });
 
   function renderCard(card, finish = card.finish) {
+    cancelDiscovery("Discovery cancelled because another printing was selected.");
     current = card;
     currentFinish = finish;
     face = 0;
@@ -194,6 +198,8 @@
   async function loadSelection() {
     if (!selection || loading) return;
     loading = true;
+    cancelDiscovery("Discovery cancelled while an exact printing loads.");
+    syncDiscoveryButton();
     $("selection-error").hidden = true;
     $("retry-printing").disabled = true;
     $("inspiration").setAttribute("aria-busy", "true");
@@ -210,6 +216,7 @@
     } catch (error) { showError(error); }
     finally {
       loading = false;
+      syncDiscoveryButton();
       $("retry-printing").disabled = false;
       $("inspiration").removeAttribute("aria-busy");
     }
@@ -277,6 +284,7 @@
     if (next !== deck) { deck = next; dirty = true; scheduleSave(); }
   });
   function changeFormat(format) {
+    cancelDiscovery("Discovery cancelled because the format changed.");
     const previous = formats.get(deck.format);
     commitState(model.edit(deck, { format }), "Format changed. All entries have been preserved.");
     if (current && deck.format === "commander") checkCommander(current);
@@ -310,6 +318,46 @@
       if (button.dataset.action === "move-sideboard") commitState(model.moveOne(deck, entry.key, "sideboard"));
     } catch (error) { message(error.message); }
   });
+
+  function syncDiscoveryButton() {
+    $("studio-discover-random").disabled = !!discoveryJob || loading;
+    $("studio-discover-random").setAttribute("aria-busy", String(!!discoveryJob));
+    $("discover-random-label").textContent = discoveryJob ? "Discovering…" : "Discover";
+  }
+  function cancelDiscovery(note = "Discovery cancelled.") {
+    if (!discoveryJob) return;
+    discoveryJob.controller.abort();
+    discoveryJob = null;
+    syncDiscoveryButton();
+    $("discovery-status").textContent = note;
+  }
+  $("studio-discover-random").addEventListener("click", async () => {
+    if (discoveryJob || loading) return;
+    const job = { controller: new AbortController(), deckId: deck.id, format: deck.format };
+    discoveryJob = job;
+    syncDiscoveryButton();
+    $("discovery-status").textContent = `Discovering a ${formats.get(job.format).name} card… Press Escape to cancel.`;
+    try {
+      const card = await client.random({ format: job.format, signal: job.controller.signal, excludeOracleId: lastDiscoveredOracle });
+      if (discoveryJob !== job || job.controller.signal.aborted || deck.id !== job.deckId || deck.format !== job.format) return;
+      const profile = formats.get(job.format);
+      if (!client.isVerified(card) || !formats.supportedLegality(card, profile) || !card.games?.includes(profile.platform)) throw Error("The discovered card's current format and platform could not be verified.");
+      discoveryJob = null;
+      syncDiscoveryButton();
+      renderCard(card);
+      lastDiscoveredOracle = card.oracleId;
+      $("discovery-status").textContent = `Selected ${card.name} · ${profile.name} · ${profile.platform}. Inspect this printing; use Add to deck when ready.`;
+      openPreview($("studio-discover-random"));
+    } catch (error) {
+      if (discoveryJob === job && error.name !== "AbortError") $("discovery-status").textContent = `Discovery unavailable. ${error.message} Your deck and selected printing are unchanged.`;
+    } finally {
+      if (discoveryJob === job) { discoveryJob = null; syncDiscoveryButton(); }
+    }
+  });
+  document.addEventListener("keydown", event => {
+    if (event.key === "Escape" && discoveryJob && !preview.open) { event.preventDefault(); cancelDiscovery(); }
+  });
+  window.addEventListener("pagehide", () => cancelDiscovery());
 
   const results = new Map();
   let resultCards = [], resultShown = 0, nextPage = "", searchQuery = "", searchToken = 0;
@@ -588,6 +636,7 @@
     return leave;
   }
   function activateDraft(record, note = "", markDirty = false) {
+    cancelDiscovery("Discovery cancelled because the active draft changed.");
     clearTimeout(saveTimer);
     deck = record.deck; savedToken = record.token || null; dirty = !!record.dirty || markDirty; storagePaused = false; lastSaveError = "";
     if (record.recovered) { deck = { ...deck, id: model.newId(), revision: 0 }; savedToken = null; dirty = true; note = "Recovered a previous snapshot as a new draft. The damaged original was left untouched."; }
