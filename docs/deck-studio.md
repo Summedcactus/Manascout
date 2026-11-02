@@ -1,4 +1,4 @@
-# Deck Studio — 5D
+# Deck Studio
 
 ManaScout's manual deck builder supports the Constructed profiles below with exact-printing entries, compact previews, artwork/list views, construction warnings, statistics and browser-local drafts. Its palette and responsive workspace remain scoped to `.deck-studio`. Homepage search, guides, Card of the Week, foil previews and the shared printing explorer are unchanged.
 
@@ -111,3 +111,13 @@ The button shows Discovering… and suppresses duplicate clicks. Format/draft ch
 Focused automated tests exercise all query profiles, uncached draws, verification, queue/cancellation/timeout failures, no-add preview behavior, repeat exclusion, manual addition, stale responses, mobile-sheet opening and saved-draft restoration. Live Scryfall requests and native browser/mobile rendering remain unverified in this restricted environment; no previously blocked network/browser operation was retried.
 
 5G validation: **227 JavaScript cases passed, zero failed**, including 34 new discovery/atmosphere cases. JavaScript syntax, HTML/JSON-LD/links, scoped CSS and homepage structure checks passed. These are automated local results, not browser or live API verification.
+
+## Clear Search / Discover selection flow
+
+The panel is labelled Find cards. Its input says Search for a card…, followed by separately named Search and Discover controls. The arrow is removed. Search click and form submission share one handler, cancel pending suggestion/debounce timers and run the existing results search; an empty search gives a visible instruction and focuses the input. The flexible row wraps compact desktop panels, while mobile always puts the input above two equal-width buttons. Discover retains its verified random-card client, cancellation, exact-printing preview and no-auto-add behavior.
+
+Both routes use the same compact preview. In Commander, the two primary actions are Use as Commander and Add to the 99 (Add to the 98 when a supported pair is already assigned). Commander assignment stays disabled while eligibility is missing/pending, after an ineligible result, for unsupported configurations or for an unavailable finish/platform. The status explains eligibility separately from format legality. A known Commander-banned or wrong-platform selection cannot be added through the main-deck action; a Commander-legal card that cannot command remains available for the main deck. Existing cached-data warnings, manual editing, other formats, singleton/identity checks and draft storage remain intact. Remove is a separate secondary action.
+
+Regression coverage includes explicit Search clicks and form submission, blank-input guidance, the identical search/random role flow, eligible/ineligible/unknown commander states, blocked banned/platform entries, partner counts and responsive structure. Native browser rendering, real API responses and touch/focus behavior still require smoke testing in an unrestricted browser.
+
+Latest selection/presentation update: **239 JavaScript cases passed, zero failed**, including twelve new role/search/depth checks. Syntax, HTML/ARIA/links/metadata and scoped stylesheet structure checks passed. Browser/live API testing remains unavailable.

@@ -180,7 +180,7 @@
     }
     $("discover-selection").hidden = false;
     $("inspiration").hidden = false;
-    $("selection-status").textContent = "Selected printing loaded. Use Add to deck to include it.";
+    $("selection-status").textContent = "Selected printing loaded. Choose its role in the card preview.";
     const entryMetadataChanged = deck.cards[card.id] && deck.cards[card.id] !== card && deck.entries.some(entry => entry.printingId === card.id);
     const selectedDeck = model.select(deck, card, currentFinish);
     if (selectedDeck !== deck) { deck = selectedDeck; dirty = true; scheduleSave(); if (entryMetadataChanged) renderDeck(); }
@@ -295,7 +295,7 @@
   for (const mode of ["artwork", "list"]) $("view-" + mode).addEventListener("click", () => commitState(model.edit(deck, { view: mode })));
   $("preview-zone").addEventListener("change", renderPreviewActions);
   $("preview-add").addEventListener("click", () => {
-    try { if (current) addCard(current, $("preview-zone").value || "main", Number($("preview-quantity").value), currentFinish); }
+    try { if (current && !$("preview-add").disabled) addCard(current, $("preview-zone").value || "main", Number($("preview-quantity").value), currentFinish); }
     catch (error) { message(error.message); }
   });
   $("preview-remove").addEventListener("click", () => {
@@ -372,7 +372,7 @@
   }
   async function runSearch(append = false) {
     const query = $("studio-search").value.trim();
-    if (!query) return;
+    if (!query) { $("search-status").textContent = "Enter a card name, then choose Search. Discover works without a search term."; $("studio-search").focus(); return; }
     searchController?.abort(); searchController = new AbortController();
     const token = ++searchToken;
     if (!append) { searchQuery = query; resultCards = []; resultShown = 0; nextPage = ""; results.clear(); $("search-results").replaceChildren(); }
@@ -402,7 +402,13 @@
     }, 180);
     searchTimer = setTimeout(() => runSearch(), 350);
   });
-  $("studio-search-form").addEventListener("submit", event => { event.preventDefault(); clearTimeout(searchTimer); clearTimeout(autoTimer); autoController?.abort(); runSearch(); });
+  function submitCardSearch(event) {
+    event.preventDefault();
+    clearTimeout(searchTimer); clearTimeout(autoTimer); autoController?.abort();
+    runSearch();
+  }
+  $("studio-search-form").addEventListener("submit", submitCardSearch);
+  $("studio-search-submit").addEventListener("click", submitCardSearch);
   $("search-more").addEventListener("click", () => { if (resultShown < resultCards.length) showMoreResults(); else if (nextPage) runSearch(true); });
   $("search-results").addEventListener("click", event => {
     const button = event.target.closest("button[data-action]");
@@ -462,19 +468,20 @@
     const eligibleBackground = profile.eligibility === "commander" && rules.background(current) && commanderCards().length === 1 && rules.pair(commanderCards()[0], current).valid && client.proof(commanderCards()[0]) === true;
     let note = fresh ? `${profile.name} card status: ${legality.replace(/_/g, " ")}.` : "Current legality is not verified. Recheck card data before assigning a leader.";
     if (!current.games?.includes(profile.platform)) note += ` This exact printing is unavailable in ${profile.platform}. It is preserved; select an appropriate printing.`;
-    button.disabled = pending || (fresh && (!formats.supportedLegality(current, profile) || !current.games?.includes(profile.platform)));
+    button.disabled = !fresh || pending || !formats.supportedLegality(current, profile) || !current.games?.includes(profile.platform) || !current.availableFinishes.includes(currentFinish);
     const role = profile.leaderLabel?.toLowerCase() || "commander";
-    button.textContent = pending ? "Checking commander eligibility…" : `Use one as ${role}`;
+    button.textContent = `Use as ${profile.leaderLabel || "Commander"}`;
     if (profile.leaders) {
       if (rules.colorChoice(current)) { note += " This leader needs a pregame colour choice; that configuration is unsupported."; button.disabled = true; }
       else if (profile.eligibility === "commander" && rules.background(current)) { note += eligibleBackground ? " Can join the selected Choose a Background commander." : " This Background needs a verified Choose a Background commander first."; button.disabled = button.disabled || !eligibleBackground; }
       else if (eligible === false) { note += ` Not eligible as a ${role}. You may include it in the main deck instead, subject to the other deck rules.`; button.disabled = true; }
-      else if (eligible === null) { note += pending ? " Checking commander eligibility." : ` ${profile.leaderLabel} eligibility has not been verified.`; button.textContent = pending ? "Checking commander eligibility…" : `Check ${role} eligibility`; }
+      else if (eligible === null) { note += pending ? " Checking commander eligibility." : ` ${profile.leaderLabel} eligibility has not been verified.`; button.disabled = true; }
       else note += ` ${profile.leaderLabel} eligibility checked; pairing and deck rules still apply.`;
     }
     $("preview-legality").textContent = note;
     if (profile.eligibility === "commander" && eligibilityErrors.has(current.oracleId)) $("preview-legality").textContent += ` Last eligibility check failed: ${eligibilityErrors.get(current.oracleId)}`;
-    $("preview-add").textContent = deck.format === "commander" && eligible === false && commanderCards().length < 2 ? "Add to the 99 +" : "Add to deck +";
+    $("preview-add").textContent = deck.format === "commander" ? `Add to the ${commanderCards().length === 2 ? "98" : "99"}` : "Add to deck +";
+    if (deck.format === "commander" && fresh && (!formats.supportedLegality(current, profile) || !current.games?.includes(profile.platform))) $("preview-add").disabled = true;
     if (commanderCards().some(card => card.id === current.id)) { button.disabled = true; button.textContent = `Assigned as ${role}`; }
     if (profile.signature) {
       const selected = $("signature-owner").value;

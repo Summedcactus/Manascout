@@ -23,7 +23,7 @@ function api(){
 }
 async function find(s,name){s.el('studio-search').value=name;await s.el('studio-search-form').emit('submit');await until(()=>!!s.el('search-results').querySelector('[data-action="quick-add"]'));}
 test('Commander journey: handoff, verified commander, Quick Add, 100 cards, views, save and current-data restoration',async t=>{
- const storage=new MemoryStorage(),first=api(),s=mount({storage,client:first.client,search:`?printing=${commander.id}&card=Fixture+Commander&finish=foil`});t.after(s.cleanup);await until(()=>s.el('preview-commander').textContent==='Use one as commander');
+ const storage=new MemoryStorage(),first=api(),s=mount({storage,client:first.client,search:`?printing=${commander.id}&card=Fixture+Commander&finish=foil`});t.after(s.cleanup);await until(()=>s.el('preview-id').textContent===commander.id && !s.el('preview-commander').disabled);
  assert.equal(s.el('preview-finish').textContent,'Foil');await s.el('preview-commander').emit('click');assert.equal(s.el('stat-commanders').textContent,'1');await s.el('close-preview').emit('click');
  await find(s,'Fixture Forest');await s.el('search-results').querySelector('[data-action="quick-add"]').emit('click');await s.el('search-results').querySelector('[data-action="inspect-search"]').emit('click');
  s.el('preview-quantity').value='98';await s.el('preview-add').emit('click');assert.equal(s.el('stat-count').textContent,'100 / 100');assert.equal(s.el('stat-lands').textContent,'99');assert.equal(s.el('stat-average').textContent,'3.00');assert.equal(s.el('deck-validity').textContent,'Construction checks passed');

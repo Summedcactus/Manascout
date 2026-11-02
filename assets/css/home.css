@@ -1877,8 +1877,8 @@
 
 @media (max-width: 760px) { .home-editorial-grid { grid-template-columns: 1fr; } .home-editorial { margin: 1.7rem 0; } }
 
-/* Week 006 — LTC #390 only. A quiet spectral aura and static black shadows.
-   The card's existing 3D surfaces and foil animations are unchanged. */
+/* Week 006 — LTC #390 only. Floating card, soft atmospheric light and depth.
+   Existing foil face gradients and reflection keyframes remain unchanged. */
 .weekly-theme-morgul[data-weekly-set="ltc"][data-weekly-number="390"][data-weekly-card="Cabal Coffers"] {
   --morgul-reflection: .68;
   --morgul-light-x: 0%;
@@ -1895,19 +1895,27 @@
 }
 :where(.weekly-theme-morgul[data-weekly-set="ltc"][data-weekly-number="390"][data-weekly-card="Cabal Coffers"]) .weekly-scene::after { background: linear-gradient(0deg, #0008, transparent 38%, transparent 75%, #0004); }
 :where(.weekly-theme-morgul[data-weekly-set="ltc"][data-weekly-number="390"][data-weekly-card="Cabal Coffers"]) .weekly-card-column {
-  background: radial-gradient(ellipse at 50% 47%, #124b3138, #030a0622 56%, #010302a8 88%);
+  background: linear-gradient(145deg, #020604, #061009 55%, #010302);
 }
 :where(.weekly-theme-morgul[data-weekly-set="ltc"][data-weekly-number="390"][data-weekly-card="Cabal Coffers"]) .weekly-card-column::before { content: none; }
-/* Anchored to the card bounds, behind its surface; no blur or moving shapes. */
+/* Irregular translucent haze, never a solid or clipped oval. */
 :where(.weekly-theme-morgul[data-weekly-set="ltc"][data-weekly-number="390"][data-weekly-card="Cabal Coffers"]) .weekly-card-halo {
-  inset: -16% -22%; width: auto; height: auto; z-index: 0; border-radius: 50%; filter: none; pointer-events: none;
-  background: radial-gradient(ellipse at 50% 47%, #82eeb76b 32%, #54c98f66 52%, #2c9d6a4d 68%, #092e1e1a 82%, transparent 100%);
-  opacity: .75; animation: msMorgulHalo 22s ease-in-out infinite alternate;
+  inset: -13% -18%; width: auto; height: auto; z-index: 0; border-radius: 0; filter: none; pointer-events: none;
+  background: radial-gradient(ellipse 54% 37% at 37% 29%, #7cb47d30, transparent 76%), radial-gradient(ellipse 67% 48% at 64% 57%, #36966b26, transparent 82%), radial-gradient(ellipse 47% 29% at 37% 79%, #21613d18, transparent 78%);
+  opacity: .45; animation: msMorgulHalo 9.5s ease-in-out infinite;
+}
+:where(.weekly-theme-morgul[data-weekly-set="ltc"][data-weekly-number="390"][data-weekly-card="Cabal Coffers"]) .weekly-card-halo::before {
+  content: ""; position: absolute; inset: 0; background: radial-gradient(ellipse 49% 31% at 54% 23%, #a2d39a30, transparent 80%); opacity: .3;
+  animation: msMorgulUpperHaze 11s ease-in-out infinite;
 }
 :where(.weekly-theme-morgul[data-weekly-set="ltc"][data-weekly-number="390"][data-weekly-card="Cabal Coffers"]) .weekly-card-shell {
-  box-shadow: 0 31px 70px #000e, 0 0 18px #4ad28b30, 0 0 0 1px #8ad6ab3b;
+  box-shadow: 0 1px 0 #304036, 1px 2px 0 #132219, 2px 3px 0 #030805, 0 20px 35px #0009, 0 35px 58px #0007, inset 0 1px 0 #d2e6d02e;
 }
-:where(.weekly-theme-morgul[data-weekly-set="ltc"][data-weekly-number="390"][data-weekly-card="Cabal Coffers"]) .weekly-card-shell:hover { box-shadow: 0 34px 76px #000e, 0 0 22px #4ad28b38, 0 0 0 1px #8ad6ab45; }
+:where(.weekly-theme-morgul[data-weekly-set="ltc"][data-weekly-number="390"][data-weekly-card="Cabal Coffers"]) .weekly-card-shell:hover { box-shadow: 0 1px 0 #405044, 1px 2px 0 #132219, 2px 3px 0 #030805, 0 24px 40px #000a, 0 39px 63px #0007, inset 0 1px 0 #d2e6d03b; }
+:where(.weekly-theme-morgul[data-weekly-set="ltc"][data-weekly-number="390"][data-weekly-card="Cabal Coffers"]) .weekly-card-shell::after {
+  content: ""; position: absolute; inset: 0; z-index: 7; border-radius: inherit; pointer-events: none; border: 1px solid #c6ddc51f;
+  box-shadow: inset 0 1px 0 #e2ecdb32, inset 1px 0 0 #adceba14, inset -1px -1px 0 #0008;
+}
 /* Curved reflection fields remain visible at rest, drifting on different time scales.
    No brightness/saturation filters are applied to the authentic artwork. */
 :where(.weekly-theme-morgul[data-weekly-set="ltc"][data-weekly-number="390"][data-weekly-card="Cabal Coffers"]) .morgul-foil-sheen {
@@ -1944,24 +1952,42 @@
 :where(.weekly-theme-morgul[data-weekly-set="ltc"][data-weekly-number="390"][data-weekly-card="Cabal Coffers"]) .morgul-printing-detail { margin: .3rem 0 0; color: #8cc9a0; font-size: .64rem; font-weight: 800; letter-spacing: .06em; text-align: center; text-transform: uppercase; }
 @keyframes msMorgulReflection { 0% { transform: translate3d(-12%,5%,0) rotate(-12deg) scale(1.02); } 57% { transform: translate3d(9%,-6%,0) rotate(6deg) scale(1.1); } 100% { transform: translate3d(-3%,9%,0) rotate(14deg) scale(1.02); } }
 @keyframes msMorgulGlimmer { 0%,58%,100% { opacity: 0; transform: translate3d(-6%,0,0); } 70% { opacity: .72; } 83% { opacity: 0; transform: translate3d(6%,0,0); } }
-@keyframes msMorgulHalo { from { opacity: .68; } to { opacity: .82; } }
-/* The outer surface owns idle movement; the inner shell owns cursor/touch tilt.
-   Widths mirror the original shell breakpoints, keeping the page layout intact. */
-.weekly-card-float { position: relative; z-index: 3; width: min(100%,290px); max-width: 100%; transform-style: preserve-3d; }
+@keyframes msMorgulHalo {
+  0%,100% { opacity: .32; transform: translate3d(-1%,1%,0) scale(.96,1.02); }
+  36% { opacity: .54; transform: translate3d(1%,-1%,0) scale(1.03,.98); }
+  67% { opacity: .42; transform: translate3d(-1.5%,.5%,0) scale(1.01,1.04); }
+}
+@keyframes msMorgulUpperHaze { 0%,100% { opacity: .18; } 57% { opacity: .5; } }
+/* Separate atmospheric, ground-shadow and card planes. The foil face is unchanged. */
+.weekly-card-stage { position: relative; z-index: 3; width: min(100%,290px); max-width: 100%; perspective: 1000px; perspective-origin: 50% 45%; transform-style: preserve-3d; }
+.weekly-card-float { position: relative; z-index: 3; width: 100%; max-width: 100%; transform-style: preserve-3d; }
 :where(.weekly-theme-morgul[data-weekly-set="ltc"][data-weekly-number="390"][data-weekly-card="Cabal Coffers"]) .weekly-card-float { animation: msMorgulFloat 13s ease-in-out infinite alternate; }
-:where(.weekly-theme-morgul[data-weekly-set="ltc"][data-weekly-number="390"][data-weekly-card="Cabal Coffers"]) .weekly-card-float > .weekly-card-shell { width: 100%; transition: transform .38s cubic-bezier(.2,.7,.25,1), box-shadow .25s ease; }
+:where(.weekly-theme-morgul[data-weekly-set="ltc"][data-weekly-number="390"][data-weekly-card="Cabal Coffers"]) .weekly-card-float > .weekly-card-shell { width: 100%; transform: rotateX(var(--weekly-rx)) rotateY(var(--weekly-ry)); transition: transform .38s cubic-bezier(.2,.7,.25,1), box-shadow .25s ease; }
 :where(.weekly-theme-morgul[data-weekly-set="ltc"][data-weekly-number="390"][data-weekly-card="Cabal Coffers"])[data-weekly-interacting="true"] .weekly-card-float { animation-play-state: paused; }
+:where(.weekly-theme-morgul[data-weekly-set="ltc"][data-weekly-number="390"][data-weekly-card="Cabal Coffers"]) .weekly-card-rest-shadow {
+  position: absolute; z-index: 1; left: 7%; right: 5%; bottom: -15px; height: 25px; pointer-events: none;
+  background: radial-gradient(ellipse, #000b, #0006 30%, transparent 73%); opacity: .72;
+  animation: msMorgulRestShadow 13s ease-in-out infinite alternate;
+}
+:where(.weekly-theme-morgul[data-weekly-set="ltc"][data-weekly-number="390"][data-weekly-card="Cabal Coffers"])[data-weekly-interacting="true"] .weekly-card-rest-shadow { animation-play-state: paused; }
+@keyframes msMorgulRestShadow { 0%,100% { transform: scaleX(.98); opacity: .72; } 48% { transform: scaleX(.85); opacity: .5; } }
 .morgul-art-glow { display: none; }
 :where(.weekly-theme-morgul[data-weekly-set="ltc"][data-weekly-number="390"][data-weekly-card="Cabal Coffers"]) .morgul-art-glow { display: block; position: absolute; inset: 0; z-index: 3; width: 100%; height: 100%; pointer-events: none; opacity: .56; mix-blend-mode: screen; animation: msMorgulArtPulse 17s ease-in-out infinite; }
 @keyframes msMorgulFloat {
-  0% { transform: perspective(1100px) translate3d(0,2px,0) rotateX(-1.6deg) rotateY(-2.2deg); }
-  48% { transform: perspective(1100px) translate3d(0,-4px,0) rotateX(1.3deg) rotateY(1deg); }
-  100% { transform: perspective(1100px) translate3d(0,0,0) rotateX(-.7deg) rotateY(2.4deg); }
+  0% { transform: translate3d(0,2px,var(--morgul-idle-z,8px)) rotateX(var(--morgul-idle-xa,2.2deg)) rotateY(var(--morgul-idle-ya,-4.5deg)); }
+  48% { transform: translate3d(0,var(--morgul-idle-lift,-5px),var(--morgul-idle-z,8px)) rotateX(var(--morgul-idle-xb,-1.6deg)) rotateY(var(--morgul-idle-yb,3.5deg)); }
+  100% { transform: translate3d(0,0,var(--morgul-idle-z,8px)) rotateX(var(--morgul-idle-xc,.8deg)) rotateY(var(--morgul-idle-yc,-2deg)); }
 }
 @keyframes msMorgulArtPulse { 0%,100% { opacity: .42; } 29% { opacity: .6; } 54% { opacity: .49; } 72% { opacity: .78; } 89% { opacity: .53; } }
-@media (max-width: 820px) { .weekly-card-float { width: min(275px,73vw); } }
-@media (max-width: 620px) { .weekly-card-float { width: min(245px,75vw); } }
-@media (max-width: 390px) { .weekly-card-float { width: min(225px,73vw); } }
+@media (max-width: 820px) {
+  .weekly-card-stage { width: min(255px,70vw); }
+  :where(.weekly-theme-morgul[data-weekly-set="ltc"][data-weekly-number="390"][data-weekly-card="Cabal Coffers"]) { --morgul-idle-z: 3px; --morgul-idle-lift: -3px; --morgul-idle-xa: .8deg; --morgul-idle-xb: -.7deg; --morgul-idle-xc: .4deg; --morgul-idle-ya: -1.5deg; --morgul-idle-yb: 1.7deg; --morgul-idle-yc: -.8deg; }
+  :where(.weekly-theme-morgul[data-weekly-set="ltc"][data-weekly-number="390"][data-weekly-card="Cabal Coffers"]) .weekly-card-column { min-height: 0; padding: 1.5rem 1.1rem 1.1rem; }
+  :where(.weekly-theme-morgul[data-weekly-set="ltc"][data-weekly-number="390"][data-weekly-card="Cabal Coffers"]) .weekly-printing { margin-top: .85rem; }
+  :where(.weekly-theme-morgul[data-weekly-set="ltc"][data-weekly-number="390"][data-weekly-card="Cabal Coffers"]) .weekly-story { padding-block: 1.6rem; }
+}
+@media (max-width: 620px) { .weekly-card-stage { width: min(228px,65vw); } }
+@media (max-width: 390px) { .weekly-card-stage { width: min(212px,64vw); } }
 /* Pause all decorative layers offscreen, in another tab or behind search. */
 [data-weekly-effects-paused="true"] *, [data-weekly-effects-paused="true"]::after,
 [data-weekly-effects-paused="true"] *::before, [data-weekly-effects-paused="true"] *::after { animation-play-state: paused !important; }
