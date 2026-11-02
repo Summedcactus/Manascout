@@ -440,6 +440,7 @@
 
   function errorState(message) {
     if (ui.details) {
+      disposePreview();
       ui.details.innerHTML = `
         <div
           class="empty-state"
@@ -539,146 +540,106 @@
     return true;
   }
 
-  function toggleFinish(card) {
-    if (!card?.id) {
-      return;
-    }
-
-    const available =
-      finishes(card);
-
-    const current =
-      selectedFinish(card);
-
-    const next =
-      current === "nonfoil"
-        ? available.includes("foil")
-          ? "foil"
-          : available.includes("etched")
-            ? "etched"
-            : "nonfoil"
-        : available.includes("nonfoil")
-          ? "nonfoil"
-          : current === "foil" &&
-            available.includes("etched")
-            ? "etched"
-            : available.includes("foil")
-              ? "foil"
-              : current;
-
-    chooseFinish(
-      card,
-      next
-    );
+  /* Only physical front/back image pairs belonging to this exact printing can flip. */
+  function reversibleFaces(card) {
+    if (!["transform", "modal_dfc", "reversible_card", "double_faced_token"].includes(card?.layout) || card.card_faces?.length !== 2) return [];
+    const result = card.card_faces.map((face, index) => {
+      try {
+        const url = new URL(face.image_uris?.normal || face.image_uris?.large || "");
+        const side = index ? "back" : "front";
+        if (url.protocol !== "https:" || url.hostname !== "cards.scryfall.io" || url.username || url.password || !url.pathname.includes(`/${side}/`) || !url.pathname.toLowerCase().endsWith(`/${String(card.id).toLowerCase()}.jpg`) && !url.pathname.toLowerCase().endsWith(`/${String(card.id).toLowerCase()}.png`)) return null;
+        return { src: url.href, name: face.name || `${card.name} (${side})` };
+      } catch { return null; }
+    });
+    return result.every(Boolean) && result[0].src !== result[1].src ? result : [];
   }
 
-  function foilControl(
-    card,
-    small = false
-  ) {
-    if (
-      !has(card, "foil") &&
-      !has(card, "etched")
-    ) {
-      return "";
-    }
-
-    const canNonfoil =
-      has(card, "nonfoil");
-
-    const canSwapFoil =
-      has(card, "foil") &&
-      has(card, "etched");
-
-    if (
-      !canNonfoil &&
-      !canSwapFoil
-    ) {
-      return "";
-    }
-
-    const on = shimmer(card);
-
-    const label = on
-      ? canNonfoil
-        ? "✕ Nonfoil"
-        : "✦ Change foil"
-      : "✦ Show foil";
-
-    return `
-      <button
-        type="button"
-        class="${small
-          ? "ms-thumb-toggle"
-          : "ms-finish-control"}"
-        data-ms-finish-toggle="${esc(card.id)}"
-        aria-label="${esc(label)}"
-        aria-pressed="${on}"
-        title="${esc(label)}"
-      >
-        ${small
-          ? canNonfoil
-            ? on
-              ? "✕"
-              : "✦"
-            : "↔"
-          : esc(label)}
-      </button>
-    `;
+  function foilControl(card, small = false) {
+    if (small || !shimmer(card) || !has(card, "nonfoil")) return "";
+    const label = `Use nonfoil finish for ${card.name}; turn off simulated foil`;
+    return `<button type="button" class="ms-surface-control ms-nonfoil-control" data-ms-nonfoil="${esc(card.id)}" aria-label="${esc(label)}" title="Use nonfoil"><span aria-hidden="true">×</span></button>`;
   }
 
-  function previewImage(
-    card,
-    small = false
-  ) {
-    const src =
-      img(
-        card,
-        small
-          ? "small"
-          : "normal"
-      );
+  function finishSelector(card) {
+    const available = finishes(card);
+    if (available.length < 2) return stat("Preview finish", available.length ? finishLabel(available[0]) : "Not supplied");
+    return `<div class="detail"><strong><label for="ms-selected-finish">Preview finish</label></strong><select id="ms-selected-finish" data-ms-selected-finish="${esc(card.id)}">${available.map(finish => `<option value="${esc(finish)}"${finish === selectedFinish(card) ? " selected" : ""}>${esc(finishLabel(finish))}</option>`).join("")}</select></div>`;
+  }
 
-    return `
-      <div
-        class="ms-preview ${small
-          ? "ms-thumb"
-          : "ms-card-image"}"
-        data-ms-preview="${esc(card.id || "")}"
-      >
-        ${src
-          ? `
-            <img
-              class="${small
-                ? "printing-card-image"
-                : "card-image"}"
-              src="${esc(src)}"
-              alt="${esc(card?.name)} — ${esc(card?.set_name)} #${esc(card?.collector_number)}"
-              ${small ? 'loading="lazy"' : ""}
-              decoding="async"
-            >
-          `
-          : `
-            <span class="muted">
-              Image unavailable
-            </span>
-          `}
+  function previewImage(card, small = false) {
+    const pair = small ? [] : reversibleFaces(card);
+    const src = pair[0]?.src || img(card, small ? "small" : "normal");
+    const glint = !small && shimmer(card) && src ? '<span class="ms-foil-glint" aria-hidden="true"></span>' : "";
+    const picture = (source, name, back = false) => `<span class="ms-card-face${back ? " ms-card-back" : ""}"${back ? ' aria-hidden="true"' : ""}><img class="${small ? "printing-card-image" : "card-image"}" src="${esc(source)}" alt="${esc(name)} — ${esc(card.set_name)} #${esc(card.collector_number)}"${small ? ' loading="lazy"' : ""} decoding="async" width="488" height="680">${glint}</span>`;
+    return `<div class="ms-preview ${small ? "ms-thumb" : "ms-card-image"}" data-ms-preview="${esc(card.id || "")}" data-ms-image-ready="false">
+      ${src ? `<div class="ms-face-turner" data-ms-face="front">${picture(src, pair[0]?.name || card.name)}${pair.length ? picture(pair[1].src, pair[1].name, true) : ""}</div>` : '<span class="muted">Image unavailable</span>'}
+      ${!small ? foilControl(card) : ""}
+      ${pair.length ? `<button class="ms-surface-control ms-flip-control" type="button" data-ms-flip="${esc(card.id)}" aria-label="${esc(`Flip to back: ${pair[1].name}`)}" aria-pressed="false" title="Flip card" disabled><span aria-hidden="true">↻</span></button><span class="ms-face-status" role="status" aria-live="polite"></span>` : ""}
+    </div>`;
+  }
 
-        ${shimmer(card) && src
-          ? `
-            <span
-              class="ms-foil-glint"
-              aria-hidden="true"
-            ></span>
-          `
-          : ""}
-
-        ${foilControl(
-          card,
-          small
-        )}
-      </div>
-    `;
+  let previewSession = null;
+  let effectObserver = null;
+  const effectHosts = new Set();
+  function observeCardEffects(container) {
+    if (!container?.querySelectorAll) return;
+    if (!effectObserver && typeof IntersectionObserver === "function") effectObserver = new IntersectionObserver(entries => {
+      for (const entry of entries) entry.target.dataset.msEffectsPaused = String(!entry.isIntersecting);
+    }, { rootMargin: "80px" });
+    for (const host of effectHosts) if (!host.isConnected) { effectObserver?.unobserve(host); effectHosts.delete(host); }
+    for (const glint of container.querySelectorAll(".ms-foil-glint")) {
+      const host = glint.closest(".ms-preview, .ms-thumb-frame");
+      if (host && !effectHosts.has(host)) { effectHosts.add(host); host.dataset.msEffectsPaused = String(!!effectObserver); effectObserver?.observe(host); }
+    }
+  }
+  function disposePreview() {
+    previewSession?.controller.abort();
+    previewSession = null;
+  }
+  function imageReady(image, signal) {
+    return new Promise((resolve, reject) => {
+      let timer;
+      const done = error => {
+        clearTimeout(timer); image.removeEventListener("load", loaded); image.removeEventListener("error", failed); signal.removeEventListener("abort", aborted);
+        error ? reject(error) : resolve();
+      };
+      const failed = () => done(Error("Artwork could not load."));
+      const aborted = () => done(Error("Preview changed."));
+      const loaded = () => image.naturalWidth ? done() : failed();
+      if (signal.aborted) return aborted();
+      if (image.complete) return loaded();
+      image.addEventListener("load", loaded, { once: true }); image.addEventListener("error", failed, { once: true }); signal.addEventListener("abort", aborted, { once: true });
+      timer = setTimeout(() => done(Error("Artwork loading timed out.")), 12000);
+    }).then(async () => {
+      if (typeof image.decode === "function") await image.decode();
+      if (signal.aborted) throw Error("Preview changed.");
+    });
+  }
+  function activatePreview(card) {
+    disposePreview();
+    const host = ui.details.querySelector?.(".ms-card-image");
+    if (!host) return;
+    const session = { host, id: card.id, controller: new AbortController(), side: 0, ready: false, faces: reversibleFaces(card) };
+    previewSession = session;
+    const images = [...host.querySelectorAll(".ms-card-face img")], button = host.querySelector("[data-ms-flip]"), status = host.querySelector(".ms-face-status");
+    const active = () => previewSession === session && host.isConnected;
+    if (images[0]) imageReady(images[0], session.controller.signal).then(() => { if (active()) host.dataset.msImageReady = "true"; }).catch(() => { if (active()) { host.dataset.msImageReady = "false"; showAction("Artwork could not load. The exact printing and card details remain available."); if (status) status.textContent = "Front artwork is unavailable; card details remain accessible."; } });
+    if (button && images.length === 2) Promise.all(images.map(image => imageReady(image, session.controller.signal))).then(() => {
+      if (!active()) return;
+      session.ready = true; button.disabled = false;
+    }).catch(() => { if (active()) { button.disabled = true; button.title = "Card flip unavailable — artwork could not load"; showAction("Both face images must load before flipping. The original front and exact printing are preserved."); status.textContent = "Both face images must load before flipping. The front and exact printing are preserved."; } });
+    observeCardEffects(ui.details);
+  }
+  function flipPreview(button) {
+    const session = previewSession;
+    if (!session?.ready || !session.host.isConnected || session.id !== currentCard?.id || button.dataset.msFlip !== session.id || !session.host.contains(button)) return;
+    session.side = 1 - session.side;
+    const back = session.side === 1, turner = session.host.querySelector(".ms-face-turner");
+    turner.dataset.msFace = back ? "back" : "front";
+    [...turner.querySelectorAll(".ms-card-face")].forEach((face, index) => face.setAttribute("aria-hidden", String(index !== session.side)));
+    button.setAttribute("aria-pressed", String(back));
+    button.setAttribute("aria-label", `Flip to ${back ? "front" : "back"}: ${session.faces[1 - session.side].name}`);
+    session.host.querySelector(".ms-face-status").textContent = `Showing ${back ? "back" : "front"}: ${session.faces[session.side].name}.`;
   }
 
 
@@ -811,6 +772,25 @@
       <div class="manascout-guide-link">
         <a href="/card/${esc(path)}/">
           ◇ View ManaScout Guide →
+        </a>
+      </div>
+    `;
+  }
+
+  function deckLink(card) {
+    if (!card?.id) return "";
+    const path = slug(card.name);
+    const query = new URLSearchParams({
+      card: card.name || "",
+      printing: card.id,
+      finish: selectedFinish(card)
+    });
+    if (GUIDE_SLUGS.has(path)) query.set("guide", `/card/${path}/`);
+    return `
+      <div class="manascout-guide-link">
+        <a data-build-deck href="/deck/?${esc(query.toString())}"
+          title="Open the Deck Studio preview with this exact printing">
+          Build a Deck →
         </a>
       </div>
     `;
@@ -956,7 +936,7 @@
             ${stat("Artist", card.artist)}
             ${stat("Language", LANGS[card.lang] || String(card.lang || "").toUpperCase())}
             ${stat("Available finishes", finishText(card))}
-            ${stat("Preview finish", finishLabel(selectedFinish(card)))}
+            ${finishSelector(card)}
             ${stat("Treatments", treatmentText(card))}
           </div>
 
@@ -1010,6 +990,7 @@
             `
             : ""}
 
+          ${deckLink(card)}
           ${guideLink(card)}
 
           ${marketplace(card)}
@@ -1051,6 +1032,8 @@
 
       </article>
     `;
+
+    activatePreview(card);
 
     announce(
       "card",
@@ -1916,7 +1899,7 @@
                 : "—"}
             </button>
 
-            ${shimmer(card) &&
+            ${chosen && shimmer(card) &&
               img(card, "small")
                 ? `
                   <span
@@ -1926,10 +1909,7 @@
                 `
                 : ""}
 
-            ${foilControl(
-              card,
-              true
-            )}
+
           </div>
 
         </td>
@@ -2556,6 +2536,8 @@
         `${rates ? "GBP estimates" : "source currencies"}` +
         `${result.complete ? "" : " · partial data"}`;
 
+      observeCardEffects(c.body);
+
       c.pages.innerHTML = `
         <span>
           Showing ${page.length} of ${list.length}
@@ -2647,40 +2629,6 @@
     c.body.addEventListener(
       "click",
       event => {
-        const toggle =
-          event.target.closest(
-            "[data-ms-finish-toggle]"
-          );
-
-        if (toggle) {
-          const target =
-            cards.find(
-              x =>
-                x.id ===
-                toggle.dataset.msFinishToggle
-            );
-
-          if (target) {
-            toggleFinish(target);
-
-            if (
-              state.selected?.id ===
-              target.id
-            ) {
-              renderCard(
-                target,
-                currentPick
-              );
-
-              replaceUrl(target);
-            }
-
-            update();
-          }
-
-          return;
-        }
-
         const button =
           event.target.closest(
             "[data-print-id]"
@@ -3356,51 +3304,36 @@
     }
   }
 
+  function updateSelectedFinish(finish) {
+    if (!currentCard || !chooseFinish(currentCard, finish)) return;
+    const card = currentCard;
+    renderCard(card, currentPick);
+    replaceUrl(card);
+    if (archive) {
+      const target = ui.printings?.querySelector(".is-selected-printing");
+      if (target) target.outerHTML = row(card, card, archive.rates);
+      observeCardEffects(ui.printings);
+    }
+    ui.details?.querySelector("[data-ms-selected-finish]")?.focus({ preventScroll: true });
+    showAction(`${finishLabel(finish)} selected for this exact printing.`);
+  }
+  document.addEventListener("change", event => {
+    const select = event.target.closest("[data-ms-selected-finish]");
+    if (select && ui.details?.contains(select) && currentCard?.id === select.dataset.msSelectedFinish) updateSelectedFinish(select.value);
+  });
+  document.body.dataset.msEffectsPaused = String(document.hidden);
+  document.addEventListener("visibilitychange", () => {
+    document.body.dataset.msEffectsPaused = String(document.hidden);
+  });
+
   document.addEventListener(
     "click",
     async event => {
-      const finish =
-        event.target.closest(
-          ".ms-card-image [data-ms-finish-toggle]"
-        );
-
-      if (
-        finish &&
-        currentCard?.id ===
-          finish.dataset.msFinishToggle
-      ) {
-        const card =
-          currentCard;
-
-        const pick =
-          currentPick;
-
-        toggleFinish(card);
-
-        renderCard(
-          card,
-          pick
-        );
-
-        replaceUrl(card);
-
-        if (archive) {
-          const target = [
-            ...ui.printings.querySelectorAll(
-              ".is-selected-printing"
-            )
-          ][0];
-
-          if (target) {
-            target.outerHTML =
-              row(
-                card,
-                card,
-                archive.rates
-              );
-          }
-        }
-
+      const flip = event.target.closest("[data-ms-flip]");
+      if (flip && ui.details?.contains(flip)) { flipPreview(flip); return; }
+      const nonfoil = event.target.closest("[data-ms-nonfoil]");
+      if (nonfoil && ui.details?.contains(nonfoil) && currentCard?.id === nonfoil.dataset.msNonfoil && shimmer(currentCard) && has(currentCard, "nonfoil")) {
+        updateSelectedFinish("nonfoil");
         return;
       }
 
@@ -3624,98 +3557,29 @@
       "ms-search-upgrade-styles";
 
     style.textContent = `
-      .ms-preview {
-        position: relative;
-        isolation: isolate;
-        display: inline-block;
-        max-width: 100%;
-        border-radius: 11px;
-        overflow: hidden;
-      }
-
-      .ms-preview > img {
-        display: block;
-        max-width: 100%;
-        height: auto;
-        border-radius: inherit;
-      }
-
-      .ms-card-image > .card-image {
-        width: 100%;
-        display: block;
-      }
-
-      .ms-foil-glint {
-        position: absolute;
-        inset: 0;
-        pointer-events: none;
-        border-radius: inherit;
-        mix-blend-mode: screen;
-        opacity: .38;
-        background:
-          linear-gradient(
-            110deg,
-            transparent 23%,
-            rgba(110,237,194,.12) 36%,
-            rgba(185,136,246,.22) 47%,
-            rgba(255,255,255,.35) 51%,
-            rgba(243,162,215,.16) 60%,
-            transparent 74%
-          );
-        background-size: 250% 100%;
-        animation:
-          msFoil 7s ease-in-out infinite;
-      }
-
-      @keyframes msFoil {
-        0%, 100% {
-          background-position: 100% 0;
-        }
-
-        50% {
-          background-position: 0 0;
-        }
-      }
-
-      .ms-finish-control,
-      .ms-thumb-toggle {
-        position: absolute;
-        z-index: 5;
-        cursor: pointer;
-        color: #ffd6dc;
-        background: rgba(17,10,15,.9);
-        border: 1px solid #cc6574;
-        box-shadow: 0 3px 12px #0008;
-      }
-
-      .ms-finish-control {
-        right: 7px;
-        top: 7px;
-        border-radius: 7px;
-        padding: 6px 8px;
-        font-size: 11px;
-      }
-
-      .ms-thumb-toggle {
-        right: 2px;
-        top: 2px;
-        border-radius: 50%;
-        width: 22px;
-        height: 22px;
-        font-size: 12px;
-      }
-
-      .ms-finish-control:disabled,
-      .ms-thumb-toggle:disabled {
-        cursor: default;
-        opacity: .8;
-      }
-
-      .ms-finish-control:focus-visible,
-      .ms-thumb-toggle:focus-visible {
-        outline: 2px solid #fff;
-        outline-offset: 2px;
-      }
+      .ms-preview { position: relative; isolation: isolate; display: inline-block; width: 100%; max-width: 100%; border-radius: 11px; overflow: hidden; perspective: 1100px; }
+      .ms-face-turner { position: relative; width: 100%; transform-style: preserve-3d; transform: rotateY(0deg); transition: transform .62s cubic-bezier(.3,.05,.25,1); }
+      .ms-face-turner[data-ms-face="back"] { transform: rotateY(180deg); }
+      .ms-card-face { position: relative; display: block; width: 100%; backface-visibility: hidden; -webkit-backface-visibility: hidden; border-radius: inherit; overflow: hidden; }
+      .ms-card-face img { display: block; width: 100%; height: auto; aspect-ratio: 488 / 680; object-fit: contain; }
+      .ms-card-back { position: absolute; inset: 0; transform: rotateY(180deg); }
+      .ms-card-back img { height: 100%; }
+      .ms-foil-glint { position: absolute; inset: -8% -60%; pointer-events: none; border-radius: inherit; mix-blend-mode: screen; opacity: .22; background: linear-gradient(110deg, transparent 23%, #6eedc21a 36%, #b988f626 47%, #ffffff38 51%, #f3a2d71a 60%, transparent 74%); animation: msFoil 11s ease-in-out infinite; }
+      @keyframes msFoil { 0%, 100% { transform: translate3d(-20%,0,0) rotate(1deg); } 50% { transform: translate3d(20%,0,0) rotate(-1deg); } }
+      .ms-preview[data-ms-image-ready="false"] .ms-foil-glint { visibility: hidden; animation-play-state: paused; }
+      [data-ms-effects-paused="true"] .ms-foil-glint { animation-play-state: paused; }
+      .ms-surface-control { position: absolute; z-index: 5; width: 44px; height: 44px; display: grid; place-items: center; padding: 10px; border: 0; background: transparent; color: #eee6e9; cursor: pointer; font: inherit; font-size: 16px; line-height: 1; touch-action: manipulation; }
+      .ms-surface-control::before { content: ""; position: absolute; inset: 10px; border-radius: 50%; border: 1px solid #a79a9f99; background: #0e1013dc; box-shadow: 0 2px 6px #0005; }
+      .ms-surface-control span { position: relative; }
+      .ms-flip-control { right: 2px; bottom: 6px; }
+      .ms-nonfoil-control { left: 2px; bottom: 6px; color: #ee8395; }
+      .ms-nonfoil-control::before { border-color: #b8586b; }
+      .ms-surface-control:hover::before { background: #252027; }
+      .ms-surface-control:focus-visible { outline: 2px solid #ebdce3; outline-offset: -4px; border-radius: 50%; }
+      .ms-surface-control:disabled { opacity: .45; cursor: wait; }
+      .ms-face-status { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+      #ms-selected-finish { max-width: 100%; min-height: 44px; margin-top: 4px; padding: 6px 10px; border: 1px solid #ffffff2b; border-radius: 7px; background: #171318; color: #f4e9ec; font: inherit; }
+      #ms-selected-finish:focus-visible { outline: 2px solid #d7768b; outline-offset: 2px; }
 
       .ms-thumb-frame {
         position: relative;
@@ -3898,9 +3762,8 @@
       }
 
       @media (prefers-reduced-motion:reduce) {
-        .ms-foil-glint {
-          animation: none !important;
-        }
+        .ms-foil-glint { animation: none !important; }
+        .ms-face-turner { transition: none !important; }
       }
     `;
 
