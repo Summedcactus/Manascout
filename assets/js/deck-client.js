@@ -2,6 +2,7 @@
 ((root) => {
   "use strict";
   const data = typeof module === "object" && module.exports ? require("./deck-data.js") : root.ManaScoutDeckData;
+  const formats = typeof module === "object" && module.exports ? require("./deck-formats.js") : root.ManaScoutDeckFormats;
   const API = "https://api.scryfall.com";
   const abortError = () => Object.assign(new Error("Request cancelled."), { name: "AbortError" });
   const pause = (ms, signal) => new Promise((resolve, reject) => {
@@ -63,8 +64,11 @@
       while (latest.size > 20000) latest.delete(latest.keys().next().value);
       return card;
     }
-    async function search(query, { signal, page = "" } = {}) {
-      const q = String(query).trim().slice(0, 300);
+    async function search(query, { signal, page = "", format = "commander" } = {}) {
+      const text = String(query).trim().slice(0, 300);
+      const profile = formats.get(format);
+      if (!profile) throw new data.SelectionError("Unsupported search format.");
+      const q = text ? `(${text}) game:${profile.platform}` : "";
       if (!q) return { cards: [], nextPage: "", total: 0 };
       let url = `${API}/cards/search?${new URLSearchParams({ q, unique: "cards", order: "name", include_extras: "false" })}`;
       if (page) {

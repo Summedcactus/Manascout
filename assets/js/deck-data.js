@@ -1,6 +1,7 @@
 /* Small data boundary shared by the studio controller and dependency-free tests. */
 ((root) => {
   "use strict";
+  const formats = typeof module === "object" && module.exports ? require("./deck-formats.js") : root.ManaScoutDeckFormats;
 
   const uuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
   const finishLabels = { nonfoil: "Nonfoil", foil: "Foil", etched: "Etched foil" };
@@ -42,6 +43,8 @@
     const oracle = card.oracle_text || (card.card_faces || []).map(face => [face.name, face.oracle_text].filter(Boolean).join("\n")).join("\n\n") || "Rules text not supplied.";
     const briefSource = card.oracle_text || card.card_faces?.[0]?.oracle_text || oracle;
     const firstLine = briefSource.split("\n").find(line => line.trim()) || "Rules text not supplied.";
+    const front = card.card_faces?.[0] || card;
+    const statuses = new Set(["legal", "not_legal", "banned", "restricted"]);
     return {
       id: selection.id, name: card.name, type: card.type_line || "Type not supplied",
       oracleId: uuid.test(card.oracle_id || "") ? card.oracle_id.toLowerCase() : "",
@@ -51,7 +54,9 @@
       colors: Array.isArray(card.colors) ? card.colors.filter(c => /^[WUBRG]$/.test(c)) : [],
       colorIdentity: Array.isArray(card.color_identity) && card.color_identity.every(c => /^[WUBRG]$/.test(c)) ? [...new Set(card.color_identity)] : null,
       keywords: Array.isArray(card.keywords) ? card.keywords.filter(k => typeof k === "string") : [],
-      legalities: { commander: card.legalities?.commander || "unknown", pauper: card.legalities?.pauper || "unknown" },
+      legalities: Object.fromEntries(formats.legalityKeys.map(key => [key, statuses.has(card.legalities?.[key]) ? card.legalities[key] : "unknown"])),
+      hasPrintedPT: typeof front.power === "string" && typeof front.toughness === "string",
+      isRebalanced: /^A-/.test(card.name),
       games: Array.isArray(card.games) ? card.games : [], layout: card.layout || "", oversized: !!card.oversized,
       borderColor: card.border_color || "", securityStamp: card.security_stamp || "",
       printingDataComplete: typeof card.oversized === "boolean" && typeof card.layout === "string" && !!card.layout && typeof card.border_color === "string" && !!card.border_color && Array.isArray(card.games) && typeof card.set === "string" && !!card.set && typeof card.collector_number === "string" && !!card.collector_number,

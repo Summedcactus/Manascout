@@ -2,6 +2,7 @@
 ((root) => {
   "use strict";
   const model = typeof module === "object" && module.exports ? require("./deck-model.js") : root.ManaScoutDeckModel;
+  const formats = typeof module === "object" && module.exports ? require("./deck-formats.js") : root.ManaScoutDeckFormats;
   const PREFIX = "manascout.deckstudio.v1.";
   const uuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
   const safeId = /^[a-zA-Z0-9-]{8,100}$/;
@@ -33,14 +34,15 @@
       summary: string(source.summary, 1000), finishes: string(source.finishes, 100), finishLabel: string(source.finishLabel, 60),
       finish: source.finish === "" || finishes.has(source.finish) ? source.finish : "",
       finishNotice: string(source.finishNotice, 1000, true), layout: string(source.layout, 80, true), borderColor: string(source.borderColor, 30, true),
-      securityStamp: string(source.securityStamp, 40, true), oversized: source.oversized === true, printingDataComplete: source.printingDataComplete === true };
+      securityStamp: string(source.securityStamp, 40, true), oversized: source.oversized === true, printingDataComplete: source.printingDataComplete === true,
+      hasPrintedPT: typeof source.hasPrintedPT === "boolean" ? source.hasPrintedPT : null, isRebalanced: source.isRebalanced === true || /^A-/.test(source.name) };
     c.colorIdentity = Array.isArray(source.colorIdentity) && source.colorIdentity.every(x => /^[WUBRG]$/.test(x)) ? [...new Set(source.colorIdentity)] : null;
     c.colors = Array.isArray(source.colors) ? source.colors.filter(x => /^[WUBRG]$/.test(x)) : [];
     c.games = Array.isArray(source.games) ? source.games.filter(x => ["paper", "mtgo", "arena"].includes(x)) : [];
     c.keywords = Array.isArray(source.keywords) && source.keywords.length <= 100 ? source.keywords.map(x => string(x, 200)) : [];
     c.availableFinishes = Array.isArray(source.availableFinishes) ? [...new Set(source.availableFinishes.filter(x => finishes.has(x)))] : [];
     c.legalities = {};
-    for (const format of ["commander", "pauper"]) c.legalities[format] = ["legal", "not_legal", "banned", "restricted", "unknown"].includes(source.legalities?.[format]) ? source.legalities[format] : "unknown";
+    for (const key of formats.legalityKeys) c.legalities[key] = ["legal", "not_legal", "banned", "restricted", "unknown"].includes(source.legalities?.[key]) ? source.legalities[key] : "unknown";
     if (!Array.isArray(source.images) || source.images.length > 8 || source.images.some(image => !image || typeof image !== "object")) invalid("A draft has invalid artwork records.");
     c.images = source.images.map(image => ({ name: string(image.name), url: url(image.url, ["cards.scryfall.io"]) })).filter(image => image.url);
     const slug = c.name.toLowerCase().replace(/['’]/g, "").replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
@@ -50,16 +52,18 @@
   }
   function sanitizeDeck(source) {
     if (!source || source.schemaVersion !== 1) invalid("This deck version is not supported. The original has not been changed.");
-    if (!safeId.test(source.id || "") || !["commander", "pauper"].includes(source.format) || !["artwork", "list"].includes(source.view)) invalid("A draft has an invalid identity, format or view.");
+    if (!safeId.test(source.id || "") || !formats.get(source.format) || !["artwork", "list"].includes(source.view)) invalid("A draft has an invalid identity, unsupported format or view. The original has not been changed.");
     if (!Array.isArray(source.entries) || source.entries.length > 2000 || !source.cards || typeof source.cards !== "object" || Array.isArray(source.cards) || Object.keys(source.cards).length > 2001) invalid("A draft exceeds the supported 2,000-entry workspace limit or has invalid card records.");
     const records = {};
     for (const [id, record] of Object.entries(source.cards)) records[id] = sanitizeCard(record, id);
     const seen = new Set();
     const entries = source.entries.map(e => {
-      if (!e || !records[e.printingId] || !finishes.has(e.finish) || !["main", "sideboard", "commander"].includes(e.zone) || !integer(e.quantity, 1, 10000)) invalid("A draft contains an invalid entry, quantity, finish or section.");
-      const key = model.entryKey(e.printingId, e.finish, e.zone);
+      if (!e || !records[e.printingId] || !finishes.has(e.finish) || !["main", "sideboard", "commander", "signature"].includes(e.zone) || !integer(e.quantity, 1, 10000)) invalid("A draft contains an invalid entry, quantity, finish or section.");
+      const assignedTo = e.zone === "signature" ? e.assignedTo || "" : "";
+      if (assignedTo && !uuid.test(assignedTo)) invalid("A signature spell has an invalid Oathbreaker reference.");
+      const key = model.entryKey(e.printingId, e.finish, e.zone, assignedTo);
       if (seen.has(key) || e.key !== key) invalid("A draft has duplicate or inconsistent entry keys.");
-      seen.add(key); return { key, printingId: e.printingId, finish: e.finish, zone: e.zone, quantity: e.quantity };
+      seen.add(key); return { key, printingId: e.printingId, finish: e.finish, zone: e.zone, quantity: e.quantity, ...(e.zone === "signature" ? { assignedTo } : {}) };
     });
     let selection = null;
     if (source.selection) {

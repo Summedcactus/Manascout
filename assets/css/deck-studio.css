@@ -361,3 +361,17 @@
 .deck-studio #deck-count { overflow-wrap: anywhere; }
 .deck-studio .ds-entry-controls { flex-wrap: wrap; min-width: 0; }
 .deck-studio .ds-entry-quantity { max-width: 100%; overflow-wrap: anywhere; }
+
+/* Format controls stay within the existing workspace and palette. */
+.deck-studio .ds-format { flex-wrap: wrap; flex: 1; min-width: 0; }
+.deck-studio .ds-primary-formats { display: flex; gap: 6px; flex-basis: 100%; }
+.deck-studio .ds-primary-formats button { min-height: 44px; padding: 7px 12px; background: var(--ds-slate); border: 1px solid var(--ds-line); border-radius: 8px; color: var(--ds-linen); font: inherit; cursor: pointer; }
+.deck-studio .ds-primary-formats button[aria-pressed="true"] { color: var(--ds-sage); border-color: var(--ds-sage); background: #8EA99A0D; }
+.deck-studio .ds-format select { max-width: min(100%, 260px); min-height: 44px; flex: 1; }
+.deck-studio #format-note { padding: 12px 26px 0; margin: 0; }
+.deck-studio .ds-signature-controls { display: grid; gap: 10px; margin-top: 12px; }
+.deck-studio .ds-signature-controls select { min-width: 0; max-width: 100%; min-height: 44px; color: var(--ds-linen); background: var(--ds-slate); border: 1px solid var(--ds-line); border-radius: 6px; padding: 8px; }
+@media (max-width: 820px) {
+  .deck-studio #format-note { padding-inline: 18px; font-size: 11px; }
+  .deck-studio .ds-deck-toolbar { align-items: flex-start; }
+}

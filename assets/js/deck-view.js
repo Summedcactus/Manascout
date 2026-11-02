@@ -1,6 +1,7 @@
 /* Small DOM-only renderers. All card strings are text, never HTML. */
 ((root) => {
   "use strict";
+  const formats = typeof module === "object" && module.exports ? require("./deck-formats.js") : root.ManaScoutDeckFormats;
   function node(tag, className = "", text = "") {
     const element = document.createElement(tag);
     if (className) element.className = className;
@@ -21,14 +22,15 @@
     return img;
   }
   function renderEntries(deck, container, { isVerified = () => false } = {}) {
+    const profile = formats.get(deck.format);
     const active = container.contains(document.activeElement) ? document.activeElement : null;
     const focus = active ? { key: active.dataset.key, action: active.dataset.action } : null;
     const fragment = document.createDocumentFragment();
-    for (const zone of ["commander", "main", "sideboard"]) {
+    for (const zone of ["commander", "signature", "main", "sideboard"]) {
       const entries = deck.entries.filter(e => e.zone === zone);
       if (!entries.length) continue;
       const section = node("section", "ds-deck-zone");
-      section.append(node("h3", "ds-zone-heading", `${zone === "commander" ? "Command zone" : zone === "sideboard" ? "Sideboard" : "Main deck"} · ${entries.reduce((n, e) => n + e.quantity, 0)}`));
+      section.append(node("h3", "ds-zone-heading", `${zone === "signature" ? "Signature spells" : zone === "commander" ? "Command zone" : zone === "sideboard" ? "Sideboard" : "Main deck"} · ${entries.reduce((n, e) => n + e.quantity, 0)}`));
       const grid = node("div", "ds-card-grid"); grid.dataset.view = deck.view;
       for (const entry of entries) {
         const card = deck.cards[entry.printingId];
@@ -40,15 +42,16 @@
         const controls = node("div", "ds-entry-controls");
         for (const [action, text, label] of [["decrease", "−", "Remove one copy of"], ["increase", "+", "Add one copy of"], ["remove", "×", "Remove all copies of"]]) {
           const b = button(action, text, entry.key); b.setAttribute("aria-label", `${label} ${card.name}`);
-          if (entry.zone === "commander" && action === "increase") b.disabled = true;
+          if (["commander", "signature"].includes(entry.zone) && action === "increase") b.disabled = true;
           if (action === "increase") controls.append(node("span", "ds-entry-quantity", String(entry.quantity)));
           controls.append(b);
         }
-        const status = node("p", "ds-entry-legality", !isVerified(card) ? "Legality needs recheck" : card.legalities[deck.format] === "legal" ? "Card legal in format" : card.legalities[deck.format] === "unknown" ? "Legality not supplied" : "Not legal in format");
+        const status = node("p", "ds-entry-legality", !isVerified(card) ? "Legality needs recheck" : !card.games?.includes(profile.platform) ? `Printing unavailable in ${profile.platform}` : formats.supportedLegality(card, profile) ? card.legalities[profile.legalityKey] === "restricted" ? "Restricted — maximum one" : "Card legal in format" : !card.legalities[profile.legalityKey] || card.legalities[profile.legalityKey] === "unknown" ? "Legality not supplied" : "Not legal in format");
         article.append(inspect, info, status, controls);
-        if (zone === "commander") {
+        if (zone === "signature") article.append(node("p", "ds-entry-meta", `For: ${deck.cards[entry.assignedTo]?.name || "Unassigned Oathbreaker"}`));
+        if (["commander", "signature"].includes(zone)) {
           const move = button("move-main", "Move one to main", entry.key); move.className = "ds-entry-move"; article.append(move);
-        } else if (deck.format === "pauper" || zone === "sideboard") {
+        } else if (profile.sideboard || zone === "sideboard") {
           const move = button(zone === "main" ? "move-sideboard" : "move-main", zone === "main" ? "To sideboard" : "To main deck", entry.key); move.className = "ds-entry-move"; article.append(move);
         }
         grid.append(article);

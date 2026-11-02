@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#0D1117">
   <title>Deck Studio — Build Your MTG Deck | ManaScout</title>
-  <meta name="description" content="Build Commander or Pauper decks with ManaScout. Search cards, keep exact printings, check construction, view stats and save local drafts with JSON backups.">
+  <meta name="description" content="Build Commander, Standard and other Constructed decks with ManaScout. Search cards, keep exact printings, check construction, view stats and save local drafts with JSON backups.">
   <meta name="robots" content="index,follow">
   <link rel="canonical" href="https://manascout.co.uk/deck/">
   <meta property="og:type" content="website">
@@ -14,17 +14,18 @@
   <meta property="og:url" content="https://manascout.co.uk/deck/">
   <meta property="og:site_name" content="ManaScout">
   <meta name="twitter:card" content="summary">
-  <link rel="stylesheet" href="/assets/css/deck-studio.css?v=5bc1">
+  <link rel="stylesheet" href="/assets/css/deck-studio.css?v=5d1">
   <script type="application/ld+json">
   {"@context":"https://schema.org","@type":"WebPage","name":"ManaScout Deck Studio","url":"https://manascout.co.uk/deck/","description":"ManaScout's artwork-first deck workspace with exact-printing card search and manual deck editing.","isPartOf":{"@type":"WebSite","name":"ManaScout","url":"https://manascout.co.uk/"}}
   </script>
-  <script src="/assets/js/deck-data.js?v=5bc1" defer></script>
-  <script src="/assets/js/deck-model.js?v=5bc1" defer></script>
-  <script src="/assets/js/deck-client.js?v=5bc1" defer></script>
-  <script src="/assets/js/deck-rules.js?v=5bc1" defer></script>
-  <script src="/assets/js/deck-view.js?v=5bc1" defer></script>
-  <script src="/assets/js/deck-store.js?v=5bc1" defer></script>
-  <script src="/assets/js/deck-studio.js?v=5bc1" defer></script>
+  <script src="/assets/js/deck-formats.js?v=5d1" defer></script>
+  <script src="/assets/js/deck-data.js?v=5d1" defer></script>
+  <script src="/assets/js/deck-model.js?v=5d1" defer></script>
+  <script src="/assets/js/deck-client.js?v=5d1" defer></script>
+  <script src="/assets/js/deck-rules.js?v=5d1" defer></script>
+  <script src="/assets/js/deck-view.js?v=5d1" defer></script>
+  <script src="/assets/js/deck-store.js?v=5d1" defer></script>
+  <script src="/assets/js/deck-studio.js?v=5d1" defer></script>
 </head>
 <body class="deck-studio" data-active-panel="deck">
   <a class="ds-skip" href="#deck-heading">Skip to deck workspace</a>
@@ -58,7 +59,7 @@
           <datalist id="studio-suggestions"></datalist>
         </form>
         <p class="ds-note" id="discover-note">Search names or Scryfall syntax. Quick Add keeps your place; select artwork for details.</p>
-        <label class="ds-label ds-search-zone" for="search-zone">Add to <select id="search-zone"><option value="main">Main deck</option><option value="sideboard" disabled>Sideboard (Pauper)</option></select></label>
+        <label class="ds-label ds-search-zone" for="search-zone">Add to <select id="search-zone"><option value="main">Main deck</option><option value="sideboard" disabled>Sideboard</option></select></label>
         <p class="ds-note ds-search-status" id="search-status" role="status" aria-live="polite">Type at least two characters, or press Search.</p>
         <div id="search-results" class="ds-search-results" aria-label="Card search results"></div>
         <button class="ds-button ds-secondary" id="search-more" type="button" hidden>Show more results</button>
@@ -78,8 +79,8 @@
     <section class="ds-panel ds-deck" id="studio-deck" aria-labelledby="deck-heading">
       <div class="ds-deck-top"><div class="ds-deck-title"><p class="ds-eyebrow">YOUR WORKSPACE</p><h2 id="deck-heading" class="ds-sr-only" tabindex="-1">Deck workspace</h2><label class="ds-sr-only" for="deck-name">Deck name</label><input id="deck-name" type="text" value="Untitled deck" maxlength="80" spellcheck="false" aria-describedby="deck-state"></div><span class="ds-unsaved" id="deck-state" role="status">Not saved</span></div>
       <div class="ds-draft-bar"><label class="ds-sr-only" for="saved-decks">Switch saved deck</label><select id="saved-decks"><option value="">Current unsaved draft</option></select><button type="button" class="ds-button ds-secondary" id="new-deck">New</button><button type="button" class="ds-button ds-primary" id="save-deck">Save Deck</button></div>
-      <div class="ds-deck-toolbar"><div class="ds-format"><label for="deck-format">Format</label><select id="deck-format" aria-describedby="format-note"><option value="commander">Commander</option><option value="pauper">Pauper</option></select></div><div class="ds-view-controls" role="group" aria-label="Deck view"><button class="ds-icon" type="button" id="view-artwork" aria-pressed="true" aria-label="Artwork view" title="Artwork view">▦</button><button class="ds-icon" type="button" id="view-list" aria-pressed="false" aria-label="List view" title="List view">☷</button></div></div>
-      <p class="ds-sr-only" id="format-note">Changing format preserves every card and updates construction warnings. Commander includes its commanders in 100 cards; Pauper needs at least 60 main-deck cards.</p>
+      <div class="ds-deck-toolbar"><div class="ds-format"><div class="ds-primary-formats" role="group" aria-label="Popular formats"><button type="button" id="format-commander" aria-pressed="true">Commander</button><button type="button" id="format-standard" aria-pressed="false">Standard</button></div><label for="deck-format">Format</label><select id="deck-format" aria-describedby="format-note"><option value="commander">Commander</option><option value="pauper">Pauper</option></select></div><div class="ds-view-controls" role="group" aria-label="Deck view"><button class="ds-icon" type="button" id="view-artwork" aria-pressed="true" aria-label="Artwork view" title="Artwork view">▦</button><button class="ds-icon" type="button" id="view-list" aria-pressed="false" aria-label="List view" title="List view">☷</button></div></div>
+      <p class="ds-note" id="format-note">Changing format preserves every card and updates construction warnings.</p>
 
       <div class="ds-canvas">
         <p class="ds-deck-message" id="deck-message" role="status" aria-live="polite"></p>
@@ -108,12 +109,12 @@
       <div class="ds-panel-top"><div><p class="ds-eyebrow">02 / THE BIG PICTURE</p><h2 id="stats-heading" tabindex="-1">Deck insights</h2></div><button class="ds-icon ds-collapse" type="button" data-collapse="stats-body" aria-expanded="true" aria-controls="stats-body" aria-label="Collapse Deck insights panel" hidden>−</button></div>
       <div class="ds-panel-body" id="stats-body">
         <p class="ds-validity" id="deck-validity" role="status" aria-live="polite">Incomplete deck</p>
-        <dl class="ds-stat-list"><div><dt id="stat-count-label">Deck size</dt><dd id="stat-count">0 / 100</dd></div><div><dt>Average mana value</dt><dd id="stat-average">—</dd></div><div><dt>Lands</dt><dd id="stat-lands">0</dd></div><div><dt>Creatures</dt><dd id="stat-creatures">0</dd></div><div><dt>Commanders</dt><dd id="stat-commanders">0</dd></div><div><dt>Sideboard</dt><dd id="stat-sideboard">0</dd></div></dl>
+        <dl class="ds-stat-list"><div><dt id="stat-count-label">Deck size</dt><dd id="stat-count">0 / 100</dd></div><div><dt>Average mana value</dt><dd id="stat-average">—</dd></div><div><dt>Lands</dt><dd id="stat-lands">0</dd></div><div><dt>Creatures</dt><dd id="stat-creatures">0</dd></div><div><dt id="stat-leader-label">Commanders</dt><dd id="stat-commanders">0</dd></div><div id="stat-signature-row" hidden><dt>Signature spells</dt><dd id="stat-signatures">0</dd></div><div><dt>Sideboard</dt><dd id="stat-sideboard">0</dd></div></dl>
         <div class="ds-stats-section"><h3>Mana curve</h3><ol id="mana-curve" class="ds-mana-curve" aria-label="Nonland card count by mana value"></ol><p class="ds-note" id="curve-note">Add nonland cards to see a mana curve.</p></div>
-        <details class="ds-stats-section"><summary>Colours &amp; card types</summary><h3>Colour identity</h3><dl id="color-distribution" class="ds-breakdown"></dl><h3>Card types</h3><dl id="type-breakdown" class="ds-breakdown"></dl><p class="ds-note">Quantity-weighted. Types use the front face (combined types for split cards); a card may count in several groups. Sideboard excluded; Commander includes its command zone.</p></details>
+        <details class="ds-stats-section"><summary>Colours &amp; card types</summary><h3>Colour identity</h3><dl id="color-distribution" class="ds-breakdown"></dl><h3>Card types</h3><dl id="type-breakdown" class="ds-breakdown"></dl><p class="ds-note">Quantity-weighted. Types use the front face (combined types for split cards); a card may count in several groups. Sideboard excluded; required command-zone cards and signature spells are included.</p></details>
         <details class="ds-stats-section ds-warning-list" id="deck-warning-details" open><summary id="deck-warning-summary">Construction warnings</summary><ul id="deck-issues"></ul></details>
         <button class="ds-button ds-secondary ds-recheck" id="refresh-card-data" type="button">Recheck current card data</button><p class="ds-note" id="data-check-status">Card data and commander checks expire after 15 minutes. Restored decks must be rechecked.</p>
-        <details class="ds-stats-section"><summary>Rules &amp; supported configurations</summary><p class="ds-note">Multiplayer Commander and paper Pauper. Supports Partner, the four recognised named Partner variants, Partner with, Choose a Background and Doctor’s companion. Pregame colour-choice commanders, additional companions, Commander Draft, brackets and custom Rule 0 combinations are not supported. No deck is declared complete while required data or checks are missing.</p><a class="ds-text-link" href="https://magic.wizards.com/en/formats/commander" target="_blank" rel="noopener noreferrer">Commander rules ↗</a><a class="ds-text-link" href="https://magic.wizards.com/en/formats/pauper" target="_blank" rel="noopener noreferrer">Pauper rules ↗</a></details>
+        <details class="ds-stats-section"><summary>Rules &amp; supported configurations</summary><p class="ds-note">Construction checks use current Scryfall legality and the exact printing’s game availability. Arena 60-card profiles cover Traditional (best-of-three), not event-specific or best-of-one rules. Commander pairing support is preserved. A passing construction check is not an event registration guarantee.</p><a id="format-source" class="ds-text-link" href="https://magic.wizards.com/en/formats/commander" target="_blank" rel="noopener noreferrer">Selected format rules ↗</a><h3>Not supported</h3><ul id="unsupported-formats" class="ds-note"></ul><p class="ds-note">Companions, pregame colour-choice commanders, brackets and custom Rule 0 combinations are not certified. Missing or stale data prevents a passing result.</p></details>
         <div class="ds-tools"><h3>Local drafts &amp; backups</h3><p class="ds-note" id="tools-note">Autosaves after edits pause. Rename in the deck-name field. Drafts stay in this browser; they are not backed up across devices.</p><p class="ds-save-message" id="save-status-message" role="status">Your new draft has not been saved yet.</p><div class="ds-tool-buttons"><button class="ds-button ds-secondary" type="button" id="save-copy">Save a copy</button><button class="ds-button ds-secondary" type="button" id="reload-deck" disabled>Reload saved</button><button class="ds-button ds-secondary" type="button" id="delete-deck" disabled>Delete deck</button><button class="ds-button ds-secondary" type="button" id="download-backup">JSON backup</button><button class="ds-button ds-secondary" type="button" id="restore-backup">Restore JSON</button></div><input id="backup-file" type="file" accept=".json,application/json" aria-label="Choose a ManaScout JSON backup" hidden></div>
         <details class="ds-stats-section"><summary>Recent recovery versions</summary><p class="ds-note">Recover a previous snapshot as a new draft. The existing saved deck is not replaced. Deleted decks remain recoverable here until you erase their backups.</p><label class="ds-sr-only" for="recovery-versions">Choose a recovery version</label><select id="recovery-versions"><option value="">Choose a version</option></select><button class="ds-button ds-secondary" type="button" id="recover-version" disabled>Restore as a new draft</button><button class="ds-button ds-secondary" type="button" id="erase-recovery" disabled>Erase deleted-deck backups</button></details>
         <p class="ds-integrity-note">Construction checks use current Scryfall status, not printed rarity. Clearing site data or using private browsing can remove local drafts. Download JSON backups for safekeeping.</p>
@@ -135,9 +136,10 @@
       <p class="ds-legality-note" id="preview-legality" role="status"></p>
       <dl class="ds-printing-facts"><div><dt>Mana value</dt><dd id="preview-mv"></dd></div><div><dt>Printing</dt><dd id="preview-printing"></dd></div><div><dt>Artist</dt><dd id="preview-artist"></dd></div><div><dt>Preview finish</dt><dd id="preview-finish"></dd></div></dl>
       <p class="ds-note" id="preview-note"></p>
-      <div class="ds-preview-quantity"><label for="preview-quantity">Copies to add</label><input id="preview-quantity" type="number" value="1" min="1" max="10000" inputmode="numeric"><label for="preview-zone">Section</label><select id="preview-zone"><option value="main">Main deck</option><option value="sideboard" disabled>Sideboard (Pauper)</option></select></div>
+      <div class="ds-preview-quantity"><label for="preview-quantity">Copies to add</label><input id="preview-quantity" type="number" value="1" min="1" max="10000" inputmode="numeric"><label for="preview-zone">Section</label><select id="preview-zone"><option value="main">Main deck</option><option value="sideboard" disabled>Sideboard</option></select></div>
       <div class="ds-preview-actions"><button class="ds-button ds-primary" type="button" id="preview-add">Add to deck +</button><button class="ds-button ds-secondary" type="button" id="preview-remove" disabled>Remove one</button></div>
       <button class="ds-button ds-secondary ds-commander-action" id="preview-commander" type="button">Check commander eligibility</button>
+      <div id="signature-controls" class="ds-signature-controls" hidden><label class="ds-label" for="signature-owner">Signature spell for</label><select id="signature-owner" aria-describedby="signature-note"></select><button class="ds-button ds-secondary" id="preview-signature" type="button">Assign signature spell</button><p class="ds-note" id="signature-note">One instant or sorcery per Oathbreaker, within that Oathbreaker’s own colour identity.</p></div>
       <button class="ds-button ds-secondary ds-future-printing" type="button" disabled aria-describedby="preview-actions-note">Change printing · coming later</button>
       <p class="ds-note" id="preview-actions-note">Adds this exact printing and finish. Illegal cards remain visible with warnings. Use the separate commander action to assign one.</p>
       <p class="ds-note" id="preview-save-status" role="status">Changes are saved only in this browser.</p>

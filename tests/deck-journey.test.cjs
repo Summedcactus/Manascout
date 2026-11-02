@@ -15,7 +15,7 @@ function api(){
   calls.push({url,options});const u=new URL(url);let value,status=200;
   if(u.pathname==='/cards/collection') { const ids=JSON.parse(options.body).identifiers.map(c=>c.id);value={data:records.filter(c=>ids.includes(c.id))}; }
   else if(u.pathname==='/cards/search') {
-   const q=u.searchParams.get('q');const eligible=q.includes('is:commander');const matches=eligible?records.filter(c=>q.includes(c.oracle_id)&&c.id===commander.id):records.filter(c=>c.name.toLowerCase().includes(q.toLowerCase()));
+   const q=u.searchParams.get('q').replace(/^\((.*)\) game:(paper|arena)$/,'$1');const eligible=q.includes('is:commander');const matches=eligible?records.filter(c=>q.includes(c.oracle_id)&&c.id===commander.id):records.filter(c=>c.name.toLowerCase().includes(q.toLowerCase()));
    if(!matches.length)status=404;value={data:matches,has_more:false,total_cards:matches.length};
   }else if(u.pathname.startsWith('/cards/'))value=records.find(c=>u.pathname==='/cards/'+c.id);
   if(!value)status=404;return {ok:status===200,status,json:async()=>value};
