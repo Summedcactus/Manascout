@@ -816,6 +816,25 @@
     `;
   }
 
+  function deckLink(card) {
+    if (!card?.id) return "";
+    const path = slug(card.name);
+    const query = new URLSearchParams({
+      card: card.name || "",
+      printing: card.id,
+      finish: selectedFinish(card)
+    });
+    if (GUIDE_SLUGS.has(path)) query.set("guide", `/card/${path}/`);
+    return `
+      <div class="manascout-guide-link">
+        <a data-build-deck href="/deck/?${esc(query.toString())}"
+          title="Open the Deck Studio preview with this exact printing">
+          Build a Deck →
+        </a>
+      </div>
+    `;
+  }
+
   function marketplace(card) {
     const name =
       encodeURIComponent(
@@ -1010,6 +1029,7 @@
             `
             : ""}
 
+          ${deckLink(card)}
           ${guideLink(card)}
 
           ${marketplace(card)}
