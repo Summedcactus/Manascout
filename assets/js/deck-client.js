@@ -15,7 +15,9 @@
     let queue = Promise.resolve();
     let lastStart = -Infinity;
     const cache = new Map();
-    const verified = new Map();
+    const verified = new WeakMap();
+    const latest = new Map();
+    let generation = 0;
     const proofs = new Map();
     function cached(key, task, ttl = 300000) {
       const hit = cache.get(key);
@@ -56,7 +58,9 @@
     }
     function remember(raw, selection = {}) {
       const card = data.normaliseCard(raw, { id: raw.id?.toLowerCase(), ...selection });
-      verified.set(card.id, { card, time: now() });
+      latest.delete(card.id); latest.set(card.id, ++generation);
+      verified.set(card, { generation, time: now() });
+      while (latest.size > 20000) latest.delete(latest.keys().next().value);
       return card;
     }
     async function search(query, { signal, page = "" } = {}) {
@@ -106,7 +110,7 @@
     }
     async function refresh(cards, { signal } = {}) {
       const updated = [];
-      for (const card of cards) verified.delete(card.id);
+      for (const card of cards) latest.delete(card.id);
       for (let i = 0; i < cards.length; i += 75) {
         const result = await request(`${API}/cards/collection`, { signal, method: "POST", body: { identifiers: cards.slice(i, i + 75).map(card => ({ id: card.id })) } });
         if (!Array.isArray(result.data)) throw new data.SelectionError("The current-card check returned incomplete data.", true);
@@ -118,7 +122,7 @@
       return updated;
     }
     return { search, autocomplete, printing, commanderEligibility, refresh,
-      isVerified: card => verified.get(card.id)?.card === card && now() - verified.get(card.id).time < 900000,
+      isVerified: card => { const check = verified.get(card); return !!check && latest.get(card.id) === check.generation && now() - check.time < 900000; },
       proof: card => { const p = proofs.get(card.oracleId); return p && now() - p.time < 900000 ? p.eligible : null; },
       clearProofs: () => proofs.clear() };
   }

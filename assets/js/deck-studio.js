@@ -6,9 +6,10 @@
   const client = window.ManaScoutDeckClient?.createClient();
   const view = window.ManaScoutDeckView;
   const rules = window.ManaScoutDeckRules;
+  const persistence = window.ManaScoutDeckStore;
   const $ = id => document.getElementById(id);
   const body = document.body;
-  if (!body.classList.contains("deck-studio") || !data || !model || !client || !view || !rules) return;
+  if (!body.classList.contains("deck-studio") || !data || !model || !client || !view || !rules || !persistence) return;
 
   const mobile = window.matchMedia("(max-width: 820px)");
   const panels = { deck: $("studio-deck"), discover: $("studio-discover"), stats: $("studio-stats") };
@@ -26,8 +27,15 @@
   let face = 0;
   let loading = false;
   let returnFocus = null;
+  let returnFocusKey = null;
   const eligibilityJobs = new Map();
   const eligibilityErrors = new Map();
+  let storage;
+  try { storage = window.localStorage; } catch { /* Editing and JSON backup remain available. */ }
+  const store = persistence.createStore({ storage });
+  let savedToken = null, dirty = false, storagePaused = false, saveTimer = 0, savePromise = null;
+  let lastSaveError = "", recoveryRows = [];
+  let lastCheckpoint = "";
 
   function syncLayout() {
     body.dataset.activePanel = activePanel;
@@ -99,6 +107,7 @@
       return;
     }
     returnFocus = trigger || document.querySelector("#inspiration [data-open-preview]");
+    returnFocusKey = returnFocus?.dataset.key ? { key: returnFocus.dataset.key, action: returnFocus.dataset.action } : null;
     if (!preview.open) preview.showModal();
   }
   for (const trigger of document.querySelectorAll("[data-open-preview]")) trigger.addEventListener("click", () => openPreview(trigger));
@@ -106,7 +115,10 @@
   $("back-to-workspace").addEventListener("click", closePreview);
   preview.addEventListener("close", () => {
     if (returnFocus?.isConnected && returnFocus.getClientRects().length) returnFocus.focus({ preventScroll: true });
-    else headings[activePanel].focus({ preventScroll: true });
+    else {
+      const replacement = returnFocusKey && [...document.querySelectorAll("button[data-action]")].find(button => button.dataset.key === returnFocusKey.key && button.dataset.action === returnFocusKey.action && button.getClientRects().length);
+      (replacement || headings[activePanel]).focus({ preventScroll: true });
+    }
   });
   preview.addEventListener("click", event => {
     if (event.target !== preview) return;
@@ -150,7 +162,7 @@
       "preview-name": card.name, "preview-type": card.type, "preview-mv": card.manaValue,
       "preview-printing": printing, "preview-artist": card.artist, "preview-finish": finish === "nonfoil" ? "Nonfoil" : finish === "etched" ? "Etched foil" : finish === "foil" ? "Foil" : "Not supplied",
       "preview-finishes": card.finishes, "preview-language": card.language, "preview-released": card.released,
-      "preview-id": card.id, "preview-oracle": card.oracle, "preview-brief": card.summary, "preview-note": card.finishNotice
+      "preview-id": card.id, "preview-oracle": card.oracle, "preview-brief": card.summary, "preview-note": card.availableFinishes.includes(finish) ? card.finishNotice : "The selected finish is not listed as available for this printing. Any saved entry is preserved; adding that finish is disabled."
     };
     for (const [id, value] of Object.entries(values)) $(id).textContent = value;
     setImage($("inspiration-image"), card.images[0], `${card.name} selected printing`);
@@ -164,6 +176,9 @@
     $("discover-selection").hidden = false;
     $("inspiration").hidden = false;
     $("selection-status").textContent = "Selected printing loaded. Use Add to deck to include it.";
+    const entryMetadataChanged = deck.cards[card.id] && deck.cards[card.id] !== card && deck.entries.some(entry => entry.printingId === card.id);
+    const selectedDeck = model.select(deck, card, currentFinish);
+    if (selectedDeck !== deck) { deck = selectedDeck; dirty = true; scheduleSave(); if (entryMetadataChanged) renderDeck(); }
     renderPreviewActions();
     if (deck.format === "commander" && !rules.background(card)) checkCommander(card);
   }
@@ -184,6 +199,11 @@
     $("selection-status").textContent = "Loading your exact printing from Scryfall…";
     try {
       renderCard(await client.printing(selection));
+      if (window.history?.replaceState && window.location.href) {
+        const url = new URL(window.location.href);
+        for (const parameter of ["card", "printing", "finish", "guide"]) url.searchParams.delete(parameter);
+        window.history.replaceState({}, "", url.href);
+      }
       // Opening a handoff preview is intentional; navigation and the empty deck remain intact.
       openPreview();
     } catch (error) { showError(error); }
@@ -196,7 +216,7 @@
   $("retry-printing").addEventListener("click", loadSelection);
   function message(text) { $("deck-message").textContent = text; }
   function commitState(next, text = "") {
-    deck = next;
+    if (next !== deck) { deck = next; dirty = true; scheduleSave(); }
     renderDeck();
     const warning = rules.validate(deck, client).issues.find(i => i.severity === "error" || i.severity === "unsupported");
     message((text || "Deck updated.") + (warning ? ` Warning: ${warning.message}` : ""));
@@ -204,11 +224,17 @@
   function renderPreviewActions() {
     if (!current) return;
     const zone = $("preview-zone").value || "main";
-    const entry = deck.entries.find(e => e.printingId === current.id && e.finish === currentFinish && e.zone === zone);
+    const entry = previewEntry();
     $("preview-remove").disabled = !entry;
-    $("preview-add").disabled = !currentFinish;
-    $("preview-context").textContent = entry ? `${entry.quantity} ${entry.quantity === 1 ? "copy" : "copies"} of this printing and finish in ${zone === "main" ? "the main deck" : "the sideboard"}.` : "Selected printing. This version has not been added to this section.";
+    $("preview-remove").textContent = entry?.zone === "commander" ? "Remove commander" : "Remove one";
+    $("preview-add").disabled = !current.availableFinishes.includes(currentFinish);
+    $("preview-context").textContent = entry?.zone === "commander" ? "This exact printing and finish is assigned as a commander. Add to deck places any additional copies in the main deck." : entry ? `${entry.quantity} ${entry.quantity === 1 ? "copy" : "copies"} of this printing and finish in ${zone === "main" ? "the main deck" : "the sideboard"}.` : "Selected printing. This version has not been added to this section.";
     renderCommanderAction();
+  }
+  function previewEntry() {
+    if (!current) return null;
+    const matches = e => e.printingId === current.id && e.finish === currentFinish;
+    return deck.entries.find(e => matches(e) && e.zone === ($("preview-zone").value || "main")) || deck.entries.find(e => matches(e) && e.zone === "commander") || null;
   }
   function renderDeck() {
     if (document.activeElement !== $("deck-name")) $("deck-name").value = deck.name;
@@ -223,7 +249,7 @@
     const count = model.count(deck);
     $("empty-deck").hidden = count > 0;
     $("deck-entries").hidden = count === 0;
-    $("deck-count").textContent = count ? `${count} ${count === 1 ? "card" : "cards"} · ${deck.format === "commander" ? "Commander" : "Pauper"}` : "No cards added";
+    $("deck-count").textContent = deck.format === "commander" ? `${model.count(deck, "main") + model.count(deck, "commander")} / 100 · Commander${model.count(deck, "sideboard") ? ` · ${model.count(deck, "sideboard")} sideboard (not allowed)` : ""}` : `${model.count(deck, "main")} / 60+ main · ${model.count(deck, "sideboard")} / 15 side`;
     view.renderEntries(deck, $("deck-entries"), client);
     renderPreviewActions();
     renderStatistics();
@@ -241,7 +267,7 @@
     catch (error) { message(error.message); }
   });
   $("preview-remove").addEventListener("click", () => {
-    const entry = deck.entries.find(e => e.printingId === current?.id && e.finish === currentFinish && e.zone === ($("preview-zone").value || "main"));
+    const entry = previewEntry();
     if (entry) commitState(model.setQuantity(deck, entry.key, entry.quantity - 1), `Removed one ${current.name}.`);
   });
   $("deck-entries").addEventListener("click", event => {
@@ -369,6 +395,7 @@
     $("preview-legality").textContent = note;
     if (eligibilityErrors.has(current.oracleId)) $("preview-legality").textContent += ` Last eligibility check failed: ${eligibilityErrors.get(current.oracleId)}`;
     $("preview-add").textContent = deck.format === "commander" && proof === false && commanderCards().length < 2 ? "Add to the 99 +" : "Add to deck +";
+    if (commanderCards().some(card => card.id === current.id)) { button.disabled = true; button.textContent = "Assigned as commander"; }
   }
   async function checkCommander(card) {
     if (!client.isVerified(card) || rules.background(card) || client.proof(card) !== null) return;
@@ -405,7 +432,7 @@
   });
   let refreshing = false;
   async function refreshDeckData() {
-    if (refreshing || !deck.entries.length) return;
+    if (refreshing || !Object.keys(deck.cards).length) return;
     const deckId = deck.id;
     refreshing = true; $("refresh-card-data").disabled = true; $("data-check-status").textContent = "Checking current card data…";
     client.clearProofs();
@@ -414,6 +441,7 @@
       if (deck.id !== deckId) return;
       commitState(model.replaceRecords(deck, fresh));
       for (const commander of commanderCards()) if (!rules.background(commander) && client.isVerified(commander)) await checkCommander(commander);
+      if (deck.id !== deckId) return;
       $("data-check-status").textContent = `${fresh.length} printing records rechecked. Any missing records or unsupported configurations remain flagged.`;
       if (current && deck.cards[current.id]) renderCard(deck.cards[current.id], currentFinish);
     } catch (error) { if (deck.id === deckId) $("data-check-status").textContent = error.message + " Cached entries are preserved; current legality is unverified."; }
@@ -421,9 +449,194 @@
   }
   $("refresh-card-data").addEventListener("click", refreshDeckData);
   setInterval(() => { renderStatistics(); renderPreviewActions(); }, 60000);
-  renderDeck();
+  function setSaveStatus(short, detail = "") {
+    $("deck-state").textContent = short;
+    $("deck-state").dataset.state = short === "Saved locally" ? "saved" : dirty ? "unsaved" : "memory";
+    $("save-status-message").textContent = detail || short;
+    $("preview-save-status").textContent = detail || short;
+  }
+  function renderLibrary() {
+    const chosenRecovery = $("recovery-versions").value;
+    let rows = [];
+    try { const library = store.list(); rows = library.decks; if (library.issues.length) $("save-status-message").textContent += ` ${library.issues.length} damaged/unsupported saved records were preserved; check recovery versions or restore a JSON backup.`; }
+    catch { /* The current in-memory draft remains usable and visible in the selector. */ }
+    const options = rows.map(record => { const option = view.node("option", "", `${record.deck.name} · ${model.count(record.deck)} cards · ${new Date(record.savedAt).toLocaleString()}`); option.value = record.deck.id; return option; });
+    if (!rows.some(record => record.deck.id === deck.id)) { const option = view.node("option", "", `${deck.name} · unsaved draft`); option.value = deck.id; options.unshift(option); }
+    $("saved-decks").replaceChildren(...options); $("saved-decks").value = deck.id;
+    $("delete-deck").disabled = !savedToken; $("reload-deck").disabled = !savedToken;
+    try { recoveryRows = store.versions().map(record => ({ id: record.deck.id, token: record.token, name: record.deck.name, savedAt: record.savedAt, kind: record.kind })); } catch { recoveryRows = []; }
+    const placeholder = view.node("option", "", "Choose a version"); placeholder.value = "";
+    $("recovery-versions").replaceChildren(placeholder, ...recoveryRows.map(record => { const option = view.node("option", "", `${record.name} · ${new Date(record.savedAt).toLocaleString()}${record.kind === "recovery" ? " · recovery checkpoint" : ""}`); option.value = `${record.id}.${record.token}`; return option; }));
+    if (recoveryRows.some(record => `${record.id}.${record.token}` === chosenRecovery)) $("recovery-versions").value = chosenRecovery;
+    updateRecoveryButtons();
+  }
+  function scheduleSave() {
+    clearTimeout(saveTimer);
+    if (storagePaused) { setSaveStatus("Save paused", lastSaveError); return; }
+    setSaveStatus("Unsaved changes", "Unsaved changes. Autosave will run when edits pause; drafts are local to this browser.");
+    saveTimer = setTimeout(() => saveNow(false), 800);
+  }
+  async function locked(operation) { return window.navigator?.locks?.request ? window.navigator.locks.request("manascout-deckstudio-v1", operation) : operation(); }
+  async function saveNow(manual = true) {
+    clearTimeout(saveTimer);
+    if (savePromise) { const success = await savePromise; if (!success) return false; return dirty ? saveNow(manual) : true; }
+    if (storagePaused && !manual) return false;
+    const snapshot = deck, expectedToken = savedToken;
+    setSaveStatus("Saving…", "Saving this draft in this browser…"); $("save-deck").disabled = true;
+    const task = (async () => {
+      try {
+        const result = await locked(() => store.save(snapshot, { expectedToken }));
+        if (deck.id === snapshot.id) {
+          savedToken = result.token; storagePaused = false; lastSaveError = ""; dirty = deck.revision !== snapshot.revision;
+          setSaveStatus(dirty ? "Unsaved changes" : "Saved locally", result.warning || "Saved in this browser only. Download JSON backups to keep a copy elsewhere.");
+          renderLibrary(); if (dirty) scheduleSave();
+        }
+        return true;
+      } catch (error) {
+        if (deck.id === snapshot.id) { dirty = true; storagePaused = true; lastSaveError = error.message; setSaveStatus(error.code === "conflict" ? "Save conflict" : "Save failed", error.message); renderLibrary(); }
+        return false;
+      } finally { $("save-deck").disabled = false; }
+    })();
+    savePromise = task;
+    const success = await task; if (savePromise === task) savePromise = null;
+    return success && manual && dirty && deck.id === snapshot.id ? saveNow(true) : success;
+  }
+  function downloadBackup() {
+    try {
+      const blob = new Blob([persistence.encodeBackup(deck)], { type: "application/json" });
+      const href = URL.createObjectURL(blob), anchor = view.node("a");
+      anchor.href = href; anchor.download = `${deck.name.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "") || "manascout-deck"}.json`;
+      document.body.append(anchor); anchor.click(); anchor.remove(); setTimeout(() => URL.revokeObjectURL(href), 1000);
+      message("JSON backup prepared. Keep the downloaded file somewhere safe; browser drafts do not sync across devices.");
+    } catch (error) { message(`Backup could not be downloaded: ${error.message}`); }
+  }
+  const confirmDialog = $("draft-confirm");
+  let pendingConfirm = null, confirmTrigger = null;
+  function confirmAction(title, text, accept) {
+    if (pendingConfirm) return Promise.resolve(false);
+    if (typeof confirmDialog.showModal !== "function") return Promise.resolve(window.confirm(`${title}\n\n${text}`));
+    $("draft-confirm-title").textContent = title; $("draft-confirm-message").textContent = text; $("draft-confirm-accept").textContent = accept;
+    confirmTrigger = document.activeElement;
+    return new Promise(resolve => { pendingConfirm = resolve; confirmDialog.showModal(); });
+  }
+  function resolveConfirm(value) { const resolve = pendingConfirm; pendingConfirm = null; confirmDialog.close(); resolve?.(value); }
+  $("draft-confirm-cancel").addEventListener("click", () => resolveConfirm(false));
+  $("draft-confirm-accept").addEventListener("click", () => resolveConfirm(true));
+  $("draft-confirm-backup").addEventListener("click", downloadBackup);
+  confirmDialog.addEventListener("cancel", () => { pendingConfirm?.(false); pendingConfirm = null; });
+  confirmDialog.addEventListener("close", () => { pendingConfirm?.(false); pendingConfirm = null; if (confirmTrigger?.isConnected) confirmTrigger.focus({ preventScroll: true }); });
+  async function canLeaveDraft() {
+    if (savePromise) await savePromise;
+    if (!dirty) return true;
+    if (await saveNow(false)) return true;
+    const leave = await confirmAction("Leave unsaved changes?", "This draft could not be saved. Download a JSON backup before continuing, or keep editing. Continuing will replace the working view without saving these edits.", "Continue without saving");
+    if (leave) { try { store.checkpoint(deck, savedToken); } catch { /* Explicitly confirmed leaving; the download action was offered. */ } }
+    return leave;
+  }
+  function activateDraft(record, note = "", markDirty = false) {
+    clearTimeout(saveTimer);
+    deck = record.deck; savedToken = record.token || null; dirty = !!record.dirty || markDirty; storagePaused = false; lastSaveError = "";
+    if (record.recovered) { deck = { ...deck, id: model.newId(), revision: 0 }; savedToken = null; dirty = true; note = "Recovered a previous snapshot as a new draft. The damaged original was left untouched."; }
+    current = null; currentFinish = ""; closePreview();
+    $("inspiration").hidden = true; $("discover-selection").hidden = true; $("deck-name").value = deck.name;
+    $("selection-status").textContent = "No printing selected. Search a card or inspect an entry.";
+    renderDeck();
+    if (deck.selection && deck.cards[deck.selection.printingId]) renderCard(deck.cards[deck.selection.printingId], deck.selection.finish);
+    setSaveStatus(dirty ? "Unsaved changes" : savedToken ? "Saved locally" : "Not saved", note || (savedToken ? "Restored a local draft. Current legality must be rechecked; drafts do not sync across devices." : "Your new draft has not been saved yet."));
+    renderLibrary(); if (dirty) scheduleSave();
+  }
+  $("save-deck").addEventListener("click", () => saveNow(true));
+  $("saved-decks").addEventListener("change", async () => {
+    const id = $("saved-decks").value;
+    if (id === deck.id) return;
+    if (!(await canLeaveDraft())) { $("saved-decks").value = deck.id; return; }
+    try { activateDraft(store.load(id)); try { store.active(deck.id); } catch { setSaveStatus("Loaded locally", "The draft loaded, but the last-opened selection could not be saved."); } refreshDeckData(); }
+    catch (error) { message(error.message); renderLibrary(); }
+  });
+  $("new-deck").addEventListener("click", async () => {
+    if (!(await canLeaveDraft())) return;
+    activateDraft({ deck: model.createDeck(), token: null, dirty: false }); activatePanel("deck");
+  });
+  $("save-copy").addEventListener("click", async () => {
+    if (savePromise) await savePromise;
+    const copy = { ...deck, id: model.newId(), name: `${deck.name.slice(0, 73)} (copy)`, revision: 0, updatedAt: Date.now() };
+    activateDraft({ deck: copy, token: null, dirty: true }, "This copy has a new identity; the existing saved deck is unchanged."); await saveNow(true);
+  });
+  $("reload-deck").addEventListener("click", async () => {
+    const id = deck.id;
+    if (dirty && !(await confirmAction("Reload the saved version?", "Unsaved edits will leave the working view. Download a backup first to keep them. The saved deck will not be overwritten.", "Reload saved version"))) return;
+    let checkpoint;
+    if (dirty) { try { checkpoint = store.checkpoint(deck, savedToken); } catch { /* Explicit confirmation and the download option remain the fallback. */ } }
+    try { const record = store.load(id, { includeJournal: false }); if (checkpoint) store.discardJournal(id, checkpoint.token); activateDraft(record); refreshDeckData(); } catch (error) { message(error.message); }
+  });
+  $("delete-deck").addEventListener("click", async () => {
+    if (!savedToken) return;
+    const id = deck.id;
+    if (!(await confirmAction("Delete this saved deck?", `Delete “${deck.name}” from Saved decks and discard its unsaved edits? Recent snapshots remain in recovery until their backups are explicitly erased.`, "Delete deck"))) return;
+    if (deck.id !== id) return;
+    try {
+      await locked(() => store.remove(id, savedToken));
+      const next = store.list().decks[0]; activateDraft(next || { deck: model.createDeck(), token: null });
+      if (next) { try { store.active(deck.id); } catch {} refreshDeckData(); }
+      message("Deck deleted from Saved decks. Recovery snapshots are still available.");
+    } catch (error) { message(error.message); }
+  });
+  $("download-backup").addEventListener("click", downloadBackup);
+  $("restore-backup").addEventListener("click", () => $("backup-file").click());
+  $("backup-file").addEventListener("change", async () => {
+    const file = $("backup-file").files?.[0]; if (!file) return;
+    try {
+      if (file.size > persistence.maxBytes) throw Error("Backup files must be JSON under 20 MB.");
+      const imported = persistence.decodeBackup(await file.text());
+      if (!(await canLeaveDraft())) return;
+      imported.name = `${imported.name.slice(0, 69)} (restored)`;
+      activateDraft({ deck: imported, token: null, dirty: true }, "Backup restored as a separate draft. Current legality is unverified until rechecked.");
+      await saveNow(true); refreshDeckData();
+    } catch (error) { message(error.message); }
+    finally { $("backup-file").value = ""; }
+  });
+  function updateRecoveryButtons() {
+    const record = recoveryRows.find(r => `${r.id}.${r.token}` === $("recovery-versions").value);
+    $("recover-version").disabled = !record;
+    try { $("erase-recovery").disabled = !record || store.isSaved(record.id) || record.id === deck.id; } catch { $("erase-recovery").disabled = true; }
+  }
+  $("recovery-versions").addEventListener("change", updateRecoveryButtons);
+  $("recover-version").addEventListener("click", async () => {
+    const record = recoveryRows.find(r => `${r.id}.${r.token}` === $("recovery-versions").value);
+    if (!record || !(await canLeaveDraft())) return;
+    try { const recovered = store.restoreVersion(record.id, record.token); recovered.name = `${recovered.name.slice(0, 68)} (recovered)`; activateDraft({ deck: recovered, token: null, dirty: true }, "Recovery version opened as a new draft; the existing saved deck was not replaced."); await saveNow(true); refreshDeckData(); }
+    catch (error) { message(error.message); }
+  });
+  $("erase-recovery").addEventListener("click", async () => {
+    const record = recoveryRows.find(r => `${r.id}.${r.token}` === $("recovery-versions").value);
+    if (!record || record.id === deck.id) return;
+    if (!(await confirmAction("Permanently erase recovery copies?", `Erase all local recovery snapshots for the deleted deck “${record.name}”? This cannot be undone. Download any needed backup before continuing.`, "Erase recovery copies"))) return;
+    try { await locked(() => store.purgeDeleted(record.id)); renderLibrary(); message("Recovery copies for the deleted deck were erased."); } catch (error) { message(error.message); }
+  });
+  window.addEventListener("storage", event => {
+    if (event.key !== null && event.key !== store.pointerKey(deck.id)) return;
+    try { const latest = event.newValue ? JSON.parse(event.newValue).token : null; if (latest === savedToken) return; } catch { /* A damaged external write is also a conflict. */ }
+    clearTimeout(saveTimer); dirty = true; storagePaused = true;
+    lastSaveError = "This draft changed or was deleted in another tab. Your working version is preserved. Save a copy or explicitly reload; autosave is paused to prevent an overwrite.";
+    setSaveStatus("Save conflict", lastSaveError); renderLibrary();
+  });
+  function checkpointIfNeeded() {
+    if (!dirty) return;
+    const signature = `${deck.id}:${deck.revision}:${savedToken}`;
+    if (lastCheckpoint === signature) return;
+    try { store.checkpoint(deck, savedToken); lastCheckpoint = signature; } catch { /* Storage failure warnings and the unload guard remain active. */ }
+  }
+  window.addEventListener("pagehide", checkpointIfNeeded);
+  document.addEventListener("visibilitychange", () => { if (document.visibilityState === "hidden") { checkpointIfNeeded(); if (dirty && !storagePaused) saveNow(false); } });
+  window.addEventListener("beforeunload", event => { if (dirty) { event.preventDefault(); event.returnValue = ""; checkpointIfNeeded(); } });
 
   try { selection = data.parseSelection(window.location.search); }
   catch (error) { showError(error); }
-  if (selection) loadSelection();
+  let restoredAtStartup = false;
+  try {
+    const active = store.loadActive();
+    if (active) { activateDraft(active); restoredAtStartup = true; if (!selection) refreshDeckData(); }
+    else { renderDeck(); renderLibrary(); }
+  } catch (error) { renderDeck(); setSaveStatus("Memory only", error.message); renderLibrary(); }
+  if (selection) loadSelection().finally(() => { if (restoredAtStartup && Object.values(deck.cards).some(card => !client.isVerified(card))) refreshDeckData(); });
 })();

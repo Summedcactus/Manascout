@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#0D1117">
   <title>Deck Studio — Build Your MTG Deck | ManaScout</title>
-  <meta name="description" content="Build an MTG deck with ManaScout Deck Studio. Search cards, Quick Add exact printings and edit quantities in artwork or compact list views.">
+  <meta name="description" content="Build Commander or Pauper decks with ManaScout. Search cards, keep exact printings, check construction, view stats and save local drafts with JSON backups.">
   <meta name="robots" content="index,follow">
   <link rel="canonical" href="https://manascout.co.uk/deck/">
   <meta property="og:type" content="website">
@@ -14,16 +14,17 @@
   <meta property="og:url" content="https://manascout.co.uk/deck/">
   <meta property="og:site_name" content="ManaScout">
   <meta name="twitter:card" content="summary">
-  <link rel="stylesheet" href="/assets/css/deck-studio.css">
+  <link rel="stylesheet" href="/assets/css/deck-studio.css?v=5bc1">
   <script type="application/ld+json">
   {"@context":"https://schema.org","@type":"WebPage","name":"ManaScout Deck Studio","url":"https://manascout.co.uk/deck/","description":"ManaScout's artwork-first deck workspace with exact-printing card search and manual deck editing.","isPartOf":{"@type":"WebSite","name":"ManaScout","url":"https://manascout.co.uk/"}}
   </script>
-  <script src="/assets/js/deck-data.js" defer></script>
-  <script src="/assets/js/deck-model.js" defer></script>
-  <script src="/assets/js/deck-client.js" defer></script>
-  <script src="/assets/js/deck-rules.js" defer></script>
-  <script src="/assets/js/deck-view.js" defer></script>
-  <script src="/assets/js/deck-studio.js" defer></script>
+  <script src="/assets/js/deck-data.js?v=5bc1" defer></script>
+  <script src="/assets/js/deck-model.js?v=5bc1" defer></script>
+  <script src="/assets/js/deck-client.js?v=5bc1" defer></script>
+  <script src="/assets/js/deck-rules.js?v=5bc1" defer></script>
+  <script src="/assets/js/deck-view.js?v=5bc1" defer></script>
+  <script src="/assets/js/deck-store.js?v=5bc1" defer></script>
+  <script src="/assets/js/deck-studio.js?v=5bc1" defer></script>
 </head>
 <body class="deck-studio" data-active-panel="deck">
   <a class="ds-skip" href="#deck-heading">Skip to deck workspace</a>
@@ -75,7 +76,8 @@
     </section>
 
     <section class="ds-panel ds-deck" id="studio-deck" aria-labelledby="deck-heading">
-      <div class="ds-deck-top"><div class="ds-deck-title"><p class="ds-eyebrow">YOUR WORKSPACE</p><h2 id="deck-heading" class="ds-sr-only" tabindex="-1">Deck workspace</h2><label class="ds-sr-only" for="deck-name">Deck name, not saved</label><input id="deck-name" type="text" value="Untitled deck" maxlength="80" spellcheck="false" aria-describedby="deck-state"></div><span class="ds-unsaved" id="deck-state">Not saved</span></div>
+      <div class="ds-deck-top"><div class="ds-deck-title"><p class="ds-eyebrow">YOUR WORKSPACE</p><h2 id="deck-heading" class="ds-sr-only" tabindex="-1">Deck workspace</h2><label class="ds-sr-only" for="deck-name">Deck name</label><input id="deck-name" type="text" value="Untitled deck" maxlength="80" spellcheck="false" aria-describedby="deck-state"></div><span class="ds-unsaved" id="deck-state" role="status">Not saved</span></div>
+      <div class="ds-draft-bar"><label class="ds-sr-only" for="saved-decks">Switch saved deck</label><select id="saved-decks"><option value="">Current unsaved draft</option></select><button type="button" class="ds-button ds-secondary" id="new-deck">New</button><button type="button" class="ds-button ds-primary" id="save-deck">Save Deck</button></div>
       <div class="ds-deck-toolbar"><div class="ds-format"><label for="deck-format">Format</label><select id="deck-format" aria-describedby="format-note"><option value="commander">Commander</option><option value="pauper">Pauper</option></select></div><div class="ds-view-controls" role="group" aria-label="Deck view"><button class="ds-icon" type="button" id="view-artwork" aria-pressed="true" aria-label="Artwork view" title="Artwork view">▦</button><button class="ds-icon" type="button" id="view-list" aria-pressed="false" aria-label="List view" title="List view">☷</button></div></div>
       <p class="ds-sr-only" id="format-note">Changing format preserves every card and updates construction warnings. Commander includes its commanders in 100 cards; Pauper needs at least 60 main-deck cards.</p>
 
@@ -112,8 +114,9 @@
         <details class="ds-stats-section ds-warning-list" id="deck-warning-details" open><summary id="deck-warning-summary">Construction warnings</summary><ul id="deck-issues"></ul></details>
         <button class="ds-button ds-secondary ds-recheck" id="refresh-card-data" type="button">Recheck current card data</button><p class="ds-note" id="data-check-status">Card data and commander checks expire after 15 minutes. Restored decks must be rechecked.</p>
         <details class="ds-stats-section"><summary>Rules &amp; supported configurations</summary><p class="ds-note">Multiplayer Commander and paper Pauper. Supports Partner, the four recognised named Partner variants, Partner with, Choose a Background and Doctor’s companion. Pregame colour-choice commanders, additional companions, Commander Draft, brackets and custom Rule 0 combinations are not supported. No deck is declared complete while required data or checks are missing.</p><a class="ds-text-link" href="https://magic.wizards.com/en/formats/commander" target="_blank" rel="noopener noreferrer">Commander rules ↗</a><a class="ds-text-link" href="https://magic.wizards.com/en/formats/pauper" target="_blank" rel="noopener noreferrer">Pauper rules ↗</a></details>
-        <div class="ds-tools"><h3>Deck tools</h3><p class="ds-note" id="tools-note">Saving, import and export are not available yet.</p><div class="ds-tool-buttons"><button class="ds-button ds-secondary" type="button" disabled aria-describedby="tools-note">Save deck</button><button class="ds-button ds-secondary" type="button" disabled aria-describedby="tools-note">Import</button><button class="ds-button ds-secondary" type="button" disabled aria-describedby="tools-note">Export</button></div></div>
-        <p class="ds-integrity-note">Construction checks use Scryfall’s current format status, not a printing’s rarity. Changes are not saved in this milestone.</p>
+        <div class="ds-tools"><h3>Local drafts &amp; backups</h3><p class="ds-note" id="tools-note">Autosaves after edits pause. Rename in the deck-name field. Drafts stay in this browser; they are not backed up across devices.</p><p class="ds-save-message" id="save-status-message" role="status">Your new draft has not been saved yet.</p><div class="ds-tool-buttons"><button class="ds-button ds-secondary" type="button" id="save-copy">Save a copy</button><button class="ds-button ds-secondary" type="button" id="reload-deck" disabled>Reload saved</button><button class="ds-button ds-secondary" type="button" id="delete-deck" disabled>Delete deck</button><button class="ds-button ds-secondary" type="button" id="download-backup">JSON backup</button><button class="ds-button ds-secondary" type="button" id="restore-backup">Restore JSON</button></div><input id="backup-file" type="file" accept=".json,application/json" aria-label="Choose a ManaScout JSON backup" hidden></div>
+        <details class="ds-stats-section"><summary>Recent recovery versions</summary><p class="ds-note">Recover a previous snapshot as a new draft. The existing saved deck is not replaced. Deleted decks remain recoverable here until you erase their backups.</p><label class="ds-sr-only" for="recovery-versions">Choose a recovery version</label><select id="recovery-versions"><option value="">Choose a version</option></select><button class="ds-button ds-secondary" type="button" id="recover-version" disabled>Restore as a new draft</button><button class="ds-button ds-secondary" type="button" id="erase-recovery" disabled>Erase deleted-deck backups</button></details>
+        <p class="ds-integrity-note">Construction checks use current Scryfall status, not printed rarity. Clearing site data or using private browsing can remove local drafts. Download JSON backups for safekeeping.</p>
       </div>
     </section>
   </main>
@@ -137,10 +140,12 @@
       <button class="ds-button ds-secondary ds-commander-action" id="preview-commander" type="button">Check commander eligibility</button>
       <button class="ds-button ds-secondary ds-future-printing" type="button" disabled aria-describedby="preview-actions-note">Change printing · coming later</button>
       <p class="ds-note" id="preview-actions-note">Adds this exact printing and finish. Illegal cards remain visible with warnings. Use the separate commander action to assign one.</p>
+      <p class="ds-note" id="preview-save-status" role="status">Changes are saved only in this browser.</p>
       <details class="ds-card-more"><summary>Rules &amp; printing details</summary><p class="ds-oracle" id="preview-oracle"></p><dl class="ds-extra-facts"><div><dt>Available finishes</dt><dd id="preview-finishes"></dd></div><div><dt>Language</dt><dd id="preview-language"></dd></div><div><dt>Released</dt><dd id="preview-released"></dd></div><div><dt>Scryfall printing ID</dt><dd id="preview-id"></dd></div></dl><p class="ds-note">Format availability is distinct from commander eligibility and full-deck construction.</p></details>
       <div class="ds-source-links"><a class="ds-text-link" id="preview-guide" hidden>Full ManaScout guide ↗</a><a class="ds-text-link" id="preview-source" target="_blank" rel="noopener noreferrer" hidden>Printing on Scryfall ↗</a></div>
       <button class="ds-back-button" id="back-to-workspace" type="button">← Back to workspace</button>
     </div>
   </dialog>
+  <dialog class="ds-confirm-dialog" id="draft-confirm" aria-labelledby="draft-confirm-title" aria-describedby="draft-confirm-message"><h2 id="draft-confirm-title">Confirm action</h2><p id="draft-confirm-message"></p><div class="ds-confirm-actions"><button class="ds-button ds-secondary" id="draft-confirm-cancel" type="button" autofocus>Keep editing</button><button class="ds-button ds-secondary" id="draft-confirm-backup" type="button">Download backup</button><button class="ds-button ds-primary" id="draft-confirm-accept" type="button">Continue</button></div></dialog>
 </body>
 </html>

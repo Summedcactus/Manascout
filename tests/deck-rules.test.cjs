@@ -127,6 +127,8 @@ test('UI commander assignment moves an existing main copy and counts it only onc
   const s=mount({client,search:`?printing=${c.id}`});t.after(s.cleanup);await drain();await s.el('preview-add').emit('click');await s.el('preview-commander').emit('click');
   assert.equal(s.el('stat-commanders').textContent,'1');assert.equal(s.el('stat-count').textContent,'1 / 100');assert.match(s.el('deck-entries').textContent,/Command zone/);
   assert.equal(s.el('deck-entries').querySelector('[data-action="increase"]').disabled,true);
+  assert.equal(s.el('preview-remove').textContent,'Remove commander');assert.equal(s.el('preview-commander').textContent,'Assigned as commander');
+  await s.el('preview-remove').emit('click');assert.equal(s.el('stat-commanders').textContent,'0');assert.equal(s.el('stat-count').textContent,'0 / 100');
 });
 test('commander query proofs cache, expire and treat 404 as ineligible without inferring from type',async()=>{
   let now=0,calls=0;const c=commander();const client=createClient({interval:0,now:()=>now,fetchImpl:async url=>{calls++;assert.match(url,/is%3Acommander/);return {ok:true,status:200,json:async()=>({data:[{oracle_id:c.oracleId}]})};}});

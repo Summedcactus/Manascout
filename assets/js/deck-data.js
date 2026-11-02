@@ -54,7 +54,7 @@
       legalities: { commander: card.legalities?.commander || "unknown", pauper: card.legalities?.pauper || "unknown" },
       games: Array.isArray(card.games) ? card.games : [], layout: card.layout || "", oversized: !!card.oversized,
       borderColor: card.border_color || "", securityStamp: card.security_stamp || "",
-      printingDataComplete: typeof card.oversized === "boolean" && typeof card.layout === "string" && typeof card.border_color === "string" && Array.isArray(card.games),
+      printingDataComplete: typeof card.oversized === "boolean" && typeof card.layout === "string" && !!card.layout && typeof card.border_color === "string" && !!card.border_color && Array.isArray(card.games) && typeof card.set === "string" && !!card.set && typeof card.collector_number === "string" && !!card.collector_number,
       availableFinishes: finishes,
       manaValue: typeof card.cmc === "number" && Number.isFinite(card.cmc) ? String(card.cmc) : "Not supplied",
       setName: card.set_name || "Set not supplied", setCode: String(card.set || "").toUpperCase(),
