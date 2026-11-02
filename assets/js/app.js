@@ -24,6 +24,7 @@
     "arcane-signet",
     "birds-of-paradise",
     "black-lotus",
+    "chrome-mox",
     "counterspell",
     "cyclonic-rift",
     "deflecting-swat",
@@ -32,6 +33,7 @@
     "dockside-extortionist",
     "doubling-season",
     "esper-sentinel",
+    "fierce-guardianship",
     "force-of-will",
     "jace-the-mind-sculptor",
     "jeskas-will",
@@ -42,6 +44,8 @@
     "mana-vault",
     "mystic-remora",
     "mystic-sanctuary",
+    "necropotence",
+    "orcish-bowmasters",
     "path-to-exile",
     "rhystic-study",
     "smaug-wicked-worm",
@@ -49,8 +53,10 @@
     "sol-ring",
     "swords-to-plowshares",
     "teferis-protection",
+    "the-great-henge",
     "the-one-ring",
     "the-theorist-jace-beleren",
+    "urzas-saga",
     "vampiric-tutor"
   ]);
 
