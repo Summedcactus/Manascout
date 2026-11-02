@@ -24,6 +24,7 @@
     "arcane-signet",
     "birds-of-paradise",
     "black-lotus",
+    "chrome-mox",
     "counterspell",
     "cyclonic-rift",
     "deflecting-swat",
@@ -52,8 +53,10 @@
     "sol-ring",
     "swords-to-plowshares",
     "teferis-protection",
+    "the-great-henge",
     "the-one-ring",
     "the-theorist-jace-beleren",
+    "urzas-saga",
     "vampiric-tutor"
   ]);
 
