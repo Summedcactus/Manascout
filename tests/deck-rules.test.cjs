@@ -119,7 +119,7 @@ test('front-face/combined split types, multicolour groups, 7+ bin and unknown ma
 test('UI identifies an ineligible starting card and allows it in the 99 with live statistics',async t=>{
   const c=card();let eligible=null;const client={printing:async()=>c,isVerified:()=>true,proof:()=>eligible,commanderEligibility:async()=>{eligible=false;return false;},clearProofs(){},refresh:async cs=>cs};
   const s=mount({client,search:`?printing=${c.id}`});t.after(s.cleanup);await drain();
-  assert.match(s.el('preview-legality').textContent,/Not eligible/);assert.equal(s.el('preview-commander').disabled,true);assert.equal(s.el('preview-add').textContent,'Add to the 99 +');
+  assert.match(s.el('preview-legality').textContent,/Not eligible/);assert.equal(s.el('preview-commander').disabled,true);assert.equal(s.el('preview-add').textContent,'Add to the 99');
   await s.el('preview-add').emit('click');assert.equal(s.el('stat-count').textContent,'1 / 100');assert.equal(s.el('stat-average').textContent,'0.00');assert.equal(s.el('deck-validity').textContent,'Incomplete deck');
 });
 test('UI commander assignment moves an existing main copy and counts it only once',async t=>{

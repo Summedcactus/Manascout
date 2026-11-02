@@ -1,4 +1,4 @@
-# Shared card presentation — 5E, 5F.1 and 5G
+# Shared card presentation
 
 The featured printing remains Minas Morgul / Cabal Coffers, LTC #390, Sean Vo, surge foil. Its static Scryfall image URL and exact-printing link are preserved. `scoutboard.js` rejects a mismatched set, number, name, artist or treatment response and retains the static fallback. This identity guard is tested with synthetic HTTP responses; the live API was not verified.
 
@@ -45,3 +45,11 @@ The aura is positioned inside `weekly-card-float`, immediately behind the existi
 The old mist, darkness and sparks/bat nodes, their polygon silhouettes and their moving keyframes are removed. Scene gradients and the small card-edge shadow are static. The former blurred card-column patch is disabled. Existing exact-printing selectors, tab/offscreen pauses and reduced-motion behavior still apply. The existing 3D float/tilt, foil bands/glimmer, image-derived in-card light map, source image, editorial text and exact-printing links are unchanged. This task does not add individual window lights or a sky mask.
 
 Visual results, mobile overflow, native 3D compositing and live image/API loading remain unverified; automated structure/state tests do not certify appearance. Before release, inspect the static aura contrast, 320/390px search row, full random-discovery journey and preserved 3D/foil motion in a real browser.
+
+## Floating presentation and translucent haze refinement
+
+The exact LTC #390 artwork, in-card light map and surge-foil gradients/keyframes are preserved. A new weekly-card-stage supplies one 1000px perspective context. Idle movement stays on the outer float surface; pointer/touch tilt stays on the clipped card shell, avoiding competing transforms. Layered dark edge shadows, a thin neutral edge highlight and a separate ground-shadow plane give the card separation and apparent thickness. Touch tilt is limited to 2° X / 2.5° Y; mobile idle ranges are smaller than desktop. Mobile card widths are capped at 255/228/212px across existing breakpoints, and fixed 520/460/420px column minimum heights are removed for this feature.
+
+The former opaque-looking oval is replaced by three offset, low-alpha green gradients on an unclipped rectangular haze layer. It sits behind the card in the stage, independent of card tilt. A 9.5-second opacity/anisotropic-scale cycle gently expands/contracts it; an 11-second upper-area light variation adds restrained emphasis. No border-radius circle, hard edge, animated blur or artwork replacement is used. A separate black ground shadow varies subtly with the 13-second idle lift. Reduced-motion and offscreen/tab pause rules apply to all new layers. No new animation loop or device-motion permission is required.
+
+Tests check the new depth/haze structure, mobile bounds, reduced touch ranges and preservation of the foil implementation. Visual appearance, clipping and motion quality remain unverified without a real browser; no pixel-perfect claim is made.

@@ -1566,8 +1566,8 @@
       weekly.dataset.weeklyInteracting = "true";
       weekly.style.setProperty("--weekly-x", `${x}%`);
       weekly.style.setProperty("--weekly-y", `${y}%`);
-      weekly.style.setProperty("--weekly-rx", `${(50 - y) * .10}deg`);
-      weekly.style.setProperty("--weekly-ry", `${(x - 50) * .12}deg`);
+      weekly.style.setProperty("--weekly-rx", `${(50 - y) * (event.pointerType === "touch" ? .04 : .10)}deg`);
+      weekly.style.setProperty("--weekly-ry", `${(x - 50) * (event.pointerType === "touch" ? .05 : .12)}deg`);
       if (exactMorgul()) {
         const intensity = .48 + .36 * (1 - Math.min(1, Math.hypot(x - 30, y - 25) / 100));
         weekly.style.setProperty("--morgul-reflection", intensity.toFixed(3));

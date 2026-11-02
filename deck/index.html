@@ -14,7 +14,7 @@
   <meta property="og:url" content="https://manascout.co.uk/deck/">
   <meta property="og:site_name" content="ManaScout">
   <meta name="twitter:card" content="summary">
-  <link rel="stylesheet" href="/assets/css/deck-studio.css?v=5g1">
+  <link rel="stylesheet" href="/assets/css/deck-studio.css?v=ux1">
   <script type="application/ld+json">
   {"@context":"https://schema.org","@type":"WebPage","name":"ManaScout Deck Studio","url":"https://manascout.co.uk/deck/","description":"ManaScout's artwork-first deck workspace with exact-printing card search and manual deck editing.","isPartOf":{"@type":"WebSite","name":"ManaScout","url":"https://manascout.co.uk/"}}
   </script>
@@ -25,7 +25,7 @@
   <script src="/assets/js/deck-rules.js?v=5d1" defer></script>
   <script src="/assets/js/deck-view.js?v=5d1" defer></script>
   <script src="/assets/js/deck-store.js?v=5d1" defer></script>
-  <script src="/assets/js/deck-studio.js?v=5g1" defer></script>
+  <script src="/assets/js/deck-studio.js?v=ux1" defer></script>
 </head>
 <body class="deck-studio" data-active-panel="deck">
   <a class="ds-skip" href="#deck-heading">Skip to deck workspace</a>
@@ -51,14 +51,14 @@
 
   <main class="ds-workspace" aria-label="Deck Studio workspace">
     <section class="ds-panel ds-discover" id="studio-discover" aria-labelledby="discover-heading">
-      <div class="ds-panel-top"><div><p class="ds-eyebrow">01 / FIND THE SPARK</p><h2 id="discover-heading" tabindex="-1">Discover</h2></div><button class="ds-icon ds-collapse" type="button" data-collapse="discover-body" aria-expanded="true" aria-controls="discover-body" aria-label="Collapse Discover panel" hidden>−</button></div>
+      <div class="ds-panel-top"><div><p class="ds-eyebrow">01 / FIND THE SPARK</p><h2 id="discover-heading" tabindex="-1">Find cards</h2></div><button class="ds-icon ds-collapse" type="button" data-collapse="discover-body" aria-expanded="true" aria-controls="discover-body" aria-label="Collapse Discover panel" hidden>−</button></div>
       <div id="discover-body" class="ds-panel-body">
         <form id="studio-search-form" role="search" autocomplete="off">
           <label class="ds-label" for="studio-search">Card search</label>
-          <div class="ds-search-row"><div class="ds-search-field"><span aria-hidden="true">⌕</span><input id="studio-search" type="search" placeholder="Find your next card…" list="studio-suggestions" maxlength="300" aria-describedby="discover-note"><button class="ds-search-submit" type="submit" aria-label="Search cards">→</button></div><button class="ds-discover-random" id="studio-discover-random" type="button" aria-label="Discover a random card for the selected format" aria-describedby="discovery-status"><span id="discover-random-label">Discover</span><span aria-hidden="true">✦</span></button></div>
+          <div class="ds-search-row"><div class="ds-search-field"><input id="studio-search" type="search" placeholder="Search for a card…" list="studio-suggestions" maxlength="300" aria-describedby="discover-note"></div><div class="ds-search-actions"><button class="ds-search-submit" id="studio-search-submit" type="submit">Search</button><button class="ds-discover-random" id="studio-discover-random" type="button" aria-label="Discover a random card for the selected format" aria-describedby="discovery-status"><span id="discover-random-label">Discover</span><span aria-hidden="true">✦</span></button></div></div>
           <datalist id="studio-suggestions"></datalist>
         </form>
-        <p class="ds-note" id="discover-note">Search names or Scryfall syntax. Quick Add keeps your place; select artwork for details.</p>
+        <p class="ds-note" id="discover-note">Search for a card you know, or use Discover for a random suggestion. Select a result to choose its role.</p>
         <p class="ds-note ds-discovery-status" id="discovery-status" role="status" aria-live="polite">Discover selects a random printing to inspect. Add it only when you choose.</p>
         <label class="ds-label ds-search-zone" for="search-zone">Add to <select id="search-zone"><option value="main">Main deck</option><option value="sideboard" disabled>Sideboard</option></select></label>
         <p class="ds-note ds-search-status" id="search-status" role="status" aria-live="polite">Type at least two characters, or press Search.</p>
@@ -138,11 +138,11 @@
       <dl class="ds-printing-facts"><div><dt>Mana value</dt><dd id="preview-mv"></dd></div><div><dt>Printing</dt><dd id="preview-printing"></dd></div><div><dt>Artist</dt><dd id="preview-artist"></dd></div><div><dt>Preview finish</dt><dd id="preview-finish"></dd></div></dl>
       <p class="ds-note" id="preview-note"></p>
       <div class="ds-preview-quantity"><label for="preview-quantity">Copies to add</label><input id="preview-quantity" type="number" value="1" min="1" max="10000" inputmode="numeric"><label for="preview-zone">Section</label><select id="preview-zone"><option value="main">Main deck</option><option value="sideboard" disabled>Sideboard</option></select></div>
-      <div class="ds-preview-actions"><button class="ds-button ds-primary" type="button" id="preview-add">Add to deck +</button><button class="ds-button ds-secondary" type="button" id="preview-remove" disabled>Remove one</button></div>
-      <button class="ds-button ds-secondary ds-commander-action" id="preview-commander" type="button">Check commander eligibility</button>
+      <div class="ds-preview-actions"><button class="ds-button ds-secondary" id="preview-commander" type="button" disabled aria-describedby="preview-legality">Use as Commander</button><button class="ds-button ds-primary" type="button" id="preview-add" disabled aria-describedby="preview-legality preview-actions-note">Add to the 99</button></div>
+      <button class="ds-button ds-secondary" type="button" id="preview-remove" disabled>Remove one</button>
       <div id="signature-controls" class="ds-signature-controls" hidden><label class="ds-label" for="signature-owner">Signature spell for</label><select id="signature-owner" aria-describedby="signature-note"></select><button class="ds-button ds-secondary" id="preview-signature" type="button">Assign signature spell</button><p class="ds-note" id="signature-note">One instant or sorcery per Oathbreaker, within that Oathbreaker’s own colour identity.</p></div>
       <button class="ds-button ds-secondary ds-future-printing" type="button" disabled aria-describedby="preview-actions-note">Change printing · coming later</button>
-      <p class="ds-note" id="preview-actions-note">Adds this exact printing and finish. Illegal cards remain visible with warnings. Use the separate commander action to assign one.</p>
+      <p class="ds-note" id="preview-actions-note">Adds this exact printing and finish. Choose a role before adding. Commander eligibility is checked separately from main-deck legality; construction warnings still apply.</p>
       <p class="ds-note" id="preview-save-status" role="status">Changes are saved only in this browser.</p>
       <details class="ds-card-more"><summary>Rules &amp; printing details</summary><p class="ds-oracle" id="preview-oracle"></p><dl class="ds-extra-facts"><div><dt>Available finishes</dt><dd id="preview-finishes"></dd></div><div><dt>Language</dt><dd id="preview-language"></dd></div><div><dt>Released</dt><dd id="preview-released"></dd></div><div><dt>Scryfall printing ID</dt><dd id="preview-id"></dd></div></dl><p class="ds-note">Format availability is distinct from commander eligibility and full-deck construction.</p></details>
       <div class="ds-source-links"><a class="ds-text-link" id="preview-guide" hidden>Full ManaScout guide ↗</a><a class="ds-text-link" id="preview-source" target="_blank" rel="noopener noreferrer" hidden>Printing on Scryfall ↗</a></div>
