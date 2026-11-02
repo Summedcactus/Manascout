@@ -4,9 +4,7 @@ const model = require('../assets/js/deck-model.js');
 const data = require('../assets/js/deck-data.js');
 const { createClient } = require('../assets/js/deck-client.js');
 const { mount } = require('./helpers/studio-dom.cjs');
-const id = n => `${n.toString(16).padStart(8,'0')}-1111-4111-8111-111111111111`;
-const raw = (n=1,extra={}) => ({ object:'card', id:id(n), oracle_id:id(n+1000), name:`Fixture ${n}`, type_line:'Artifact', cmc:0, colors:[], color_identity:[], finishes:['nonfoil','foil'], games:['paper'], legalities:{ commander:'legal',pauper:'legal' }, set:'tst',set_name:'Synthetic Test Set',collector_number:String(n),lang:'en',oracle_text:'Synthetic fixture text.',image_uris:{ normal:`https://cards.scryfall.io/${n}.jpg` }, ...extra });
-const card = (n=1,extra={}) => data.normaliseCard(raw(n,extra),{id:id(n)});
+const { id, raw, card } = require('./helpers/cards.cjs');
 const reply = (value,status=200) => ({ok:status===200,status,json:async()=>value});
 const drain = () => new Promise(resolve=>setTimeout(resolve,15));
 function fakeClient(cards=[card()]) {

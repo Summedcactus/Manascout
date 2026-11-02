@@ -5,9 +5,10 @@
   const model = window.ManaScoutDeckModel;
   const client = window.ManaScoutDeckClient?.createClient();
   const view = window.ManaScoutDeckView;
+  const rules = window.ManaScoutDeckRules;
   const $ = id => document.getElementById(id);
   const body = document.body;
-  if (!body.classList.contains("deck-studio") || !data || !model || !client || !view) return;
+  if (!body.classList.contains("deck-studio") || !data || !model || !client || !view || !rules) return;
 
   const mobile = window.matchMedia("(max-width: 820px)");
   const panels = { deck: $("studio-deck"), discover: $("studio-discover"), stats: $("studio-stats") };
@@ -25,6 +26,8 @@
   let face = 0;
   let loading = false;
   let returnFocus = null;
+  const eligibilityJobs = new Map();
+  const eligibilityErrors = new Map();
 
   function syncLayout() {
     body.dataset.activePanel = activePanel;
@@ -145,7 +148,7 @@
       "selection-name": card.name, "selection-set": `${card.setCode} #${card.collectorNumber}`,
       "inspiration-name": card.name, "inspiration-printing": printing,
       "preview-name": card.name, "preview-type": card.type, "preview-mv": card.manaValue,
-      "preview-printing": printing, "preview-artist": card.artist, "preview-finish": finish === "nonfoil" ? "Nonfoil" : finish === "etched" ? "Etched foil" : "Foil",
+      "preview-printing": printing, "preview-artist": card.artist, "preview-finish": finish === "nonfoil" ? "Nonfoil" : finish === "etched" ? "Etched foil" : finish === "foil" ? "Foil" : "Not supplied",
       "preview-finishes": card.finishes, "preview-language": card.language, "preview-released": card.released,
       "preview-id": card.id, "preview-oracle": card.oracle, "preview-brief": card.summary, "preview-note": card.finishNotice
     };
@@ -162,6 +165,7 @@
     $("inspiration").hidden = false;
     $("selection-status").textContent = "Selected printing loaded. Use Add to deck to include it.";
     renderPreviewActions();
+    if (deck.format === "commander" && !rules.background(card)) checkCommander(card);
   }
 
   function showError(error) {
@@ -194,7 +198,8 @@
   function commitState(next, text = "") {
     deck = next;
     renderDeck();
-    if (text) message(text);
+    const warning = rules.validate(deck, client).issues.find(i => i.severity === "error" || i.severity === "unsupported");
+    message((text || "Deck updated.") + (warning ? ` Warning: ${warning.message}` : ""));
   }
   function renderPreviewActions() {
     if (!current) return;
@@ -203,6 +208,7 @@
     $("preview-remove").disabled = !entry;
     $("preview-add").disabled = !currentFinish;
     $("preview-context").textContent = entry ? `${entry.quantity} ${entry.quantity === 1 ? "copy" : "copies"} of this printing and finish in ${zone === "main" ? "the main deck" : "the sideboard"}.` : "Selected printing. This version has not been added to this section.";
+    renderCommanderAction();
   }
   function renderDeck() {
     if (document.activeElement !== $("deck-name")) $("deck-name").value = deck.name;
@@ -218,15 +224,16 @@
     $("empty-deck").hidden = count > 0;
     $("deck-entries").hidden = count === 0;
     $("deck-count").textContent = count ? `${count} ${count === 1 ? "card" : "cards"} · ${deck.format === "commander" ? "Commander" : "Pauper"}` : "No cards added";
-    view.renderEntries(deck, $("deck-entries"));
+    view.renderEntries(deck, $("deck-entries"), client);
     renderPreviewActions();
+    renderStatistics();
   }
   function addCard(card, zone = "main", quantity = 1, finish = card.finish) {
     if (zone === "sideboard" && deck.format !== "pauper") throw Error("Sideboards are supported for Pauper only.");
     commitState(model.add(deck, card, { zone, quantity, finish }), `Added ${quantity} × ${card.name} to ${zone === "main" ? "the main deck" : "the sideboard"}.`);
   }
   $("deck-name").addEventListener("input", () => commitState(model.edit(deck, { name: $("deck-name").value })));
-  $("deck-format").addEventListener("change", () => commitState(model.edit(deck, { format: $("deck-format").value }), "Format changed. All entries have been preserved."));
+  $("deck-format").addEventListener("change", () => { commitState(model.edit(deck, { format: $("deck-format").value }), "Format changed. All entries have been preserved."); if (current && deck.format === "commander") checkCommander(current); });
   for (const mode of ["artwork", "list"]) $("view-" + mode).addEventListener("click", () => commitState(model.edit(deck, { view: mode })));
   $("preview-zone").addEventListener("change", renderPreviewActions);
   $("preview-add").addEventListener("click", () => {
@@ -309,6 +316,111 @@
       catch (error) { $("search-status").textContent = error.message; }
     }
   });
+
+  function renderStatistics() {
+    const validation = rules.validate(deck, client), stats = rules.statistics(deck);
+    $("deck-validity").textContent = validation.label;
+    $("deck-validity").dataset.state = validation.status;
+    $("stat-count-label").textContent = deck.format === "commander" ? "Deck + commanders" : "Main deck";
+    $("stat-count").textContent = deck.format === "commander" ? `${validation.total} / 100` : `${validation.main} / 60+`;
+    $("stat-average").textContent = stats.average === null ? "—" : stats.average.toFixed(2);
+    $("stat-lands").textContent = String(stats.lands); $("stat-creatures").textContent = String(stats.creatures);
+    $("stat-commanders").textContent = String(validation.command);
+    $("stat-sideboard").textContent = `${validation.side} / ${deck.format === "pauper" ? 15 : 0}`;
+    const chart = $("mana-curve"); chart.replaceChildren(); chart.hidden = stats.average === null;
+    const maximum = Math.max(1, ...stats.curve);
+    stats.curve.forEach((count, i) => {
+      const column = view.node("li", "ds-curve-column");
+      const bar = view.node("span", "ds-curve-bar"); bar.setAttribute("aria-hidden", "true"); bar.style.height = `${count / maximum * 52}px`;
+      column.setAttribute("aria-label", `Mana value ${i === 7 ? "7 or more" : i}: ${count} cards`);
+      column.append(view.node("strong", "", String(count)), bar, view.node("span", "", i === 7 ? "7+" : String(i))); chart.append(column);
+    });
+    $("curve-note").textContent = stats.average === null ? "Add nonland cards with known mana values to see the curve." : `Nonland cards only; quantities included. X is zero outside the stack.${stats.unknownMana ? ` ${stats.unknownMana} cards have unknown mana values and are excluded.` : ""}`;
+    for (const [id, values] of [["color-distribution", stats.distribution], ["type-breakdown", stats.types]]) {
+      const nodes = [];
+      const names = { W: "White", U: "Blue", B: "Black", R: "Red", G: "Green", C: "Colourless" };
+      for (const [label, count] of Object.entries(values)) {
+        const row = view.node("div"); row.append(view.node("dt", "", names[label] || label), view.node("dd", "", String(count))); nodes.push(row);
+      }
+      $(id).replaceChildren(...nodes);
+    }
+    $("deck-warning-details").hidden = !validation.issues.length;
+    $("deck-warning-summary").textContent = `${validation.issues.length} construction ${validation.issues.length === 1 ? "issue" : "issues"}`;
+    $("deck-issues").replaceChildren(...validation.issues.map(issue => view.node("li", `ds-issue-${issue.severity}`, issue.message)));
+    return validation;
+  }
+  function commanderCards() { return deck.entries.filter(e => e.zone === "commander").map(e => deck.cards[e.printingId]); }
+  function renderCommanderAction() {
+    const button = $("preview-commander"); button.hidden = deck.format !== "commander";
+    if (!current) return;
+    const fresh = client.isVerified(current), legality = current.legalities[deck.format];
+    const proof = client.proof(current), pending = eligibilityJobs.has(current.oracleId);
+    const eligibleBackground = rules.background(current) && commanderCards().length === 1 && rules.pair(commanderCards()[0], current).valid && client.proof(commanderCards()[0]) === true;
+    let note = fresh ? `${deck.format === "commander" ? "Commander" : "Pauper"} card status: ${legality.replace(/_/g, " ")}.` : "Current legality is not verified. Recheck card data before assigning a commander.";
+    button.disabled = pending || (fresh && legality !== "legal");
+    button.textContent = pending ? "Checking commander eligibility…" : "Use one as commander";
+    if (deck.format === "commander") {
+      if (rules.colorChoice(current)) { note += " This commander needs a pregame colour choice; that configuration is unsupported."; button.disabled = true; }
+      else if (rules.background(current)) { note += eligibleBackground ? " Can join the selected Choose a Background commander." : " This Background needs a verified Choose a Background commander first."; button.disabled = button.disabled || !eligibleBackground; }
+      else if (proof === false) { note += " Not eligible as a commander. You may include it in the main deck instead, subject to the other deck rules."; button.disabled = true; }
+      else if (proof === null) { note += pending ? " Checking commander eligibility." : " Commander eligibility has not been verified."; button.textContent = pending ? "Checking commander eligibility…" : "Check commander eligibility"; }
+      else note += " Commander eligibility verified by Scryfall; pairing and deck rules still apply.";
+    }
+    $("preview-legality").textContent = note;
+    if (eligibilityErrors.has(current.oracleId)) $("preview-legality").textContent += ` Last eligibility check failed: ${eligibilityErrors.get(current.oracleId)}`;
+    $("preview-add").textContent = deck.format === "commander" && proof === false && commanderCards().length < 2 ? "Add to the 99 +" : "Add to deck +";
+  }
+  async function checkCommander(card) {
+    if (!client.isVerified(card) || rules.background(card) || client.proof(card) !== null) return;
+    let task = eligibilityJobs.get(card.oracleId);
+    if (!task) { eligibilityErrors.delete(card.oracleId); task = client.commanderEligibility(card); eligibilityJobs.set(card.oracleId, task); }
+    renderCommanderAction();
+    try { await task; }
+    catch (error) { eligibilityErrors.set(card.oracleId, error.message); if (current?.id === card.id) message(`Commander eligibility could not be verified: ${error.message} You can still edit the main deck.`); }
+    finally { eligibilityJobs.delete(card.oracleId); if (current?.id === card.id) renderCommanderAction(); renderStatistics(); }
+  }
+  $("preview-commander").addEventListener("click", async () => {
+    const originalId = current?.id, deckId = deck.id;
+    if (!current || deck.format !== "commander") return;
+    try {
+      let card = current;
+      if (!client.isVerified(card)) {
+        const fresh = await client.printing({ id: card.id, requestedFinish: currentFinish, guide: card.guide });
+        if (deck.id !== deckId || current?.id !== originalId) return;
+        commitState(model.replaceRecords(deck, [fresh])); renderCard(fresh, currentFinish); card = fresh;
+      }
+      if (card.legalities.commander !== "legal") throw Error(`${card.name} is not currently legal in Commander.`);
+      if (rules.colorChoice(card)) throw Error("Pregame colour-choice commanders are not supported. This card can still be added to the main deck.");
+      if (!rules.background(card)) await checkCommander(card);
+      if (deck.id !== deckId || current?.id !== originalId) return;
+      if (!rules.background(card) && client.proof(card) !== true) throw Error("Commander eligibility has not passed. Use Add to deck to include this printing in the main deck instead.");
+      const commanders = commanderCards();
+      if (commanders.some(c => c.oracleId === card.oracleId || c.name === card.name)) throw Error("This card is already assigned as a commander.");
+      if (model.count(deck, "commander") >= 2) throw Error("Remove or move an existing commander before selecting another. More than two are not supported.");
+      if (!commanders.length && rules.background(card)) throw Error("Choose a Background commander first; a Background cannot command alone.");
+      if (commanders.length) { const pairing = rules.pair(commanders[0], card); if (!pairing.valid) throw Error(pairing.reason); }
+      const inMain = deck.entries.find(e => e.printingId === card.id && e.finish === currentFinish && e.zone === "main");
+      commitState(inMain ? model.moveOne(deck, inMain.key, "commander") : model.add(deck, card, { finish: currentFinish, zone: "commander" }), `${card.name} assigned as a commander. It counts within the 100-card total.`);
+    } catch (error) { message(error.message); }
+  });
+  let refreshing = false;
+  async function refreshDeckData() {
+    if (refreshing || !deck.entries.length) return;
+    const deckId = deck.id;
+    refreshing = true; $("refresh-card-data").disabled = true; $("data-check-status").textContent = "Checking current card data…";
+    client.clearProofs();
+    try {
+      const fresh = await client.refresh(Object.values(deck.cards));
+      if (deck.id !== deckId) return;
+      commitState(model.replaceRecords(deck, fresh));
+      for (const commander of commanderCards()) if (!rules.background(commander) && client.isVerified(commander)) await checkCommander(commander);
+      $("data-check-status").textContent = `${fresh.length} printing records rechecked. Any missing records or unsupported configurations remain flagged.`;
+      if (current && deck.cards[current.id]) renderCard(deck.cards[current.id], currentFinish);
+    } catch (error) { if (deck.id === deckId) $("data-check-status").textContent = error.message + " Cached entries are preserved; current legality is unverified."; }
+    finally { refreshing = false; $("refresh-card-data").disabled = false; renderStatistics(); renderPreviewActions(); }
+  }
+  $("refresh-card-data").addEventListener("click", refreshDeckData);
+  setInterval(() => { renderStatistics(); renderPreviewActions(); }, 60000);
   renderDeck();
 
   try { selection = data.parseSelection(window.location.search); }

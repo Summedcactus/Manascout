@@ -106,6 +106,7 @@
     }
     async function refresh(cards, { signal } = {}) {
       const updated = [];
+      for (const card of cards) verified.delete(card.id);
       for (let i = 0; i < cards.length; i += 75) {
         const result = await request(`${API}/cards/collection`, { signal, method: "POST", body: { identifiers: cards.slice(i, i + 75).map(card => ({ id: card.id })) } });
         if (!Array.isArray(result.data)) throw new data.SelectionError("The current-card check returned incomplete data.", true);

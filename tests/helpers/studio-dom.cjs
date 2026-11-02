@@ -7,7 +7,7 @@ function mount({ client, narrow = false, search = '', storage } = {}) {
   let document;
   const decode = s => s.replace(/&amp;/g, '&').replace(/&quot;/g, '"').replace(/&#39;/g, "'").replace(/&lt;/g, '<').replace(/&gt;/g, '>');
   class Element {
-    constructor(tag) { this.tagName = tag.toUpperCase(); this.children = []; this.parentElement = null; this.attributes = {}; this.dataset = {}; this.listeners = {}; this._text = ''; this._value = undefined; this.hidden = false; this.disabled = false; this.open = false; this.scrollTop = 0; this.className = ''; this.files = []; }
+    constructor(tag) { this.tagName = tag.toUpperCase(); this.children = []; this.parentElement = null; this.attributes = {}; this.dataset = {}; this.listeners = {}; this._text = ''; this._value = undefined; this.hidden = false; this.disabled = false; this.open = false; this.scrollTop = 0; this.className = ''; this.files = []; this.style = {}; }
     get id() { return this.attributes.id || ''; } set id(v) { this.attributes.id = v; }
     get textContent() { return this._text + this.children.map(c => c.textContent).join(''); }
     set textContent(v) { this.replaceChildren(); this._text = String(v); }

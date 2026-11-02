@@ -20,7 +20,7 @@
     img.addEventListener("error", () => { img.hidden = true; }, { once: true });
     return img;
   }
-  function renderEntries(deck, container) {
+  function renderEntries(deck, container, { isVerified = () => false } = {}) {
     const active = container.contains(document.activeElement) ? document.activeElement : null;
     const focus = active ? { key: active.dataset.key, action: active.dataset.action } : null;
     const fragment = document.createDocumentFragment();
@@ -40,10 +40,12 @@
         const controls = node("div", "ds-entry-controls");
         for (const [action, text, label] of [["decrease", "−", "Remove one copy of"], ["increase", "+", "Add one copy of"], ["remove", "×", "Remove all copies of"]]) {
           const b = button(action, text, entry.key); b.setAttribute("aria-label", `${label} ${card.name}`);
+          if (entry.zone === "commander" && action === "increase") b.disabled = true;
           if (action === "increase") controls.append(node("span", "ds-entry-quantity", String(entry.quantity)));
           controls.append(b);
         }
-        article.append(inspect, info, controls);
+        const status = node("p", "ds-entry-legality", !isVerified(card) ? "Legality needs recheck" : card.legalities[deck.format] === "legal" ? "Card legal in format" : card.legalities[deck.format] === "unknown" ? "Legality not supplied" : "Not legal in format");
+        article.append(inspect, info, status, controls);
         if (zone === "commander") {
           const move = button("move-main", "Move one to main", entry.key); move.className = "ds-entry-move"; article.append(move);
         } else if (deck.format === "pauper" || zone === "sideboard") {
