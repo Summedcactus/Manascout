@@ -53,3 +53,13 @@ The exact LTC #390 artwork, in-card light map and surge-foil gradients/keyframes
 The former opaque-looking oval is replaced by three offset, low-alpha green gradients on an unclipped rectangular haze layer. It sits behind the card in the stage, independent of card tilt. A 9.5-second opacity/anisotropic-scale cycle gently expands/contracts it; an 11-second upper-area light variation adds restrained emphasis. No border-radius circle, hard edge, animated blur or artwork replacement is used. A separate black ground shadow varies subtly with the 13-second idle lift. Reduced-motion and offscreen/tab pause rules apply to all new layers. No new animation loop or device-motion permission is required.
 
 Tests check the new depth/haze structure, mobile bounds, reduced touch ranges and preservation of the foil implementation. Visual appearance, clipping and motion quality remain unverified without a real browser; no pixel-perfect claim is made.
+
+## Main-only Card of the Week visual polish
+
+The existing section, stage/float/shell structure, foil styles/reflection keyframes, in-card green layer and LTC #390 fallback/verification logic remain unchanged. Desktop tilt now uses the same clamped pointer handler with an 8° X / 10° Y maximum. Touch remains restrained at 2.5° X / 3° Y and stays passive, preserving scrolling and pinch zoom. The existing reset and idle-interaction pause logic is preserved.
+
+The 13-second idle float now varies depth as well as height and both angles: desktop depth rises from 8px to 13px at its high point, while existing smaller mobile overrides remain. The existing ground shadow broadens and fades as the card rises. Neutral edge lighting and near/far black shadows increase separation without adding whole-card glow or new objects.
+
+The existing halo uses faint asymmetric linear light fields rather than radial ellipses. Vertical transparency masking and a static, card-sized 8px blur (6px on mobile) soften its perimeter; opacity/transform animations, not the blur itself, animate. Its 12-second cycle ebbs between 0.08 and 0.28 opacity, with a restrained 14-second upper-area variation. No bats, particles, silhouettes or decorative shapes were added. Reduced-motion and offscreen/tab pauses are unchanged.
+
+Validation: **242 JavaScript cases passed, zero failed**, including pointer/touch bounds, depth/shadow changes and non-radial haze regressions. Existing HTML, CSS, metadata/link, Deck Studio and shared-card checks passed. A single offline Chromium launch check in the restarted environment ended with the browser closing during launch. No browser rendering, clipping, Android frame rate or pixel-level appearance was verified, and no blocked browser/network operation was repeatedly retried.

@@ -73,7 +73,10 @@ morgul = home.split('/* Week 006', 1)[1]
 for selector in re.findall(r'([^{}]+)\{', morgul):
     if '.morgul-' in selector and '@media' not in selector and not selector.lstrip().startswith('/*'):
         assert selector.strip() == '.morgul-art-glow' or 'data-weekly-' in selector or 'prefers-reduced-motion' in selector or '.weekly-theme-morgul *' in selector or '.weekly-theme-morgul .morgul-' in selector, selector
-assert 'saturate(' not in morgul and 'brightness(' not in morgul and 'blur(' not in morgul
+assert 'saturate(' not in morgul and 'brightness(' not in morgul
+assert all(float(radius) <= 8 for radius in re.findall(r'blur\(([0-9.]+)px\)', morgul))
+for block in re.findall(r'@keyframes msMorgul[^\{]*\{(.*?)(?=\n(?:@|/|\.)|$)', morgul, re.S):
+    assert 'filter:' not in block, 'Decorative filters must remain static'
 assert 'morgul-window' not in html, 'Unverified window coordinates must not ship'
 assert 'class="morgul-art-glow"' in html and 'id="morgul-green-light"' in html
 assert 'id="card-week-light-map"' in html and 'feColorMatrix' in html

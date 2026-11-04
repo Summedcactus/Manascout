@@ -107,6 +107,39 @@
       if (card.oracleId === excludeOracleId) throw new data.SelectionError("Scryfall repeated the previous card. Try Discover again.");
       return verify(card);
     }
+    // Bounded role pools share the same queue, pacing, normalisation and cache as Search.
+    async function candidates(query, { signal, pages = 1, order = "edhrec" } = {}) {
+      if (!["edhrec", "eur", "name"].includes(order) || !Number.isInteger(pages) || pages < 1 || pages > 2) throw new data.SelectionError("Invalid generation pool request.");
+      let url = `${API}/cards/search?${new URLSearchParams({ q: `f:commander game:paper (${query})`, unique: "cards", order, dir: "asc", include_extras: "false" })}`;
+      const cards = [];
+      for (let page = 0; page < pages && url; page++) {
+        if (signal?.aborted) throw abortError();
+        const key = url;
+        const response = await cached(key, async () => {
+          try {
+            const result = await request(key, { signal });
+            if (!Array.isArray(result.data)) throw new data.SelectionError("Scryfall returned an incomplete candidate pool.", true);
+            return { cards: result.data.map(raw => remember(raw)), next: result.has_more ? result.next_page || "" : "" };
+          } catch (error) { if (error.status === 404) return { cards: [], next: "" }; throw error; }
+        });
+        // Reuse cached candidate hints even after a previous deck's final refresh replaced
+        // their object identities. Every selected record still gets a fresh final collection check.
+        cards.push(...response.cards.map(card => verify(card)));
+        url = response.next;
+        if (url) { const next = new URL(url); if (next.origin !== API || next.pathname !== "/cards/search") throw new data.SelectionError("Invalid candidate pool page."); }
+      }
+      if (signal?.aborted) throw abortError();
+      return cards;
+    }
+    async function euroRate({ signal } = {}) {
+      const url = "https://api.frankfurter.dev/v1/latest?base=EUR&symbols=GBP";
+      return cached(url, async () => {
+        const raw = await request(url, { signal });
+        const age = now() - Date.parse(raw?.date);
+        if (raw?.base !== "EUR" || !/^\d{4}-\d{2}-\d{2}$/.test(raw.date || "") || !Number.isFinite(age) || age < -86400000 || age > 7 * 86400000 || typeof raw.rates?.GBP !== "number" || !Number.isFinite(raw.rates.GBP) || raw.rates.GBP <= 0) throw new data.SelectionError("A current EUR/GBP reference rate is unavailable. Try No limit, or retry later.");
+        return { rate: raw.rates.GBP, date: raw.date };
+      }, 3600000);
+    }
     async function autocomplete(query, { signal } = {}) {
       const q = String(query).trim().slice(0, 200);
       if (q.length < 2) return [];
@@ -148,7 +181,7 @@
       }
       return updated;
     }
-    return { search, random, autocomplete, printing, commanderEligibility, refresh,
+    return { search, random, candidates, euroRate, autocomplete, printing, commanderEligibility, refresh,
       isVerified: card => { const check = verified.get(card); return !!check && latest.get(card.id) === check.generation && now() - check.time < 900000; },
       proof: card => { const p = proofs.get(card.oracleId); return p && now() - p.time < 900000 ? p.eligible : null; },
       clearProofs: () => proofs.clear() };
