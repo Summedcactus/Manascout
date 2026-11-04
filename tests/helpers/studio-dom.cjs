@@ -11,7 +11,7 @@ function mount({ client, narrow = false, search = '', storage } = {}) {
     get id() { return this.attributes.id || ''; } set id(v) { this.attributes.id = v; }
     get textContent() { return this._text + this.children.map(c => c.textContent).join(''); }
     set textContent(v) { this.replaceChildren(); this._text = String(v); }
-    get value() { return this._value ?? this.attributes.value ?? (this.tagName === 'SELECT' ? this.querySelector('option')?.value || '' : this.tagName === 'OPTION' ? this.textContent : ''); }
+    get value() { return this._value ?? this.attributes.value ?? (this.tagName === 'SELECT' ? (this.querySelector('option[selected]') || this.querySelector('option'))?.value || '' : this.tagName === 'OPTION' ? this.textContent : ''); }
     set value(v) { this._value = String(v); }
     get isConnected() { return this === document.body || !!this.parentElement?.isConnected; }
     get classList() { return { contains: c => this.className.split(/\s+/).includes(c), add: c => { if (!this.className.split(/\s+/).includes(c)) this.className += ' ' + c; }, remove: c => { this.className = this.className.split(/\s+/).filter(x => x !== c).join(' '); } }; }
@@ -68,7 +68,7 @@ function mount({ client, narrow = false, search = '', storage } = {}) {
   const media = { matches: narrow, listeners: [], addEventListener(_name, fn) { this.listeners.push(fn); } };
   const listeners = {};
   const window = { ManaScoutDeckFormats: require('../../assets/js/deck-formats.js'), location: { search }, matchMedia: () => media, ManaScoutDeckData: require('../../assets/js/deck-data.js'), ManaScoutDeckModel: require('../../assets/js/deck-model.js'), ManaScoutDeckClient: { createClient: () => client }, addEventListener(t, fn) { (listeners[t] ||= []).push(fn); }, localStorage: storage, confirm: () => false };
-  for (const [file, global] of [['deck-rules.js','ManaScoutDeckRules'],['deck-store.js','ManaScoutDeckStore']]) if (fs.existsSync(path.join(root,'assets/js',file))) window[global] = require('../../assets/js/' + file);
+  for (const [file, global] of [['deck-rules.js','ManaScoutDeckRules'],['deck-store.js','ManaScoutDeckStore'],['deck-generator.js','ManaScoutDeckGenerator']]) if (fs.existsSync(path.join(root,'assets/js',file))) window[global] = require('../../assets/js/' + file);
   const timers = new Set();
   const timerTasks = new Map();
   const context = { window, document, console, URL, URLSearchParams, AbortController, Blob, Date, structuredClone,

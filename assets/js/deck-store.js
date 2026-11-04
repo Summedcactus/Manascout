@@ -37,6 +37,9 @@
       securityStamp: string(source.securityStamp, 40, true), oversized: source.oversized === true, printingDataComplete: source.printingDataComplete === true,
       hasPrintedPT: typeof source.hasPrintedPT === "boolean" ? source.hasPrintedPT : null, isRebalanced: source.isRebalanced === true || /^A-/.test(source.name),
       meldEntry: ["meld_part", "meld_result", "not_meld"].includes(source.meldEntry) ? source.meldEntry : source.layout === "meld" ? "unknown" : "not_meld" };
+    c.manaCost = typeof source.manaCost === "string" && source.manaCost.length <= 200 ? source.manaCost : "";
+    c.pricesEUR = Object.fromEntries(["nonfoil", "foil", "etched"].map(f => [f, typeof source.pricesEUR?.[f] === "number" && Number.isFinite(source.pricesEUR[f]) && source.pricesEUR[f] > 0 ? source.pricesEUR[f] : null]));
+    c.edhrecRank = Number.isSafeInteger(source.edhrecRank) && source.edhrecRank > 0 ? source.edhrecRank : null;
     c.colorIdentity = Array.isArray(source.colorIdentity) && source.colorIdentity.every(x => /^[WUBRG]$/.test(x)) ? [...new Set(source.colorIdentity)] : null;
     c.colors = Array.isArray(source.colors) ? source.colors.filter(x => /^[WUBRG]$/.test(x)) : [];
     c.games = Array.isArray(source.games) ? source.games.filter(x => ["paper", "mtgo", "arena"].includes(x)) : [];

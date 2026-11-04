@@ -14,18 +14,19 @@
   <meta property="og:url" content="https://manascout.co.uk/deck/">
   <meta property="og:site_name" content="ManaScout">
   <meta name="twitter:card" content="summary">
-  <link rel="stylesheet" href="/assets/css/deck-studio.css?v=ux1">
+  <link rel="stylesheet" href="/assets/css/deck-studio.css?v=generate1">
   <script type="application/ld+json">
   {"@context":"https://schema.org","@type":"WebPage","name":"ManaScout Deck Studio","url":"https://manascout.co.uk/deck/","description":"ManaScout's artwork-first deck workspace with exact-printing card search and manual deck editing.","isPartOf":{"@type":"WebSite","name":"ManaScout","url":"https://manascout.co.uk/"}}
   </script>
   <script src="/assets/js/deck-formats.js?v=5d1" defer></script>
-  <script src="/assets/js/deck-data.js?v=5d1" defer></script>
+  <script src="/assets/js/deck-data.js?v=generate1" defer></script>
   <script src="/assets/js/deck-model.js?v=5d1" defer></script>
-  <script src="/assets/js/deck-client.js?v=5g1" defer></script>
+  <script src="/assets/js/deck-client.js?v=generate1" defer></script>
   <script src="/assets/js/deck-rules.js?v=5d1" defer></script>
   <script src="/assets/js/deck-view.js?v=5d1" defer></script>
-  <script src="/assets/js/deck-store.js?v=5d1" defer></script>
-  <script src="/assets/js/deck-studio.js?v=ux1" defer></script>
+  <script src="/assets/js/deck-store.js?v=generate1" defer></script>
+  <script src="/assets/js/deck-generator.js?v=generate1" defer></script>
+  <script src="/assets/js/deck-studio.js?v=generate1" defer></script>
 </head>
 <body class="deck-studio" data-active-panel="deck">
   <a class="ds-skip" href="#deck-heading">Skip to deck workspace</a>
@@ -140,6 +141,21 @@
       <div class="ds-preview-quantity"><label for="preview-quantity">Copies to add</label><input id="preview-quantity" type="number" value="1" min="1" max="10000" inputmode="numeric"><label for="preview-zone">Section</label><select id="preview-zone"><option value="main">Main deck</option><option value="sideboard" disabled>Sideboard</option></select></div>
       <div class="ds-preview-actions"><button class="ds-button ds-secondary" id="preview-commander" type="button" disabled aria-describedby="preview-legality">Use as Commander</button><button class="ds-button ds-primary" type="button" id="preview-add" disabled aria-describedby="preview-legality preview-actions-note">Add to the 99</button></div>
       <button class="ds-button ds-secondary" type="button" id="preview-remove" disabled>Remove one</button>
+      <section class="ds-generation" id="generation-controls" aria-label="Commander deck generation" hidden>
+        <div class="ds-generation-actions"><button class="ds-button ds-primary" type="button" id="generate-deck" aria-describedby="generation-note generation-status">Generate Deck</button><button class="ds-button ds-secondary" type="button" id="cancel-generation" hidden>Cancel</button></div>
+        <details id="generation-options"><summary>Deck options</summary>
+          <div class="ds-generation-fields">
+            <label for="generation-bracket">Power preference<select id="generation-bracket" aria-describedby="generation-note"><option value="1">Bracket 1 · relaxed</option><option value="2" selected>Bracket 2 · casual</option><option value="3">Bracket 3 · focused</option><option value="4">Bracket 4 · efficient</option><option value="5">Bracket 5 · strongest target</option></select></label>
+            <label for="generation-budget">Budget (GBP)<select id="generation-budget"><option value="">No limit</option><option value="50">£50</option><option value="100">£100</option><option value="150">£150</option><option value="250">£250</option><option value="custom">Custom</option></select></label>
+            <label for="generation-custom-budget" id="generation-custom-label" hidden>Custom budget (£)<input id="generation-custom-budget" type="number" min="1" max="100000" step="1" inputmode="decimal" value="100"></label>
+            <label for="generation-strategy">Strategy<select id="generation-strategy"><option value="auto">Auto · infer from cards</option></select></label>
+            <label for="generation-curve">Mana curve<select id="generation-curve"><option value="low">Low</option><option value="balanced" selected>Balanced</option><option value="high">High</option></select></label>
+            <label for="generation-randomness">Choices<select id="generation-randomness"><option value="reliable">Reliable</option><option value="mixed">Mixed</option><option value="wild">Wild · unusual synergies</option></select></label>
+          </div>
+          <p class="ds-note" id="generation-note">Commander only. Brackets guide power preferences; they are not certified. Budgets use reported EUR prices converted to GBP, not a shop quote. Unknown prices cannot pass a budget check. Wild still requires mechanical relevance.</p>
+        </details>
+        <p class="ds-note" id="generation-status" role="status" aria-live="polite">Build around this assigned printing. Options are optional.</p>
+      </section>
       <div id="signature-controls" class="ds-signature-controls" hidden><label class="ds-label" for="signature-owner">Signature spell for</label><select id="signature-owner" aria-describedby="signature-note"></select><button class="ds-button ds-secondary" id="preview-signature" type="button">Assign signature spell</button><p class="ds-note" id="signature-note">One instant or sorcery per Oathbreaker, within that Oathbreaker’s own colour identity.</p></div>
       <button class="ds-button ds-secondary ds-future-printing" type="button" disabled aria-describedby="preview-actions-note">Change printing · coming later</button>
       <p class="ds-note" id="preview-actions-note">Adds this exact printing and finish. Choose a role before adding. Commander eligibility is checked separately from main-deck legality; construction warnings still apply.</p>

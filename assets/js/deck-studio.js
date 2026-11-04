@@ -8,6 +8,7 @@
   const view = window.ManaScoutDeckView;
   const rules = window.ManaScoutDeckRules;
   const persistence = window.ManaScoutDeckStore;
+  const generator = window.ManaScoutDeckGenerator;
   const $ = id => document.getElementById(id);
   const body = document.body;
   if (!body.classList.contains("deck-studio") || !data || !model || !client || !view || !rules || !persistence || !formats) return;
@@ -28,6 +29,7 @@
   let face = 0;
   let loading = false;
   let discoveryJob = null;
+  let generationJob = null;
   let lastDiscoveredOracle = "";
   let returnFocus = null;
   let returnFocusKey = null;
@@ -156,6 +158,7 @@
   $("flip-preview").addEventListener("click", () => { face = (face + 1) % current.images.length; showFace(); });
 
   function renderCard(card, finish = card.finish) {
+    cancelGeneration("Generation cancelled because another card was selected.");
     cancelDiscovery("Discovery cancelled because another printing was selected.");
     current = card;
     currentFinish = finish;
@@ -224,12 +227,13 @@
   $("retry-printing").addEventListener("click", loadSelection);
   function message(text) { $("deck-message").textContent = text; }
   function commitState(next, text = "") {
-    if (next !== deck) { deck = next; dirty = true; scheduleSave(); }
+    if (next !== deck) { cancelGeneration("Generation cancelled because the deck changed."); deck = next; dirty = true; scheduleSave(); }
     renderDeck();
     const warning = rules.validate(deck, client).issues.find(i => i.severity === "error" || i.severity === "unsupported");
     message((text || "Deck updated.") + (warning ? ` Warning: ${warning.message}` : ""));
   }
   function renderPreviewActions() {
+    syncGeneration();
     if (!current) return;
     const zone = $("preview-zone").value || "main";
     const entry = previewEntry();
@@ -281,7 +285,7 @@
   }
   $("deck-name").addEventListener("input", () => {
     const next = model.edit(deck, { name: $("deck-name").value });
-    if (next !== deck) { deck = next; dirty = true; scheduleSave(); }
+    if (next !== deck) { cancelGeneration("Generation cancelled because the deck changed."); deck = next; dirty = true; scheduleSave(); }
   });
   function changeFormat(format) {
     cancelDiscovery("Discovery cancelled because the format changed.");
@@ -539,10 +543,80 @@
       commitState(entry ? model.moveOne(deck, entry.key, "signature", owner.id) : model.add(deck, current, { zone: "signature", finish: currentFinish, assignedTo: owner.id }), `Assigned ${current.name} as ${owner.name}'s signature spell.`);
     } catch (error) { message(error.message); }
   });
+  function syncGeneration() {
+    const assigned = generator?.context(deck);
+    $("generation-controls").hidden = !assigned;
+    $("generate-deck").disabled = !!generationJob || !assigned || loading;
+    $("generate-deck").textContent = generationJob ? "Generating…" : "Generate Deck";
+    $("generate-deck").setAttribute("aria-busy", String(!!generationJob));
+    $("cancel-generation").hidden = !generationJob;
+    const selected = $("generation-strategy").value || "auto";
+    const suggested = generator?.strategies(deck) || [];
+    const key = suggested.map(x => x.value).join(":");
+    if ($("generation-strategy").dataset.choices !== key) {
+      const auto = view.node("option", "", "Auto · infer from cards"); auto.value = "auto";
+      $("generation-strategy").replaceChildren(auto, ...suggested.map(x => { const option = view.node("option", "", x.label); option.value = x.value; return option; }));
+      $("generation-strategy").value = suggested.some(x => x.value === selected) ? selected : "auto";
+      $("generation-strategy").dataset.choices = key;
+    }
+  }
+  function cancelGeneration(note = "Generation cancelled. Your deck is unchanged.") {
+    if (!generationJob) return;
+    generationJob.controller.abort(); generationJob = null;
+    $("generation-status").textContent = note;
+    syncGeneration();
+  }
+  $("cancel-generation").addEventListener("click", () => { cancelGeneration(); $("generate-deck").focus({ preventScroll: true }); });
+  for (const id of ["generation-bracket", "generation-budget", "generation-custom-budget", "generation-strategy", "generation-curve", "generation-randomness"]) $(id).addEventListener("change", () => {
+    cancelGeneration("Generation cancelled because deck options changed.");
+    $("generation-custom-label").hidden = $("generation-budget").value !== "custom";
+  });
+  $("generate-deck").addEventListener("click", async () => {
+    if (!generator?.context(deck) || generationJob || loading) return;
+    cancelDiscovery("Discovery cancelled while generating a deck.");
+    const snapshot = deck;
+    const job = { controller: new AbortController(), snapshot };
+    generationJob = job; syncGeneration();
+    const active = () => generationJob === job && !job.controller.signal.aborted && deck === snapshot;
+    try {
+      const replaces = generator.needsConfirmation(snapshot);
+      if (replaces) {
+        const confirmed = await confirmAction("Generate a new deck around this card?", "Existing manual/generated contents will be replaced. The selected printing and finish, and assigned commanders, are preserved. A recovery snapshot will be kept before replacement. You can also download a JSON backup here.", "Generate");
+        if (!active()) return;
+        if (!confirmed) { cancelGeneration(); return; }
+      }
+      if ($("generation-budget").value === "custom" && !$("generation-custom-budget").value.trim()) throw Error("Enter a custom GBP budget, or choose No limit.");
+      const result = await generator.generate(snapshot, {
+        bracket: $("generation-bracket").value, budget: $("generation-budget").value === "custom" ? $("generation-custom-budget").value : $("generation-budget").value,
+        strategy: $("generation-strategy").value, curve: $("generation-curve").value, randomness: $("generation-randomness").value
+      }, { client, signal: job.controller.signal, progress: text => { if (active()) $("generation-status").textContent = text; } });
+      if (!active()) return;
+      // A recoverable snapshot must precede destructive replacement; failure preserves the deck.
+      if (replaces) {
+        if (savePromise) await savePromise;
+        if (!active()) return;
+        store.checkpoint(snapshot, savedToken);
+      }
+      if (!active()) return;
+      generationJob = null;
+      commitState(result.deck, result.note);
+      current = deck.cards[deck.selection.printingId]; currentFinish = deck.selection.finish;
+      renderCard(current, currentFinish);
+      $("generation-status").textContent = result.note;
+      closePreview(); activatePanel("deck");
+    } catch (error) {
+      if (generationJob === job && error.name !== "AbortError") {
+        const note = `Generation unavailable: ${error.message} Existing deck and selection preserved.`;
+        $("generation-status").textContent = note; message(note);
+      }
+    } finally { if (generationJob === job) generationJob = null; syncGeneration(); }
+  });
+  window.addEventListener("pagehide", () => cancelGeneration());
   let refreshing = false;
   async function refreshDeckData() {
     if (refreshing || !Object.keys(deck.cards).length) return;
     const deckId = deck.id;
+    cancelGeneration("Generation cancelled while current card data is rechecked.");
     refreshing = true; $("refresh-card-data").disabled = true; $("data-check-status").textContent = "Checking current card data…";
     client.clearProofs();
     try {
@@ -643,6 +717,7 @@
     return leave;
   }
   function activateDraft(record, note = "", markDirty = false) {
+    cancelGeneration("Generation cancelled because the active draft changed.");
     cancelDiscovery("Discovery cancelled because the active draft changed.");
     clearTimeout(saveTimer);
     deck = record.deck; savedToken = record.token || null; dirty = !!record.dirty || markDirty; storagePaused = false; lastSaveError = "";
@@ -726,6 +801,7 @@
   window.addEventListener("storage", event => {
     if (event.key !== null && event.key !== store.pointerKey(deck.id)) return;
     try { const latest = event.newValue ? JSON.parse(event.newValue).token : null; if (latest === savedToken) return; } catch { /* A damaged external write is also a conflict. */ }
+    cancelGeneration("Generation cancelled because this draft changed in another tab.");
     clearTimeout(saveTimer); dirty = true; storagePaused = true;
     lastSaveError = "This draft changed or was deleted in another tab. Your working version is preserved. Save a copy or explicitly reload; autosave is paused to prevent an overwrite.";
     setSaveStatus("Save conflict", lastSaveError); renderLibrary();

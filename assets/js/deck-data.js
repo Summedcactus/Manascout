@@ -47,6 +47,9 @@
     const statuses = new Set(["legal", "not_legal", "banned", "restricted"]);
     return {
       id: selection.id, name: card.name, type: card.type_line || "Type not supplied",
+      manaCost: typeof front.mana_cost === "string" ? front.mana_cost : "",
+      pricesEUR: Object.fromEntries([["nonfoil", card.prices?.eur], ["foil", card.prices?.eur_foil], ["etched", card.prices?.eur_etched]].map(([finish, value]) => [finish, typeof value === "string" && /^\d+(?:\.\d+)?$/.test(value) && Number.isFinite(Number(value)) && Number(value) > 0 ? Number(value) : null])),
+      edhrecRank: Number.isSafeInteger(card.edhrec_rank) && card.edhrec_rank > 0 ? card.edhrec_rank : null,
       oracleId: uuid.test(card.oracle_id || "") ? card.oracle_id.toLowerCase() : "",
       frontType: card.card_faces?.[0]?.type_line || card.type_line || "",
       frontText: card.card_faces?.[0]?.oracle_text || card.oracle_text || "",
