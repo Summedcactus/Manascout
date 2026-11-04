@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#0D1117">
+  <meta name="theme-color" content="#101114">
   <title>Deck Studio — Build Your MTG Deck | ManaScout</title>
   <meta name="description" content="Build Commander, Standard and other Constructed decks with ManaScout. Search cards, keep exact printings, check construction, view stats and save local drafts with JSON backups.">
   <meta name="robots" content="index,follow">
@@ -14,19 +14,19 @@
   <meta property="og:url" content="https://manascout.co.uk/deck/">
   <meta property="og:site_name" content="ManaScout">
   <meta name="twitter:card" content="summary">
-  <link rel="stylesheet" href="/assets/css/deck-studio.css?v=generate1">
+  <link rel="stylesheet" href="/assets/css/deck-studio.css?v=roleux1">
   <script type="application/ld+json">
   {"@context":"https://schema.org","@type":"WebPage","name":"ManaScout Deck Studio","url":"https://manascout.co.uk/deck/","description":"ManaScout's artwork-first deck workspace with exact-printing card search and manual deck editing.","isPartOf":{"@type":"WebSite","name":"ManaScout","url":"https://manascout.co.uk/"}}
   </script>
   <script src="/assets/js/deck-formats.js?v=5d1" defer></script>
   <script src="/assets/js/deck-data.js?v=generate1" defer></script>
   <script src="/assets/js/deck-model.js?v=5d1" defer></script>
-  <script src="/assets/js/deck-client.js?v=generate1" defer></script>
+  <script src="/assets/js/deck-client.js?v=roleux1" defer></script>
   <script src="/assets/js/deck-rules.js?v=5d1" defer></script>
   <script src="/assets/js/deck-view.js?v=5d1" defer></script>
   <script src="/assets/js/deck-store.js?v=generate1" defer></script>
   <script src="/assets/js/deck-generator.js?v=generate1" defer></script>
-  <script src="/assets/js/deck-studio.js?v=generate1" defer></script>
+  <script src="/assets/js/deck-studio.js?v=roleux1" defer></script>
 </head>
 <body class="deck-studio" data-active-panel="deck">
   <a class="ds-skip" href="#deck-heading">Skip to deck workspace</a>
@@ -59,6 +59,7 @@
           <div class="ds-search-row"><div class="ds-search-field"><input id="studio-search" type="search" placeholder="Search for a card…" list="studio-suggestions" maxlength="300" aria-describedby="discover-note"></div><div class="ds-search-actions"><button class="ds-search-submit" id="studio-search-submit" type="submit">Search</button><button class="ds-discover-random" id="studio-discover-random" type="button" aria-label="Discover a random card for the selected format" aria-describedby="discovery-status"><span id="discover-random-label">Discover</span><span aria-hidden="true">✦</span></button></div></div>
           <datalist id="studio-suggestions"></datalist>
         </form>
+        <label class="ds-discovery-mode" id="commander-discovery-mode" for="studio-discovery-mode" hidden><span>Discover:</span><select id="studio-discovery-mode" aria-describedby="discovery-status"><option value="any">Any card</option><option value="commander">Commander</option></select></label>
         <p class="ds-note" id="discover-note">Search for a card you know, or use Discover for a random suggestion. Select a result to choose its role.</p>
         <p class="ds-note ds-discovery-status" id="discovery-status" role="status" aria-live="polite">Discover selects a random printing to inspect. Add it only when you choose.</p>
         <label class="ds-label ds-search-zone" for="search-zone">Add to <select id="search-zone"><option value="main">Main deck</option><option value="sideboard" disabled>Sideboard</option></select></label>
@@ -74,7 +75,7 @@
           </button>
         </div>
 
-        <div class="ds-discover-foot"><span class="ds-compass" aria-hidden="true">◇</span><h3>A version worth building around.</h3><p>Start with the artwork that speaks to you. Explore the history, then bring a printing here.</p><a class="ds-text-link" href="/card/">Explore 38 card guides <span aria-hidden="true">→</span></a></div>
+        <div class="ds-discover-foot"><span class="ds-compass" aria-hidden="true">◇</span><h3>A version worth building around.</h3><p>Start with the artwork that speaks to you. Explore the history, then bring a printing here.</p><a class="ds-text-link" href="/card/">Explore 44 card guides <span aria-hidden="true">→</span></a></div>
       </div>
     </section>
 
@@ -91,7 +92,7 @@
 
         <div class="ds-inspiration" id="inspiration" hidden>
           <div class="ds-inspiration-image"><img id="inspiration-image" width="160" height="224" alt="" hidden></div>
-          <div class="ds-inspiration-copy"><p class="ds-eyebrow">INSPIRATION / NOT ADDED TO A DECK</p><h3 id="inspiration-name"></h3><p class="ds-note" id="inspiration-printing"></p><button type="button" class="ds-button ds-primary" data-open-preview>Inspect printing <span aria-hidden="true">↗</span></button></div>
+          <div class="ds-inspiration-copy"><p class="ds-eyebrow" id="inspiration-role">PREVIEW / CHOOSE A ROLE</p><h3 id="inspiration-name"></h3><p class="ds-note" id="inspiration-printing"></p><button type="button" class="ds-button ds-primary" data-open-preview>Inspect printing <span aria-hidden="true">↗</span></button></div>
         </div>
 
         <div class="ds-empty-deck" id="empty-deck">
@@ -136,11 +137,9 @@
       <h2 id="preview-name">Card preview</h2><p class="ds-card-type" id="preview-type"></p>
       <p class="ds-card-brief"><span>Rules excerpt</span><span id="preview-brief"></span></p>
       <p class="ds-legality-note" id="preview-legality" role="status"></p>
-      <dl class="ds-printing-facts"><div><dt>Mana value</dt><dd id="preview-mv"></dd></div><div><dt>Printing</dt><dd id="preview-printing"></dd></div><div><dt>Artist</dt><dd id="preview-artist"></dd></div><div><dt>Preview finish</dt><dd id="preview-finish"></dd></div></dl>
-      <p class="ds-note" id="preview-note"></p>
-      <div class="ds-preview-quantity"><label for="preview-quantity">Copies to add</label><input id="preview-quantity" type="number" value="1" min="1" max="10000" inputmode="numeric"><label for="preview-zone">Section</label><select id="preview-zone"><option value="main">Main deck</option><option value="sideboard" disabled>Sideboard</option></select></div>
-      <div class="ds-preview-actions"><button class="ds-button ds-secondary" id="preview-commander" type="button" disabled aria-describedby="preview-legality">Use as Commander</button><button class="ds-button ds-primary" type="button" id="preview-add" disabled aria-describedby="preview-legality preview-actions-note">Add to the 99</button></div>
-      <button class="ds-button ds-secondary" type="button" id="preview-remove" disabled>Remove one</button>
+      <p class="ds-eyebrow" id="preview-role-note">Choose a role</p>
+      <div class="ds-preview-actions"><button class="ds-button ds-primary" id="preview-commander" type="button" disabled aria-describedby="preview-legality">Set as Commander</button><button class="ds-button ds-secondary" type="button" id="preview-add" disabled aria-describedby="preview-legality preview-actions-note">Add to the 99</button></div>
+      <button class="ds-pair-action" type="button" id="preview-pair" hidden aria-describedby="preview-legality">Add as partner</button>
       <section class="ds-generation" id="generation-controls" aria-label="Commander deck generation" hidden>
         <div class="ds-generation-actions"><button class="ds-button ds-primary" type="button" id="generate-deck" aria-describedby="generation-note generation-status">Generate Deck</button><button class="ds-button ds-secondary" type="button" id="cancel-generation" hidden>Cancel</button></div>
         <details id="generation-options"><summary>Deck options</summary>
@@ -156,6 +155,12 @@
         </details>
         <p class="ds-note" id="generation-status" role="status" aria-live="polite">Build around this assigned printing. Options are optional.</p>
       </section>
+      <dl class="ds-printing-facts"><div><dt>Mana value</dt><dd id="preview-mv"></dd></div><div><dt>Printing</dt><dd id="preview-printing"></dd></div><div><dt>Artist</dt><dd id="preview-artist"></dd></div><div><dt>Preview finish</dt><dd id="preview-finish"></dd></div></dl>
+      <p class="ds-note" id="preview-note"></p>
+      <div class="ds-preview-quantity"><label for="preview-quantity">Copies to add</label><input id="preview-quantity" type="number" value="1" min="1" max="10000" inputmode="numeric"><label for="preview-zone">Section</label><select id="preview-zone"><option value="main">Main deck</option><option value="sideboard" disabled>Sideboard</option></select></div>
+
+      <button class="ds-button ds-secondary" type="button" id="preview-remove" disabled>Remove one</button>
+
       <div id="signature-controls" class="ds-signature-controls" hidden><label class="ds-label" for="signature-owner">Signature spell for</label><select id="signature-owner" aria-describedby="signature-note"></select><button class="ds-button ds-secondary" id="preview-signature" type="button">Assign signature spell</button><p class="ds-note" id="signature-note">One instant or sorcery per Oathbreaker, within that Oathbreaker’s own colour identity.</p></div>
       <button class="ds-button ds-secondary ds-future-printing" type="button" disabled aria-describedby="preview-actions-note">Change printing · coming later</button>
       <p class="ds-note" id="preview-actions-note">Adds this exact printing and finish. Choose a role before adding. Commander eligibility is checked separately from main-deck legality; construction warnings still apply.</p>

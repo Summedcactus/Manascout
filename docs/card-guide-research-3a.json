@@ -1,0 +1,1252 @@
+{
+  "reviewed": "2026-11-04",
+  "scope": "Prompt 3A: four new paper-printing guides and six in-place editorial audits",
+  "method": "Catalogue research preceded drafting. Facts were checked using accessible catalogue pages or indexed catalogue extracts; direct Scryfall API access and real-browser testing were unavailable. No price or availability inference from empty fields. Physical foil behaviour and authenticity are not verified by these records.",
+  "uncertainties": [
+    "Early Judge promo year/date fields can be nominal. JGP #3 is not asserted to have been distributed on 1 January 1998.",
+    "PHPR #5 catalogue date is not a guaranteed mail-order delivery day.",
+    "Table shortlists are representative; omission does not prove that no other edition exists.",
+    "SPG letter suffixes are catalogue variant identifiers; actual photographs/ink colours should accompany seller identification."
+  ],
+  "cards": [
+    {
+      "name": "Mox Diamond",
+      "slug": "mox-diamond",
+      "title": "Mox Diamond Printings, Stronghold & From the Vault Foil | ManaScout",
+      "description": "Compare Mox Diamond’s Stronghold #138 debut with From the Vault: Relics #10: original art, foil differences, Reserved List context and collector choices.",
+      "first": [
+        "Stronghold",
+        "STH",
+        "138",
+        "2 March 1998",
+        "rare",
+        "Dan Frazier",
+        "Nonfoil only"
+      ],
+      "records": [
+        {
+          "set": "Stronghold",
+          "code": "STH",
+          "number": "138",
+          "art": "Original illustration; original frame",
+          "artist": "Dan Frazier",
+          "finish": "Nonfoil only",
+          "year": "1998",
+          "source": "https://mtg.wtf/card/sth/138"
+        },
+        {
+          "set": "From the Vault: Relics",
+          "code": "V10",
+          "number": "10",
+          "art": "New illustration; modern frame; From the Vault foil",
+          "artist": "Volkan Baǵa",
+          "finish": "Foil only",
+          "year": "2010",
+          "source": "https://mtg.wtf/card/v10/10"
+        }
+      ],
+      "related": [
+        "chrome-mox",
+        "mana-crypt",
+        "mana-vault",
+        "grim-monolith"
+      ],
+      "sources": [
+        "https://mtg.wtf/card/sth/138",
+        "https://mtg.wtf/card/v10/10",
+        "https://magic.wizards.com/en/news/announcements/official-reprint-policy",
+        "https://magery.com/mtg/card/mox-diamond",
+        "https://deckbuilder.co.uk/card-profile-name/?name=Mox+Diamond&uuid=d11cc8d0-137a-5867-ad11-aea6c8a6c67c"
+      ],
+      "verified": "2026-11-04",
+      "mana_cost": "{0}",
+      "colour_identity": [],
+      "oracle_summary": "Mox Diamond costs {0}, is an  Artifact  and has a  colourless colour identity . It can produce one mana of any colour, but that flexibility does not add coloured mana symbols to its identity.",
+      "scope": "Representative meaningful paper records; digital and oversized entries explained separately where useful."
+    },
+    {
+      "name": "Gaea's Cradle",
+      "slug": "gaeas-cradle",
+      "title": "Gaea’s Cradle First Printing, Judge Foil & Versions | ManaScout",
+      "description": "Identify Gaea’s Cradle USG #321, the Mark Zug Judge foil and gold-bordered editions. Compare real paper printings, artwork and collector context.",
+      "first": [
+        "Urza’s Saga",
+        "USG",
+        "321",
+        "12 October 1998",
+        "rare",
+        "Mark Zug",
+        "Nonfoil only"
+      ],
+      "records": [
+        {
+          "set": "Urza’s Saga",
+          "code": "USG",
+          "number": "321",
+          "art": "Original illustration; original frame",
+          "artist": "Mark Zug",
+          "finish": "Nonfoil only",
+          "year": "1998",
+          "source": "https://mtg.wtf/card/usg/321"
+        },
+        {
+          "set": "Judge Gift Cards 1998",
+          "code": "JGP",
+          "number": "3",
+          "art": "Original illustration; shooting-star Judge promo",
+          "artist": "Mark Zug",
+          "finish": "Traditional foil only",
+          "year": "Promo series: 1998",
+          "source": "https://mtg.wtf/card/jgp/3"
+        },
+        {
+          "set": "World Championship Decks 1999",
+          "code": "WC99",
+          "number": "ml321",
+          "art": "Matt Linde deck; gold border; collector reproduction",
+          "artist": "Mark Zug",
+          "finish": "Nonfoil only",
+          "year": "1999",
+          "source": "https://mtg.wtf/card/wc99/ml321"
+        }
+      ],
+      "related": [
+        "the-great-henge",
+        "birds-of-paradise",
+        "cavern-of-souls"
+      ],
+      "sources": [
+        "https://mtg.wtf/card/usg/321",
+        "https://mtg.wtf/card/jgp/3",
+        "https://mtg.wtf/card/wc99/ml321",
+        "https://magic.wizards.com/en/news/announcements/official-reprint-policy",
+        "https://magery.com/mtg/card/gaeas-cradle",
+        "https://www.magiclibrarities.net/56-211-rarities-gaeas-cradle-zoom-card.html"
+      ],
+      "verified": "2026-11-04",
+      "mana_cost": "",
+      "colour_identity": [
+        "G"
+      ],
+      "oracle_summary": "Gaea’s Cradle is a  Legendary Land  with no mana cost and a  green colour identity . Its activated ability produces one green mana for each creature you control when it resolves. An empty creature board means no mana from that activation.",
+      "scope": "Representative meaningful paper records; digital and oversized entries explained separately where useful."
+    },
+    {
+      "name": "Grim Monolith",
+      "slug": "grim-monolith",
+      "title": "Grim Monolith First Printing, Urza’s Legacy & Foils | ManaScout",
+      "description": "Explore Grim Monolith ULG #126, Chippy’s original artwork, early booster foils and gold-bordered World Championship versions, with clear collecting advice.",
+      "first": [
+        "Urza’s Legacy",
+        "ULG",
+        "126",
+        "15 February 1999",
+        "rare",
+        "Chippy",
+        "Nonfoil, traditional foil"
+      ],
+      "records": [
+        {
+          "set": "Urza’s Legacy",
+          "code": "ULG",
+          "number": "126",
+          "art": "Original Chippy illustration; original frame",
+          "artist": "Chippy",
+          "finish": "Nonfoil, traditional foil",
+          "year": "1999",
+          "source": "https://mtg.wtf/card/ulg/126"
+        },
+        {
+          "set": "World Championship Decks 1999",
+          "code": "WC99",
+          "number": "kb126",
+          "art": "Kai Budde deck; gold border; collector reproduction",
+          "artist": "Chippy",
+          "finish": "Nonfoil only",
+          "year": "1999",
+          "source": "https://mtg.wtf/card/wc99/kb126"
+        },
+        {
+          "set": "World Championship Decks 2000",
+          "code": "WC00",
+          "number": "jf126",
+          "art": "Jon Finkel deck; gold border; collector reproduction",
+          "artist": "Chippy",
+          "finish": "Nonfoil only",
+          "year": "2000",
+          "source": "https://mtg.wtf/card/wc00/jf126"
+        }
+      ],
+      "related": [
+        "mana-vault",
+        "mana-crypt",
+        "mox-diamond"
+      ],
+      "sources": [
+        "https://mtg.wtf/card/ulg/126",
+        "https://mtg.wtf/card/wc99/kb126",
+        "https://mtg.wtf/card/wc00/jf126",
+        "https://magic.wizards.com/en/news/announcements/official-reprint-policy",
+        "https://magery.com/mtg/ulg/grim-monolith",
+        "https://themanagrove.com/cards/grim-monolith"
+      ],
+      "verified": "2026-11-04",
+      "mana_cost": "{2}",
+      "colour_identity": [],
+      "oracle_summary": "Grim Monolith costs {2}, is an  Artifact  and has a  colourless colour identity . It taps for three colourless mana, does not untap during your untap step, and has a four-mana activated ability to untap itself.",
+      "scope": "Representative meaningful paper records; digital and oversized entries explained separately where useful."
+    },
+    {
+      "name": "Cavern of Souls",
+      "slug": "cavern-of-souls",
+      "title": "Cavern of Souls Printings, Borderless Art & Neon Foils | ManaScout",
+      "description": "Compare Cavern of Souls’ Avacyn Restored debut, Masters reprints, borderless art, foil-etched versions, LOTR surge foil and Cosmium neon-ink treatment.",
+      "first": [
+        "Avacyn Restored",
+        "AVR",
+        "226",
+        "4 May 2012",
+        "rare",
+        "Cliff Childs",
+        "Nonfoil, traditional foil"
+      ],
+      "records": [
+        {
+          "set": "Avacyn Restored",
+          "code": "AVR",
+          "number": "226",
+          "art": "Original illustration; regular frame",
+          "artist": "Cliff Childs",
+          "finish": "Nonfoil, traditional foil",
+          "year": "2012",
+          "source": "https://mtg.wtf/card/avr/226"
+        },
+        {
+          "set": "Modern Masters 2017",
+          "code": "MM3",
+          "number": "232",
+          "art": "New illustration; regular frame",
+          "artist": "Richard Wright",
+          "finish": "Nonfoil, traditional foil",
+          "year": "2017",
+          "source": "https://mtg.wtf/card/mm3/232"
+        },
+        {
+          "set": "Ultimate Masters",
+          "code": "UMA",
+          "number": "237",
+          "art": "Reuses Richard Wright illustration",
+          "artist": "Richard Wright",
+          "finish": "Nonfoil, traditional foil",
+          "year": "2018",
+          "source": "https://mtg.wtf/card/uma/237"
+        },
+        {
+          "set": "Ultimate Box Topper",
+          "code": "PUMA",
+          "number": "U32",
+          "art": "Expanded presentation of Wright artwork",
+          "artist": "Richard Wright",
+          "finish": "Traditional foil only",
+          "year": "2018",
+          "source": "https://mtg.wtf/card/puma/U32"
+        },
+        {
+          "set": "Zendikar Rising Expeditions",
+          "code": "ZNE",
+          "number": "22",
+          "art": "Expedition frame and alternate illustration",
+          "artist": "Sam Burley",
+          "finish": "Nonfoil, traditional foil",
+          "year": "2020",
+          "source": "https://mtg.wtf/card/zne/22"
+        },
+        {
+          "set": "Double Masters 2022",
+          "code": "2X2",
+          "number": "320",
+          "art": "Regular frame; Wright artwork",
+          "artist": "Richard Wright",
+          "finish": "Nonfoil, traditional foil",
+          "year": "2022",
+          "source": "https://mtg.wtf/card/2x2/320"
+        },
+        {
+          "set": "Double Masters 2022",
+          "code": "2X2",
+          "number": "402",
+          "art": "Borderless alternate illustration",
+          "artist": "Drew Tucker",
+          "finish": "Nonfoil, traditional foil",
+          "year": "2022",
+          "source": "https://mtg.wtf/card/2x2/402"
+        },
+        {
+          "set": "Double Masters 2022",
+          "code": "2X2",
+          "number": "569",
+          "art": "Foil-etched frame; Wright artwork",
+          "artist": "Richard Wright",
+          "finish": "Etched foil only",
+          "year": "2022",
+          "source": "https://mtg.wtf/card/2x2/569"
+        },
+        {
+          "set": "Tales of Middle-earth Commander",
+          "code": "LTC",
+          "number": "362",
+          "art": "Path of the Dead; borderless Realms and Relics",
+          "artist": "Logan Feliciano",
+          "finish": "Nonfoil, traditional foil",
+          "year": "2023",
+          "source": "https://mtg.wtf/card/ltc/362"
+        },
+        {
+          "set": "Tales of Middle-earth Commander",
+          "code": "LTC",
+          "number": "392",
+          "art": "Path of the Dead; surge foil counterpart",
+          "artist": "Logan Feliciano",
+          "finish": "Surge foil only",
+          "year": "2023",
+          "source": "https://mtg.wtf/card/ltc/392"
+        },
+        {
+          "set": "The Lost Caverns of Ixalan",
+          "code": "LCI",
+          "number": "269",
+          "art": "Main-set regular frame",
+          "artist": "Alayna Danner",
+          "finish": "Nonfoil, traditional foil",
+          "year": "2023",
+          "source": "https://mtg.wtf/card/lci/269"
+        },
+        {
+          "set": "The Lost Caverns of Ixalan",
+          "code": "LCI",
+          "number": "345",
+          "art": "Borderless alternate illustration",
+          "artist": "Pedro Correa",
+          "finish": "Nonfoil, traditional foil",
+          "year": "2023",
+          "source": "https://mtg.wtf/card/lci/345"
+        },
+        {
+          "set": "The Lost Caverns of Ixalan",
+          "code": "LCI",
+          "number": "410a",
+          "art": "Borderless three-colour Cosmium neon ink",
+          "artist": "Pedro Correa",
+          "finish": "Cosmium neon-ink foil only",
+          "year": "2023",
+          "source": "https://mtg.wtf/card/lci/410a"
+        }
+      ],
+      "related": [
+        "ancient-tomb",
+        "gaeas-cradle",
+        "the-great-henge"
+      ],
+      "sources": [
+        "https://mtg.wtf/card/avr/226",
+        "https://mtg.wtf/card/mm3/232",
+        "https://mtg.wtf/card/uma/237",
+        "https://mtg.wtf/card/puma/U32",
+        "https://mtg.wtf/card/zne/22",
+        "https://mtg.wtf/card/2x2/320",
+        "https://mtg.wtf/card/2x2/402",
+        "https://mtg.wtf/card/2x2/569",
+        "https://mtg.wtf/card/ltc/362",
+        "https://mtg.wtf/card/ltc/392",
+        "https://mtg.wtf/card/lci/269",
+        "https://mtg.wtf/card/lci/345",
+        "https://mtg.wtf/card/lci/410a",
+        "https://magic.wizards.com/en/news/feature/collecting-the-lost-caverns-of-ixalan",
+        "https://www.mtgnexus.com/cards/double-masters-2022/73640-cavern-of-souls",
+        "https://magery.com/mtg/zne/cavern-of-souls",
+        "https://magery.com/mtg/lci/cavern-of-souls-410a"
+      ],
+      "verified": "2026-11-04",
+      "mana_cost": "",
+      "colour_identity": [],
+      "oracle_summary": "Cavern of Souls is a  Land  with no mana cost and a  colourless colour identity . As it enters, you choose a creature type. It can tap for colourless mana, or for one mana of any colour restricted to casting a creature spell of that chosen type.",
+      "scope": "Representative meaningful paper records; digital and oversized entries explained separately where useful."
+    },
+    {
+      "name": "Rhystic Study",
+      "slug": "rhystic-study",
+      "title": "Rhystic Study Printings, Reprints & First Printing | ManaScout",
+      "description": "Rhystic Study began as Prophecy common #45. Compare original foils, Judge art, Jumpstart reprints and Enchanting Tales anime and confetti versions.",
+      "first": [
+        "Prophecy",
+        "PCY",
+        "45",
+        "5 June 2000",
+        "common",
+        "Terese Nielsen",
+        "Nonfoil, traditional foil"
+      ],
+      "records": [
+        {
+          "set": "Prophecy",
+          "code": "PCY",
+          "number": "45",
+          "art": "Original illustration; original frame; common",
+          "artist": "Terese Nielsen",
+          "finish": "Nonfoil, traditional foil",
+          "year": "2000",
+          "source": "https://mtg.wtf/card/pcy/45"
+        },
+        {
+          "set": "Commander’s Arsenal",
+          "code": "CM1",
+          "number": "15",
+          "art": "Original illustration; modern frame; common",
+          "artist": "Terese Nielsen",
+          "finish": "Traditional foil only",
+          "year": "2012",
+          "source": "https://mtg.wtf/card/cm1/15"
+        },
+        {
+          "set": "Judge Gift Cards 2018",
+          "code": "J18",
+          "number": "7",
+          "art": "Alternate illustration; Judge promo; rare",
+          "artist": "Paul Scott Canavan",
+          "finish": "Traditional foil only",
+          "year": "2018",
+          "source": "https://mtg.wtf/card/j18/7"
+        },
+        {
+          "set": "Jumpstart",
+          "code": "JMP",
+          "number": "169",
+          "art": "Original illustration; modern frame; rare",
+          "artist": "Terese Nielsen",
+          "finish": "Nonfoil only",
+          "year": "2020",
+          "source": "https://mtg.wtf/card/jmp/169"
+        },
+        {
+          "set": "Jumpstart 2022",
+          "code": "J22",
+          "number": "114",
+          "art": "Alternate illustration; rare",
+          "artist": "Tatiana Kirgetova",
+          "finish": "Nonfoil only",
+          "year": "2022",
+          "source": "https://mtg.wtf/card/j22/114"
+        },
+        {
+          "set": "Enchanting Tales",
+          "code": "WOT",
+          "number": "25",
+          "art": "Enchantment showcase; mythic rare",
+          "artist": "Serena Malyon",
+          "finish": "Nonfoil, traditional foil",
+          "year": "2023",
+          "source": "https://mtg.wtf/card/wot/25"
+        },
+        {
+          "set": "Enchanting Tales",
+          "code": "WOT",
+          "number": "71",
+          "art": "Borderless anime illustration; mythic rare",
+          "artist": "Fuzichoco",
+          "finish": "Nonfoil, traditional foil",
+          "year": "2023",
+          "source": "https://mtg.wtf/card/wot/71"
+        },
+        {
+          "set": "Enchanting Tales",
+          "code": "WOT",
+          "number": "91",
+          "art": "Same anime illustration; confetti treatment; mythic rare",
+          "artist": "Fuzichoco",
+          "finish": "Confetti foil only",
+          "year": "2023",
+          "source": "https://mtg.wtf/card/wot/91"
+        },
+        {
+          "set": "Final Fantasy: Through the Ages",
+          "code": "FCA",
+          "number": "31",
+          "art": "Borderless crossover illustration; mythic rare",
+          "artist": "Square Enix",
+          "finish": "Nonfoil, traditional foil",
+          "year": "2025",
+          "source": "https://mtg.wtf/card/fca/31"
+        }
+      ],
+      "related": [
+        "mystic-remora",
+        "the-one-ring",
+        "smothering-tithe",
+        "cyclonic-rift"
+      ],
+      "sources": [
+        "https://mtg.wtf/card/pcy/45",
+        "https://mtg.wtf/card/cm1/15",
+        "https://mtg.wtf/card/j18/7",
+        "https://mtg.wtf/card/jmp/169",
+        "https://mtg.wtf/card/j22/114",
+        "https://mtg.wtf/card/wot/25",
+        "https://mtg.wtf/card/wot/71",
+        "https://mtg.wtf/card/wot/91",
+        "https://mtg.wtf/card/fca/31",
+        "https://magery.com/mtg/jmp/rhystic-study",
+        "https://magic.wizards.com/en/news/feature/collecting-wilds-of-eldraine",
+        "https://magery.com/mtg/fca/rhystic-study",
+        "https://mtg.wtf/card/sld/478/Rhystic-Study",
+        "https://mtg.wtf/card/fca/31/Rhystic-Study"
+      ],
+      "verified": "2026-11-04",
+      "mana_cost": "{2}{U}",
+      "colour_identity": [
+        "U"
+      ],
+      "oracle_summary": "Rhystic Study costs {2}{U}, is an  Enchantment  and has a  blue colour identity . Its tax-or-draw ability has made it one of the most recognisable card-advantage engines in multiplayer Magic.",
+      "scope": "Representative meaningful paper records; digital and oversized entries explained separately where useful."
+    },
+    {
+      "name": "Black Lotus",
+      "slug": "black-lotus",
+      "title": "Black Lotus Collector’s Edition, Printings & Versions | ManaScout",
+      "description": "Distinguish Alpha, Beta and Unlimited Black Lotus from Collectors’ Editions and 30th Anniversary cards: dates, borders, Christopher Rush art and legality.",
+      "first": [
+        "Limited Edition Alpha",
+        "LEA",
+        "232",
+        "5 August 1993",
+        "rare",
+        "Christopher Rush",
+        "Nonfoil only"
+      ],
+      "records": [
+        {
+          "set": "Limited Edition Alpha",
+          "code": "LEA",
+          "number": "232",
+          "art": "Black border; more rounded Alpha corners",
+          "artist": "Christopher Rush",
+          "finish": "Nonfoil only",
+          "year": "1993",
+          "source": "https://mtg.wtf/card/lea/232"
+        },
+        {
+          "set": "Limited Edition Beta",
+          "code": "LEB",
+          "number": "233",
+          "art": "Black border; Beta-era corners",
+          "artist": "Christopher Rush",
+          "finish": "Nonfoil only",
+          "year": "1993",
+          "source": "https://mtg.wtf/card/leb/233"
+        },
+        {
+          "set": "Unlimited Edition",
+          "code": "2ED",
+          "number": "233",
+          "art": "White border; original artwork",
+          "artist": "Christopher Rush",
+          "finish": "Nonfoil only",
+          "year": "1993",
+          "source": "https://mtg.wtf/card/2ed/233"
+        },
+        {
+          "set": "Collectors’ Edition",
+          "code": "CED",
+          "number": "233",
+          "art": "Square corners; gold-bordered back; collector edition",
+          "artist": "Christopher Rush",
+          "finish": "Nonfoil only",
+          "year": "1993",
+          "source": "https://mtg.wtf/card/ced/233"
+        },
+        {
+          "set": "International Collectors’ Edition",
+          "code": "CEI",
+          "number": "233",
+          "art": "Square corners; International collector back",
+          "artist": "Christopher Rush",
+          "finish": "Nonfoil only",
+          "year": "1993",
+          "source": "https://mtg.wtf/card/cei/233"
+        },
+        {
+          "set": "30th Anniversary Edition",
+          "code": "30A",
+          "number": "228",
+          "art": "Modern frame; commemorative back",
+          "artist": "Christopher Rush",
+          "finish": "Nonfoil only",
+          "year": "2022",
+          "source": "https://mtg.wtf/card/30a/228"
+        },
+        {
+          "set": "30th Anniversary Edition",
+          "code": "30A",
+          "number": "525",
+          "art": "Retro frame; commemorative back",
+          "artist": "Christopher Rush",
+          "finish": "Nonfoil only",
+          "year": "2022",
+          "source": "https://mtg.wtf/card/30a/525"
+        }
+      ],
+      "related": [
+        "sol-ring",
+        "demonic-tutor",
+        "mox-diamond",
+        "lightning-bolt"
+      ],
+      "sources": [
+        "https://mtg.wtf/card/lea/232",
+        "https://mtg.wtf/card/leb/233",
+        "https://mtg.wtf/card/2ed/233",
+        "https://mtg.wtf/card/ced/233",
+        "https://mtg.wtf/card/cei/233",
+        "https://mtg.wtf/card/30a/228",
+        "https://mtg.wtf/card/30a/525",
+        "https://magic.wizards.com/en/banned-restricted-list",
+        "https://magic.wizards.com/en/news/announcements/official-reprint-policy",
+        "https://magery.com/mtg/card/black-lotus",
+        "https://magic.wizards.com/en/news/announcements/celebrate-30-years-magic-gathering-30th-anniversary-edition-2022-10-04"
+      ],
+      "verified": "2026-11-04",
+      "mana_cost": "{0}",
+      "colour_identity": [],
+      "oracle_summary": "Black Lotus costs {0}, is an  Artifact  and has a  colourless colour identity . Tapping and sacrificing it produces three mana of one colour. Its ability to turn a card into immediate acceleration explains its place among the Power Nine.",
+      "scope": "Representative meaningful paper records; digital and oversized entries explained separately where useful."
+    },
+    {
+      "name": "Mana Crypt",
+      "slug": "mana-crypt",
+      "title": "Mana Crypt First Printing, Reprints & Commander Ban | ManaScout",
+      "description": "Trace Mana Crypt from HarperPrism #5 through Judge, Masters and Invention printings. Identify each neon-ink variant and its dated Commander ban status.",
+      "first": [
+        "HarperPrism Book Promos",
+        "PHPR",
+        "5",
+        "1995 (catalogue date: 1 May)",
+        "rare",
+        "Mark Tedin",
+        "Nonfoil only"
+      ],
+      "records": [
+        {
+          "set": "HarperPrism Book Promos",
+          "code": "PHPR",
+          "number": "5",
+          "art": "Original book promo; original frame",
+          "artist": "Mark Tedin",
+          "finish": "Nonfoil only",
+          "year": "1995",
+          "source": "https://mtg.wtf/card/phpr/5"
+        },
+        {
+          "set": "Judge Gift Cards 2011",
+          "code": "G11",
+          "number": "5",
+          "art": "Alternate artwork; Judge foil",
+          "artist": "Matt Stewart",
+          "finish": "Traditional foil only",
+          "year": "2011",
+          "source": "https://mtg.wtf/card/g11/5"
+        },
+        {
+          "set": "Eternal Masters",
+          "code": "EMA",
+          "number": "225",
+          "art": "Modern frame; Stewart artwork",
+          "artist": "Matt Stewart",
+          "finish": "Nonfoil, traditional foil",
+          "year": "2016",
+          "source": "https://mtg.wtf/card/ema/225"
+        },
+        {
+          "set": "Kaladesh Inventions",
+          "code": "MPS",
+          "number": "16",
+          "art": "Ornate Invention frame; alternate illustration",
+          "artist": "Volkan Baǵa",
+          "finish": "Traditional foil only",
+          "year": "2016",
+          "source": "https://mtg.wtf/card/mps/16"
+        },
+        {
+          "set": "Mystery Booster / The List record",
+          "code": "PLST",
+          "number": "EMA-225",
+          "art": "Reuses EMA face with Planeswalker reprint mark",
+          "artist": "Matt Stewart",
+          "finish": "Nonfoil only",
+          "year": "2019 onward",
+          "source": "https://mtg.wtf/card/plst/EMA-225"
+        },
+        {
+          "set": "Double Masters",
+          "code": "2XM",
+          "number": "270",
+          "art": "Regular frame; Stewart artwork",
+          "artist": "Matt Stewart",
+          "finish": "Nonfoil, traditional foil",
+          "year": "2020",
+          "source": "https://mtg.wtf/card/2xm/270"
+        },
+        {
+          "set": "Double Masters",
+          "code": "2XM",
+          "number": "361",
+          "art": "Borderless alternate illustration",
+          "artist": "Ron Spencer",
+          "finish": "Nonfoil, traditional foil",
+          "year": "2020",
+          "source": "https://mtg.wtf/card/2xm/361"
+        },
+        {
+          "set": "Special Guests",
+          "code": "SPG",
+          "number": "17",
+          "art": "Ordinary borderless illustration; no neon ink",
+          "artist": "Dominik Mayer",
+          "finish": "Nonfoil, traditional foil",
+          "year": "2023",
+          "source": "https://mtg.wtf/card/spg/17"
+        },
+        {
+          "set": "Special Guests",
+          "code": "SPG",
+          "number": "17a",
+          "art": "Borderless three-colour Cosmium neon ink; colour-specific artwork",
+          "artist": "Dominik Mayer",
+          "finish": "Cosmium neon-ink foil only",
+          "year": "2023",
+          "source": "https://mtg.wtf/card/spg/17a"
+        },
+        {
+          "set": "Special Guests",
+          "code": "SPG",
+          "number": "17b",
+          "art": "Borderless yellow Cosmium neon ink; colour-specific artwork",
+          "artist": "Dominik Mayer",
+          "finish": "Cosmium neon-ink foil only",
+          "year": "2023",
+          "source": "https://mtg.wtf/card/spg/17b"
+        },
+        {
+          "set": "Special Guests",
+          "code": "SPG",
+          "number": "17c",
+          "art": "Borderless blue Cosmium neon ink; colour-specific artwork",
+          "artist": "Dominik Mayer",
+          "finish": "Cosmium neon-ink foil only",
+          "year": "2023",
+          "source": "https://mtg.wtf/card/spg/17c"
+        },
+        {
+          "set": "Special Guests",
+          "code": "SPG",
+          "number": "17d",
+          "art": "Borderless purple Cosmium neon ink; colour-specific artwork",
+          "artist": "Dominik Mayer",
+          "finish": "Cosmium neon-ink foil only",
+          "year": "2023",
+          "source": "https://mtg.wtf/card/spg/17d"
+        },
+        {
+          "set": "Special Guests",
+          "code": "SPG",
+          "number": "17e",
+          "art": "Borderless red Cosmium neon ink; colour-specific artwork",
+          "artist": "Dominik Mayer",
+          "finish": "Cosmium neon-ink foil only",
+          "year": "2023",
+          "source": "https://mtg.wtf/card/spg/17e"
+        },
+        {
+          "set": "Special Guests",
+          "code": "SPG",
+          "number": "17f",
+          "art": "Borderless green Cosmium neon ink; colour-specific artwork",
+          "artist": "Dominik Mayer",
+          "finish": "Cosmium neon-ink foil only",
+          "year": "2023",
+          "source": "https://mtg.wtf/card/spg/17f"
+        }
+      ],
+      "related": [
+        "mana-vault",
+        "sol-ring",
+        "ancient-tomb",
+        "mox-diamond"
+      ],
+      "sources": [
+        "https://mtg.wtf/card/phpr/5",
+        "https://mtg.wtf/card/g11/5",
+        "https://mtg.wtf/card/ema/225",
+        "https://mtg.wtf/card/mps/16",
+        "https://mtg.wtf/card/plst/EMA-225",
+        "https://mtg.wtf/card/2xm/270",
+        "https://mtg.wtf/card/2xm/361",
+        "https://mtg.wtf/card/spg/17",
+        "https://mtg.wtf/card/spg/17a",
+        "https://mtg.wtf/card/spg/17b",
+        "https://mtg.wtf/card/spg/17c",
+        "https://mtg.wtf/card/spg/17d",
+        "https://mtg.wtf/card/spg/17e",
+        "https://mtg.wtf/card/spg/17f",
+        "https://magic.wizards.com/en/banned-restricted-list",
+        "https://magic.wizards.com/en/news/announcements/commander-banned-and-restricted-announcement-september-23-2024",
+        "https://magic.wizards.com/en/news/feature/collecting-the-lost-caverns-of-ixalan",
+        "https://magic.wizards.com/en/news/announcements/mystery-booster-revealed-2019-11-11",
+        "https://magicuntapped.com/index.php/articles/the-tale-of-mana-crypt-a-look-back-at-magics-harperprism-promos",
+        "https://www.spellbinder.gg/cards/spg/17a/mana-crypt",
+        "https://www.spellbinder.gg/cards/spg/17d/mana-crypt",
+        "https://magery.com/mtg/spg/mana-crypt-17e",
+        "https://facetofacegames.com/en-us/products/mana-crypt-17a-neon-ink-showcase-rainbow-special-guests-foil",
+        "https://facetofacegames.com/products/mana-crypt-17d-neon-ink-showcase-purple-special-guests-foil",
+        "https://facetofacegames.com/en-eu/products/mana-crypt-17e-neon-ink-showcase-red-special-guests-foil"
+      ],
+      "verified": "2026-11-04",
+      "mana_cost": "{0}",
+      "colour_identity": [],
+      "oracle_summary": "Mana Crypt is a zero-mana  Artifact  with a  colourless colour identity . It taps to produce  two colourless mana , providing acceleration immediately without a mana investment to cast it.",
+      "scope": "Representative meaningful paper records; digital and oversized entries explained separately where useful."
+    },
+    {
+      "name": "Jace, the Mind Sculptor",
+      "slug": "jace-the-mind-sculptor",
+      "title": "Jace, the Mind Sculptor Printings, Art & Foils | ManaScout",
+      "description": "Compare Jace’s Worldwake #31 original, Jason Chan Masters versions, Mythic Edition, Secret Lair art and Bloomburrow raised foils by exact collector number.",
+      "first": [
+        "Worldwake",
+        "WWK",
+        "31",
+        "5 February 2010",
+        "mythic rare",
+        "Jason Chan",
+        "Nonfoil, traditional foil"
+      ],
+      "records": [
+        {
+          "set": "Worldwake",
+          "code": "WWK",
+          "number": "31",
+          "art": "Original illustration; original planeswalker frame",
+          "artist": "Jason Chan",
+          "finish": "Nonfoil, traditional foil",
+          "year": "2010",
+          "source": "https://mtg.wtf/card/wwk/31"
+        },
+        {
+          "set": "From the Vault: Twenty",
+          "code": "V13",
+          "number": "18",
+          "art": "Reuses original illustration; From the Vault foil",
+          "artist": "Jason Chan",
+          "finish": "Foil only",
+          "year": "2013",
+          "source": "https://mtg.wtf/card/v13/18"
+        },
+        {
+          "set": "Eternal Masters",
+          "code": "EMA",
+          "number": "57",
+          "art": "Original illustration; modern frame",
+          "artist": "Jason Chan",
+          "finish": "Nonfoil, traditional foil",
+          "year": "2016",
+          "source": "https://mtg.wtf/card/ema/57"
+        },
+        {
+          "set": "Masters 25",
+          "code": "A25",
+          "number": "62",
+          "art": "Original illustration; anniversary watermark",
+          "artist": "Jason Chan",
+          "finish": "Nonfoil, traditional foil",
+          "year": "2018",
+          "source": "https://mtg.wtf/card/a25/62"
+        },
+        {
+          "set": "War of the Spark Mythic Edition",
+          "code": "MED",
+          "number": "WS3",
+          "art": "Borderless alternate illustration",
+          "artist": "Chris Rallis",
+          "finish": "Traditional foil only",
+          "year": "2019",
+          "source": "https://mtg.wtf/card/med/WS3"
+        },
+        {
+          "set": "Double Masters",
+          "code": "2XM",
+          "number": "56",
+          "art": "Regular frame; original illustration",
+          "artist": "Jason Chan",
+          "finish": "Nonfoil, traditional foil",
+          "year": "2020",
+          "source": "https://mtg.wtf/card/2xm/56"
+        },
+        {
+          "set": "Double Masters",
+          "code": "2XM",
+          "number": "334",
+          "art": "Borderless presentation of Jason Chan artwork",
+          "artist": "Jason Chan",
+          "finish": "Nonfoil, traditional foil",
+          "year": "2020",
+          "source": "https://mtg.wtf/card/2xm/334"
+        },
+        {
+          "set": "Secret Lair Drop",
+          "code": "SLD",
+          "number": "8001",
+          "art": "Borderless alternate illustration",
+          "artist": "Wizard of Barge",
+          "finish": "Nonfoil, traditional foil",
+          "year": "2023",
+          "source": "https://mtg.wtf/card/sld/8001"
+        },
+        {
+          "set": "Bloomburrow Commander",
+          "code": "BLC",
+          "number": "75",
+          "art": "Borderless Imagine: Critters alternate illustration",
+          "artist": "Justin Gerard",
+          "finish": "Nonfoil, traditional foil",
+          "year": "2024",
+          "source": "https://mtg.wtf/card/blc/75"
+        },
+        {
+          "set": "Bloomburrow Commander",
+          "code": "BLC",
+          "number": "93",
+          "art": "Separate Imagine: Critters illustration; raised foil",
+          "artist": "TAPIOCA",
+          "finish": "Raised foil only",
+          "year": "2024",
+          "source": "https://mtg.wtf/card/blc/93"
+        }
+      ],
+      "related": [
+        "force-of-will",
+        "counterspell",
+        "rhystic-study",
+        "cyclonic-rift"
+      ],
+      "sources": [
+        "https://mtg.wtf/card/wwk/31",
+        "https://mtg.wtf/card/v13/18",
+        "https://mtg.wtf/card/ema/57",
+        "https://mtg.wtf/card/a25/62",
+        "https://mtg.wtf/card/med/WS3",
+        "https://mtg.wtf/card/2xm/56",
+        "https://mtg.wtf/card/2xm/334",
+        "https://mtg.wtf/card/sld/8001",
+        "https://mtg.wtf/card/blc/75",
+        "https://mtg.wtf/card/blc/93",
+        "https://magery.com/mtg/card/jace-the-mind-sculptor",
+        "https://magic.wizards.com/en/news/feature/collecting-bloomburrow"
+      ],
+      "verified": "2026-11-04",
+      "mana_cost": "{2}{U}{U}",
+      "colour_identity": [
+        "U"
+      ],
+      "oracle_summary": "Jace costs {2}{U}{U}, has a  blue colour identity  and is a  Legendary Planeswalker — Jace  with three starting loyalty. His four abilities manipulate a library’s top card, draw three then put two cards back, return a creature to hand, or exile a player’s library before shuffling their hand into it.",
+      "scope": "Representative meaningful paper records; digital and oversized entries explained separately where useful."
+    },
+    {
+      "name": "Lightning Bolt",
+      "slug": "lightning-bolt",
+      "title": "Lightning Bolt Printings, Reprints & First Printing | ManaScout",
+      "description": "Compare Lightning Bolt’s Alpha #161 original, major artwork eras, Mountain, Go Secret Lair cards and Mystical Archive finishes without losing the history.",
+      "first": [
+        "Limited Edition Alpha",
+        "LEA",
+        "161",
+        "5 August 1993",
+        "common",
+        "Christopher Rush",
+        "Nonfoil only"
+      ],
+      "records": [
+        {
+          "set": "Limited Edition Alpha",
+          "code": "LEA",
+          "number": "161",
+          "art": "Original illustration; original black-border frame",
+          "artist": "Christopher Rush",
+          "finish": "Nonfoil only",
+          "year": "1993",
+          "source": "https://mtg.wtf/card/lea/161"
+        },
+        {
+          "set": "Magic 2010",
+          "code": "M10",
+          "number": "146",
+          "art": "Modern illustration and frame; common",
+          "artist": "Christopher Moeller",
+          "finish": "Nonfoil, traditional foil",
+          "year": "2009",
+          "source": "https://mtg.wtf/card/m10/146"
+        },
+        {
+          "set": "Secret Lair: Mountain, Go",
+          "code": "SLD",
+          "number": "83",
+          "art": "Full-art standalone illustration",
+          "artist": "Noah Bradley",
+          "finish": "Traditional foil only",
+          "year": "2020",
+          "source": "https://mtg.wtf/card/sld/83"
+        },
+        {
+          "set": "Secret Lair: Mountain, Go",
+          "code": "SLD",
+          "number": "84",
+          "art": "Full-art standalone illustration",
+          "artist": "Brigitte Roka",
+          "finish": "Traditional foil only",
+          "year": "2020",
+          "source": "https://mtg.wtf/card/sld/84"
+        },
+        {
+          "set": "Secret Lair: Mountain, Go",
+          "code": "SLD",
+          "number": "85",
+          "art": "Full-art standalone illustration",
+          "artist": "Robbie Trevino",
+          "finish": "Traditional foil only",
+          "year": "2020",
+          "source": "https://mtg.wtf/card/sld/85"
+        },
+        {
+          "set": "Secret Lair: Mountain, Go",
+          "code": "SLD",
+          "number": "86",
+          "art": "Full-art standalone illustration",
+          "artist": "Alexis Ziritt",
+          "finish": "Traditional foil only",
+          "year": "2020",
+          "source": "https://mtg.wtf/card/sld/86"
+        },
+        {
+          "set": "Strixhaven Mystical Archive",
+          "code": "STA",
+          "number": "42",
+          "art": "Global mystical showcase frame and illustration",
+          "artist": "Anato Finnstark",
+          "finish": "Nonfoil, traditional foil, etched foil",
+          "year": "2021",
+          "source": "https://mtg.wtf/card/sta/42"
+        },
+        {
+          "set": "Strixhaven Mystical Archive",
+          "code": "STA",
+          "number": "105",
+          "art": "Japanese alternate-art showcase",
+          "artist": "Ezoi",
+          "finish": "Nonfoil, traditional foil, etched foil",
+          "year": "2021",
+          "source": "https://mtg.wtf/card/sta/105"
+        }
+      ],
+      "related": [
+        "counterspell",
+        "swords-to-plowshares",
+        "black-lotus",
+        "force-of-will"
+      ],
+      "sources": [
+        "https://mtg.wtf/card/lea/161",
+        "https://mtg.wtf/card/m10/146",
+        "https://mtg.wtf/card/sld/83",
+        "https://mtg.wtf/card/sld/84",
+        "https://mtg.wtf/card/sld/85",
+        "https://mtg.wtf/card/sld/86",
+        "https://mtg.wtf/card/sta/42",
+        "https://mtg.wtf/card/sta/105",
+        "https://mtg.wtf/card/sld/1871/Lightning-Bolt",
+        "https://mtg.wtf/card/tle/32/Lightning-Bolt",
+        "https://magic.wizards.com/en/news/feature/collecting-strixhaven-school-mages-2021-03-25",
+        "https://www.mtgpics.com/set_checklist?set=324"
+      ],
+      "verified": "2026-11-04",
+      "mana_cost": "{R}",
+      "colour_identity": [
+        "R"
+      ],
+      "oracle_summary": "Lightning Bolt is a one-mana  red Instant  with a  red colour identity  that deals three damage to any target. Few Magic cards communicate their purpose as cleanly.",
+      "scope": "Representative meaningful paper records; digital and oversized entries explained separately where useful."
+    },
+    {
+      "name": "Ancient Tomb",
+      "slug": "ancient-tomb",
+      "title": "Ancient Tomb First Printing, Expeditions & Foil Versions | ManaScout",
+      "description": "Trace Ancient Tomb from Tempest #315 through From the Vault, Expeditions, Ultimate Masters and LOTR surge foil. Compare artists, frames and finishes.",
+      "first": [
+        "Tempest",
+        "TMP",
+        "315",
+        "14 October 1997",
+        "uncommon",
+        "Colin MacNeil",
+        "Nonfoil only"
+      ],
+      "records": [
+        {
+          "set": "Tempest",
+          "code": "TMP",
+          "number": "315",
+          "art": "Original illustration; original frame",
+          "artist": "Colin MacNeil",
+          "finish": "Nonfoil only",
+          "year": "1997",
+          "source": "https://mtg.wtf/card/tmp/315"
+        },
+        {
+          "set": "From the Vault: Realms",
+          "code": "V12",
+          "number": "1",
+          "art": "Original illustration; modern frame; From the Vault foil",
+          "artist": "Colin MacNeil",
+          "finish": "Foil only",
+          "year": "2012",
+          "source": "https://mtg.wtf/card/v12/1"
+        },
+        {
+          "set": "Zendikar Expeditions",
+          "code": "EXP",
+          "number": "36",
+          "art": "Expedition frame; alternate illustration",
+          "artist": "Howard Lyon",
+          "finish": "Traditional foil only",
+          "year": "2016",
+          "source": "https://mtg.wtf/card/exp/36"
+        },
+        {
+          "set": "Ultimate Masters",
+          "code": "UMA",
+          "number": "236",
+          "art": "Alternate illustration; regular frame",
+          "artist": "Yeong-Hao Han",
+          "finish": "Nonfoil, traditional foil",
+          "year": "2018",
+          "source": "https://mtg.wtf/card/uma/236"
+        },
+        {
+          "set": "Ultimate Box Topper",
+          "code": "PUMA",
+          "number": "U31",
+          "art": "Expanded presentation of Han artwork",
+          "artist": "Yeong-Hao Han",
+          "finish": "Traditional foil only",
+          "year": "2018",
+          "source": "https://mtg.wtf/card/puma/U31"
+        },
+        {
+          "set": "Zendikar Rising Expeditions",
+          "code": "ZNE",
+          "number": "21",
+          "art": "New Expedition illustration and frame",
+          "artist": "Adam Paquette",
+          "finish": "Nonfoil, traditional foil",
+          "year": "2020",
+          "source": "https://mtg.wtf/card/zne/21"
+        },
+        {
+          "set": "Tales of Middle-earth Commander",
+          "code": "LTC",
+          "number": "357",
+          "art": "Balin’s Tomb; borderless Realms and Relics",
+          "artist": "Anastasia Balakchina",
+          "finish": "Nonfoil, traditional foil",
+          "year": "2023",
+          "source": "https://mtg.wtf/card/ltc/357"
+        },
+        {
+          "set": "Tales of Middle-earth Commander",
+          "code": "LTC",
+          "number": "387",
+          "art": "Balin’s Tomb; surge foil counterpart",
+          "artist": "Anastasia Balakchina",
+          "finish": "Surge foil only",
+          "year": "2023",
+          "source": "https://mtg.wtf/card/ltc/387"
+        }
+      ],
+      "related": [
+        "cavern-of-souls",
+        "mana-crypt",
+        "sol-ring",
+        "grim-monolith"
+      ],
+      "sources": [
+        "https://mtg.wtf/card/tmp/315",
+        "https://mtg.wtf/card/v12/1",
+        "https://mtg.wtf/card/exp/36",
+        "https://mtg.wtf/card/uma/236",
+        "https://mtg.wtf/card/puma/U31",
+        "https://mtg.wtf/card/zne/21",
+        "https://mtg.wtf/card/ltc/357",
+        "https://mtg.wtf/card/ltc/387",
+        "https://magery.com/mtg/exp/ancient-tomb",
+        "https://magery.com/mtg/uma/ancient-tomb",
+        "https://magery.com/mtg/zne/ancient-tomb",
+        "https://magery.com/mtg/ltc/ancient-tomb-387"
+      ],
+      "verified": "2026-11-04",
+      "mana_cost": "",
+      "colour_identity": [],
+      "oracle_summary": "Ancient Tomb is a  Land  with no mana cost and a  colourless colour identity . Its activated mana ability adds {C}{C} and deals two damage to you. The damage is part of the ability’s effect, not an additional cost paid to activate it.",
+      "scope": "Representative meaningful paper records; digital and oversized entries explained separately where useful."
+    }
+  ],
+  "legacy_corrections": [
+    {
+      "page": "rhystic-study",
+      "old": "From Prophecy rare to Commander icon",
+      "new": "From Prophecy common to Commander icon; PCY #45 is common in the quick answer, chronology and table. Later rare/mythic printings are individually identified.",
+      "source": "https://mtg.wtf/card/pcy/45/Rhystic-Study"
+    },
+    {
+      "page": "rhystic-study",
+      "old": "Whenever an opponent casts a spell, that player may pay an additional mana.",
+      "new": "Payment occurs as the triggered ability resolves; it is not an additional casting cost. The trigger resolves before the triggering spell.",
+      "source": "https://mtg.wtf/card/wot/71/Rhystic-Study"
+    },
+    {
+      "page": "ancient-tomb",
+      "old": "produce two colourless mana at the cost of life",
+      "new": "The mana ability adds {C}{C} and deals two damage as its effect, rather than requiring a payment of life as a cost.",
+      "source": "https://mtg.wtf/card/tmp/315/Ancient-Tomb"
+    },
+    {
+      "page": "lightning-bolt",
+      "old": "The Alpha card is numbered 161",
+      "new": "LEA #161 is a catalogue identifier; the physical Alpha card does not print a collector number.",
+      "source": "https://www.mtg.wtf/card/lea/161/Lightning-Bolt"
+    },
+    {
+      "page": "mana-crypt",
+      "old": "They appear across collector numbers 17a through 17f alongside the standard Special Guests #17 version.",
+      "new": "Retained only after individual checks: 17a three-colour, 17b yellow, 17c blue, 17d purple, 17e red, 17f green. Each is a distinct foil-only neon-ink record by Dominik Mayer, with colour-adjusted artwork. SPG #17 is ordinary borderless nonfoil/traditional foil, not neon ink. Suffixes are catalogue variant identifiers.",
+      "source": "https://magic.wizards.com/en/news/feature/collecting-the-lost-caverns-of-ixalan"
+    },
+    {
+      "page": "mana-crypt",
+      "old": "The rarest treatments became some of the most recognisable modern Mana Crypt collector cards",
+      "new": "Removed unsupported popularity/rarity superlative; use specific treatment records and avoid unverified scarcity/value claims.",
+      "source": "https://magic.wizards.com/en/news/feature/collecting-the-lost-caverns-of-ixalan"
+    },
+    {
+      "page": "mana-crypt",
+      "old": "Yes. Mana Crypt remains banned in Commander.",
+      "new": "Dated 4 November 2026, cross-checked against the current official list; Commander/Legacy banned, Vintage restricted. Historical Commander ban effective 23 September 2024.",
+      "source": "https://magic.wizards.com/en/banned-restricted-list"
+    }
+  ]
+}

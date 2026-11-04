@@ -1,0 +1,1699 @@
+{
+  "reviewed": "2026-11-04",
+  "scope": "Prompt 3B: ten in-place guide upgrades; catalogue remains 44 guides",
+  "method": "Catalogue research preceded drafting; existing ManaScout copy was not a source. Accessible external catalogue pages, indexed catalogue extracts and official product/rules pages support the records. Direct Scryfall API and browser verification were unavailable. No finish or stock inference from blank prices.",
+  "uncertainties": [
+    "Shortlists are representative, not proofs that omitted printings do not exist.",
+    "Annual promo catalogue dates may be nominal; no exact January distribution day is asserted.",
+    "The List Dockside release day was not established; the table identifies the record without inventing a date.",
+    "No physical-card authentication, physical foil inspection, stock audit or live API audit is claimed."
+  ],
+  "cards": [
+    {
+      "name": "Birds of Paradise",
+      "slug": "birds-of-paradise",
+      "title": "Birds of Paradise Printings: Original Art, Foils & Versions | ManaScout",
+      "description": "Compare Birds of Paradise’s Alpha debut, Seventh Edition foil, Ravnica art, Buy-a-Box promo and Dominaria Remastered frames by artist and collector number.",
+      "first": [
+        "Limited Edition Alpha",
+        "LEA",
+        "186",
+        "5 August 1993",
+        "rare",
+        "Mark Poole",
+        "Nonfoil only"
+      ],
+      "mana_cost": "{G}",
+      "colour_identity": [
+        "G"
+      ],
+      "type_line": "Creature — Bird",
+      "records": [
+        {
+          "set": "Limited Edition Alpha",
+          "code": "LEA",
+          "number": "186",
+          "art": "Original illustration and black-border frame",
+          "artist": "Mark Poole",
+          "finish": "Nonfoil only",
+          "year": "1993",
+          "source": "https://mtg.wtf/card/lea/186",
+          "release_date": null
+        },
+        {
+          "set": "Seventh Edition",
+          "code": "7ED",
+          "number": "231",
+          "art": "Alternate illustration; white border",
+          "artist": "Edward P. Beard, Jr.",
+          "finish": "Nonfoil only",
+          "year": "2001",
+          "source": "https://mtg.wtf/card/7ed/231",
+          "release_date": null
+        },
+        {
+          "set": "Seventh Edition",
+          "code": "7ED",
+          "number": "231★",
+          "art": "Same Seventh Edition illustration; black-border foil",
+          "artist": "Edward P. Beard, Jr.",
+          "finish": "Traditional foil only",
+          "year": "2001",
+          "source": "https://mtg.wtf/card/7ed/231★",
+          "release_date": null
+        },
+        {
+          "set": "Ravnica: City of Guilds",
+          "code": "RAV",
+          "number": "153",
+          "art": "New illustration; modern frame",
+          "artist": "Marcelo Vignali",
+          "finish": "Nonfoil, traditional foil",
+          "year": "2005",
+          "source": "https://mtg.wtf/card/rav/153",
+          "release_date": null
+        },
+        {
+          "set": "Magic 2011 Promos",
+          "code": "PM11",
+          "number": "165★",
+          "art": "Buy-a-Box promo; alternate illustration",
+          "artist": "Terese Nielsen",
+          "finish": "Traditional foil only",
+          "year": "2010",
+          "source": "https://mtg.wtf/card/pm11/165★",
+          "release_date": null
+        },
+        {
+          "set": "Dominaria Remastered",
+          "code": "DMR",
+          "number": "151",
+          "art": "Mark Poole illustration; regular modern frame",
+          "artist": "Mark Poole",
+          "finish": "Nonfoil, traditional foil",
+          "year": "2023",
+          "source": "https://mtg.wtf/card/dmr/151",
+          "release_date": null
+        },
+        {
+          "set": "Dominaria Remastered",
+          "code": "DMR",
+          "number": "336",
+          "art": "Mark Poole illustration; retro frame",
+          "artist": "Mark Poole",
+          "finish": "Nonfoil, traditional foil",
+          "year": "2023",
+          "source": "https://mtg.wtf/card/dmr/336",
+          "release_date": null
+        },
+        {
+          "set": "Dominaria Remastered",
+          "code": "DMR",
+          "number": "439",
+          "art": "Borderless alternate illustration",
+          "artist": "Darrell Riche",
+          "finish": "Nonfoil, traditional foil",
+          "year": "2023",
+          "source": "https://mtg.wtf/card/dmr/439",
+          "release_date": null
+        }
+      ],
+      "related": [
+        "gaeas-cradle",
+        "the-great-henge",
+        "ancient-tomb",
+        "sol-ring"
+      ],
+      "sources": [
+        "https://mtg.wtf/card/lea/186",
+        "https://mtg.wtf/card/7ed/231",
+        "https://mtg.wtf/card/7ed/231★",
+        "https://mtg.wtf/card/rav/153",
+        "https://mtg.wtf/card/pm11/165★",
+        "https://mtg.wtf/card/dmr/151",
+        "https://mtg.wtf/card/dmr/336",
+        "https://mtg.wtf/card/dmr/439",
+        "https://mtg.wtf/card/lea/186/Birds-of-Paradise",
+        "https://magery.com/mtg/rav/birds-of-paradise",
+        "https://rhysticstudies.substack.com/p/the-new-iconic-a-retrospective-of",
+        "https://tablecommander.com/cards/birds-of-paradise"
+      ],
+      "oracle_summary": "Birds of Paradise costs {G}, is a  0/1 Creature — Bird  with flying, and taps for one mana of any colour. Its  colour identity is green : producing mana of any colour does not make the card five-colour.",
+      "scope": "Representative meaningful paper records; digital and oversized entries explained separately where useful.",
+      "verified": "2026-11-04",
+      "first_release_date": "1993-08-05",
+      "evidence_method": "External catalogue pages and indexed catalogue extracts; official product/rules evidence where listed. Existing ManaScout text was compared only after research."
+    },
+    {
+      "name": "Dockside Extortionist",
+      "slug": "dockside-extortionist",
+      "title": "Dockside Extortionist Printings, Commander Ban & Art | ManaScout",
+      "description": "Trace Dockside Extortionist from Commander 2019 #24 through Double Masters borderless and etched versions, The List and Avatar art, with dated ban status.",
+      "first": [
+        "Commander 2019",
+        "C19",
+        "24",
+        "23 August 2019",
+        "rare",
+        "Forrest Imel",
+        "Nonfoil only"
+      ],
+      "mana_cost": "{1}{R}",
+      "colour_identity": [
+        "R"
+      ],
+      "type_line": "Creature — Goblin Pirate",
+      "records": [
+        {
+          "set": "Commander 2019",
+          "code": "C19",
+          "number": "24",
+          "art": "Original illustration; Mystic Intellect deck",
+          "artist": "Forrest Imel",
+          "finish": "Nonfoil only",
+          "year": "2019",
+          "source": "https://mtg.wtf/card/c19/24",
+          "release_date": null
+        },
+        {
+          "set": "Double Masters 2022",
+          "code": "2X2",
+          "number": "107",
+          "art": "Regular frame; alternate illustration",
+          "artist": "Lie Setiawan",
+          "finish": "Nonfoil, traditional foil",
+          "year": "2022",
+          "source": "https://mtg.wtf/card/2x2/107",
+          "release_date": null
+        },
+        {
+          "set": "Double Masters 2022",
+          "code": "2X2",
+          "number": "360",
+          "art": "Borderless alternate illustration",
+          "artist": "Douglas Shuler",
+          "finish": "Nonfoil, traditional foil",
+          "year": "2022",
+          "source": "https://mtg.wtf/card/2x2/360",
+          "release_date": null
+        },
+        {
+          "set": "Double Masters 2022",
+          "code": "2X2",
+          "number": "452",
+          "art": "Etched frame; same Setiawan artwork",
+          "artist": "Lie Setiawan",
+          "finish": "Etched foil only",
+          "year": "2022",
+          "source": "https://mtg.wtf/card/2x2/452",
+          "release_date": null
+        },
+        {
+          "set": "The List",
+          "code": "PLST",
+          "number": "2X2-107",
+          "art": "Reproduces the regular 2X2 face with a reprint mark",
+          "artist": "Lie Setiawan",
+          "finish": "Nonfoil only",
+          "year": "Later reprint",
+          "source": "https://magery.com/mtg/plst/dockside-extortionist",
+          "release_date": null
+        },
+        {
+          "set": "Avatar: The Last Airbender Eternal",
+          "code": "TLE",
+          "number": "28",
+          "art": "Borderless Source Material illustration",
+          "artist": "Viacom",
+          "finish": "Nonfoil, traditional foil",
+          "year": "2025",
+          "source": "https://mtg.wtf/card/tle/28",
+          "release_date": null
+        }
+      ],
+      "related": [
+        "jeskas-will",
+        "mana-crypt",
+        "smothering-tithe",
+        "deflecting-swat"
+      ],
+      "sources": [
+        "https://mtg.wtf/card/c19/24",
+        "https://mtg.wtf/card/2x2/107",
+        "https://mtg.wtf/card/2x2/360",
+        "https://mtg.wtf/card/2x2/452",
+        "https://magery.com/mtg/plst/dockside-extortionist",
+        "https://mtg.wtf/card/tle/28",
+        "https://magic.wizards.com/en/banned-restricted-list",
+        "https://magic.wizards.com/en/news/announcements/commander-banned-and-restricted-announcement-september-23-2024",
+        "https://mtg.wtf/card/c19/24/Dockside-Extortionist",
+        "https://magery.com/mtg/tle/dockside-extortionist"
+      ],
+      "oracle_summary": "Dockside Extortionist costs {1}{R}, is a  1/2 Creature — Goblin Pirate  and has a  red colour identity . When it enters, it creates Treasure tokens equal to the number of artifacts and enchantments your opponents control as the trigger resolves.",
+      "scope": "Representative meaningful paper records; digital and oversized entries explained separately where useful.",
+      "verified": "2026-11-04",
+      "first_release_date": "2019-08-23",
+      "evidence_method": "External catalogue pages and indexed catalogue extracts; official product/rules evidence where listed. Existing ManaScout text was compared only after research."
+    },
+    {
+      "name": "Doubling Season",
+      "slug": "doubling-season",
+      "title": "Doubling Season Printings, Japan Showcase & Foil Versions | ManaScout",
+      "description": "Compare Doubling Season’s Ravnica original, major artwork eras, Masters etched foil, Enchanting Tales confetti, Foundations fracture foil and TMNT edition.",
+      "first": [
+        "Ravnica: City of Guilds",
+        "RAV",
+        "158",
+        "7 October 2005",
+        "rare",
+        "Wayne Reynolds",
+        "Nonfoil, traditional foil"
+      ],
+      "mana_cost": "{4}{G}",
+      "colour_identity": [
+        "G"
+      ],
+      "type_line": "Enchantment",
+      "records": [
+        {
+          "set": "Ravnica: City of Guilds",
+          "code": "RAV",
+          "number": "158",
+          "art": "Original illustration and frame",
+          "artist": "Wayne Reynolds",
+          "finish": "Nonfoil, traditional foil",
+          "year": "2005",
+          "source": "https://mtg.wtf/card/rav/158",
+          "release_date": null
+        },
+        {
+          "set": "Judge Gift Cards 2011",
+          "code": "G11",
+          "number": "7",
+          "art": "Judge promo; new illustration",
+          "artist": "Chuck Lukacs",
+          "finish": "Traditional foil only",
+          "year": "2011",
+          "source": "https://mtg.wtf/card/g11/7",
+          "release_date": null
+        },
+        {
+          "set": "Modern Masters",
+          "code": "MMA",
+          "number": "141",
+          "art": "Regular frame; reuses Judge artwork",
+          "artist": "Chuck Lukacs",
+          "finish": "Nonfoil, traditional foil",
+          "year": "2013",
+          "source": "https://mtg.wtf/card/mma/141",
+          "release_date": null
+        },
+        {
+          "set": "Battlebond",
+          "code": "BBD",
+          "number": "195",
+          "art": "Alternate illustration",
+          "artist": "Richard Wright",
+          "finish": "Nonfoil, traditional foil",
+          "year": "2018",
+          "source": "https://mtg.wtf/card/bbd/195",
+          "release_date": null
+        },
+        {
+          "set": "Double Masters",
+          "code": "2XM",
+          "number": "164",
+          "art": "Regular frame; Lukacs artwork",
+          "artist": "Chuck Lukacs",
+          "finish": "Nonfoil, traditional foil",
+          "year": "2020",
+          "source": "https://mtg.wtf/card/2xm/164",
+          "release_date": null
+        },
+        {
+          "set": "Double Masters",
+          "code": "2XM",
+          "number": "350",
+          "art": "Borderless alternate illustration",
+          "artist": "Ron Spencer",
+          "finish": "Nonfoil, traditional foil",
+          "year": "2020",
+          "source": "https://mtg.wtf/card/2xm/350",
+          "release_date": null
+        },
+        {
+          "set": "Commander Masters",
+          "code": "CMM",
+          "number": "283",
+          "art": "Regular frame; Lukacs artwork",
+          "artist": "Chuck Lukacs",
+          "finish": "Nonfoil, traditional foil",
+          "year": "2023",
+          "source": "https://mtg.wtf/card/cmm/283",
+          "release_date": null
+        },
+        {
+          "set": "Commander Masters",
+          "code": "CMM",
+          "number": "557",
+          "art": "Foil-etched frame; Lukacs artwork",
+          "artist": "Chuck Lukacs",
+          "finish": "Etched foil only",
+          "year": "2023",
+          "source": "https://mtg.wtf/card/cmm/557",
+          "release_date": null
+        },
+        {
+          "set": "Enchanting Tales",
+          "code": "WOT",
+          "number": "52",
+          "art": "Enchantment showcase alternate illustration",
+          "artist": "Eva Eskelinen",
+          "finish": "Nonfoil, traditional foil",
+          "year": "2023",
+          "source": "https://mtg.wtf/card/wot/52",
+          "release_date": null
+        },
+        {
+          "set": "Enchanting Tales",
+          "code": "WOT",
+          "number": "81",
+          "art": "Borderless anime alternate illustration",
+          "artist": "Kemonomichi",
+          "finish": "Nonfoil, traditional foil",
+          "year": "2023",
+          "source": "https://mtg.wtf/card/wot/81",
+          "release_date": null
+        },
+        {
+          "set": "Enchanting Tales",
+          "code": "WOT",
+          "number": "101",
+          "art": "Same anime artwork; confetti surface",
+          "artist": "Kemonomichi",
+          "finish": "Confetti foil only",
+          "year": "2023",
+          "source": "https://mtg.wtf/card/wot/101",
+          "release_date": null
+        },
+        {
+          "set": "Foundations",
+          "code": "FDN",
+          "number": "216",
+          "art": "Regular frame; Lukacs artwork",
+          "artist": "Chuck Lukacs",
+          "finish": "Nonfoil, traditional foil",
+          "year": "2024",
+          "source": "https://mtg.wtf/card/fdn/216",
+          "release_date": null
+        },
+        {
+          "set": "Foundations",
+          "code": "FDN",
+          "number": "428",
+          "art": "Japan Showcase illustration",
+          "artist": "Kawasumi",
+          "finish": "Traditional foil only",
+          "year": "2024",
+          "source": "https://mtg.wtf/card/fdn/428",
+          "release_date": null
+        },
+        {
+          "set": "Foundations",
+          "code": "FDN",
+          "number": "438",
+          "art": "Same Japan Showcase artwork; fracture surface",
+          "artist": "Kawasumi",
+          "finish": "Fracture foil only",
+          "year": "2024",
+          "source": "https://mtg.wtf/card/fdn/438",
+          "release_date": null
+        },
+        {
+          "set": "Teenage Mutant Ninja Turtles Source Material",
+          "code": "PZA",
+          "number": "11",
+          "art": "Borderless comic-book Source Material art",
+          "artist": "Kevin Eastman",
+          "finish": "Nonfoil, traditional foil",
+          "year": "2026",
+          "source": "https://mtg.wtf/card/pza/11",
+          "release_date": null
+        }
+      ],
+      "related": [
+        "the-great-henge",
+        "birds-of-paradise",
+        "rhystic-study"
+      ],
+      "sources": [
+        "https://mtg.wtf/card/rav/158",
+        "https://mtg.wtf/card/g11/7",
+        "https://mtg.wtf/card/mma/141",
+        "https://mtg.wtf/card/bbd/195",
+        "https://mtg.wtf/card/2xm/164",
+        "https://mtg.wtf/card/2xm/350",
+        "https://mtg.wtf/card/cmm/283",
+        "https://mtg.wtf/card/cmm/557",
+        "https://mtg.wtf/card/wot/52",
+        "https://mtg.wtf/card/wot/81",
+        "https://mtg.wtf/card/wot/101",
+        "https://mtg.wtf/card/fdn/216",
+        "https://mtg.wtf/card/fdn/428",
+        "https://mtg.wtf/card/fdn/438",
+        "https://mtg.wtf/card/pza/11",
+        "https://magic.wizards.com/en/news/feature/collecting-foundations",
+        "https://magic.wizards.com/en/news/feature/collecting-wilds-of-eldraine",
+        "https://magery.com/mtg/card/doubling-season",
+        "https://magery.com/mtg/pza/doubling-season"
+      ],
+      "oracle_summary": "Doubling Season costs {4}{G}, is an  Enchantment  and has a  green colour identity . It replaces effects that create tokens under your control with twice that many tokens, and effects putting counters on permanents you control with twice that many counters.",
+      "scope": "Representative meaningful paper records; digital and oversized entries explained separately where useful.",
+      "verified": "2026-11-04",
+      "first_release_date": "2005-10-07",
+      "evidence_method": "External catalogue pages and indexed catalogue extracts; official product/rules evidence where listed. Existing ManaScout text was compared only after research."
+    },
+    {
+      "name": "Jeska's Will",
+      "slug": "jeskas-will",
+      "title": "Jeska’s Will Printings, Extended Art & Premium Versions | ManaScout",
+      "description": "Identify Jeska’s Will CMR #187 and extended-art #668, Storm’s Will Secret Lair art and the later Mystical Archive Japanese and silver-scroll records.",
+      "first": [
+        "Commander Legends",
+        "CMR",
+        "187",
+        "20 November 2020",
+        "rare",
+        "Izzy",
+        "Nonfoil, traditional foil"
+      ],
+      "mana_cost": "{2}{R}",
+      "colour_identity": [
+        "R"
+      ],
+      "type_line": "Sorcery",
+      "records": [
+        {
+          "set": "Commander Legends",
+          "code": "CMR",
+          "number": "187",
+          "art": "Original Izzy illustration; regular frame",
+          "artist": "Izzy",
+          "finish": "Nonfoil, traditional foil",
+          "year": "2020",
+          "source": "https://mtg.wtf/card/cmr/187",
+          "release_date": null
+        },
+        {
+          "set": "Commander Legends",
+          "code": "CMR",
+          "number": "668",
+          "art": "Extended-art presentation of original artwork",
+          "artist": "Izzy",
+          "finish": "Nonfoil, traditional foil",
+          "year": "2020",
+          "source": "https://mtg.wtf/card/cmr/668",
+          "release_date": null
+        },
+        {
+          "set": "Commander Legends: Battle for Baldur’s Gate",
+          "code": "CLB",
+          "number": "799",
+          "art": "Commander-deck reprint; Izzy artwork",
+          "artist": "Izzy",
+          "finish": "Nonfoil only",
+          "year": "2022",
+          "source": "https://mtg.wtf/card/clb/799",
+          "release_date": null
+        },
+        {
+          "set": "Murders at Karlov Manor Commander",
+          "code": "MKC",
+          "number": "156",
+          "art": "Commander-deck reprint; Izzy artwork",
+          "artist": "Izzy",
+          "finish": "Nonfoil only",
+          "year": "2024",
+          "source": "https://mtg.wtf/card/mkc/156",
+          "release_date": null
+        },
+        {
+          "set": "Secret Lair: Marvel’s Storm",
+          "code": "SLD",
+          "number": "1744",
+          "art": "Storm’s Will; borderless crossover illustration",
+          "artist": "Miguel Mercado",
+          "finish": "Nonfoil, traditional foil",
+          "year": "2024",
+          "source": "https://mtg.wtf/card/sld/1744",
+          "release_date": null
+        },
+        {
+          "set": "Secrets of Strixhaven Mystical Archive",
+          "code": "SOA",
+          "number": "44",
+          "art": "Global Mystical Archive showcase illustration",
+          "artist": "Eliot Baum",
+          "finish": "Nonfoil, traditional foil",
+          "year": "2026",
+          "source": "https://mtg.wtf/card/soa/44",
+          "release_date": null
+        },
+        {
+          "set": "Secrets of Strixhaven Mystical Archive",
+          "code": "SOA",
+          "number": "109",
+          "art": "Japanese alternate-art showcase",
+          "artist": "Shiro Yayoi",
+          "finish": "Nonfoil only",
+          "year": "2026",
+          "source": "https://mtg.wtf/card/soa/109",
+          "release_date": null
+        },
+        {
+          "set": "Secrets of Strixhaven Mystical Archive",
+          "code": "SOA",
+          "number": "174",
+          "art": "Same Japanese artwork; silver-scroll treatment",
+          "artist": "Shiro Yayoi",
+          "finish": "Silver-scroll foil only",
+          "year": "2026",
+          "source": "https://mtg.wtf/card/soa/174",
+          "release_date": null
+        }
+      ],
+      "related": [
+        "dockside-extortionist",
+        "deflecting-swat",
+        "mana-vault"
+      ],
+      "sources": [
+        "https://mtg.wtf/card/cmr/187",
+        "https://mtg.wtf/card/cmr/668",
+        "https://mtg.wtf/card/clb/799",
+        "https://mtg.wtf/card/mkc/156",
+        "https://mtg.wtf/card/sld/1744",
+        "https://mtg.wtf/card/soa/44",
+        "https://mtg.wtf/card/soa/109",
+        "https://mtg.wtf/card/soa/174",
+        "https://magery.com/mtg/card/jeskas-will",
+        "https://mtg.wtf/card/sld/1744/Jeskas-Will",
+        "https://www.spellbinder.gg/cards/cmr/187/jeskas-will"
+      ],
+      "oracle_summary": "Jeska’s Will costs {2}{R}, is a  Sorcery  and has a  red colour identity . One mode produces red mana equal to the cards in a target opponent’s hand; the other exiles your top three cards and lets you play them that turn.",
+      "scope": "Representative meaningful paper records; digital and oversized entries explained separately where useful.",
+      "verified": "2026-11-04",
+      "first_release_date": "2020-11-20",
+      "evidence_method": "External catalogue pages and indexed catalogue extracts; official product/rules evidence where listed. Existing ManaScout text was compared only after research."
+    },
+    {
+      "name": "Mystic Sanctuary",
+      "slug": "mystic-sanctuary",
+      "title": "Mystic Sanctuary Printings, Secret Lair & Retro Foils | ManaScout",
+      "description": "Compare Mystic Sanctuary’s Eldraine #247 original, TSR #408 retro frame, later nonfoil reprints and Amélie Fléchais’s foil-only Dandân version #2143.",
+      "first": [
+        "Throne of Eldraine",
+        "ELD",
+        "247",
+        "4 October 2019",
+        "common",
+        "Randy Vargas",
+        "Nonfoil, traditional foil"
+      ],
+      "mana_cost": "",
+      "colour_identity": [
+        "U"
+      ],
+      "type_line": "Land — Island",
+      "records": [
+        {
+          "set": "Throne of Eldraine",
+          "code": "ELD",
+          "number": "247",
+          "art": "Original illustration; regular frame",
+          "artist": "Randy Vargas",
+          "finish": "Nonfoil, traditional foil",
+          "year": "2019",
+          "source": "https://mtg.wtf/card/eld/247",
+          "release_date": null
+        },
+        {
+          "set": "Time Spiral Remastered",
+          "code": "TSR",
+          "number": "408",
+          "art": "Retro frame; original illustration",
+          "artist": "Randy Vargas",
+          "finish": "Nonfoil, traditional foil",
+          "year": "2021",
+          "source": "https://mtg.wtf/card/tsr/408",
+          "release_date": null
+        },
+        {
+          "set": "Murders at Karlov Manor Commander",
+          "code": "MKC",
+          "number": "277",
+          "art": "Regular-frame Commander-deck reprint",
+          "artist": "Randy Vargas",
+          "finish": "Nonfoil only",
+          "year": "2024",
+          "source": "https://mtg.wtf/card/mkc/277",
+          "release_date": null
+        },
+        {
+          "set": "Mystery Booster 2",
+          "code": "MB2",
+          "number": "110",
+          "art": "Reprint of original illustration",
+          "artist": "Randy Vargas",
+          "finish": "Nonfoil only",
+          "year": "2024",
+          "source": "https://mtg.wtf/card/mb2/110",
+          "release_date": null
+        },
+        {
+          "set": "Secret Lair: Dandân Deck",
+          "code": "SLD",
+          "number": "2143",
+          "art": "Borderless alternate illustration",
+          "artist": "Amélie Fléchais",
+          "finish": "Traditional foil only",
+          "year": "2025",
+          "source": "https://mtg.wtf/card/sld/2143",
+          "release_date": null
+        }
+      ],
+      "related": [
+        "rhystic-study",
+        "mystic-remora",
+        "counterspell"
+      ],
+      "sources": [
+        "https://mtg.wtf/card/eld/247",
+        "https://mtg.wtf/card/tsr/408",
+        "https://mtg.wtf/card/mkc/277",
+        "https://mtg.wtf/card/mb2/110",
+        "https://mtg.wtf/card/sld/2143",
+        "https://magic.wizards.com/en/banned-restricted-list",
+        "https://mtg.wtf/card/availability/eld/247",
+        "https://mtg.wtf/card/sld/2143/Mystic-Sanctuary",
+        "https://www.mtgnexus.com/cards/murders-at-karlov-manor-commander/95056-mystic-sanctuary"
+      ],
+      "oracle_summary": "Mystic Sanctuary has no mana cost and is a  nonbasic Land — Island  with a  blue colour identity . Its Island subtype supplies the ability to tap for blue mana; it is not a basic land.",
+      "scope": "Representative meaningful paper records; digital and oversized entries explained separately where useful.",
+      "verified": "2026-11-04",
+      "first_release_date": "2019-10-04",
+      "evidence_method": "External catalogue pages and indexed catalogue extracts; official product/rules evidence where listed. Existing ManaScout text was compared only after research."
+    },
+    {
+      "name": "Path to Exile",
+      "slug": "path-to-exile",
+      "title": "Path to Exile Printings, Secret Lair & First Printing | ManaScout",
+      "description": "Compare Path to Exile’s Conflux #15 debut with early promos, Masters art, Arcane and Fblthp Secret Lairs and the experimental Zeta Set printing.",
+      "first": [
+        "Conflux",
+        "CON",
+        "15",
+        "6 February 2009",
+        "uncommon",
+        "Todd Lockwood",
+        "Nonfoil, traditional foil"
+      ],
+      "mana_cost": "{W}",
+      "colour_identity": [
+        "W"
+      ],
+      "type_line": "Instant",
+      "records": [
+        {
+          "set": "Conflux",
+          "code": "CON",
+          "number": "15",
+          "art": "Original illustration; regular frame",
+          "artist": "Todd Lockwood",
+          "finish": "Nonfoil, traditional foil",
+          "year": "2009",
+          "source": "https://mtg.wtf/card/con/15",
+          "release_date": null
+        },
+        {
+          "set": "DCI Promos",
+          "code": "DCI",
+          "number": "24",
+          "art": "Early foil promo; alternate illustration",
+          "artist": "Rebecca Guay",
+          "finish": "Traditional foil only",
+          "year": "2009",
+          "source": "https://mtg.wtf/card/dci/24",
+          "release_date": null
+        },
+        {
+          "set": "Duel Decks: Venser vs. Koth",
+          "code": "DDI",
+          "number": "23",
+          "art": "Alternate illustration in a fixed deck",
+          "artist": "Erica Yang",
+          "finish": "Nonfoil only",
+          "year": "2012",
+          "source": "https://mtg.wtf/card/ddi/23",
+          "release_date": null
+        },
+        {
+          "set": "Modern Masters",
+          "code": "MMA",
+          "number": "25",
+          "art": "Regular reprint of original illustration",
+          "artist": "Todd Lockwood",
+          "finish": "Nonfoil, traditional foil",
+          "year": "2013",
+          "source": "https://mtg.wtf/card/mma/25",
+          "release_date": null
+        },
+        {
+          "set": "Friday Night Magic 2015",
+          "code": "F15",
+          "number": "7",
+          "art": "FNM foil promo; alternate illustration",
+          "artist": "Raf Sarmento",
+          "finish": "Traditional foil only",
+          "year": "2015",
+          "source": "https://www.spellbinder.gg/cards/f15/7/path-to-exile",
+          "release_date": null
+        },
+        {
+          "set": "Secret Lair: Fblthp",
+          "code": "SLD",
+          "number": "226",
+          "art": "Borderless section of a five-card panorama",
+          "artist": "Marija Tiurina",
+          "finish": "Nonfoil, traditional foil",
+          "year": "2021",
+          "source": "https://mtg.wtf/card/sld/226",
+          "release_date": null
+        },
+        {
+          "set": "Secret Lair x Arcane",
+          "code": "SLD",
+          "number": "477",
+          "art": "Borderless Arcane illustration",
+          "artist": "Riot Games",
+          "finish": "Nonfoil, traditional foil",
+          "year": "2021",
+          "source": "https://www.spellbinder.gg/cards/sld/477/path-to-exile",
+          "release_date": null
+        },
+        {
+          "set": "Commander Masters",
+          "code": "CMM",
+          "number": "49",
+          "art": "Regular frame; original illustration",
+          "artist": "Todd Lockwood",
+          "finish": "Nonfoil, traditional foil",
+          "year": "2023",
+          "source": "https://mtg.wtf/card/cmm/49",
+          "release_date": null
+        },
+        {
+          "set": "Commander Masters",
+          "code": "CMM",
+          "number": "626",
+          "art": "Borderless alternate illustration",
+          "artist": "Ron Spears",
+          "finish": "Nonfoil, traditional foil",
+          "year": "2023",
+          "source": "https://mtg.wtf/card/cmm/626",
+          "release_date": null
+        },
+        {
+          "set": "The Zeta Set",
+          "code": "SLZ",
+          "number": "7",
+          "art": "MSCHF full-art experimental presentation",
+          "artist": "MSCHF",
+          "finish": "Nonfoil only",
+          "year": "2026",
+          "source": "https://www.spellbinder.gg/cards/slz/7/path-to-exile",
+          "release_date": null
+        }
+      ],
+      "related": [
+        "swords-to-plowshares",
+        "lightning-bolt",
+        "teferis-protection",
+        "counterspell"
+      ],
+      "sources": [
+        "https://mtg.wtf/card/con/15",
+        "https://mtg.wtf/card/dci/24",
+        "https://mtg.wtf/card/ddi/23",
+        "https://mtg.wtf/card/mma/25",
+        "https://www.spellbinder.gg/cards/f15/7/path-to-exile",
+        "https://mtg.wtf/card/sld/226",
+        "https://www.spellbinder.gg/cards/sld/477/path-to-exile",
+        "https://mtg.wtf/card/cmm/49",
+        "https://mtg.wtf/card/cmm/626",
+        "https://www.spellbinder.gg/cards/slz/7/path-to-exile",
+        "https://magery.com/mtg/card/path-to-exile?ctx=set&set=otp",
+        "https://magic.wizards.com/en/news/feature/checking-back-in-with-secret-lair",
+        "https://mtg.wtf/card/con/15/Path-to-Exile"
+      ],
+      "oracle_summary": "Path to Exile costs {W}, is an  Instant  and has a  white colour identity . It exiles a target creature, then that creature’s controller may search for a basic land, put it onto the battlefield tapped and shuffle.",
+      "scope": "Representative meaningful paper records; digital and oversized entries explained separately where useful.",
+      "verified": "2026-11-04",
+      "first_release_date": "2009-02-06",
+      "evidence_method": "External catalogue pages and indexed catalogue extracts; official product/rules evidence where listed. Existing ManaScout text was compared only after research."
+    },
+    {
+      "name": "Smaug, Wicked Worm",
+      "slug": "smaug-wicked-worm",
+      "title": "Smaug, Wicked Worm Printings, Book Cover Art & Surge Foil | ManaScout",
+      "description": "Compare Smaug, Wicked Worm HOB #164, Tyler Jacobson’s book-cover #245 and surge foil #281. Identify the exact card without confusing other Smaug designs.",
+      "first": [
+        "The Hobbit",
+        "HOB",
+        "164",
+        "14 August 2026",
+        "rare",
+        "Antonio José Manzanedo",
+        "Nonfoil, traditional foil"
+      ],
+      "mana_cost": "{3}{B}{R}",
+      "colour_identity": [
+        "B",
+        "R"
+      ],
+      "type_line": "Legendary Creature — Dragon",
+      "records": [
+        {
+          "set": "The Hobbit",
+          "code": "HOB",
+          "number": "164",
+          "art": "Original illustration; regular frame",
+          "artist": "Antonio José Manzanedo",
+          "finish": "Nonfoil, traditional foil",
+          "year": "2026",
+          "source": "https://mtg.wtf/card/hob/164",
+          "release_date": null
+        },
+        {
+          "set": "The Hobbit",
+          "code": "HOB",
+          "number": "245",
+          "art": "Borderless book cover; alternate illustration",
+          "artist": "Tyler Jacobson",
+          "finish": "Nonfoil, traditional foil",
+          "year": "2026",
+          "source": "https://mtg.wtf/card/hob/245",
+          "release_date": null
+        },
+        {
+          "set": "The Hobbit",
+          "code": "HOB",
+          "number": "281",
+          "art": "Same book-cover illustration; surge surface",
+          "artist": "Tyler Jacobson",
+          "finish": "Surge foil only",
+          "year": "2026",
+          "source": "https://mtg.wtf/card/hob/281",
+          "release_date": null
+        }
+      ],
+      "related": [
+        "the-one-ring",
+        "dockside-extortionist",
+        "jeskas-will"
+      ],
+      "sources": [
+        "https://mtg.wtf/card/hob/164",
+        "https://mtg.wtf/card/hob/245",
+        "https://mtg.wtf/card/hob/281",
+        "https://magic.wizards.com/en/news/feature/collecting-the-hobbit",
+        "https://magery.com/mtg/card/smaug-wicked-worm",
+        "https://www.mtg.wtf/card/hob/281/Smaug-Wicked-Worm"
+      ],
+      "oracle_summary": "Smaug, Wicked Worm costs {3}{B}{R} and is a  5/5 Legendary Creature — Dragon  with flying and a  black-red colour identity . Its enters ability creates tapped Treasures equal to the artifacts your opponents control.",
+      "scope": "Representative meaningful paper records; digital and oversized entries explained separately where useful.",
+      "verified": "2026-11-04",
+      "first_release_date": "2026-08-14",
+      "evidence_method": "External catalogue pages and indexed catalogue extracts; official product/rules evidence where listed. Existing ManaScout text was compared only after research."
+    },
+    {
+      "name": "Swords to Plowshares",
+      "slug": "swords-to-plowshares",
+      "title": "Swords to Plowshares Printings, Original Art & Foils | ManaScout",
+      "description": "Explore Swords to Plowshares from Alpha #40 through classic art, Judge and Masters editions, Mystical Archive etched foil and Fallout surge printing.",
+      "first": [
+        "Limited Edition Alpha",
+        "LEA",
+        "40",
+        "5 August 1993",
+        "uncommon",
+        "Jeff A. Menges",
+        "Nonfoil only"
+      ],
+      "mana_cost": "{W}",
+      "colour_identity": [
+        "W"
+      ],
+      "type_line": "Instant",
+      "records": [
+        {
+          "set": "Limited Edition Alpha",
+          "code": "LEA",
+          "number": "40",
+          "art": "Original illustration and black-border frame",
+          "artist": "Jeff A. Menges",
+          "finish": "Nonfoil only",
+          "year": "1993",
+          "source": "https://www.spellbinder.gg/cards/lea/40/swords-to-plowshares",
+          "release_date": null
+        },
+        {
+          "set": "Ice Age",
+          "code": "ICE",
+          "number": "54",
+          "art": "Early alternate illustration",
+          "artist": "Kaja Foglio",
+          "finish": "Nonfoil only",
+          "year": "1995",
+          "source": "https://mtg.wtf/card/ice/54",
+          "release_date": null
+        },
+        {
+          "set": "Judge Gift Cards 2013",
+          "code": "J13",
+          "number": "1",
+          "art": "Judge foil; alternate illustration",
+          "artist": "Sam Wolfe Connelly",
+          "finish": "Traditional foil only",
+          "year": "2013",
+          "source": "https://www.spellbinder.gg/cards/j13/1/swords-to-plowshares",
+          "release_date": null
+        },
+        {
+          "set": "From the Vault: Twenty",
+          "code": "V13",
+          "number": "2",
+          "art": "Alternate illustration; From the Vault foil",
+          "artist": "Terese Nielsen",
+          "finish": "Traditional foil only",
+          "year": "2013",
+          "source": "https://mtg.wtf/card/v13/2",
+          "release_date": null
+        },
+        {
+          "set": "Eternal Masters",
+          "code": "EMA",
+          "number": "32",
+          "art": "Reuses Nielsen illustration; modern frame",
+          "artist": "Terese Nielsen",
+          "finish": "Nonfoil, traditional foil",
+          "year": "2016",
+          "source": "https://mtg.wtf/card/ema/32",
+          "release_date": null
+        },
+        {
+          "set": "Strixhaven Mystical Archive",
+          "code": "STA",
+          "number": "10",
+          "art": "Global showcase illustration",
+          "artist": "Mark Tedin",
+          "finish": "Nonfoil, traditional foil, etched foil",
+          "year": "2021",
+          "source": "https://mtg.wtf/card/sta/10",
+          "release_date": null
+        },
+        {
+          "set": "Strixhaven Mystical Archive",
+          "code": "STA",
+          "number": "73",
+          "art": "Japanese alternate-art showcase",
+          "artist": "Nagano",
+          "finish": "Nonfoil, traditional foil, etched foil",
+          "year": "2021",
+          "source": "https://mtg.wtf/card/sta/73",
+          "release_date": null
+        },
+        {
+          "set": "Secret Lair: Kamigawa: The Manga: The Cards",
+          "code": "SLD",
+          "number": "1021",
+          "art": "Manga illustration",
+          "artist": "Ryo Kamei",
+          "finish": "Nonfoil, traditional foil",
+          "year": "2022",
+          "source": "https://mtg.wtf/card/sld/1021",
+          "release_date": null
+        },
+        {
+          "set": "Fallout",
+          "code": "PIP",
+          "number": "173",
+          "art": "Regular-frame crossover illustration",
+          "artist": "Alex Konstad",
+          "finish": "Nonfoil, traditional foil",
+          "year": "2024",
+          "source": "https://mtg.wtf/card/pip/173",
+          "release_date": null
+        },
+        {
+          "set": "Fallout",
+          "code": "PIP",
+          "number": "701",
+          "art": "Same illustration; surge surface",
+          "artist": "Alex Konstad",
+          "finish": "Surge foil only",
+          "year": "2024",
+          "source": "https://mtg.wtf/card/pip/701",
+          "release_date": null
+        }
+      ],
+      "related": [
+        "path-to-exile",
+        "lightning-bolt",
+        "teferis-protection",
+        "black-lotus"
+      ],
+      "sources": [
+        "https://www.spellbinder.gg/cards/lea/40/swords-to-plowshares",
+        "https://mtg.wtf/card/ice/54",
+        "https://www.spellbinder.gg/cards/j13/1/swords-to-plowshares",
+        "https://mtg.wtf/card/v13/2",
+        "https://mtg.wtf/card/ema/32",
+        "https://mtg.wtf/card/sta/10",
+        "https://mtg.wtf/card/sta/73",
+        "https://mtg.wtf/card/sld/1021",
+        "https://mtg.wtf/card/pip/173",
+        "https://mtg.wtf/card/pip/701",
+        "https://magic.wizards.com/en/news/feature/collecting-strixhaven-school-mages-2021-03-25",
+        "https://tablecommander.com/cards/swords-to-plowshares",
+        "https://mtg.wtf/card/pip/701/Swords-to-Plowshares",
+        "https://magery.com/mtg/pip/swords-to-plowshares-173"
+      ],
+      "oracle_summary": "Swords to Plowshares costs {W}, is an  Instant  and has a  white colour identity . It exiles a target creature, and that creature’s controller gains life equal to its power.",
+      "scope": "Representative meaningful paper records; digital and oversized entries explained separately where useful.",
+      "verified": "2026-11-04",
+      "first_release_date": "1993-08-05",
+      "evidence_method": "External catalogue pages and indexed catalogue extracts; official product/rules evidence where listed. Existing ManaScout text was compared only after research."
+    },
+    {
+      "name": "Teferi's Protection",
+      "slug": "teferis-protection",
+      "title": "Teferi’s Protection Printings, Secret Lairs & Premium Foils | ManaScout",
+      "description": "Compare Teferi’s Protection C17 #8 with Judge foil, Secret Lair art, Mystical Archive editions and Double Masters borderless and etched treatments.",
+      "first": [
+        "Commander 2017",
+        "C17",
+        "8",
+        "25 August 2017",
+        "rare",
+        "Chase Stone",
+        "Nonfoil only"
+      ],
+      "mana_cost": "{2}{W}",
+      "colour_identity": [
+        "W"
+      ],
+      "type_line": "Instant",
+      "records": [
+        {
+          "set": "Commander 2017",
+          "code": "C17",
+          "number": "8",
+          "art": "Original illustration; regular frame",
+          "artist": "Chase Stone",
+          "finish": "Nonfoil only",
+          "year": "2017",
+          "source": "https://mtg.wtf/card/c17/8",
+          "release_date": null
+        },
+        {
+          "set": "Judge Gift Cards 2018",
+          "code": "J18",
+          "number": "5",
+          "art": "Judge promo; original artwork",
+          "artist": "Chase Stone",
+          "finish": "Traditional foil only",
+          "year": "2018",
+          "source": "https://mtg.wtf/card/j18/5",
+          "release_date": null
+        },
+        {
+          "set": "Secret Lair: Extra Life 2020",
+          "code": "SLD",
+          "number": "164",
+          "art": "Alternate illustration",
+          "artist": "Kieran Yanner",
+          "finish": "Traditional foil only",
+          "year": "2020",
+          "source": "https://mtg.wtf/card/sld/164",
+          "release_date": null
+        },
+        {
+          "set": "Strixhaven Mystical Archive",
+          "code": "STA",
+          "number": "11",
+          "art": "Global showcase illustration",
+          "artist": "Minttu Hynninen",
+          "finish": "Nonfoil, traditional foil, etched foil",
+          "year": "2021",
+          "source": "https://mtg.wtf/card/sta/11",
+          "release_date": null
+        },
+        {
+          "set": "Strixhaven Mystical Archive",
+          "code": "STA",
+          "number": "74",
+          "art": "Japanese alternate-art showcase",
+          "artist": "So-Taro",
+          "finish": "Nonfoil, traditional foil, etched foil",
+          "year": "2021",
+          "source": "https://mtg.wtf/card/sta/74",
+          "release_date": null
+        },
+        {
+          "set": "Double Masters 2022",
+          "code": "2X2",
+          "number": "32",
+          "art": "Regular frame; original artwork",
+          "artist": "Chase Stone",
+          "finish": "Nonfoil, traditional foil",
+          "year": "2022",
+          "source": "https://mtg.wtf/card/2x2/32",
+          "release_date": null
+        },
+        {
+          "set": "Double Masters 2022",
+          "code": "2X2",
+          "number": "343",
+          "art": "Borderless alternate illustration",
+          "artist": "Greg Staples",
+          "finish": "Nonfoil, traditional foil",
+          "year": "2022",
+          "source": "https://mtg.wtf/card/2x2/343",
+          "release_date": null
+        },
+        {
+          "set": "Double Masters 2022",
+          "code": "2X2",
+          "number": "424",
+          "art": "Etched frame; original artwork",
+          "artist": "Chase Stone",
+          "finish": "Etched foil only",
+          "year": "2022",
+          "source": "https://mtg.wtf/card/2x2/424",
+          "release_date": null
+        },
+        {
+          "set": "Secret Lair: Sheldon’s Spellbook",
+          "code": "SLD",
+          "number": "1691",
+          "art": "Borderless alternate illustration",
+          "artist": "Steve Argyle",
+          "finish": "Nonfoil, traditional foil",
+          "year": "2024",
+          "source": "https://mtg.wtf/card/sld/1691",
+          "release_date": null
+        },
+        {
+          "set": "Avatar: The Last Airbender Eternal",
+          "code": "TLE",
+          "number": "7",
+          "art": "Borderless Source Material illustration",
+          "artist": "Viacom",
+          "finish": "Nonfoil, traditional foil",
+          "year": "2025",
+          "source": "https://mtg.wtf/card/tle/7",
+          "release_date": null
+        },
+        {
+          "set": "Marvel Universe",
+          "code": "MAR",
+          "number": "51",
+          "art": "T’Challa’s Protection; Source Material art",
+          "artist": "Jack Kirby",
+          "finish": "Nonfoil, traditional foil",
+          "year": "2026",
+          "source": "https://mtg.wtf/card/mar/51",
+          "release_date": null
+        }
+      ],
+      "related": [
+        "swords-to-plowshares",
+        "deflecting-swat",
+        "the-one-ring"
+      ],
+      "sources": [
+        "https://mtg.wtf/card/c17/8",
+        "https://mtg.wtf/card/j18/5",
+        "https://mtg.wtf/card/sld/164",
+        "https://mtg.wtf/card/sta/11",
+        "https://mtg.wtf/card/sta/74",
+        "https://mtg.wtf/card/2x2/32",
+        "https://mtg.wtf/card/2x2/343",
+        "https://mtg.wtf/card/2x2/424",
+        "https://mtg.wtf/card/sld/1691",
+        "https://mtg.wtf/card/tle/7",
+        "https://mtg.wtf/card/mar/51",
+        "https://magic.wizards.com/en/news/feature/collecting-strixhaven-school-mages-2021-03-25",
+        "https://magery.com/mtg/card/teferis-protection",
+        "https://mtg.wtf/card/mar/51/Teferis-Protection"
+      ],
+      "oracle_summary": "Teferi’s Protection costs {2}{W}, is an  Instant  and has a  white colour identity . Until your next turn your life total cannot change and you gain protection from everything; your permanents phase out. The spell then exiles itself.",
+      "scope": "Representative meaningful paper records; digital and oversized entries explained separately where useful.",
+      "verified": "2026-11-04",
+      "first_release_date": "2017-08-25",
+      "evidence_method": "External catalogue pages and indexed catalogue extracts; official product/rules evidence where listed. Existing ManaScout text was compared only after research."
+    },
+    {
+      "name": "The Theorist, Jace Beleren",
+      "slug": "the-theorist-jace-beleren",
+      "title": "The Theorist, Jace Beleren Printings, Showcase & Foils | ManaScout",
+      "description": "Identify The Theorist FRA #43, braintwister #363, Japan Showcase and fracture foil, plus the later Secret Lair Bundle promo and its distinct artwork.",
+      "first": [
+        "Reality Fracture",
+        "FRA",
+        "43",
+        "2 October 2026",
+        "mythic rare",
+        "Ekaterina Burmak",
+        "Nonfoil, traditional foil"
+      ],
+      "mana_cost": "{2}{U}{U}",
+      "colour_identity": [
+        "U"
+      ],
+      "type_line": "Legendary Planeswalker — Jace",
+      "records": [
+        {
+          "set": "Reality Fracture",
+          "code": "FRA",
+          "number": "43",
+          "art": "Original illustration; regular frame",
+          "artist": "Ekaterina Burmak",
+          "finish": "Nonfoil, traditional foil",
+          "year": "2026",
+          "source": "https://mtg.wtf/card/fra/43",
+          "release_date": "2026-10-02"
+        },
+        {
+          "set": "Reality Fracture",
+          "code": "FRA",
+          "number": "363",
+          "art": "Borderless braintwister series illustration",
+          "artist": "Miles Johnston",
+          "finish": "Nonfoil, traditional foil",
+          "year": "2026",
+          "source": "https://mtg.wtf/card/fra/363",
+          "release_date": "2026-10-02"
+        },
+        {
+          "set": "Reality Fracture",
+          "code": "FRA",
+          "number": "405",
+          "art": "Japan Showcase illustration",
+          "artist": "Yukie Tajima",
+          "finish": "Traditional foil only",
+          "year": "2026",
+          "source": "https://mtg.wtf/card/fra/405",
+          "release_date": "2026-10-02"
+        },
+        {
+          "set": "Reality Fracture",
+          "code": "FRA",
+          "number": "415",
+          "art": "Same Japan Showcase artwork; fracture surface",
+          "artist": "Yukie Tajima",
+          "finish": "Fracture foil only",
+          "year": "2026",
+          "source": "https://mtg.wtf/card/fra/415",
+          "release_date": "2026-10-02"
+        },
+        {
+          "set": "Reality Fracture Promos",
+          "code": "PFRA",
+          "number": "43p",
+          "art": "Stamped Promo Pack version of original art",
+          "artist": "Ekaterina Burmak",
+          "finish": "Nonfoil, traditional foil",
+          "year": "2026",
+          "source": "https://mtg.wtf/card/pfra/43p",
+          "release_date": "2026-10-02"
+        },
+        {
+          "set": "Reality Fracture",
+          "code": "FRA",
+          "number": "443",
+          "art": "Secret Lair Bundle promo; borderless illustration",
+          "artist": "ONIKU kuitai",
+          "finish": "Traditional foil only",
+          "year": "23 October 2026",
+          "source": "https://mtg.wtf/card/fra/443",
+          "release_date": "2026-10-23"
+        }
+      ],
+      "related": [
+        "jace-the-mind-sculptor",
+        "rhystic-study",
+        "force-of-will"
+      ],
+      "sources": [
+        "https://mtg.wtf/card/fra/43",
+        "https://mtg.wtf/card/fra/363",
+        "https://mtg.wtf/card/fra/405",
+        "https://mtg.wtf/card/fra/415",
+        "https://mtg.wtf/card/pfra/43p",
+        "https://mtg.wtf/card/fra/443",
+        "https://magic.wizards.com/en/news/feature/collecting-reality-fracture",
+        "https://magic.wizards.com/en/news/magic-story/the-legends-of-reality-fracture",
+        "https://mtg.wtf/card/availability/fra/443"
+      ],
+      "oracle_summary": "The Theorist costs {2}{U}{U}, has a  blue colour identity  and is a  Legendary Planeswalker — Jace  with three starting loyalty. Its triggered ability makes you draw a card at the beginning of each opponent’s draw step; that opponent’s normal draw happens before this trigger resolves.",
+      "scope": "Representative meaningful paper records; digital and oversized entries explained separately where useful.",
+      "verified": "2026-11-04",
+      "first_release_date": "2026-10-02",
+      "evidence_method": "External catalogue pages and indexed catalogue extracts; official product/rules evidence where listed. Existing ManaScout text was compared only after research."
+    }
+  ],
+  "legacy_corrections": [
+    {
+      "page": "jeskas-will",
+      "old": "potentially do both with a commander in play",
+      "new": "The commander condition is checked as the spell is cast; later removal does not undo the chosen modes. The commander need not be your own.",
+      "source": "https://magery.com/mtg/card/jeskas-will",
+      "kind": "Gameplay clarification"
+    },
+    {
+      "page": "mystic-sanctuary",
+      "old": "an Island that can put an instant or sorcery card from your graveyard back on top of your library when it enters untapped",
+      "new": "A nonbasic Land — Island; needs three other Islands to avoid its own tapped-entry replacement. Its optional triggered ability only triggers if it enters untapped.",
+      "source": "https://mtg.wtf/card/eld/247/Mystic-Sanctuary",
+      "kind": "Gameplay precision"
+    },
+    {
+      "page": "teferis-protection",
+      "old": "removing its controller from many forms of interaction",
+      "new": "The player remains in the game; protection, an unchanging life total and phasing are distinct effects. Phasing does not cause permanents to leave or re-enter the battlefield.",
+      "source": "https://m.mtg.wtf/card/c17/8/Teferis-Protection",
+      "kind": "Misleading rules shorthand replaced"
+    },
+    {
+      "page": "dockside-extortionist",
+      "old": "Yes. Dockside Extortionist is currently banned in Commander.",
+      "new": "Legality dated 4 November 2026 against the official Commander banned list; same status across every printing, including later Avatar art. Historical effective date retained: 23 September 2024.",
+      "source": "https://magic.wizards.com/en/banned-restricted-list",
+      "kind": "Date-sensitive statement qualified"
+    },
+    {
+      "page": "smaug-wicked-worm",
+      "old": "A premium foil-only treatment also gives collectors a more distinctive version",
+      "new": "HOB #281 is specifically surge foil using Tyler Jacobson’s #245 book-cover artwork. It is not the gleaming-gold Smaug the Magnificent headliner, which is a different card.",
+      "source": "https://magic.wizards.com/en/news/feature/collecting-the-hobbit",
+      "kind": "Treatment and card-identity precision"
+    },
+    {
+      "page": "the-theorist-jace-beleren",
+      "old": "compact printing history centred on Reality Fracture",
+      "new": "Main records date to 2 October 2026; FRA #443 is the separately dated 23 October Secret Lair Bundle promo. PFRA #43p is a stamped Promo Pack entry. Japan Showcase #405 and fracture #415 are both foil-only.",
+      "source": "https://magic.wizards.com/en/news/feature/collecting-reality-fracture",
+      "kind": "Release/finish precision"
+    }
+  ],
+  "sitemap_lastmod": {
+    "method": "Read latest per-path GitHub history for the unchanged modern guides and the three top-level pages; verified Prompt 2/3A commit dates and this task’s material edits separately. Shared registry-only changes do not reset unrelated guide dates.",
+    "baseline_commit": "b5699d635f40505200b6f1440a2dbce8dc4bccce",
+    "entries": {
+      "https://manascout.co.uk/card/arcane-signet/": {
+        "lastmod": "2026-11-01",
+        "basis": "Upgrade essential mana and utility card guides",
+        "commit": "d78ce089b81de7c750f6b7128ad9f7046bac5f8f",
+        "path": "card/arcane-signet/index.html"
+      },
+      "https://manascout.co.uk/card/chrome-mox/": {
+        "lastmod": "2026-11-02",
+        "basis": "Add premium Chrome Mox, Urza's Saga and Great Henge guides",
+        "commit": "e481590c24da9bff41f0d6b40c4a7139312b3c5c",
+        "path": "card/chrome-mox/index.html"
+      },
+      "https://manascout.co.uk/card/counterspell/": {
+        "lastmod": "2026-11-02",
+        "basis": "Upgrade four premium interaction card guides",
+        "commit": "126767990c0c73598277f6ccfe4b59577c799bb1",
+        "path": "card/counterspell/index.html"
+      },
+      "https://manascout.co.uk/card/cyclonic-rift/": {
+        "lastmod": "2026-11-01",
+        "basis": "Upgrade four card guides with sourced printing histories",
+        "commit": "b50dd1dc33d49dbdfae8cae04378e41255beda95",
+        "path": "card/cyclonic-rift/index.html"
+      },
+      "https://manascout.co.uk/card/deflecting-swat/": {
+        "lastmod": "2026-11-02",
+        "basis": "Upgrade four premium interaction card guides",
+        "commit": "126767990c0c73598277f6ccfe4b59577c799bb1",
+        "path": "card/deflecting-swat/index.html"
+      },
+      "https://manascout.co.uk/card/demonic-consultation/": {
+        "lastmod": "2026-11-02",
+        "basis": "Upgrade tutor and Mystic Remora printing guides",
+        "commit": "1b62bf3ddc61eea71cd9b138570bde9bc40eabe4",
+        "path": "card/demonic-consultation/index.html"
+      },
+      "https://manascout.co.uk/card/demonic-tutor/": {
+        "lastmod": "2026-11-02",
+        "basis": "Upgrade tutor and Mystic Remora printing guides",
+        "commit": "1b62bf3ddc61eea71cd9b138570bde9bc40eabe4",
+        "path": "card/demonic-tutor/index.html"
+      },
+      "https://manascout.co.uk/card/esper-sentinel/": {
+        "lastmod": "2026-11-01",
+        "basis": "Upgrade four card guides with sourced printing histories",
+        "commit": "b50dd1dc33d49dbdfae8cae04378e41255beda95",
+        "path": "card/esper-sentinel/index.html"
+      },
+      "https://manascout.co.uk/card/fierce-guardianship/": {
+        "lastmod": "2026-11-02",
+        "basis": "Add researched Bowmasters, Guardianship and Necropotence guides",
+        "commit": "9ca2f9e367483bee0f4839b1c187ba19e95ae0f4",
+        "path": "card/fierce-guardianship/index.html"
+      },
+      "https://manascout.co.uk/card/force-of-will/": {
+        "lastmod": "2026-11-02",
+        "basis": "Upgrade four premium interaction card guides",
+        "commit": "126767990c0c73598277f6ccfe4b59577c799bb1",
+        "path": "card/force-of-will/index.html"
+      },
+      "https://manascout.co.uk/card/lightning-greaves/": {
+        "lastmod": "2026-11-01",
+        "basis": "Upgrade essential mana and utility card guides",
+        "commit": "d78ce089b81de7c750f6b7128ad9f7046bac5f8f",
+        "path": "card/lightning-greaves/index.html"
+      },
+      "https://manascout.co.uk/card/mana-drain/": {
+        "lastmod": "2026-11-02",
+        "basis": "Upgrade four premium interaction card guides",
+        "commit": "126767990c0c73598277f6ccfe4b59577c799bb1",
+        "path": "card/mana-drain/index.html"
+      },
+      "https://manascout.co.uk/card/mana-vault/": {
+        "lastmod": "2026-11-01",
+        "basis": "Upgrade essential mana and utility card guides",
+        "commit": "d78ce089b81de7c750f6b7128ad9f7046bac5f8f",
+        "path": "card/mana-vault/index.html"
+      },
+      "https://manascout.co.uk/card/mystic-remora/": {
+        "lastmod": "2026-11-02",
+        "basis": "Upgrade tutor and Mystic Remora printing guides",
+        "commit": "1b62bf3ddc61eea71cd9b138570bde9bc40eabe4",
+        "path": "card/mystic-remora/index.html"
+      },
+      "https://manascout.co.uk/card/necropotence/": {
+        "lastmod": "2026-11-02",
+        "basis": "Add researched Bowmasters, Guardianship and Necropotence guides",
+        "commit": "9ca2f9e367483bee0f4839b1c187ba19e95ae0f4",
+        "path": "card/necropotence/index.html"
+      },
+      "https://manascout.co.uk/card/orcish-bowmasters/": {
+        "lastmod": "2026-11-02",
+        "basis": "Add researched Bowmasters, Guardianship and Necropotence guides",
+        "commit": "9ca2f9e367483bee0f4839b1c187ba19e95ae0f4",
+        "path": "card/orcish-bowmasters/index.html"
+      },
+      "https://manascout.co.uk/card/smothering-tithe/": {
+        "lastmod": "2026-11-01",
+        "basis": "Upgrade four card guides with sourced printing histories",
+        "commit": "b50dd1dc33d49dbdfae8cae04378e41255beda95",
+        "path": "card/smothering-tithe/index.html"
+      },
+      "https://manascout.co.uk/card/sol-ring/": {
+        "lastmod": "2026-11-01",
+        "basis": "Upgrade essential mana and utility card guides",
+        "commit": "d78ce089b81de7c750f6b7128ad9f7046bac5f8f",
+        "path": "card/sol-ring/index.html"
+      },
+      "https://manascout.co.uk/card/the-great-henge/": {
+        "lastmod": "2026-11-02",
+        "basis": "Add premium Chrome Mox, Urza's Saga and Great Henge guides",
+        "commit": "e481590c24da9bff41f0d6b40c4a7139312b3c5c",
+        "path": "card/the-great-henge/index.html"
+      },
+      "https://manascout.co.uk/card/the-one-ring/": {
+        "lastmod": "2026-11-01",
+        "basis": "Upgrade four card guides with sourced printing histories",
+        "commit": "b50dd1dc33d49dbdfae8cae04378e41255beda95",
+        "path": "card/the-one-ring/index.html"
+      },
+      "https://manascout.co.uk/card/urzas-saga/": {
+        "lastmod": "2026-11-02",
+        "basis": "Add premium Chrome Mox, Urza's Saga and Great Henge guides",
+        "commit": "e481590c24da9bff41f0d6b40c4a7139312b3c5c",
+        "path": "card/urzas-saga/index.html"
+      },
+      "https://manascout.co.uk/card/vampiric-tutor/": {
+        "lastmod": "2026-11-02",
+        "basis": "Upgrade tutor and Mystic Remora printing guides",
+        "commit": "1b62bf3ddc61eea71cd9b138570bde9bc40eabe4",
+        "path": "card/vampiric-tutor/index.html"
+      },
+      "https://manascout.co.uk/": {
+        "lastmod": "2026-11-04",
+        "basis": "Polish Card of the Week 3D depth and atmosphere",
+        "commit": "ef9394c69289f63145d4bdaefd83b686812bc625",
+        "path": "index.html"
+      },
+      "https://manascout.co.uk/card/": {
+        "lastmod": "2026-11-04",
+        "basis": "Add four printing guides and audit six flagship guides with verified records and SEO",
+        "commit": "b5699d635f40505200b6f1440a2dbce8dc4bccce",
+        "path": "card/index.html"
+      },
+      "https://manascout.co.uk/deck/": {
+        "lastmod": "2026-11-04",
+        "basis": "Add four printing guides and audit six flagship guides with verified records and SEO",
+        "commit": "b5699d635f40505200b6f1440a2dbce8dc4bccce",
+        "path": "deck/index.html"
+      },
+      "https://manascout.co.uk/card/captain-jean-luc-picard/": {
+        "lastmod": "2026-11-04",
+        "basis": "Prompt 2 or Prompt 3A material guide creation/rewrite, verified against GitHub commit history",
+        "commit": "1ad72e21dcb379f01b00829d721784a5fdaf8bec",
+        "path": "card/captain-jean-luc-picard/index.html"
+      },
+      "https://manascout.co.uk/card/mr-spock-science-officer/": {
+        "lastmod": "2026-11-04",
+        "basis": "Prompt 2 or Prompt 3A material guide creation/rewrite, verified against GitHub commit history",
+        "commit": "1ad72e21dcb379f01b00829d721784a5fdaf8bec",
+        "path": "card/mr-spock-science-officer/index.html"
+      },
+      "https://manascout.co.uk/card/mox-diamond/": {
+        "lastmod": "2026-11-04",
+        "basis": "Prompt 2 or Prompt 3A material guide creation/rewrite, verified against GitHub commit history",
+        "commit": "b5699d635f40505200b6f1440a2dbce8dc4bccce",
+        "path": "card/mox-diamond/index.html"
+      },
+      "https://manascout.co.uk/card/gaeas-cradle/": {
+        "lastmod": "2026-11-04",
+        "basis": "Prompt 2 or Prompt 3A material guide creation/rewrite, verified against GitHub commit history",
+        "commit": "b5699d635f40505200b6f1440a2dbce8dc4bccce",
+        "path": "card/gaeas-cradle/index.html"
+      },
+      "https://manascout.co.uk/card/grim-monolith/": {
+        "lastmod": "2026-11-04",
+        "basis": "Prompt 2 or Prompt 3A material guide creation/rewrite, verified against GitHub commit history",
+        "commit": "b5699d635f40505200b6f1440a2dbce8dc4bccce",
+        "path": "card/grim-monolith/index.html"
+      },
+      "https://manascout.co.uk/card/cavern-of-souls/": {
+        "lastmod": "2026-11-04",
+        "basis": "Prompt 2 or Prompt 3A material guide creation/rewrite, verified against GitHub commit history",
+        "commit": "b5699d635f40505200b6f1440a2dbce8dc4bccce",
+        "path": "card/cavern-of-souls/index.html"
+      },
+      "https://manascout.co.uk/card/rhystic-study/": {
+        "lastmod": "2026-11-04",
+        "basis": "Prompt 2 or Prompt 3A material guide creation/rewrite, verified against GitHub commit history",
+        "commit": "b5699d635f40505200b6f1440a2dbce8dc4bccce",
+        "path": "card/rhystic-study/index.html"
+      },
+      "https://manascout.co.uk/card/black-lotus/": {
+        "lastmod": "2026-11-04",
+        "basis": "Prompt 2 or Prompt 3A material guide creation/rewrite, verified against GitHub commit history",
+        "commit": "b5699d635f40505200b6f1440a2dbce8dc4bccce",
+        "path": "card/black-lotus/index.html"
+      },
+      "https://manascout.co.uk/card/mana-crypt/": {
+        "lastmod": "2026-11-04",
+        "basis": "Prompt 2 or Prompt 3A material guide creation/rewrite, verified against GitHub commit history",
+        "commit": "b5699d635f40505200b6f1440a2dbce8dc4bccce",
+        "path": "card/mana-crypt/index.html"
+      },
+      "https://manascout.co.uk/card/jace-the-mind-sculptor/": {
+        "lastmod": "2026-11-04",
+        "basis": "Prompt 2 or Prompt 3A material guide creation/rewrite, verified against GitHub commit history",
+        "commit": "b5699d635f40505200b6f1440a2dbce8dc4bccce",
+        "path": "card/jace-the-mind-sculptor/index.html"
+      },
+      "https://manascout.co.uk/card/lightning-bolt/": {
+        "lastmod": "2026-11-04",
+        "basis": "Prompt 2 or Prompt 3A material guide creation/rewrite, verified against GitHub commit history",
+        "commit": "b5699d635f40505200b6f1440a2dbce8dc4bccce",
+        "path": "card/lightning-bolt/index.html"
+      },
+      "https://manascout.co.uk/card/ancient-tomb/": {
+        "lastmod": "2026-11-04",
+        "basis": "Prompt 2 or Prompt 3A material guide creation/rewrite, verified against GitHub commit history",
+        "commit": "b5699d635f40505200b6f1440a2dbce8dc4bccce",
+        "path": "card/ancient-tomb/index.html"
+      },
+      "https://manascout.co.uk/card/birds-of-paradise/": {
+        "lastmod": "2026-11-04",
+        "basis": "Prompt 3B material guide rewrite in this task",
+        "path": "card/birds-of-paradise/index.html"
+      },
+      "https://manascout.co.uk/card/dockside-extortionist/": {
+        "lastmod": "2026-11-04",
+        "basis": "Prompt 3B material guide rewrite in this task",
+        "path": "card/dockside-extortionist/index.html"
+      },
+      "https://manascout.co.uk/card/doubling-season/": {
+        "lastmod": "2026-11-04",
+        "basis": "Prompt 3B material guide rewrite in this task",
+        "path": "card/doubling-season/index.html"
+      },
+      "https://manascout.co.uk/card/jeskas-will/": {
+        "lastmod": "2026-11-04",
+        "basis": "Prompt 3B material guide rewrite in this task",
+        "path": "card/jeskas-will/index.html"
+      },
+      "https://manascout.co.uk/card/mystic-sanctuary/": {
+        "lastmod": "2026-11-04",
+        "basis": "Prompt 3B material guide rewrite in this task",
+        "path": "card/mystic-sanctuary/index.html"
+      },
+      "https://manascout.co.uk/card/path-to-exile/": {
+        "lastmod": "2026-11-04",
+        "basis": "Prompt 3B material guide rewrite in this task",
+        "path": "card/path-to-exile/index.html"
+      },
+      "https://manascout.co.uk/card/smaug-wicked-worm/": {
+        "lastmod": "2026-11-04",
+        "basis": "Prompt 3B material guide rewrite in this task",
+        "path": "card/smaug-wicked-worm/index.html"
+      },
+      "https://manascout.co.uk/card/swords-to-plowshares/": {
+        "lastmod": "2026-11-04",
+        "basis": "Prompt 3B material guide rewrite in this task",
+        "path": "card/swords-to-plowshares/index.html"
+      },
+      "https://manascout.co.uk/card/teferis-protection/": {
+        "lastmod": "2026-11-04",
+        "basis": "Prompt 3B material guide rewrite in this task",
+        "path": "card/teferis-protection/index.html"
+      },
+      "https://manascout.co.uk/card/the-theorist-jace-beleren/": {
+        "lastmod": "2026-11-04",
+        "basis": "Prompt 3B material guide rewrite in this task",
+        "path": "card/the-theorist-jace-beleren/index.html"
+      }
+    }
+  }
+}
