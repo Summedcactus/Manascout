@@ -123,7 +123,7 @@ def rules(text, keyframes=False):
 
 
 rules(css)
-for colour in ['#0D1117', '#151B22', '#9B283A', '#8EA99A', '#EBEDE5']:
+for colour in ['#101114', '#1B1C20', '#9B283A', '#8EA99A', '#EFEDE6']:
     assert colour in css
 assert '(max-width: 820px)' in css and '(max-width: 360px)' in css and '(prefers-reduced-motion: reduce)' in css
 assert 'minmax(0,' in css and 'safe-area-inset-bottom' in css

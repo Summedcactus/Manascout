@@ -30,6 +30,7 @@
   let loading = false;
   let discoveryJob = null;
   let generationJob = null;
+  let assigningLeader = false;
   let lastDiscoveredOracle = "";
   let returnFocus = null;
   let returnFocusKey = null;
@@ -260,6 +261,12 @@
     if (document.activeElement !== $("deck-name")) $("deck-name").value = deck.name;
     $("deck-format").value = deck.format;
     const profile = formats.get(deck.format);
+    const mode = $("commander-discovery-mode");
+    mode.hidden = deck.format !== "commander";
+    if (mode.hidden) {
+      $("studio-discovery-mode").value = "any";
+      if (document.activeElement === $("studio-discovery-mode")) $("studio-discover-random").focus({ preventScroll: true });
+    }
     for (const id of ["commander", "standard"]) $("format-" + id).setAttribute("aria-pressed", String(deck.format === id));
     $("format-note").textContent = `${profile.name} · ${profile.platform === "arena" ? "Arena" : "Paper"} · ${profile.min === profile.max ? `exactly ${profile.min}` : `${profile.min}+`} cards${profile.leaders ? " including special zones" : " in the main deck"} · ${profile.copies === 1 ? "singleton" : "four-copy limit"} (Oracle exceptions apply) · ${profile.sideboard ? `up to ${profile.sideboard} sideboard` : "no sideboard"}.${profile.restricted ? " Restricted cards: one total across all sections." : ""} ${profile.note || ""} Switching preserves every entry.`;
     $("format-source").href = profile.source;
@@ -335,22 +342,25 @@
     syncDiscoveryButton();
     $("discovery-status").textContent = note;
   }
+  function discoveryMode() { return deck.format === "commander" ? $("studio-discovery-mode").value : "any"; }
+  $("studio-discovery-mode").addEventListener("change", () => cancelDiscovery("Discovery cancelled because its mode changed."));
   $("studio-discover-random").addEventListener("click", async () => {
     if (discoveryJob || loading) return;
-    const job = { controller: new AbortController(), deckId: deck.id, format: deck.format };
+    const job = { controller: new AbortController(), deckId: deck.id, format: deck.format, mode: discoveryMode() };
     discoveryJob = job;
     syncDiscoveryButton();
-    $("discovery-status").textContent = `Discovering a ${formats.get(job.format).name} card… Press Escape to cancel.`;
+    $("discovery-status").textContent = job.mode === "commander" ? "Discovering a verified Commander candidate… Press Escape to cancel." : `Discovering a ${formats.get(job.format).name} card… Press Escape to cancel.`;
     try {
-      const card = await client.random({ format: job.format, signal: job.controller.signal, excludeOracleId: lastDiscoveredOracle });
-      if (discoveryJob !== job || job.controller.signal.aborted || deck.id !== job.deckId || deck.format !== job.format) return;
+      const card = await client.random({ format: job.format, signal: job.controller.signal, excludeOracleId: lastDiscoveredOracle, commanderOnly: job.mode === "commander" });
+      if (discoveryJob !== job || job.controller.signal.aborted || deck.id !== job.deckId || deck.format !== job.format || discoveryMode() !== job.mode) return;
       const profile = formats.get(job.format);
       if (!client.isVerified(card) || !formats.supportedLegality(card, profile) || !card.games?.includes(profile.platform)) throw Error("The discovered card's current format and platform could not be verified.");
+      if (job.mode === "commander" && client.proof(card) !== true) throw Error("Commander eligibility has not been verified. Your deck is unchanged.");
       discoveryJob = null;
       syncDiscoveryButton();
       renderCard(card);
       lastDiscoveredOracle = card.oracleId;
-      $("discovery-status").textContent = `Selected ${card.name} · ${profile.name} · ${profile.platform}. Inspect this printing; use Add to deck when ready.`;
+      $("discovery-status").textContent = `Selected ${card.name} · ${profile.name} · ${profile.platform}. Inspect this printing, then choose its role.`;
       openPreview($("studio-discover-random"));
     } catch (error) {
       if (discoveryJob === job && error.name !== "AbortError") $("discovery-status").textContent = `Discovery unavailable. ${error.message} Your deck and selected printing are unchanged.`;
@@ -466,6 +476,8 @@
     const profile = formats.get(deck.format), button = $("preview-commander");
     button.hidden = !profile.leaders;
     $("signature-controls").hidden = !profile.signature;
+    $("preview-pair").hidden = true;
+    $("preview-role-note").hidden = deck.format !== "commander";
     if (!current) return;
     const fresh = client.isVerified(current), legality = current.legalities[profile.legalityKey] || "unknown";
     const eligible = rules.leaderEligibility(current, profile, client.proof), pending = profile.eligibility === "commander" && eligibilityJobs.has(current.oracleId);
@@ -487,6 +499,28 @@
     $("preview-add").textContent = deck.format === "commander" ? `Add to the ${commanderCards().length === 2 ? "98" : "99"}` : "Add to deck +";
     if (deck.format === "commander" && fresh && (!formats.supportedLegality(current, profile) || !current.games?.includes(profile.platform))) $("preview-add").disabled = true;
     if (commanderCards().some(card => card.id === current.id)) { button.disabled = true; button.textContent = `Assigned as ${role}`; }
+    if (deck.format === "commander") {
+      const leaders = commanderCards();
+      const assigned = leaders.some(c => c.id === current.id);
+      button.textContent = assigned ? "Assigned as commander" : leaders.length ? "Replace Commander" : "Set as Commander";
+      button.hidden = assigned || eligible !== true || rules.background(current) || rules.colorChoice(current) || !fresh || !formats.supportedLegality(current, profile) || !current.games?.includes(profile.platform);
+      button.disabled = button.disabled || assigningLeader;
+      const canPair = leaders.length === 1 && model.count(deck, "commander") === 1 && !assigned && leaders[0].oracleId !== current.oracleId && leaders[0].name !== current.name && fresh && current.games?.includes(profile.platform) && client.isVerified(leaders[0]) && (client.proof(leaders[0]) === true || rules.background(leaders[0])) && (eligible === true || eligibleBackground) && rules.pair(leaders[0], current).valid && !rules.colorChoice(current) && formats.supportedLegality(current, profile) && current.availableFinishes.includes(currentFinish);
+      $("preview-pair").hidden = !canPair;
+      $("preview-pair").disabled = assigningLeader;
+      $("preview-pair").textContent = rules.background(current) ? "Add Background" : "Add as partner";
+      button.classList.remove("ds-secondary"); button.classList.add("ds-primary");
+      $("preview-add").classList.remove("ds-primary"); $("preview-add").classList.add("ds-secondary");
+      const assignedRole = generator?.context(deck)?.seed.zone;
+      $("selection-status").textContent = assignedRole === "commander" ? "This exact printing is assigned as Commander." : assignedRole === "main" ? "This exact printing is assigned to the main deck. Generate Deck checks its compatibility before building." : "Preview only. Choose a role to use this printing; searching or discovery does not assign it.";
+      $("preview-role-note").textContent = assignedRole === "commander" ? "Assigned Commander" : assignedRole === "main" ? "Main-deck seed assigned" : "Choose a role";
+      $("inspiration-role").textContent = assignedRole === "commander" ? "ASSIGNED COMMANDER" : assignedRole === "main" ? "ADDED TO THE MAIN DECK" : "PREVIEW / CHOOSE A ROLE";
+    } else {
+      button.classList.remove("ds-primary"); button.classList.add("ds-secondary");
+      $("preview-add").classList.remove("ds-secondary"); $("preview-add").classList.add("ds-primary");
+      $("inspiration-role").textContent = previewEntry() ? "ADDED TO THIS DECK" : "SELECTED PRINTING / NOT ADDED";
+    }
+    for (const control of [button, $("preview-pair")]) if (control.hidden && document.activeElement === control) $("preview-add").focus({ preventScroll: true });
     if (profile.signature) {
       const selected = $("signature-owner").value;
       $("signature-owner").replaceChildren(...commanderCards().map(card => { const option = view.node("option", "", card.name); option.value = card.id; return option; }));
@@ -502,9 +536,45 @@
     renderCommanderAction();
     try { await task; }
     catch (error) { eligibilityErrors.set(card.oracleId, error.message); if (current?.id === card.id) message(`Commander eligibility could not be verified: ${error.message} You can still edit the main deck.`); }
-    finally { eligibilityJobs.delete(card.oracleId); if (current?.id === card.id) renderCommanderAction(); renderStatistics(); }
+    finally { eligibilityJobs.delete(card.oracleId); if (current?.id === card.id) renderCommanderAction(); syncGeneration(); renderStatistics(); }
   }
+  async function assignCommander({ pairing = false } = {}) {
+    const control = pairing ? $("preview-pair") : $("preview-commander");
+    if (!current || assigningLeader || control.hidden || control.disabled || deck.format !== "commander") return;
+    const snapshot = deck, card = current, finish = currentFinish;
+    assigningLeader = true; renderCommanderAction();
+    const unchanged = () => deck === snapshot && current?.id === card.id && currentFinish === finish && deck.format === "commander";
+    try {
+      const leaders = commanderCards();
+      if (!client.isVerified(card) || !formats.supportedLegality(card, formats.get("commander")) || !card.games.includes("paper") || !card.availableFinishes.includes(finish) || rules.colorChoice(card)) throw Error("Recheck this printing before assigning its role.");
+      if (!rules.background(card) && client.proof(card) !== true) throw Error("Commander eligibility must be verified first.");
+      if (pairing) {
+        if (leaders.length !== 1 || model.count(deck, "commander") !== 1 || leaders[0].oracleId === card.oracleId || leaders[0].name === card.name || !rules.pair(leaders[0], card).valid) throw Error("This is not a supported commander pairing.");
+      } else if (leaders.length) {
+        const signatures = deck.entries.filter(e => e.zone === "signature");
+        const pairNote = leaders.length === 2 ? " This ends the current commander pairing." : "";
+        const signatureNote = signatures.length ? " Preserved signature spells will also move to the main deck and their leader assignments will be cleared." : "";
+        if (!(await confirmAction("Replace Commander?", `Replace ${leaders.map(c => c.name).join(" + ")} with ${card.name}? Existing commanders move to the main deck with their exact printings, finishes and quantities intact.${pairNote}${signatureNote} Colour-identity and copy warnings may need correction. A recovery snapshot will be kept.`, "Replace Commander"))) return;
+        if (!unchanged()) return;
+        if (savePromise) await savePromise;
+        if (!unchanged()) return;
+        store.checkpoint(snapshot, savedToken);
+      }
+      if (!unchanged()) return;
+      let next = deck;
+      if (!pairing) for (const entry of deck.entries.filter(e => e.zone === "commander" || e.zone === "signature")) {
+        next = model.add(model.setQuantity(next, entry.key, 0), deck.cards[entry.printingId], { finish: entry.finish, quantity: entry.quantity, zone: "main" });
+      }
+      const inMain = next.entries.find(e => e.printingId === card.id && e.finish === finish && e.zone === "main");
+      next = inMain ? model.moveOne(next, inMain.key, "commander") : model.add(next, card, { finish, zone: "commander" });
+      commitState(next, `${card.name} ${pairing ? "joined the supported commander pairing" : "set as Commander"}. The selected printing and finish are preserved.`);
+      $("selection-status").textContent = "Commander role assigned. Generate Deck is available when current construction checks for the seed pass.";
+    } catch (error) { message(error.message); }
+    finally { assigningLeader = false; renderPreviewActions(); }
+  }
+  $("preview-pair").addEventListener("click", () => assignCommander({ pairing: true }));
   $("preview-commander").addEventListener("click", async () => {
+    if (deck.format === "commander") return assignCommander();
     const originalId = current?.id, deckId = deck.id, originalFormat = deck.format, profile = formats.get(deck.format);
     if (!current || !profile.leaders) return;
     try {
@@ -545,8 +615,15 @@
   });
   function syncGeneration() {
     const assigned = generator?.context(deck);
-    $("generation-controls").hidden = !assigned;
-    $("generate-deck").disabled = !!generationJob || !assigned || loading;
+    let validRole = false;
+    if (assigned) {
+      const keys = new Set([...assigned.commanders.map(e => e.key), assigned.seed.key]);
+      const roleDeck = { ...deck, entries: deck.entries.filter(e => keys.has(e.key)) };
+      validRole = rules.validate(roleDeck, client).issues.every(i => i.code === "size" || (i.code === "commander-missing" && assigned.seed.zone === "main"));
+    }
+    if (!validRole && $("generation-controls").contains(document.activeElement)) $("preview-add").focus({ preventScroll: true });
+    $("generation-controls").hidden = !validRole;
+    $("generate-deck").disabled = !!generationJob || !validRole || loading;
     $("generate-deck").textContent = generationJob ? "Generating…" : "Generate Deck";
     $("generate-deck").setAttribute("aria-busy", String(!!generationJob));
     $("cancel-generation").hidden = !generationJob;
@@ -572,7 +649,7 @@
     $("generation-custom-label").hidden = $("generation-budget").value !== "custom";
   });
   $("generate-deck").addEventListener("click", async () => {
-    if (!generator?.context(deck) || generationJob || loading) return;
+    if (!generator?.context(deck) || $("generate-deck").disabled || $("generation-controls").hidden || generationJob || loading) return;
     cancelDiscovery("Discovery cancelled while generating a deck.");
     const snapshot = deck;
     const job = { controller: new AbortController(), snapshot };

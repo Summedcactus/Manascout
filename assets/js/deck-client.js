@@ -87,11 +87,13 @@
         } catch (error) { if (error.status === 404) return { cards: [], nextPage: "", total: 0 }; throw error; }
       });
     }
-    async function random({ format = "commander", signal, excludeOracleId = "" } = {}) {
+    async function random({ format = "commander", signal, excludeOracleId = "", commanderOnly = false } = {}) {
       const profile = formats.get(format);
       if (!profile) throw new data.SelectionError("Choose a supported format before discovering a card.");
+      if (commanderOnly && format !== "commander") throw new data.SelectionError("Commander discovery is available only in Commander format.");
       if (excludeOracleId && !/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(excludeOracleId)) throw new data.SelectionError("The previous card identity is invalid.");
       const query = [`f:${profile.legalityKey}`, `game:${profile.platform}`];
+      if (commanderOnly) query.push("is:commander");
       if (excludeOracleId) query.push(`-oracleid:${excludeOracleId}`);
       if (profile.originalVersions) query.push("-is:rebalanced");
       const raw = await request(`${API}/cards/random?${new URLSearchParams({ q: query.join(" ") })}`, { signal, cache: "no-store" });
@@ -105,6 +107,10 @@
       if (card.oversized || ["gold", "silver"].includes(card.borderColor) || card.securityStamp === "acorn" || ["token", "double_faced_token", "emblem", "art_series", "scheme", "planar", "vanguard"].includes(card.layout) || /\bAttraction\b|\bContraption\b|\bDungeon\b|\bConspiracy\b|\bStickers\b/.test(card.frontType) || (card.layout === "meld" && card.meldEntry !== "meld_part")) throw new data.SelectionError("This printing needs a special-card workflow. Try Discover again for a supported game card.");
       if (profile.originalVersions && card.isRebalanced) throw new data.SelectionError("Gladiator discovery requires an original, unrebalanced card.");
       if (card.oracleId === excludeOracleId) throw new data.SelectionError("Scryfall repeated the previous card. Try Discover again.");
+      if (commanderOnly) {
+        if (!(await commanderEligibility(card, { signal }))) throw new data.SelectionError("This card's commander eligibility could not be verified. Try Discover again.");
+        if (signal?.aborted) throw abortError();
+      }
       return verify(card);
     }
     // Bounded role pools share the same queue, pacing, normalisation and cache as Search.
