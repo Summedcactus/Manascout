@@ -10,7 +10,18 @@ import subprocess
 import sys
 
 ROOT = Path(__file__).resolve().parents[1]
-DEFAULT = ['card/captain-jean-luc-picard/index.html', 'card/mr-spock-science-officer/index.html']
+DEFAULT = ['card/captain-jean-luc-picard/index.html', 'card/mr-spock-science-officer/index.html'] + [
+    'card/mox-diamond/index.html',
+    'card/gaeas-cradle/index.html',
+    'card/grim-monolith/index.html',
+    'card/cavern-of-souls/index.html',
+    'card/rhystic-study/index.html',
+    'card/black-lotus/index.html',
+    'card/mana-crypt/index.html',
+    'card/jace-the-mind-sculptor/index.html',
+    'card/lightning-bolt/index.html',
+    'card/ancient-tomb/index.html',
+]
 
 
 class Page(HTMLParser):
