@@ -1,0 +1,790 @@
+{
+  "reviewed": "2026-11-04",
+  "guide_count": 44,
+  "registry_count": 44,
+  "itemlist_count": 44,
+  "sitemap_unique_urls": 47,
+  "sitemap_lastmod_counts": {
+    "2026-11-01": 8,
+    "2026-11-02": 14,
+    "2026-11-04": 25
+  },
+  "pages": [
+    {
+      "path": "card/ancient-tomb/index.html",
+      "card_name": "Ancient Tomb",
+      "canonical": "https://manascout.co.uk/card/ancient-tomb/",
+      "lastmod": "2026-11-04",
+      "schema_types": [
+        "WebPage",
+        "Article",
+        "BreadcrumbList"
+      ],
+      "local_links_assets_aria": "pass",
+      "metadata": "pass",
+      "unique_explorer_ids": "pass"
+    },
+    {
+      "path": "card/arcane-signet/index.html",
+      "card_name": "Arcane Signet",
+      "canonical": "https://manascout.co.uk/card/arcane-signet/",
+      "lastmod": "2026-11-01",
+      "schema_types": [
+        "WebPage",
+        "Article",
+        "BreadcrumbList"
+      ],
+      "local_links_assets_aria": "pass",
+      "metadata": "pass",
+      "unique_explorer_ids": "pass"
+    },
+    {
+      "path": "card/birds-of-paradise/index.html",
+      "card_name": "Birds of Paradise",
+      "canonical": "https://manascout.co.uk/card/birds-of-paradise/",
+      "lastmod": "2026-11-04",
+      "schema_types": [
+        "WebPage",
+        "Article",
+        "BreadcrumbList"
+      ],
+      "local_links_assets_aria": "pass",
+      "metadata": "pass",
+      "unique_explorer_ids": "pass"
+    },
+    {
+      "path": "card/black-lotus/index.html",
+      "card_name": "Black Lotus",
+      "canonical": "https://manascout.co.uk/card/black-lotus/",
+      "lastmod": "2026-11-04",
+      "schema_types": [
+        "WebPage",
+        "Article",
+        "BreadcrumbList"
+      ],
+      "local_links_assets_aria": "pass",
+      "metadata": "pass",
+      "unique_explorer_ids": "pass"
+    },
+    {
+      "path": "card/captain-jean-luc-picard/index.html",
+      "card_name": "Captain Jean-Luc Picard",
+      "canonical": "https://manascout.co.uk/card/captain-jean-luc-picard/",
+      "lastmod": "2026-11-04",
+      "schema_types": [
+        "WebPage",
+        "Article",
+        "BreadcrumbList"
+      ],
+      "local_links_assets_aria": "pass",
+      "metadata": "pass",
+      "unique_explorer_ids": "pass"
+    },
+    {
+      "path": "card/cavern-of-souls/index.html",
+      "card_name": "Cavern of Souls",
+      "canonical": "https://manascout.co.uk/card/cavern-of-souls/",
+      "lastmod": "2026-11-04",
+      "schema_types": [
+        "WebPage",
+        "Article",
+        "BreadcrumbList"
+      ],
+      "local_links_assets_aria": "pass",
+      "metadata": "pass",
+      "unique_explorer_ids": "pass"
+    },
+    {
+      "path": "card/chrome-mox/index.html",
+      "card_name": "Chrome Mox",
+      "canonical": "https://manascout.co.uk/card/chrome-mox/",
+      "lastmod": "2026-11-02",
+      "schema_types": [
+        "WebPage",
+        "Article",
+        "BreadcrumbList"
+      ],
+      "local_links_assets_aria": "pass",
+      "metadata": "pass",
+      "unique_explorer_ids": "pass"
+    },
+    {
+      "path": "card/counterspell/index.html",
+      "card_name": "Counterspell",
+      "canonical": "https://manascout.co.uk/card/counterspell/",
+      "lastmod": "2026-11-02",
+      "schema_types": [
+        "WebPage",
+        "Article",
+        "BreadcrumbList"
+      ],
+      "local_links_assets_aria": "pass",
+      "metadata": "pass",
+      "unique_explorer_ids": "pass"
+    },
+    {
+      "path": "card/cyclonic-rift/index.html",
+      "card_name": "Cyclonic Rift",
+      "canonical": "https://manascout.co.uk/card/cyclonic-rift/",
+      "lastmod": "2026-11-01",
+      "schema_types": [
+        "WebPage",
+        "Article",
+        "BreadcrumbList"
+      ],
+      "local_links_assets_aria": "pass",
+      "metadata": "pass",
+      "unique_explorer_ids": "pass"
+    },
+    {
+      "path": "card/deflecting-swat/index.html",
+      "card_name": "Deflecting Swat",
+      "canonical": "https://manascout.co.uk/card/deflecting-swat/",
+      "lastmod": "2026-11-02",
+      "schema_types": [
+        "WebPage",
+        "Article",
+        "BreadcrumbList"
+      ],
+      "local_links_assets_aria": "pass",
+      "metadata": "pass",
+      "unique_explorer_ids": "pass"
+    },
+    {
+      "path": "card/demonic-consultation/index.html",
+      "card_name": "Demonic Consultation",
+      "canonical": "https://manascout.co.uk/card/demonic-consultation/",
+      "lastmod": "2026-11-02",
+      "schema_types": [
+        "WebPage",
+        "Article",
+        "BreadcrumbList"
+      ],
+      "local_links_assets_aria": "pass",
+      "metadata": "pass",
+      "unique_explorer_ids": "pass"
+    },
+    {
+      "path": "card/demonic-tutor/index.html",
+      "card_name": "Demonic Tutor",
+      "canonical": "https://manascout.co.uk/card/demonic-tutor/",
+      "lastmod": "2026-11-02",
+      "schema_types": [
+        "WebPage",
+        "Article",
+        "BreadcrumbList"
+      ],
+      "local_links_assets_aria": "pass",
+      "metadata": "pass",
+      "unique_explorer_ids": "pass"
+    },
+    {
+      "path": "card/dockside-extortionist/index.html",
+      "card_name": "Dockside Extortionist",
+      "canonical": "https://manascout.co.uk/card/dockside-extortionist/",
+      "lastmod": "2026-11-04",
+      "schema_types": [
+        "WebPage",
+        "Article",
+        "BreadcrumbList"
+      ],
+      "local_links_assets_aria": "pass",
+      "metadata": "pass",
+      "unique_explorer_ids": "pass"
+    },
+    {
+      "path": "card/doubling-season/index.html",
+      "card_name": "Doubling Season",
+      "canonical": "https://manascout.co.uk/card/doubling-season/",
+      "lastmod": "2026-11-04",
+      "schema_types": [
+        "WebPage",
+        "Article",
+        "BreadcrumbList"
+      ],
+      "local_links_assets_aria": "pass",
+      "metadata": "pass",
+      "unique_explorer_ids": "pass"
+    },
+    {
+      "path": "card/esper-sentinel/index.html",
+      "card_name": "Esper Sentinel",
+      "canonical": "https://manascout.co.uk/card/esper-sentinel/",
+      "lastmod": "2026-11-01",
+      "schema_types": [
+        "WebPage",
+        "Article",
+        "BreadcrumbList"
+      ],
+      "local_links_assets_aria": "pass",
+      "metadata": "pass",
+      "unique_explorer_ids": "pass"
+    },
+    {
+      "path": "card/fierce-guardianship/index.html",
+      "card_name": "Fierce Guardianship",
+      "canonical": "https://manascout.co.uk/card/fierce-guardianship/",
+      "lastmod": "2026-11-02",
+      "schema_types": [
+        "WebPage",
+        "Article",
+        "BreadcrumbList"
+      ],
+      "local_links_assets_aria": "pass",
+      "metadata": "pass",
+      "unique_explorer_ids": "pass"
+    },
+    {
+      "path": "card/force-of-will/index.html",
+      "card_name": "Force of Will",
+      "canonical": "https://manascout.co.uk/card/force-of-will/",
+      "lastmod": "2026-11-02",
+      "schema_types": [
+        "WebPage",
+        "Article",
+        "BreadcrumbList"
+      ],
+      "local_links_assets_aria": "pass",
+      "metadata": "pass",
+      "unique_explorer_ids": "pass"
+    },
+    {
+      "path": "card/gaeas-cradle/index.html",
+      "card_name": "Gaea's Cradle",
+      "canonical": "https://manascout.co.uk/card/gaeas-cradle/",
+      "lastmod": "2026-11-04",
+      "schema_types": [
+        "WebPage",
+        "Article",
+        "BreadcrumbList"
+      ],
+      "local_links_assets_aria": "pass",
+      "metadata": "pass",
+      "unique_explorer_ids": "pass"
+    },
+    {
+      "path": "card/grim-monolith/index.html",
+      "card_name": "Grim Monolith",
+      "canonical": "https://manascout.co.uk/card/grim-monolith/",
+      "lastmod": "2026-11-04",
+      "schema_types": [
+        "WebPage",
+        "Article",
+        "BreadcrumbList"
+      ],
+      "local_links_assets_aria": "pass",
+      "metadata": "pass",
+      "unique_explorer_ids": "pass"
+    },
+    {
+      "path": "card/jace-the-mind-sculptor/index.html",
+      "card_name": "Jace, the Mind Sculptor",
+      "canonical": "https://manascout.co.uk/card/jace-the-mind-sculptor/",
+      "lastmod": "2026-11-04",
+      "schema_types": [
+        "WebPage",
+        "Article",
+        "BreadcrumbList"
+      ],
+      "local_links_assets_aria": "pass",
+      "metadata": "pass",
+      "unique_explorer_ids": "pass"
+    },
+    {
+      "path": "card/jeskas-will/index.html",
+      "card_name": "Jeska's Will",
+      "canonical": "https://manascout.co.uk/card/jeskas-will/",
+      "lastmod": "2026-11-04",
+      "schema_types": [
+        "WebPage",
+        "Article",
+        "BreadcrumbList"
+      ],
+      "local_links_assets_aria": "pass",
+      "metadata": "pass",
+      "unique_explorer_ids": "pass"
+    },
+    {
+      "path": "card/lightning-bolt/index.html",
+      "card_name": "Lightning Bolt",
+      "canonical": "https://manascout.co.uk/card/lightning-bolt/",
+      "lastmod": "2026-11-04",
+      "schema_types": [
+        "WebPage",
+        "Article",
+        "BreadcrumbList"
+      ],
+      "local_links_assets_aria": "pass",
+      "metadata": "pass",
+      "unique_explorer_ids": "pass"
+    },
+    {
+      "path": "card/lightning-greaves/index.html",
+      "card_name": "Lightning Greaves",
+      "canonical": "https://manascout.co.uk/card/lightning-greaves/",
+      "lastmod": "2026-11-01",
+      "schema_types": [
+        "WebPage",
+        "Article",
+        "BreadcrumbList"
+      ],
+      "local_links_assets_aria": "pass",
+      "metadata": "pass",
+      "unique_explorer_ids": "pass"
+    },
+    {
+      "path": "card/mana-crypt/index.html",
+      "card_name": "Mana Crypt",
+      "canonical": "https://manascout.co.uk/card/mana-crypt/",
+      "lastmod": "2026-11-04",
+      "schema_types": [
+        "WebPage",
+        "Article",
+        "BreadcrumbList"
+      ],
+      "local_links_assets_aria": "pass",
+      "metadata": "pass",
+      "unique_explorer_ids": "pass"
+    },
+    {
+      "path": "card/mana-drain/index.html",
+      "card_name": "Mana Drain",
+      "canonical": "https://manascout.co.uk/card/mana-drain/",
+      "lastmod": "2026-11-02",
+      "schema_types": [
+        "WebPage",
+        "Article",
+        "BreadcrumbList"
+      ],
+      "local_links_assets_aria": "pass",
+      "metadata": "pass",
+      "unique_explorer_ids": "pass"
+    },
+    {
+      "path": "card/mana-vault/index.html",
+      "card_name": "Mana Vault",
+      "canonical": "https://manascout.co.uk/card/mana-vault/",
+      "lastmod": "2026-11-01",
+      "schema_types": [
+        "WebPage",
+        "Article",
+        "BreadcrumbList"
+      ],
+      "local_links_assets_aria": "pass",
+      "metadata": "pass",
+      "unique_explorer_ids": "pass"
+    },
+    {
+      "path": "card/mox-diamond/index.html",
+      "card_name": "Mox Diamond",
+      "canonical": "https://manascout.co.uk/card/mox-diamond/",
+      "lastmod": "2026-11-04",
+      "schema_types": [
+        "WebPage",
+        "Article",
+        "BreadcrumbList"
+      ],
+      "local_links_assets_aria": "pass",
+      "metadata": "pass",
+      "unique_explorer_ids": "pass"
+    },
+    {
+      "path": "card/mr-spock-science-officer/index.html",
+      "card_name": "Mr. Spock, Science Officer",
+      "canonical": "https://manascout.co.uk/card/mr-spock-science-officer/",
+      "lastmod": "2026-11-04",
+      "schema_types": [
+        "WebPage",
+        "Article",
+        "BreadcrumbList"
+      ],
+      "local_links_assets_aria": "pass",
+      "metadata": "pass",
+      "unique_explorer_ids": "pass"
+    },
+    {
+      "path": "card/mystic-remora/index.html",
+      "card_name": "Mystic Remora",
+      "canonical": "https://manascout.co.uk/card/mystic-remora/",
+      "lastmod": "2026-11-02",
+      "schema_types": [
+        "WebPage",
+        "Article",
+        "BreadcrumbList"
+      ],
+      "local_links_assets_aria": "pass",
+      "metadata": "pass",
+      "unique_explorer_ids": "pass"
+    },
+    {
+      "path": "card/mystic-sanctuary/index.html",
+      "card_name": "Mystic Sanctuary",
+      "canonical": "https://manascout.co.uk/card/mystic-sanctuary/",
+      "lastmod": "2026-11-04",
+      "schema_types": [
+        "WebPage",
+        "Article",
+        "BreadcrumbList"
+      ],
+      "local_links_assets_aria": "pass",
+      "metadata": "pass",
+      "unique_explorer_ids": "pass"
+    },
+    {
+      "path": "card/necropotence/index.html",
+      "card_name": "Necropotence",
+      "canonical": "https://manascout.co.uk/card/necropotence/",
+      "lastmod": "2026-11-02",
+      "schema_types": [
+        "WebPage",
+        "Article",
+        "BreadcrumbList"
+      ],
+      "local_links_assets_aria": "pass",
+      "metadata": "pass",
+      "unique_explorer_ids": "pass"
+    },
+    {
+      "path": "card/orcish-bowmasters/index.html",
+      "card_name": "Orcish Bowmasters",
+      "canonical": "https://manascout.co.uk/card/orcish-bowmasters/",
+      "lastmod": "2026-11-02",
+      "schema_types": [
+        "WebPage",
+        "Article",
+        "BreadcrumbList"
+      ],
+      "local_links_assets_aria": "pass",
+      "metadata": "pass",
+      "unique_explorer_ids": "pass"
+    },
+    {
+      "path": "card/path-to-exile/index.html",
+      "card_name": "Path to Exile",
+      "canonical": "https://manascout.co.uk/card/path-to-exile/",
+      "lastmod": "2026-11-04",
+      "schema_types": [
+        "WebPage",
+        "Article",
+        "BreadcrumbList"
+      ],
+      "local_links_assets_aria": "pass",
+      "metadata": "pass",
+      "unique_explorer_ids": "pass"
+    },
+    {
+      "path": "card/rhystic-study/index.html",
+      "card_name": "Rhystic Study",
+      "canonical": "https://manascout.co.uk/card/rhystic-study/",
+      "lastmod": "2026-11-04",
+      "schema_types": [
+        "WebPage",
+        "Article",
+        "BreadcrumbList"
+      ],
+      "local_links_assets_aria": "pass",
+      "metadata": "pass",
+      "unique_explorer_ids": "pass"
+    },
+    {
+      "path": "card/smaug-wicked-worm/index.html",
+      "card_name": "Smaug, Wicked Worm",
+      "canonical": "https://manascout.co.uk/card/smaug-wicked-worm/",
+      "lastmod": "2026-11-04",
+      "schema_types": [
+        "WebPage",
+        "Article",
+        "BreadcrumbList"
+      ],
+      "local_links_assets_aria": "pass",
+      "metadata": "pass",
+      "unique_explorer_ids": "pass"
+    },
+    {
+      "path": "card/smothering-tithe/index.html",
+      "card_name": "Smothering Tithe",
+      "canonical": "https://manascout.co.uk/card/smothering-tithe/",
+      "lastmod": "2026-11-01",
+      "schema_types": [
+        "WebPage",
+        "Article",
+        "BreadcrumbList"
+      ],
+      "local_links_assets_aria": "pass",
+      "metadata": "pass",
+      "unique_explorer_ids": "pass"
+    },
+    {
+      "path": "card/sol-ring/index.html",
+      "card_name": "Sol Ring",
+      "canonical": "https://manascout.co.uk/card/sol-ring/",
+      "lastmod": "2026-11-01",
+      "schema_types": [
+        "WebPage",
+        "Article",
+        "BreadcrumbList"
+      ],
+      "local_links_assets_aria": "pass",
+      "metadata": "pass",
+      "unique_explorer_ids": "pass"
+    },
+    {
+      "path": "card/swords-to-plowshares/index.html",
+      "card_name": "Swords to Plowshares",
+      "canonical": "https://manascout.co.uk/card/swords-to-plowshares/",
+      "lastmod": "2026-11-04",
+      "schema_types": [
+        "WebPage",
+        "Article",
+        "BreadcrumbList"
+      ],
+      "local_links_assets_aria": "pass",
+      "metadata": "pass",
+      "unique_explorer_ids": "pass"
+    },
+    {
+      "path": "card/teferis-protection/index.html",
+      "card_name": "Teferi's Protection",
+      "canonical": "https://manascout.co.uk/card/teferis-protection/",
+      "lastmod": "2026-11-04",
+      "schema_types": [
+        "WebPage",
+        "Article",
+        "BreadcrumbList"
+      ],
+      "local_links_assets_aria": "pass",
+      "metadata": "pass",
+      "unique_explorer_ids": "pass"
+    },
+    {
+      "path": "card/the-great-henge/index.html",
+      "card_name": "The Great Henge",
+      "canonical": "https://manascout.co.uk/card/the-great-henge/",
+      "lastmod": "2026-11-02",
+      "schema_types": [
+        "WebPage",
+        "Article",
+        "BreadcrumbList"
+      ],
+      "local_links_assets_aria": "pass",
+      "metadata": "pass",
+      "unique_explorer_ids": "pass"
+    },
+    {
+      "path": "card/the-one-ring/index.html",
+      "card_name": "The One Ring",
+      "canonical": "https://manascout.co.uk/card/the-one-ring/",
+      "lastmod": "2026-11-01",
+      "schema_types": [
+        "WebPage",
+        "Article",
+        "BreadcrumbList"
+      ],
+      "local_links_assets_aria": "pass",
+      "metadata": "pass",
+      "unique_explorer_ids": "pass"
+    },
+    {
+      "path": "card/the-theorist-jace-beleren/index.html",
+      "card_name": "The Theorist, Jace Beleren",
+      "canonical": "https://manascout.co.uk/card/the-theorist-jace-beleren/",
+      "lastmod": "2026-11-04",
+      "schema_types": [
+        "WebPage",
+        "Article",
+        "BreadcrumbList"
+      ],
+      "local_links_assets_aria": "pass",
+      "metadata": "pass",
+      "unique_explorer_ids": "pass"
+    },
+    {
+      "path": "card/urzas-saga/index.html",
+      "card_name": "Urza's Saga",
+      "canonical": "https://manascout.co.uk/card/urzas-saga/",
+      "lastmod": "2026-11-02",
+      "schema_types": [
+        "WebPage",
+        "Article",
+        "BreadcrumbList"
+      ],
+      "local_links_assets_aria": "pass",
+      "metadata": "pass",
+      "unique_explorer_ids": "pass"
+    },
+    {
+      "path": "card/vampiric-tutor/index.html",
+      "card_name": "Vampiric Tutor",
+      "canonical": "https://manascout.co.uk/card/vampiric-tutor/",
+      "lastmod": "2026-11-02",
+      "schema_types": [
+        "WebPage",
+        "Article",
+        "BreadcrumbList"
+      ],
+      "local_links_assets_aria": "pass",
+      "metadata": "pass",
+      "unique_explorer_ids": "pass"
+    }
+  ],
+  "structural_outliers_for_final_audit": [
+    {
+      "path": "card/arcane-signet/index.html",
+      "reasons": [
+        "Uses the earlier shared guide layout, without printing-guide scope",
+        "Does not load guide-editorial.css"
+      ]
+    },
+    {
+      "path": "card/chrome-mox/index.html",
+      "reasons": [
+        "Uses the earlier shared guide layout, without printing-guide scope",
+        "Does not load guide-editorial.css"
+      ]
+    },
+    {
+      "path": "card/counterspell/index.html",
+      "reasons": [
+        "Uses the earlier shared guide layout, without printing-guide scope",
+        "Does not load guide-editorial.css"
+      ]
+    },
+    {
+      "path": "card/cyclonic-rift/index.html",
+      "reasons": [
+        "Uses the earlier shared guide layout, without printing-guide scope",
+        "Does not load guide-editorial.css"
+      ]
+    },
+    {
+      "path": "card/deflecting-swat/index.html",
+      "reasons": [
+        "Uses the earlier shared guide layout, without printing-guide scope",
+        "Does not load guide-editorial.css"
+      ]
+    },
+    {
+      "path": "card/demonic-consultation/index.html",
+      "reasons": [
+        "Uses the earlier shared guide layout, without printing-guide scope",
+        "Does not load guide-editorial.css"
+      ]
+    },
+    {
+      "path": "card/demonic-tutor/index.html",
+      "reasons": [
+        "Uses the earlier shared guide layout, without printing-guide scope",
+        "Does not load guide-editorial.css"
+      ]
+    },
+    {
+      "path": "card/esper-sentinel/index.html",
+      "reasons": [
+        "Uses the earlier shared guide layout, without printing-guide scope",
+        "Does not load guide-editorial.css"
+      ]
+    },
+    {
+      "path": "card/fierce-guardianship/index.html",
+      "reasons": [
+        "Uses the earlier shared guide layout, without printing-guide scope",
+        "Does not load guide-editorial.css"
+      ]
+    },
+    {
+      "path": "card/force-of-will/index.html",
+      "reasons": [
+        "Uses the earlier shared guide layout, without printing-guide scope",
+        "Does not load guide-editorial.css"
+      ]
+    },
+    {
+      "path": "card/lightning-greaves/index.html",
+      "reasons": [
+        "Uses the earlier shared guide layout, without printing-guide scope",
+        "Does not load guide-editorial.css"
+      ]
+    },
+    {
+      "path": "card/mana-drain/index.html",
+      "reasons": [
+        "Uses the earlier shared guide layout, without printing-guide scope",
+        "Does not load guide-editorial.css"
+      ]
+    },
+    {
+      "path": "card/mana-vault/index.html",
+      "reasons": [
+        "Uses the earlier shared guide layout, without printing-guide scope",
+        "Does not load guide-editorial.css"
+      ]
+    },
+    {
+      "path": "card/mystic-remora/index.html",
+      "reasons": [
+        "Uses the earlier shared guide layout, without printing-guide scope",
+        "Does not load guide-editorial.css"
+      ]
+    },
+    {
+      "path": "card/necropotence/index.html",
+      "reasons": [
+        "Uses the earlier shared guide layout, without printing-guide scope",
+        "Does not load guide-editorial.css"
+      ]
+    },
+    {
+      "path": "card/orcish-bowmasters/index.html",
+      "reasons": [
+        "Uses the earlier shared guide layout, without printing-guide scope",
+        "Does not load guide-editorial.css"
+      ]
+    },
+    {
+      "path": "card/smothering-tithe/index.html",
+      "reasons": [
+        "Uses the earlier shared guide layout, without printing-guide scope",
+        "Does not load guide-editorial.css"
+      ]
+    },
+    {
+      "path": "card/sol-ring/index.html",
+      "reasons": [
+        "Uses the earlier shared guide layout, without printing-guide scope",
+        "Does not load guide-editorial.css"
+      ]
+    },
+    {
+      "path": "card/the-great-henge/index.html",
+      "reasons": [
+        "Uses the earlier shared guide layout, without printing-guide scope",
+        "Does not load guide-editorial.css"
+      ]
+    },
+    {
+      "path": "card/the-one-ring/index.html",
+      "reasons": [
+        "Uses the earlier shared guide layout, without printing-guide scope",
+        "Does not load guide-editorial.css"
+      ]
+    },
+    {
+      "path": "card/urzas-saga/index.html",
+      "reasons": [
+        "Uses the earlier shared guide layout, without printing-guide scope",
+        "Does not load guide-editorial.css"
+      ]
+    },
+    {
+      "path": "card/vampiric-tutor/index.html",
+      "reasons": [
+        "Uses the earlier shared guide layout, without printing-guide scope",
+        "Does not load guide-editorial.css"
+      ]
+    }
+  ],
+  "preservation": "Other 34 guides inspected, not mass-rewritten. Homepage, Deck Studio, shared rendering and styles unchanged by this task.",
+  "limitations": [
+    "Static validation does not prove visual/mobile rendering, physical foil appearance, live API responses, marketplace stock or indexing."
+  ]
+}

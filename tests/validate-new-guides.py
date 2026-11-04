@@ -21,6 +21,16 @@ DEFAULT = ['card/captain-jean-luc-picard/index.html', 'card/mr-spock-science-off
     'card/jace-the-mind-sculptor/index.html',
     'card/lightning-bolt/index.html',
     'card/ancient-tomb/index.html',
+    'card/birds-of-paradise/index.html',
+    'card/dockside-extortionist/index.html',
+    'card/doubling-season/index.html',
+    'card/jeskas-will/index.html',
+    'card/mystic-sanctuary/index.html',
+    'card/path-to-exile/index.html',
+    'card/smaug-wicked-worm/index.html',
+    'card/swords-to-plowshares/index.html',
+    'card/teferis-protection/index.html',
+    'card/the-theorist-jace-beleren/index.html',
 ]
 
 
