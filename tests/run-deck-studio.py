@@ -26,5 +26,6 @@ for file in sorted((ROOT / 'assets/js').glob('deck-*.js')) + [ROOT / 'assets/js/
 print('PASS Deck Studio, shared explorer, card-page and homepage JavaScript syntax', flush=True)
 subprocess.run([sys.executable, str(ROOT / 'tests/validate-deck-studio.py')], cwd=ROOT, check=True)
 subprocess.run([sys.executable, str(ROOT / 'tests/validate-card-presentation.py')], cwd=ROOT, check=True)
+subprocess.run([sys.executable, str(ROOT / 'tests/validate-new-guides.py')], cwd=ROOT, check=True)
 print(f"TOTAL: {totals['tests']} JavaScript cases; {totals['pass']} passed, {totals['fail']} failed.")
 print('Browser rendering, native focus/keyboard behaviour and live API requests are not exercised by this runner.')

@@ -1,0 +1,18 @@
+/* Only the new editorial guide class; existing guides and homepage retain their styling. */
+.printing-guide main.container { min-width: 0; }
+.printing-guide .hero h1 { max-width: 22ch; font-size: clamp(36px,5.5vw,72px); line-height: 1.08; overflow-wrap: anywhere; text-wrap: balance; }
+.printing-guide .section-heading h2 { line-height: 1.25; overflow-wrap: anywhere; }
+.printing-guide .section-heading > div { min-width: 0; }
+.printing-guide .card-week-fact { max-width: 820px; }
+.printing-guide .card-week-fact a { overflow-wrap: anywhere; }
+.printing-guide .table-wrap { max-width: 100%; }
+.printing-guide .table-wrap:focus-visible { outline: 2px solid var(--accent-bright); outline-offset: 4px; }
+.printing-guide .printings-table caption { padding: 14px; text-align: left; font-size: 13px; color: var(--muted); }
+.printing-guide .printings-table th[scope="row"] { font-size: 13px; text-transform: none; letter-spacing: normal; color: #f1eee9; }
+.printing-guide .guide-jump-links { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px 18px; margin-top: 20px; }
+.printing-guide .guide-jump-links a { display: inline-flex; align-items: center; min-height: 44px; font-size: 13px; text-underline-offset: 4px; }
+.printing-guide .guide-jump-links a:hover { text-decoration: underline; }
+@media (max-width: 600px) {
+  .printing-guide .hero h1 { font-size: clamp(34px,8.5vw,48px); }
+  .printing-guide .section-heading { flex-wrap: wrap; }
+}
