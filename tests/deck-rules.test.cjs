@@ -136,10 +136,10 @@ test('commander query proofs cache, expire and treat 404 as ineligible without i
   now=900001;assert.equal(client.proof(c),null);
   const no=createClient({interval:0,fetchImpl:async()=>({ok:false,status:404})});assert.equal(await no.commanderEligibility(c),false);assert.equal(no.proof(c),false);
 });
-test('freshness expires by time; missing collection responses invalidate prior verification',async()=>{
-  let now=0;const client=createClient({interval:0,now:()=>now,fetchImpl:async url=>({ok:true,status:200,json:async()=>url.endsWith('/collection')?{data:[]}:raw()})});
+test('freshness expires by time; inconclusive refreshes preserve fresh facts, explicit missing IDs invalidate them',async()=>{
+  let now=0,confirmedMissing=false;const client=createClient({interval:0,now:()=>now,fetchImpl:async url=>({ok:true,status:200,json:async()=>url.endsWith('/collection')?{data:[],...(confirmedMissing?{not_found:[{id:id(1)}]}:{})}:raw()})});
   const c=await client.printing({id:id(1)});assert.equal(client.isVerified(c),true);now=900001;assert.equal(client.isVerified(c),false);
-  const fresh=await client.printing({id:id(1)});assert.equal(client.isVerified(fresh),true);assert.deepEqual(await client.refresh([fresh]),[]);assert.equal(client.isVerified(fresh),false);
+  const fresh=await client.printing({id:id(1)});assert.equal(client.isVerified(fresh),true);assert.deepEqual(await client.refresh([fresh]),[]);assert.equal(client.isVerified(fresh),true);confirmedMissing=true;assert.deepEqual(await client.refresh([fresh]),[]);assert.equal(client.isVerified(fresh),false);
 });
 test('unknown identity/physical metadata never quietly becomes colourless or complete',()=>{
   assert.equal(has(fullCommander(commander(1,{color_identity:['?']})),'missing-data'),true);

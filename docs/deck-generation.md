@@ -1,98 +1,120 @@
-# Commander generation V1
+# Commander generation and deck identity
 
-Generation extends the existing Deck Studio. It does not create another deck representation,
-legality engine or save store. Search, Discover and handoffs still use the same compact preview.
-Assign its exact printing to the command zone or main deck to reveal **Generate Deck**.
-**Deck options** is a native, initially closed details element in the existing drawer/bottom sheet.
-Other formats retain manual editing; automatic generation is Commander/paper only.
+Deck Studio reuses its model, paced Scryfall client, rules, previews and local draft store.
+Automatic generation remains Commander/paper only; other formats retain manual editing.
+Assign the selected exact printing to the command zone or main deck to reveal **Generate Deck**.
+The existing drawer/bottom sheet keeps **Deck style & priorities** closed by default.
 
-## Construction
+## Analysis and style selection
 
-`deck-generator.js` accepts an immutable deck snapshot and returns a candidate using
-`deck-model.js`. Its async dependencies are supplied explicitly for testing. It refreshes
-preserved printing records, preserves finishes/leader assignments, and obtains current
-commander eligibility proofs from the existing client. Supported commander pairs use the
-existing pair/colour rules, including Backgrounds; generation does not introduce new pairings.
+`deck-identity.js` is a pure analysis/policy module, independent of the DOM and network.
+`analyse(cards)` reads current commander Oracle text, types/subtypes and combined colour identity.
+It returns a maximum of seven relevant styles with evidence and heuristic confidence weights
+(these are not statistical probabilities). Referenced creature types take precedence. A subtype
+alone, a creature token's incidental name, or a destructive artifact reference is insufficient.
+English creature-type plurals are normalised. There are no commander-name branches.
 
-With a main-deck seed and no commanders, it searches a bounded pool of Commander candidates
-whose identities contain the seed's. It ranks explicit mechanical relationships in Oracle text
-and relevant card types, penalises unnecessary extra colours, checks eligibility and retains the
-original main-deck seed. An isolated destructive reference to a theme is insufficient. Unclear
-seeds fail with an invitation to choose a commander manually. Existing incompatible commanders
-are reported, never replaced silently.
+The registry covers tribal, creature tokens/go-wide, artifacts, graveyard, sacrifice/aristocrats,
+spellslinger, lands/landfall, Voltron, counters, lifegain/drain, blink, enchantments, vehicles,
+Treasure, Clues, Food, poison, discard, combat, control, mana engines and broad value.
+Narrow categories require text evidence. A few extensions use an evidenced engine and colours,
+such as creature-token fodder with black sacrifice access. Ambiguous commanders receive a broad
+creature/combat or value fallback, rather than arbitrary mechanics to fill a quota.
 
-Broad heuristics cover artifacts, graveyard, tokens, spellslinger, aristocrats, Voltron, ramp,
-aggro, control and combo-oriented engines. The strategy selector is filtered to inferred matches.
-This is **not** an exhaustive tribal/theme engine or a verified combo database. Unrecognised
-mechanics and sparse candidate pools can fail safely. The default is Auto / balanced curve /
-reliable choices / Bracket 2 preference / no budget.
+Auto selects the strongest inferred primary. Users can select a different relevant primary and
+optional, distinct secondary/tertiary styles. Supporting styles cannot duplicate the primary.
+Existing supported partners/Backgrounds are analysed together; their legality rules are unchanged.
+The main-deck-seed route retains its bounded mechanical commander matching, current eligibility
+checks and exact seed printing/finish. Ambiguous seeds still require manual commander selection.
 
-Candidate queries group basics, fixing/utility lands, ramp, draw, interaction, wipes,
-protection/recursion, theme support and payoffs. At most 12 search pages are requested including
-commander discovery (normally 10–11), not hundreds of individual printing lookups. Each page
-uses the existing paced/cancellable request queue, timeout, normalisation and short-lived cache.
-404 means an empty pool; there are no automatic retries. Final selected records are refreshed in
-collection batches of at most 75. Searches choose a currently supplied printing, not an
-optimised cheapest-printing inventory. Preferred finish follows the existing nonfoil-first
-normalisation and available finishes; preserved seeds retain their exact selected finish.
+## Composition and priorities
 
-Role-deficit scoring favours missing functions, theme relevance, the selected curve and power
-preference. A card may fill multiple roles. Land and ramp targets adapt to commander mana value,
-curve and strategy; basic allocation follows actual mana symbols, with at least one source in
-each required colour. Colourless decks use Wastes. There are hard minimums for ramp, draw,
-interaction, synergy and payoffs. Failure to meet them does not trigger random filler. Oracle
-and English-name identities prevent duplicate game cards across printings. Basic repeats use
-the existing model and rules. Final construction must pass the **unchanged** rules engine with
-current verification/proofs and exactly 100 cards, including one or two leaders.
+Each style defines component minimums. Primary/secondary/tertiary influence is **1 / .55 / .28**;
+Loose/Balanced/Strict scales theme minimums by **.6 / 1 / 1.3**. Tribal minimums also adapt to the
+chosen curve. Infrastructure uses separate priorities; a style's essential minimum remains a floor.
+Counts concern the main deck, excluding commanders, and one card may serve several real roles.
 
-## Power and budget limits
+Examples of enforced components:
 
-Bracket 1–5 is a **generation preference, not bracket certification**. Higher settings favour
-mana efficiency, interaction, generic tutors and repeatable engines. Casual settings avoid
-generic unrestricted tutors, artifact fast mana, explicit extra turns/alternate-win text and
-explicit land destruction among generated candidates. Preserved seeds are retained even if
-stronger. Reliable favours common synergistic choices using Scryfall's supplied EDHREC rank;
-Mixed/Wild widen score variation within legal, relevant role pools. No cEDH capability, verified
-infinite combo, formal bracket assignment or tournament readiness is claimed.
+- Tribal: actual creatures of the referenced subtype, or creature cards with changeling.
+- Tokens: token makers, creature-token generators and token/go-wide payoffs. Treasure alone
+  cannot satisfy the creature-token requirement.
+- Sacrifice: outlets, fodder, death payoffs and appropriate recursion.
+- Spells: instant/sorcery density, spell payoffs and cheap card velocity.
+- Lands: 38–40 target lands as configured, land ramp, land payoffs and fetch/sacrifice
+  utility lands; basics follow actual mana symbols and include each required colour.
+- Artifacts, graveyard, counters and Voltron each have distinct density/enabler/payoff minimums.
 
-Finite GBP budgets use positive Scryfall EUR prices for the **actual chosen finish**, multiplied
-by a dated EUR/GBP reference rate from Frankfurter. Missing, zero or malformed prices remain
-unknown; they are never treated as £0. An unpriced seed/commander or missing/stale rate prevents a
-budgeted generation. Unpriced candidate printings are excluded. The estimate includes repeated
-basics and leaders; it is checked again after the final record refresh. It excludes shipping,
-fees, stock and regional shop differences. It is not a purchase quote. Exact-printing price
-optimisation is not implemented. A pool may fail a tight budget even if other printings outside
-it could meet the target. No-limit generation makes no price guarantee.
+Ramp Light/Normal/Heavy targets **5 / 9 / 17** (Normal 12 for expensive commanders).
+Draw targets **5 / 10 / 17**, removal **4 / 8 / 16**, wipes **0 / 2 / 5**,
+protection **1 / 3 / 9**, and tutors **0 / 2 / 7**. Theme-specific ramp/support can fill these
+roles simultaneously. Tutors None excludes generated nonland card tutors; land searches remain
+ramp. Preserved seeds/commanders are never removed by preference filters.
 
-## Replacement, cancellation and local drafts
+`deck-generator.js` queries bounded, current Commander/paper candidate pools through the existing
+client/cache/normalisation/cancellation path. At most **12 search pages**, including commander
+search and combined supporting-style/combo queries, are requested. There are no retry loops.
+Cards must pass existing verification, colour identity, platform and legality checks. Role-deficit
+scoring prioritises hard targets; irrelevant feature tags alone do not qualify a filler card.
+A cached classifier and bounded, monotonic swaps rebalance remaining deficits. Repair yields to
+the event loop and respects cancellation. Seeds, commanders and suggested package cards are
+protected. An infeasible target combination fails with the missing counts, keeping the old deck.
 
-Existing meaningful contents require the existing confirmation dialog. Seed and assigned
-commanders are the only entries retained for construction; other contents are replaced only on
-success. Before destructive replacement the existing store must create a recovery checkpoint.
-If storage cannot preserve that checkpoint, replacement stops and the existing deck stays intact;
-the existing JSON backup action remains available.
+After selection, all printing records are refreshed in batches; both construction and composition
+are checked again. Changed commander mechanics invalidate stale styles. Exactly 100 cards,
+current commander/pairing proofs, singleton rules and the unchanged legality engine must pass
+before the controller applies anything. Manual contents require confirmation and a successful
+recovery checkpoint. Cancellation, edits, draft changes and stale responses cannot replace a deck.
 
-The controller holds a temporary job/snapshot and AbortController. Edits, selection, format,
-options, draft changes, external-tab conflicts or Cancel invalidate the job. Both the generator
-and controller check for cancellation/staleness after awaits. A late response cannot overwrite
-newer work. No partial generation is committed, autosaved or displayed as a completed deck.
+## Power, combos and prices
 
-On success the candidate goes through the same commit/render/autosave path as manual edits.
-Save Deck, rename, draft switching, recovery, views, quantities, statistics and JSON backups
-remain unchanged. Storage stays schemaVersion 1. Optional manaCost, pricesEUR and edhrecRank
-fields are sanitised additively; old records load with empty/unknown defaults. There is no new
-save mechanism and no required migration. Current verification is deliberately not restored
-from storage: reopened decks still require the existing current-data checks.
+Bracket 1–5 remains a preference, **not certification**. Casual filters, mana curve, efficiency
+and randomness preferences remain; explicit tutor/combo priorities take precedence over implied
+optimisation. No cEDH or tournament-strength guarantee is made.
 
-## Verification and limits
+Combo None does not deliberately assemble packages and avoids completing the small catalogued
+pairs among generated picks. Some/Heavy can suggest up to one/two compatible packages and
+increase relevant engine density. The initial catalogue is Scepter/Reversal, Dualcaster/Twinflame
+and Kiki-Jiki/Conscripts, with Oracle-pattern checks and documented prerequisites. These are
+conditional suggestions, not certified executable wins. The catalogue is deliberately small:
+this is not exhaustive combo detection, and ordinary cards can interact outside it. Unsupported
+colour/style pools can have no available package. See each registry entry's source/prerequisites.
 
-Run `python tests/run-deck-studio.py` for all existing and new tests, syntax and structural
-checks. New tests use synthetic cards/HTTP responses and the actual model/client/rules/store,
-plus the controller's existing DOM double. They do not establish real-world deck strength.
+GBP budgets still use positive Scryfall EUR prices for actual selected finishes and a dated
+Frankfurter reference rate. Unknown prices are not zero; final prices are checked again.
+Estimates exclude stock, shipping and fees. No cheapest-printing inventory optimisation is added.
 
-During implementation, one live Scryfall request failed with `Operation not permitted` in the
-execution sandbox. It was not retried. Live candidate quality, pricing/exchange responses and
-real-API generation remain unverified. A prior Chromium launch in this environment closed
-before a page was available; no repeated launch or claimed desktop/mobile visual verification
-was made. Static responsive/focus structure and simulated interactions passed; native browser
-layout, actual touch/focus behaviour and gameplay quality still need manual review.
+## Storage and extension
+
+Storage remains schemaVersion 1. Optional `generation` metadata records version, three style
+keys, priorities, composition targets and achieved counts. It is a **generation-time snapshot**,
+not live deck-health or legality certification after manual edits. The existing sanitiser bounds
+and whitelists it; old drafts without metadata load unchanged. Exact IDs, finishes, quantities,
+selection, commander assignments, JSON backups, autosave and recovery use the same store.
+Saved style/priority choices restore when reopening a draft. Verification proofs still expire.
+
+To add a mechanic: add its evidence/query/component definition to `defs`, add precise feature
+classification, and test inference plus actual generated composition. Avoid granting a role for
+an incidental mention. Keep secondary/tertiary query terms in the shared bounded query, use the
+existing client, and never weaken construction checks to make a composition pass.
+
+## Verification and limitations
+
+Run `python tests/run-deck-studio.py`. Tests use verified reference Oracle excerpts for six
+commanders and explicitly synthetic candidate pools/printing IDs, not fabricated production
+card records. They exercise actual generation, rules, model, controller and storage.
+
+Controlled Edgar fixtures produced 20 Vampires under Loose versus 36 under Strict. Light
+ramp/removal produced 5/4 cards versus 17/16 under Heavy. Aristocrats primary with tribal
+secondary produced 21 Vampires, 7 outlets and 8 death payoffs. These compare behaviour, not deck
+strength, and are not predictions for a live Scryfall pool.
+
+Oracle matching is heuristic, not a full rules interpreter. Unusual wording, type morphology,
+negative/opponent references or highly constrained budgets/styles can cause sparse pools or safe
+failure. Finite candidate pools and greedy repair do not guarantee finding every feasible deck.
+Human gameplay review remains necessary. In this environment the live Scryfall collection
+request failed with `Operation not permitted`; it was not retried. Actual API deck quality and
+native desktop/mobile layout, touch and focus remain unverified. Automated DOM/CSS checks do
+not establish browser rendering or playtesting quality.
+
+Commander verification and progress lifecycle: see [deck-commander-lifecycle.md](deck-commander-lifecycle.md). Verified card records are immutable; matching API responses preserve trusted aliases, partial responses cannot replace known facts, and restored JSON still requires session verification.

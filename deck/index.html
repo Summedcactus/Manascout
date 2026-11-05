@@ -14,19 +14,20 @@
   <meta property="og:url" content="https://manascout.co.uk/deck/">
   <meta property="og:site_name" content="ManaScout">
   <meta name="twitter:card" content="summary">
-  <link rel="stylesheet" href="/assets/css/deck-studio.css?v=roleux1">
+  <link rel="stylesheet" href="/assets/css/deck-studio.css?v=identity1-roleux1">
   <script type="application/ld+json">
   {"@context":"https://schema.org","@type":"WebPage","name":"ManaScout Deck Studio","url":"https://manascout.co.uk/deck/","description":"ManaScout's artwork-first deck workspace with exact-printing card search and manual deck editing.","isPartOf":{"@type":"WebSite","name":"ManaScout","url":"https://manascout.co.uk/"}}
   </script>
   <script src="/assets/js/deck-formats.js?v=5d1" defer></script>
   <script src="/assets/js/deck-data.js?v=generate1" defer></script>
   <script src="/assets/js/deck-model.js?v=5d1" defer></script>
-  <script src="/assets/js/deck-client.js?v=roleux1" defer></script>
+  <script src="/assets/js/deck-client.js?v=commander-lifecycle1" defer></script>
   <script src="/assets/js/deck-rules.js?v=5d1" defer></script>
   <script src="/assets/js/deck-view.js?v=5d1" defer></script>
-  <script src="/assets/js/deck-store.js?v=generate1" defer></script>
-  <script src="/assets/js/deck-generator.js?v=generate1" defer></script>
-  <script src="/assets/js/deck-studio.js?v=roleux1" defer></script>
+  <script src="/assets/js/deck-store.js?v=identity1-generate1" defer></script>
+  <script src="/assets/js/deck-identity.js?v=identity1" defer></script>
+  <script src="/assets/js/deck-generator.js?v=commander-lifecycle1" defer></script>
+  <script src="/assets/js/deck-studio.js?v=commander-lifecycle1" defer></script>
 </head>
 <body class="deck-studio" data-active-panel="deck">
   <a class="ds-skip" href="#deck-heading">Skip to deck workspace</a>
@@ -142,15 +143,29 @@
       <button class="ds-pair-action" type="button" id="preview-pair" hidden aria-describedby="preview-legality">Add as partner</button>
       <section class="ds-generation" id="generation-controls" aria-label="Commander deck generation" hidden>
         <div class="ds-generation-actions"><button class="ds-button ds-primary" type="button" id="generate-deck" aria-describedby="generation-note generation-status">Generate Deck</button><button class="ds-button ds-secondary" type="button" id="cancel-generation" hidden>Cancel</button></div>
-        <details id="generation-options"><summary>Deck options</summary>
+        <details id="generation-options"><summary>Deck style &amp; priorities</summary>
+          <p class="ds-note" id="generation-identity-note" role="status">Styles are inferred from current commander text. Select a primary identity; supporting styles are optional.</p>
           <div class="ds-generation-fields">
             <label for="generation-bracket">Power preference<select id="generation-bracket" aria-describedby="generation-note"><option value="1">Bracket 1 · relaxed</option><option value="2" selected>Bracket 2 · casual</option><option value="3">Bracket 3 · focused</option><option value="4">Bracket 4 · efficient</option><option value="5">Bracket 5 · strongest target</option></select></label>
             <label for="generation-budget">Budget (GBP)<select id="generation-budget"><option value="">No limit</option><option value="50">£50</option><option value="100">£100</option><option value="150">£150</option><option value="250">£250</option><option value="custom">Custom</option></select></label>
             <label for="generation-custom-budget" id="generation-custom-label" hidden>Custom budget (£)<input id="generation-custom-budget" type="number" min="1" max="100000" step="1" inputmode="decimal" value="100"></label>
-            <label for="generation-strategy">Strategy<select id="generation-strategy"><option value="auto">Auto · infer from cards</option></select></label>
+            <label for="generation-strategy">Primary style<select id="generation-strategy"><option value="auto">Auto · infer from cards</option></select></label>
+            <label for="generation-secondary">Secondary style<select id="generation-secondary"><option value="">None</option></select></label>
+            <label for="generation-tertiary">Tertiary style · optional<select id="generation-tertiary"><option value="">None</option></select></label>
             <label for="generation-curve">Mana curve<select id="generation-curve"><option value="low">Low</option><option value="balanced" selected>Balanced</option><option value="high">High</option></select></label>
             <label for="generation-randomness">Choices<select id="generation-randomness"><option value="reliable">Reliable</option><option value="mixed">Mixed</option><option value="wild">Wild · unusual synergies</option></select></label>
           </div>
+          <fieldset class="ds-priorities"><legend>Deck priorities</legend><div class="ds-generation-fields">
+            <label for="generation-ramp">Ramp<select id="generation-ramp"><option value="light">Light</option><option value="normal" selected>Normal</option><option value="heavy">Heavy</option></select></label>
+            <label for="generation-draw">Card draw<select id="generation-draw"><option value="light">Light</option><option value="normal" selected>Normal</option><option value="heavy">Heavy</option></select></label>
+            <label for="generation-removal">Removal / interaction<select id="generation-removal"><option value="light">Light</option><option value="normal" selected>Normal</option><option value="heavy">Heavy</option></select></label>
+            <label for="generation-wipes">Board wipes<select id="generation-wipes"><option value="low">Low</option><option value="normal" selected>Normal</option><option value="high">High</option></select></label>
+            <label for="generation-protection">Protection<select id="generation-protection"><option value="low">Low</option><option value="normal" selected>Normal</option><option value="high">High</option></select></label>
+            <label for="generation-tutors">Tutors<select id="generation-tutors"><option value="none" selected>None</option><option value="some">Some</option><option value="heavy">Heavy</option></select></label>
+            <label for="generation-combo">Combo engines<select id="generation-combo"><option value="none" selected>None</option><option value="some">Some</option><option value="heavy">Heavy</option></select></label>
+            <label for="generation-adherence">Theme adherence<select id="generation-adherence"><option value="loose">Loose</option><option value="balanced" selected>Balanced</option><option value="strict">Strict</option></select></label>
+          </div></fieldset>
+          <p class="ds-note">Primary has the strongest density target; secondary and tertiary provide lighter support. Strict requires more on-theme cards. Combo engines are not an exhaustive combo database or a claim of a verified win.</p>
           <p class="ds-note" id="generation-note">Commander only. Brackets guide power preferences; they are not certified. Budgets use reported EUR prices converted to GBP, not a shop quote. Unknown prices cannot pass a budget check. Wild still requires mechanical relevance.</p>
         </details>
         <p class="ds-note" id="generation-status" role="status" aria-live="polite">Build around this assigned printing. Options are optional.</p>

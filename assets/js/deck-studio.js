@@ -30,6 +30,7 @@
   let loading = false;
   let discoveryJob = null;
   let generationJob = null;
+  let refreshing = false;
   let assigningLeader = false;
   let lastDiscoveredOracle = "";
   let returnFocus = null;
@@ -495,6 +496,8 @@
       else note += ` ${profile.leaderLabel} eligibility checked; pairing and deck rules still apply.`;
     }
     $("preview-legality").textContent = note;
+    const verification=profile.eligibility === "commander" ? client.commanderState?.(current) : null;
+    if(verification?.state === "verified-legal" && verification.refreshError)$("preview-legality").textContent += " Previously verified; currently unable to refresh. Verification keeps its normal expiry. Use Recheck current card data to retry.";
     if (profile.eligibility === "commander" && eligibilityErrors.has(current.oracleId)) $("preview-legality").textContent += ` Last eligibility check failed: ${eligibilityErrors.get(current.oracleId)}`;
     $("preview-add").textContent = deck.format === "commander" ? `Add to the ${commanderCards().length === 2 ? "98" : "99"}` : "Add to deck +";
     if (deck.format === "commander" && fresh && (!formats.supportedLegality(current, profile) || !current.games?.includes(profile.platform))) $("preview-add").disabled = true;
@@ -529,13 +532,13 @@
       $("preview-signature").disabled = !fresh || !commanderCards().length || !/\bInstant\b|\bSorcery\b/.test(type) || !formats.supportedLegality(current, profile) || !current.games?.includes(profile.platform) || !current.availableFinishes.includes(currentFinish);
     }
   }
-  async function checkCommander(card) {
-    if (formats.get(deck.format).eligibility !== "commander" || !client.isVerified(card) || rules.background(card) || client.proof(card) !== null) return;
+  async function checkCommander(card, { refresh = false } = {}) {
+    if (formats.get(deck.format).eligibility !== "commander" || !client.isVerified(card) || rules.background(card) || (!refresh && client.proof(card) !== null)) return;
     let task = eligibilityJobs.get(card.oracleId);
-    if (!task) { eligibilityErrors.delete(card.oracleId); task = client.commanderEligibility(card); eligibilityJobs.set(card.oracleId, task); }
+    if (!task) { eligibilityErrors.delete(card.oracleId); task = client.commanderEligibility(card, { refresh }); eligibilityJobs.set(card.oracleId, task); }
     renderCommanderAction();
     try { await task; }
-    catch (error) { eligibilityErrors.set(card.oracleId, error.message); if (current?.id === card.id) message(`Commander eligibility could not be verified: ${error.message} You can still edit the main deck.`); }
+    catch (error) { eligibilityErrors.set(card.oracleId, error.message); if (current?.id === card.id) message(client.proof(card) === true ? `Previously verified commander retained; eligibility refresh is unavailable: ${error.message}` : `Commander eligibility could not be verified: ${error.message} You can still edit the main deck.`); }
     finally { eligibilityJobs.delete(card.oracleId); if (current?.id === card.id) renderCommanderAction(); syncGeneration(); renderStatistics(); }
   }
   async function assignCommander({ pairing = false } = {}) {
@@ -623,19 +626,36 @@
     }
     if (!validRole && $("generation-controls").contains(document.activeElement)) $("preview-add").focus({ preventScroll: true });
     $("generation-controls").hidden = !validRole;
-    $("generate-deck").disabled = !!generationJob || !validRole || loading;
+    $("generate-deck").disabled = !!generationJob || !validRole || loading || refreshing;
     $("generate-deck").textContent = generationJob ? "Generating…" : "Generate Deck";
     $("generate-deck").setAttribute("aria-busy", String(!!generationJob));
     $("cancel-generation").hidden = !generationJob;
-    const selected = $("generation-strategy").value || "auto";
     const suggested = generator?.strategies(deck) || [];
-    const key = suggested.map(x => x.value).join(":");
-    if ($("generation-strategy").dataset.choices !== key) {
-      const auto = view.node("option", "", "Auto · infer from cards"); auto.value = "auto";
-      $("generation-strategy").replaceChildren(auto, ...suggested.map(x => { const option = view.node("option", "", x.label); option.value = x.value; return option; }));
-      $("generation-strategy").value = suggested.some(x => x.value === selected) ? selected : "auto";
-      $("generation-strategy").dataset.choices = key;
+    const key = deck.id + ":" + (assigned?.commanders.map(e=>e.printingId).join(":") || assigned?.seed.printingId || "") + ":" + suggested.map(x=>x.value).join(":");
+    const primary=$("generation-strategy"), secondary=$("generation-secondary"), tertiary=$("generation-tertiary");
+    const commanderChanged=primary.dataset.identity !== key;
+    const draftChanged=primary.dataset.deck!==deck.id;
+    const savedIdentity=draftChanged?deck.generation:null;
+    if(savedIdentity)for(const k of ["ramp","draw","removal","wipes","protection","tutors","combo","adherence"])if(savedIdentity.priorities[k])$("generation-"+k).value=savedIdentity.priorities[k];
+    const savedPrimary=savedIdentity?.primaryStyle;
+    const selectedPrimary=commanderChanged?(suggested.some(x=>x.value===savedPrimary)?savedPrimary:"auto"):primary.value || "auto";
+    const effectivePrimary=selectedPrimary==="auto"?suggested[0]?.value:selectedPrimary;
+    const selectedSecondary=commanderChanged?savedIdentity?.secondaryStyle||"":secondary.value;
+    const effectiveSecondary=suggested.some(x=>x.value===selectedSecondary&&x.value!==effectivePrimary)?selectedSecondary:"";
+    for(const [select, selected, blocked, first] of [
+      [primary,selectedPrimary,[],"Auto · " + (suggested[0]?.label || "analyse after commander selection")],
+      [secondary,effectiveSecondary,[effectivePrimary],"None"],
+      [tertiary,commanderChanged?savedIdentity?.tertiaryStyle||"":tertiary.value,[effectivePrimary,effectiveSecondary],"None"]
+    ]) {
+      const choices=suggested.filter(x=>!blocked.includes(x.value));
+      const choiceKey=key+":"+blocked.join(":");
+      if(select.dataset.choices===choiceKey)continue;
+      const initial=view.node("option","",first);initial.value=select===primary?"auto":"";
+      select.replaceChildren(initial,...choices.map(x=>{const option=view.node("option","",x.label);option.value=x.value;return option;}));
+      select.value=choices.some(x=>x.value===selected)?selected:initial.value;select.dataset.choices=choiceKey;
     }
+    primary.dataset.identity=key; primary.dataset.deck=deck.id;
+    $("generation-identity-note").textContent = assigned?.commanders.length ? `Commander analysis: ${suggested.map(x=>x.label).join(" · ")}. Targets are checked before the deck is applied.` : "Choose supporting styles after a compatible commander is found. Auto uses that commander's strongest inferred identity.";
   }
   function cancelGeneration(note = "Generation cancelled. Your deck is unchanged.") {
     if (!generationJob) return;
@@ -644,9 +664,10 @@
     syncGeneration();
   }
   $("cancel-generation").addEventListener("click", () => { cancelGeneration(); $("generate-deck").focus({ preventScroll: true }); });
-  for (const id of ["generation-bracket", "generation-budget", "generation-custom-budget", "generation-strategy", "generation-curve", "generation-randomness"]) $(id).addEventListener("change", () => {
+  for (const id of ["generation-bracket", "generation-budget", "generation-custom-budget", "generation-strategy", "generation-curve", "generation-randomness", "generation-secondary", "generation-tertiary", "generation-ramp", "generation-draw", "generation-removal", "generation-wipes", "generation-protection", "generation-tutors", "generation-combo", "generation-adherence"]) $(id).addEventListener("change", () => {
     cancelGeneration("Generation cancelled because deck options changed.");
     $("generation-custom-label").hidden = $("generation-budget").value !== "custom";
+    syncGeneration();
   });
   $("generate-deck").addEventListener("click", async () => {
     if (!generator?.context(deck) || $("generate-deck").disabled || $("generation-controls").hidden || generationJob || loading) return;
@@ -665,7 +686,9 @@
       if ($("generation-budget").value === "custom" && !$("generation-custom-budget").value.trim()) throw Error("Enter a custom GBP budget, or choose No limit.");
       const result = await generator.generate(snapshot, {
         bracket: $("generation-bracket").value, budget: $("generation-budget").value === "custom" ? $("generation-custom-budget").value : $("generation-budget").value,
-        strategy: $("generation-strategy").value, curve: $("generation-curve").value, randomness: $("generation-randomness").value
+        strategy: $("generation-strategy").value,
+        secondaryStyle: $("generation-secondary").value, tertiaryStyle: $("generation-tertiary").value,
+        priorities: Object.fromEntries(["ramp","draw","removal","wipes","protection","tutors","combo","adherence"].map(k=>[k,$("generation-"+k).value])), curve: $("generation-curve").value, randomness: $("generation-randomness").value
       }, { client, signal: job.controller.signal, progress: text => { if (active()) $("generation-status").textContent = text; } });
       if (!active()) return;
       // A recoverable snapshot must precede destructive replacement; failure preserves the deck.
@@ -683,28 +706,30 @@
       closePreview(); activatePanel("deck");
     } catch (error) {
       if (generationJob === job && error.name !== "AbortError") {
-        const note = `Generation unavailable: ${error.message} Existing deck and selection preserved.`;
+        const note = `Generation unavailable${error.stage ? " at " + error.stage : ""}: ${error.message} Existing deck and selection preserved. Retry Generate Deck or Recheck current card data.`;
         $("generation-status").textContent = note; message(note);
       }
     } finally { if (generationJob === job) generationJob = null; syncGeneration(); }
   });
   window.addEventListener("pagehide", () => cancelGeneration());
-  let refreshing = false;
   async function refreshDeckData() {
     if (refreshing || !Object.keys(deck.cards).length) return;
-    const deckId = deck.id;
+    const snapshot=deck, deckId = deck.id;
     cancelGeneration("Generation cancelled while current card data is rechecked.");
-    refreshing = true; $("refresh-card-data").disabled = true; $("data-check-status").textContent = "Checking current card data…";
-    client.clearProofs();
+    refreshing = true; syncGeneration(); $("refresh-card-data").disabled = true; $("data-check-status").textContent = "Checking current card data…";
     try {
       const fresh = await client.refresh(Object.values(deck.cards));
-      if (deck.id !== deckId) return;
+      if (deck !== snapshot) { if(deck.id===deckId)$("data-check-status").textContent="Deck changed while rechecking. Your newer edits are preserved; recheck again when ready."; return; }
+      const missing=Object.values(snapshot.cards).filter(card=>!fresh.some(record=>record.id===card.id));
+      const retained=fresh.filter(card=>client.commanderState?.(card)?.cardRefreshError).length;
+      const missingRetained=missing.filter(card=>client.isVerified(card)).length;
       commitState(model.replaceRecords(deck, fresh));
-      for (const commander of commanderCards()) if (!rules.background(commander) && client.isVerified(commander)) await checkCommander(commander);
-      if (deck.id !== deckId) return;
-      $("data-check-status").textContent = `${fresh.length} printing records rechecked. Any missing records or unsupported configurations remain flagged.`;
+      const checkedDeck=deck;
+      for (const commander of commanderCards()) if (!rules.background(commander) && client.isVerified(commander)) await checkCommander(commander, { refresh: true });
+      if (deck !== checkedDeck) return;
+      $("data-check-status").textContent = `${fresh.length-retained} printing records rechecked.${retained+missingRetained ? ` ${retained+missingRetained} previously verified record(s) retained because refresh data was incomplete; retry the recheck.` : ""}${missing.length>missingRetained ? ` ${missing.length-missingRetained} printing record(s) remain unavailable; recheck or choose another printing.` : ""} Any missing records or unsupported configurations remain flagged.`;
       if (current && deck.cards[current.id]) renderCard(deck.cards[current.id], currentFinish);
-    } catch (error) { if (deck.id === deckId) $("data-check-status").textContent = error.message + " Cached entries are preserved; current legality is unverified."; }
+    } catch (error) { if (deck.id === deckId) $("data-check-status").textContent = error.message + (Object.values(deck.cards).every(card=>client.isVerified(card)) ? " Previously verified records are preserved until their normal expiry. Retry Recheck current card data." : " Cached entries are preserved; some records still need current verification. Retry Recheck current card data."); }
     finally { refreshing = false; $("refresh-card-data").disabled = false; renderStatistics(); renderPreviewActions(); }
   }
   $("refresh-card-data").addEventListener("click", refreshDeckData);

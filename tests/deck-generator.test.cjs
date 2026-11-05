@@ -98,7 +98,10 @@ for(const strategy of ['spellslinger','graveyard','tokens'])test(`${strategy} us
   if(c.id===f.commander.id)return {...c,frontText:commanderText,rulesText:commanderText};
   if(!f.spells.some(x=>x.id===c.id))return c;
   const type=strategy==='spellslinger'?'Sorcery':'Creature — Test';
-  const text=(c.frontText.startsWith('{T}: Add')?'Search your library for a basic land card, put it onto the battlefield tapped, then shuffle.':c.frontText)+suffix;
+  let text=(c.frontText.startsWith('{T}: Add')?'Search your library for a basic land card, put it onto the battlefield tapped, then shuffle.':c.frontText)+suffix;
+  // These synthetic pools now need actual theme payoffs/recursion for hard targets.
+  if(strategy==='spellslinger' && f.spells.indexOf(c)<8)text+=' Whenever you cast an instant or sorcery spell this turn, draw a card.';
+  if(strategy==='graveyard' && f.spells.indexOf(c)<4)text+=' Return target creature card from your graveyard to your hand.';
   return {...c,frontType:type,type,frontText:text,rulesText:text};
  });
  const commander=f.records.find(c=>c.id===f.commander.id);f.deck=model.select(model.add(model.createDeck(),commander,{zone:'commander'}),commander);
