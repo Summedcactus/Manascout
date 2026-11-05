@@ -37,6 +37,10 @@
       securityStamp: string(source.securityStamp, 40, true), oversized: source.oversized === true, printingDataComplete: source.printingDataComplete === true,
       hasPrintedPT: typeof source.hasPrintedPT === "boolean" ? source.hasPrintedPT : null, isRebalanced: source.isRebalanced === true || /^A-/.test(source.name),
       meldEntry: ["meld_part", "meld_result", "not_meld"].includes(source.meldEntry) ? source.meldEntry : source.layout === "meld" ? "unknown" : "not_meld" };
+    c.frame = typeof source.frame === "string" ? source.frame.slice(0,40) : "";
+    c.frameEffects = Array.isArray(source.frameEffects) ? source.frameEffects.filter(x => typeof x === "string").slice(0,30).map(x => x.slice(0,80)) : [];
+    c.fullArt = source.fullArt === true;
+    c.promoTypes = Array.isArray(source.promoTypes) ? source.promoTypes.filter(x => typeof x === "string").slice(0,30).map(x => x.slice(0,80)) : [];
     c.manaCost = typeof source.manaCost === "string" && source.manaCost.length <= 200 ? source.manaCost : "";
     c.pricesEUR = Object.fromEntries(["nonfoil", "foil", "etched"].map(f => [f, typeof source.pricesEUR?.[f] === "number" && Number.isFinite(source.pricesEUR[f]) && source.pricesEUR[f] > 0 ? source.pricesEUR[f] : null]));
     c.edhrecRank = Number.isSafeInteger(source.edhrecRank) && source.edhrecRank > 0 ? source.edhrecRank : null;

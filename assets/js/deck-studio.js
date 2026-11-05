@@ -91,8 +91,20 @@
     if (!$("deck-health").open) { restoreBrowser(healthPosition); healthPosition = null; }
   });
 
+  const printingSelector = window.ManaScoutDeckPrintingSelector?.create({
+    client, getDeck: () => deck, capture: captureBrowser, restore: restoreBrowser,
+    onError(error) { renderDeck(); message(`Printing change not applied: ${error.message} The saved edition is preserved.`); },
+    fallbackFocus: () => [...$("deck-filters").querySelectorAll("button")].find(button => button.dataset.filter === activeDeckFilter) || headings.deck,
+    onApply(result, session) {
+      commitState(result.deck, "Exact printing updated. Cards, quantities and deck strategy are preserved.", true);
+      if (session.position.anchor?.dataset.key === session.key) session.position.anchor = [...$("deck-entries").querySelectorAll(".ds-deck-entry")].find(article => article.dataset.key === result.key);
+      if (deck.selection?.printingId === result.deck.entries.find(entry => entry.key === result.key)?.printingId && current?.id === session.original.id) renderCard(deck.cards[deck.selection.printingId], deck.selection.finish);
+    }
+  });
+
   function activatePanel(name, focus = true) {
     if (!Object.hasOwn(panels, name)) return;
+    if (name !== activePanel) printingSelector?.cancel();
     if (mobile.matches) scrollPositions.set(activePanel, panels[activePanel].scrollTop);
     activePanel = name;
     if (name === "discover") collapsed.delete("discover-body");
@@ -137,6 +149,7 @@
 
   function closePreview() { if (preview.open) preview.close(); }
   function openPreview(trigger) {
+    printingSelector?.cancel();
     cancelDiscovery("Discovery cancelled while another printing was opened.");
     if (!current) return;
     if (typeof preview.showModal !== "function") {
@@ -218,7 +231,7 @@
     $("selection-status").textContent = "Selected printing loaded. Choose its role in the card preview.";
     const entryMetadataChanged = deck.cards[card.id] && deck.cards[card.id] !== card && deck.entries.some(entry => entry.printingId === card.id);
     const selectedDeck = model.select(deck, card, currentFinish);
-    if (selectedDeck !== deck) { deck = selectedDeck; dirty = true; scheduleSave(); if (entryMetadataChanged) renderDeck(); }
+    if (selectedDeck !== deck) { printingSelector?.cancel(); deck = selectedDeck; dirty = true; scheduleSave(); if (entryMetadataChanged) renderDeck(); }
     renderPreviewActions();
     if (deck.format === "commander" && !rules.background(card)) checkCommander(card);
   }
@@ -258,7 +271,8 @@
   }
   $("retry-printing").addEventListener("click", loadSelection);
   function message(text) { $("deck-message").textContent = text; }
-  function commitState(next, text = "") {
+  function commitState(next, text = "", printingEdit = false) {
+    if (next !== deck && !printingEdit) printingSelector?.cancel();
     if (next !== deck) { cancelGeneration("Generation cancelled because the deck changed."); deck = next; dirty = true; scheduleSave(); }
     renderDeck();
     const warning = rules.validate(deck, client).issues.find(i => i.severity === "error" || i.severity === "unsupported");
@@ -313,6 +327,7 @@
   }
   function selectDeckFilter(event){
     const button=event.target.closest("button[data-filter]");if(!button)return;
+    printingSelector?.cancel();
     const position=captureBrowser();
     const previous=activeDeckFilter;
     activeDeckFilter=button.dataset.filter;
@@ -373,6 +388,7 @@
     commitState(model.add(deck, card, { zone, quantity, finish }), `Added ${quantity} × ${card.name} to ${zone === "main" ? "the main deck" : "the sideboard"}.`);
   }
   $("deck-name").addEventListener("input", () => {
+    printingSelector?.cancel();
     const next = model.edit(deck, { name: $("deck-name").value });
     if (next !== deck) { cancelGeneration("Generation cancelled because the deck changed."); deck = next; dirty = true; scheduleSave(); }
   });
@@ -401,6 +417,10 @@
     const entry = deck.entries.find(e => e.key === button.dataset.key);
     if (!entry) return;
     try {
+      if (button.dataset.action === "change-printing") {
+        cancelDiscovery("Discovery cancelled while editing a deck printing.");
+        closePreview(); printingSelector?.open(entry.key, button); return;
+      }
       if (button.dataset.action === "inspect-entry") {
         renderCard(deck.cards[entry.printingId], entry.finish); openPreview(button); return;
       }
@@ -793,7 +813,7 @@
       }
     } finally { if (generationJob === job) generationJob = null; syncGeneration(); }
   });
-  window.addEventListener("pagehide", () => cancelGeneration());
+  window.addEventListener("pagehide", () => { printingSelector?.cancel(); cancelGeneration(); });
   async function refreshDeckData() {
     if (refreshing || !Object.keys(deck.cards).length) return;
     const snapshot=deck, deckId = deck.id;
@@ -901,6 +921,7 @@
     return leave;
   }
   function activateDraft(record, note = "", markDirty = false) {
+    printingSelector?.cancel();
     cancelGeneration("Generation cancelled because the active draft changed.");
     cancelDiscovery("Discovery cancelled because the active draft changed.");
     clearTimeout(saveTimer);

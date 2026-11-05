@@ -37,7 +37,9 @@
     const name = node("strong", "ds-entry-name"); inspect.append(name);
     // Stage 4 can append controls here without replacing the article or its entry key.
     const printing = node("div", "ds-entry-printing");
-    const info = node("p", "ds-entry-meta"); printing.append(info);
+    const info = node("p", "ds-entry-meta");
+    const change = button("change-printing", "Change printing", entry.key); change.className = "ds-entry-change";
+    printing.append(info, change);
     const status = node("p", "ds-entry-legality");
     const controls = node("div", "ds-entry-controls");
     const decrease = button("decrease", "−", entry.key), increase = button("increase", "+", entry.key);
@@ -46,7 +48,7 @@
     const roles = node("p", "ds-entry-roles"), owner = node("p", "ds-entry-owner ds-entry-meta");
     const move = button("move-main", "", entry.key); move.className = "ds-entry-move";
     article.append(inspect, printing, roles, status, controls, owner, move);
-    entryNodes.set(article, { inspect, name, printing, info, status, controls, decrease, increase, remove, quantity, roles, owner, move, art: null, url: null });
+    entryNodes.set(article, { inspect, name, printing, info, change, status, controls, decrease, increase, remove, quantity, roles, owner, move, art: null, url: null });
     return article;
   }
   function renderEntries(deck, container, { isVerified = () => false } = {}, inspection = null) {
@@ -78,6 +80,8 @@
         text(ui.name, card.name);
         text(ui.info, `${card.setCode} #${card.collectorNumber} · ${entry.finish}`);
         ui.printing.dataset.printingId = entry.printingId;
+        ui.change.hidden = !card.oracleId; ui.change.disabled = !card.oracleId;
+        ui.change.setAttribute("aria-label", `Change printing of ${card.name}, ${card.setCode} #${card.collectorNumber}, ${entry.finish}`);
         for (const [control, label] of [[ui.decrease,"Remove one copy of"],[ui.increase,"Add one copy of"],[ui.remove,"Remove all copies of"]]) control.setAttribute("aria-label", `${label} ${card.name}`);
         ui.increase.disabled = ["commander", "signature"].includes(zone);
         text(ui.quantity, String(entry.quantity)); ui.quantity.setAttribute("aria-label", `${entry.quantity} copies of ${card.name}`);

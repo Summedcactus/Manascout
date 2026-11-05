@@ -133,3 +133,5 @@ The original essential/strategy filter groups share one horizontally scrolling s
 Stage 4 should attach printing controls to `.ds-entry-printing` inside the existing article. Both expose `data-printing-id`; the article also exposes `data-key`, `data-finish` and role metadata. Update records through the existing model, then reconcile: same-key metadata changes update only the printing text/artwork; a replacement key creates only the affected card. Keep classification/filter keys derived from Stage 2. No printing chooser is implemented here.
 
 Responsive space-budget tests and DOM-controller tests are automated; they do not certify native sticky behaviour, touch scrolling, visual quality or browser layout. Those still require a real desktop/phone smoke test.
+
+Stage 4 implements individual exact-printing edits using that prepared component. See [Exact-printing edits](deck-printings.md) for the selector, validation/replacement boundary and future bulk-edit reuse.

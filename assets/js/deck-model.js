@@ -2,6 +2,7 @@
 ((root) => {
   "use strict";
   const formatRegistry = typeof module === "object" && module.exports ? require("./deck-formats.js") : root.ManaScoutDeckFormats;
+  const data = typeof module === "object" && module.exports ? require("./deck-data.js") : root.ManaScoutDeckData;
   const zones = new Set(["main", "sideboard", "commander", "signature"]);
   const uuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
   const entryKey = (id, finish, zone, assignedTo = "") => `${id}:${finish}:${zone}${zone === "signature" ? ":" + (assignedTo || "unassigned") : ""}`;
@@ -55,8 +56,32 @@
     const used = new Set([...deck.entries.map(e => e.printingId), card.id]);
     return changed(deck, { selection: { printingId: card.id, finish }, cards: Object.fromEntries(Object.entries({ ...deck.cards, [card.id]: card }).filter(([id]) => used.has(id))) });
   }
+  // Pure atomic replacement; callers verify live legality before committing the candidate.
+  function replacePrinting(deck, key, card, finish) {
+    const original = deck.entries.find(entry => entry.key === key);
+    if (!original) throw Error("That deck entry is no longer available.");
+    if (!uuid.test(card?.id || "") || !data.sameOracleCard(deck.cards[original.printingId], card)) throw Error("Choose a printing of the same Oracle card with equivalent gameplay data.");
+    if (!card.availableFinishes?.includes(finish)) throw Error("That finish is not listed for this printing.");
+    const ownerChanged = original.zone === "commander" && original.printingId !== card.id;
+    const grouped = new Map();
+    for (const entry of deck.entries) {
+      let next = entry.key === key ? { ...entry, printingId: card.id, finish } : entry;
+      if (ownerChanged && next.zone === "signature" && next.assignedTo === original.printingId) next = { ...next, assignedTo: card.id };
+      const newKey = entryKey(next.printingId, next.finish, next.zone, next.assignedTo);
+      next = { ...next, key: newKey };
+      const previous = grouped.get(newKey);
+      if (previous) next = { ...next, quantity: next.quantity + previous.quantity };
+      if (next.quantity > 10000) throw Error("One entry cannot exceed 10,000 copies.");
+      grouped.set(newKey, next);
+    }
+    const entries = [...grouped.values()];
+    const selection = deck.selection?.printingId === original.printingId && deck.selection.finish === original.finish ? { printingId: card.id, finish } : deck.selection;
+    const used = new Set([...entries.map(entry => entry.printingId), selection?.printingId].filter(Boolean));
+    const cards = Object.fromEntries(Object.entries({ ...deck.cards, [card.id]: card }).filter(([id]) => used.has(id)));
+    return changed(deck, { entries, cards, selection });
+  }
   const count = (deck, zone) => deck.entries.filter(e => !zone || e.zone === zone).reduce((sum, e) => sum + e.quantity, 0);
-  const api = Object.freeze({ createDeck, edit, add, setQuantity, moveOne, replaceRecords, select, count, entryKey, newId });
+  const api = Object.freeze({ createDeck, edit, add, setQuantity, moveOne, replaceRecords, replacePrinting, select, count, entryKey, newId });
   if (typeof module === "object" && module.exports) module.exports = api;
   else root.ManaScoutDeckModel = api;
 })(typeof window === "undefined" ? globalThis : window);

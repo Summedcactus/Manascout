@@ -14,21 +14,23 @@
   <meta property="og:url" content="https://manascout.co.uk/deck/">
   <meta property="og:site_name" content="ManaScout">
   <meta name="twitter:card" content="summary">
-  <link rel="stylesheet" href="/assets/css/deck-studio.css?v=health1">
+  <link rel="stylesheet" href="/assets/css/deck-studio.css?v=printing1">
   <script type="application/ld+json">
   {"@context":"https://schema.org","@type":"WebPage","name":"ManaScout Deck Studio","url":"https://manascout.co.uk/deck/","description":"ManaScout's artwork-first deck workspace with exact-printing card search and manual deck editing.","isPartOf":{"@type":"WebSite","name":"ManaScout","url":"https://manascout.co.uk/"}}
   </script>
   <script src="/assets/js/deck-formats.js?v=5d1" defer></script>
-  <script src="/assets/js/deck-data.js?v=generate1" defer></script>
-  <script src="/assets/js/deck-model.js?v=5d1" defer></script>
-  <script src="/assets/js/deck-client.js?v=commander-lifecycle1" defer></script>
+  <script src="/assets/js/deck-data.js?v=printing1" defer></script>
+  <script src="/assets/js/deck-model.js?v=printing1" defer></script>
+  <script src="/assets/js/deck-client.js?v=printing1" defer></script>
   <script src="/assets/js/deck-rules.js?v=5d1" defer></script>
-  <script src="/assets/js/deck-view.js?v=health1" defer></script>
-  <script src="/assets/js/deck-store.js?v=health1" defer></script>
+  <script src="/assets/js/deck-view.js?v=printing1" defer></script>
+  <script src="/assets/js/deck-store.js?v=printing1" defer></script>
   <script src="/assets/js/deck-identity.js?v=health1" defer></script>
   <script src="/assets/js/deck-health.js?v=health1" defer></script>
   <script src="/assets/js/deck-generator.js?v=health1" defer></script>
-  <script src="/assets/js/deck-studio.js?v=health1" defer></script>
+  <script src="/assets/js/deck-printings.js?v=printing1" defer></script>
+  <script src="/assets/js/deck-printing-selector.js?v=printing1" defer></script>
+  <script src="/assets/js/deck-studio.js?v=printing1" defer></script>
 </head>
 <body class="deck-studio" data-active-panel="deck">
   <a class="ds-skip" href="#deck-heading">Skip to deck workspace</a>
@@ -196,12 +198,37 @@
       <button class="ds-button ds-secondary" type="button" id="preview-remove" disabled>Remove one</button>
 
       <div id="signature-controls" class="ds-signature-controls" hidden><label class="ds-label" for="signature-owner">Signature spell for</label><select id="signature-owner" aria-describedby="signature-note"></select><button class="ds-button ds-secondary" id="preview-signature" type="button">Assign signature spell</button><p class="ds-note" id="signature-note">One instant or sorcery per Oathbreaker, within that Oathbreaker’s own colour identity.</p></div>
-      <button class="ds-button ds-secondary ds-future-printing" type="button" disabled aria-describedby="preview-actions-note">Change printing · coming later</button>
+      <p class="ds-note">Use Change printing on a deck entry to curate its exact edition and finish.</p>
       <p class="ds-note" id="preview-actions-note">Adds this exact printing and finish. Choose a role before adding. Commander eligibility is checked separately from main-deck legality; construction warnings still apply.</p>
       <p class="ds-note" id="preview-save-status" role="status">Changes are saved only in this browser.</p>
       <details class="ds-card-more"><summary>Roles, rules &amp; printing details</summary><p class="ds-preview-roles" id="preview-roles"></p><p class="ds-oracle" id="preview-oracle"></p><dl class="ds-extra-facts"><div><dt>Available finishes</dt><dd id="preview-finishes"></dd></div><div><dt>Language</dt><dd id="preview-language"></dd></div><div><dt>Released</dt><dd id="preview-released"></dd></div><div><dt>Scryfall printing ID</dt><dd id="preview-id"></dd></div></dl><p class="ds-note">Format availability is distinct from commander eligibility and full-deck construction.</p></details>
       <div class="ds-source-links"><a class="ds-text-link" id="preview-guide" hidden>Full ManaScout guide ↗</a><a class="ds-text-link" id="preview-source" target="_blank" rel="noopener noreferrer" hidden>Printing on Scryfall ↗</a></div>
       <button class="ds-back-button" id="back-to-workspace" type="button">← Back to workspace</button>
+    </div>
+  </dialog>
+  <dialog class="ds-card-drawer ds-printing-selector" id="printing-selector" aria-labelledby="printing-title" aria-describedby="printing-context">
+    <div class="ds-drawer-handle" aria-hidden="true"></div>
+    <div class="ds-drawer-top"><h2 id="printing-title">Choose a printing</h2><button class="ds-icon" id="printing-close" type="button" aria-label="Close printing selector" autofocus>×</button></div>
+    <div class="ds-drawer-scroll" id="printing-scroll">
+      <p class="ds-note" id="printing-context"></p>
+      <details class="ds-printing-options" id="printing-options"><summary>Filter editions &amp; sort</summary>
+      <div class="ds-printing-tools">
+        <label>Finish<select id="printing-filter-finish"><option value="">All finishes</option><option value="nonfoil">Nonfoil</option><option value="foil">Foil</option><option value="etched">Etched</option></select></label>
+        <label>Order<select id="printing-sort"><option value="newest">Newest</option><option value="oldest">Oldest</option></select></label>
+        <label>Set<input id="printing-filter-set" type="search" placeholder="Set name or code" autocomplete="off"></label>
+        <label>Treatment<select id="printing-filter-treatment"><option value="">All treatments</option><option value="borderless">Borderless</option><option value="showcase">Showcase</option><option value="retro">Classic / retro</option><option value="extendedart">Extended art</option><option value="fullart">Full art</option></select></label>
+      </div>
+      </details>
+      <p class="ds-note" id="printing-status" role="status" aria-live="polite"></p>
+      <button class="ds-button ds-secondary" id="printing-retry" type="button" hidden>Retry printing lookup</button>
+      <div class="ds-printing-grid" id="printing-results" aria-label="Available printings"></div>
+      <button class="ds-button ds-secondary" id="printing-more" type="button" hidden>Load more printings</button>
+    </div>
+    <div class="ds-printing-choice" id="printing-choice">
+      <img id="printing-selected-image" alt="" width="80" height="112" hidden>
+      <div class="ds-printing-choice-copy"><p id="printing-selected-name"></p><p class="ds-note" id="printing-selected-meta"></p><p class="ds-note" id="printing-current-marker"></p><button class="ds-text-link" id="printing-face" type="button" hidden>Next face</button><label id="printing-finish-label" for="printing-finish">Use finish</label><select id="printing-finish"></select><p class="ds-note" id="printing-single-finish"></p></div>
+      <button class="ds-button ds-primary" id="printing-apply" type="button" disabled>Use this printing</button>
+      <p class="ds-note" id="printing-apply-status" role="status" aria-live="polite"></p>
     </div>
   </dialog>
   <dialog class="ds-confirm-dialog" id="draft-confirm" aria-labelledby="draft-confirm-title" aria-describedby="draft-confirm-message"><h2 id="draft-confirm-title">Confirm action</h2><p id="draft-confirm-message"></p><div class="ds-confirm-actions"><button class="ds-button ds-secondary" id="draft-confirm-cancel" type="button" autofocus>Keep editing</button><button class="ds-button ds-secondary" id="draft-confirm-backup" type="button">Download backup</button><button class="ds-button ds-primary" id="draft-confirm-accept" type="button">Continue</button></div></dialog>

@@ -235,10 +235,42 @@
         return result.data.filter(name => typeof name === "string").slice(0, 6);
       });
     }
-    async function printing(selection, { signal } = {}) {
+    async function printing(selection, { signal, sameOracleAs = null } = {}) {
       data.parseSelection(`?printing=${encodeURIComponent(selection.id)}`);
-      const raw = await request(`${API}/cards/${selection.id}`, { signal });
+      let raw;
+      try { raw = await request(`${API}/cards/${selection.id}`, { signal }); }
+      catch(error) {
+        if(error.name!=="AbortError"&&latest.has(selection.id)) {
+          warnings.set(selection.id,error.status===404?"This exact printing could not be found. Its saved entry is preserved; recheck or choose another edition.":error.message);
+          if(error.status===404)latest.delete(selection.id);
+        }
+        throw error;
+      }
+      if (sameOracleAs && !data.sameOracleCard(sameOracleAs, data.normaliseCard(raw, selection))) throw new data.SelectionError("The new edition has different or incomplete Oracle gameplay data. Your current printing is preserved; recheck card data before retrying.",true);
       return remember(raw, selection);
+    }
+    // Catalogue hints are intentionally NOT promoted to authoritative gameplay facts.
+    // Only the explicitly applied UUID goes through printing()/remember().
+    async function printings(oracleId, { signal, page = "", format = "commander", order = "newest" } = {}) {
+      const profile = formats.get(format);
+      if (!/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(oracleId || "") || !profile || !["newest","oldest"].includes(order)) throw new data.SelectionError("Invalid printing catalogue request.");
+      const params = { q: `oracleid:${oracleId} game:${profile.platform}`, unique: "prints", order: "released", dir: order === "newest" ? "desc" : "asc", include_extras: "false", include_multilingual: "true", include_variations: "true" };
+      function checkedPage(value) {
+        const next = new URL(value);
+        if (next.origin !== API || next.username || next.password || next.pathname !== "/cards/search" || !/^[1-9]\d*$/.test(next.searchParams.get("page") || "") || Object.entries(params).some(([key,value]) => next.searchParams.has(key) && next.searchParams.get(key) !== value)) throw new data.SelectionError("Invalid printing catalogue page.");
+        return `${API}/cards/search?${new URLSearchParams({...params,page:next.searchParams.get("page")})}`;
+      }
+      const url = page ? checkedPage(page) : `${API}/cards/search?${new URLSearchParams(params)}`;
+      const result = await cached(url, async () => {
+        try {
+          const raw = await request(url, { signal });
+          if (!Array.isArray(raw.data) || raw.data.some(card => card?.oracle_id?.toLowerCase() !== oracleId.toLowerCase() || !/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(card?.id || ""))) throw new data.SelectionError("The printing catalogue did not match this Oracle card.",true);
+          if (raw.has_more && !raw.next_page) throw new data.SelectionError("The printing catalogue omitted its next page. Retry the lookup.",true);
+          return { cards: raw.data.map(card => data.normaliseCard(card,{id:card.id?.toLowerCase()})), nextPage: raw.has_more ? checkedPage(raw.next_page) : "", total: Number.isSafeInteger(raw.total_cards) ? raw.total_cards : null };
+        } catch (error) { if (error.status === 404) return { cards: [], nextPage: "", total: 0 }; throw error; }
+      });
+      if (signal?.aborted) throw abortError();
+      return result;
     }
     const proof = card => {
       const hit=proofs.get(card.oracleId);
@@ -296,7 +328,7 @@
       }
       return updated;
     }
-    return { search, random, candidates, euroRate, autocomplete, printing, commanderEligibility, refresh, ensure, current, commanderState,
+    return { search, random, candidates, euroRate, autocomplete, printing, printings, commanderEligibility, refresh, ensure, current, commanderState,
       isVerified, proof, diagnostics:()=>events.map(event=>({...event})),
       clearProofs:()=>{proofEra++;proofs.clear();} };
   }
