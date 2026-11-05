@@ -9,6 +9,8 @@
   const rules = window.ManaScoutDeckRules;
   const persistence = window.ManaScoutDeckStore;
   const generator = window.ManaScoutDeckGenerator;
+  const inspection = window.ManaScoutDeckHealth;
+  let activeDeckFilter="all", inspectionCache=null;
   const $ = id => document.getElementById(id);
   const body = document.body;
   if (!body.classList.contains("deck-studio") || !data || !model || !client || !view || !rules || !persistence || !formats) return;
@@ -243,6 +245,9 @@
     $("preview-remove").textContent = entry?.zone === "commander" ? `Remove ${formats.get(deck.format).leaderLabel?.toLowerCase() || "leader"}` : entry?.zone === "signature" ? "Remove signature spell" : "Remove one";
     $("preview-add").disabled = !current.availableFinishes.includes(currentFinish);
     $("preview-context").textContent = entry?.zone === "commander" ? "This exact printing and finish is assigned as a leader. Additional copies go into the main deck." : entry?.zone === "signature" ? "This printing is a signature spell. Additional copies go into the main deck; owner and copy restrictions still apply." : entry ? `${entry.quantity} ${entry.quantity === 1 ? "copy" : "copies"} of this printing and finish in ${zone === "main" ? "the main deck" : "the sideboard"}.` : "Selected printing. This version has not been added to this section.";
+    const analysis=inspectDeck();
+    const classified=analysis?.cardRoles[current.id]||inspection?.classifyCard(current,{styles:analysis?.styles||[]});
+    $("preview-roles").textContent=classified?"Detected roles: "+classified.roles.filter(role=>inspection.label(role)!==role).map(inspection.label).join(" · "):"No evidence-based roles identified.";
     renderCommanderAction();
   }
   function previewEntry() {
@@ -258,6 +263,44 @@
   }
   $("deck-format").replaceChildren(...formatOptions);
   $("unsupported-formats").replaceChildren(...formats.unsupported.map(format => view.node("li", "", `${format.name}: ${format.reason}`)));
+  function inspectDeck() {
+    if(!inspection)return null;
+    const key={id:deck.id,entries:deck.entries,cards:deck.cards,generation:deck.generation,format:deck.format};
+    if(!inspectionCache||Object.keys(key).some(k=>inspectionCache.key[k]!==key[k])){
+      if(inspectionCache?.key.id!==deck.id)activeDeckFilter="all";
+      inspectionCache={key,analysis:inspection.analyse(deck)};
+    }
+    return inspectionCache.analysis;
+  }
+  function applyDeckFilter() {
+    const analysis=inspectDeck();if(!analysis)return;
+    const keys=inspection.filterKeys(analysis,activeDeckFilter);
+    const shown=view.filterEntries(deck,$("deck-entries"),keys);
+    const selected=analysis.categories.find(category=>category.id===activeDeckFilter)||analysis.categories[0];
+    $("deck-filter-status").textContent=`${selected.label}: ${shown} / ${analysis.categories[0].count} main-deck cards shown. Command zone, special zones and sideboard stay visible.`;
+    for(const b of [...$("deck-filters").querySelectorAll("button"),...$("deck-health").querySelectorAll("button[data-filter]")])b.setAttribute("aria-pressed",String(b.dataset.filter===activeDeckFilter));
+    if([...$("deck-entries").querySelectorAll(".ds-deck-entry")].some(entry=>entry.hidden&&entry.contains(document.activeElement))){
+      [...$("deck-filters").querySelectorAll("button")].find(button=>button.dataset.filter===activeDeckFilter)?.focus({preventScroll:true});
+    }
+  }
+  function selectDeckFilter(event){
+    const button=event.target.closest("button[data-filter]");if(!button)return;
+    const previous=activeDeckFilter;
+    activeDeckFilter=button.dataset.filter;
+    const analysis=inspectDeck();
+    if(analysis&&analysis.categories.some(category=>category.group==="additional"&&[previous,activeDeckFilter].includes(category.id)))activeDeckFilter=view.renderFilters(analysis,activeDeckFilter,$("deck-filter-essential"),$("deck-filter-strategy"));
+    applyDeckFilter();
+    if($("deck-health").contains(button)){
+      $("deck-health").open=false;
+      [...$("deck-filters").querySelectorAll("button")].find(control=>control.dataset.filter===activeDeckFilter)?.focus({preventScroll:true});
+    }
+  }
+  $("deck-filters").addEventListener("click",selectDeckFilter);
+  $("deck-health").addEventListener("click",selectDeckFilter);
+  function renderInspectionHealth(validation) {
+    const analysis=inspectDeck();if(!analysis)return;
+    view.renderHealth(inspection.evaluate(analysis,validation),{panel:$("deck-health"),state:$("health-state"),brief:$("health-brief"),context:$("health-context"),legality:$("health-legality"),theme:$("health-theme"),infrastructure:$("health-infrastructure"),coverage:$("health-style-coverage"),activeFilter:activeDeckFilter,observed:$("health-observations"),other:$("health-other-roles"),warnings:$("health-warnings"),styleLabel:key=>window.ManaScoutDeckIdentity.definition(key)?.label||key,roleLabel:inspection.label});
+  }
   function renderDeck() {
     if (document.activeElement !== $("deck-name")) $("deck-name").value = deck.name;
     $("deck-format").value = deck.format;
@@ -283,7 +326,11 @@
     $("deck-entries").hidden = count === 0;
     const validation = rules.validate(deck, client);
     $("deck-count").textContent = `${validation.total} / ${profile.min}${profile.min !== profile.max ? "+" : ""} · ${profile.name}${profile.sideboard || validation.side ? ` · ${validation.side} / ${profile.sideboard} side` : ""}`;
-    view.renderEntries(deck, $("deck-entries"), client);
+    const analysis=inspectDeck();
+    $("deck-filters").hidden=!analysis||!analysis.categories[0].count;
+    if(analysis)activeDeckFilter=view.renderFilters(analysis,activeDeckFilter,$("deck-filter-essential"),$("deck-filter-strategy"));
+    view.renderEntries(deck, $("deck-entries"), client,analysis);
+    applyDeckFilter();
     renderPreviewActions();
     renderStatistics();
   }
@@ -470,6 +517,7 @@
     $("deck-warning-details").hidden = !validation.issues.length;
     $("deck-warning-summary").textContent = `${validation.issues.length} construction ${validation.issues.length === 1 ? "issue" : "issues"}`;
     $("deck-issues").replaceChildren(...validation.issues.map(issue => view.node("li", `ds-issue-${issue.severity}`, issue.message)));
+    renderInspectionHealth(validation);
     return validation;
   }
   function commanderCards() { return deck.entries.filter(e => e.zone === "commander").map(e => deck.cards[e.printingId]); }

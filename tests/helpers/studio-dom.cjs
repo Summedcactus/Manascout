@@ -68,7 +68,7 @@ function mount({ client, narrow = false, search = '', storage } = {}) {
   const media = { matches: narrow, listeners: [], addEventListener(_name, fn) { this.listeners.push(fn); } };
   const listeners = {};
   const window = { ManaScoutDeckFormats: require('../../assets/js/deck-formats.js'), location: { search }, matchMedia: () => media, ManaScoutDeckData: require('../../assets/js/deck-data.js'), ManaScoutDeckModel: require('../../assets/js/deck-model.js'), ManaScoutDeckClient: { createClient: () => client }, addEventListener(t, fn) { (listeners[t] ||= []).push(fn); }, localStorage: storage, confirm: () => false };
-  for (const [file, global] of [['deck-rules.js','ManaScoutDeckRules'],['deck-store.js','ManaScoutDeckStore'],['deck-generator.js','ManaScoutDeckGenerator']]) if (fs.existsSync(path.join(root,'assets/js',file))) window[global] = require('../../assets/js/' + file);
+  for (const [file, global] of [['deck-identity.js','ManaScoutDeckIdentity'],['deck-health.js','ManaScoutDeckHealth'],['deck-rules.js','ManaScoutDeckRules'],['deck-store.js','ManaScoutDeckStore'],['deck-generator.js','ManaScoutDeckGenerator']]) if (fs.existsSync(path.join(root,'assets/js',file))) window[global] = require('../../assets/js/' + file);
   const timers = new Set();
   const timerTasks = new Map();
   const context = { window, document, console, URL, URLSearchParams, AbortController, Blob, Date, structuredClone,

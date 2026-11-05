@@ -14,7 +14,7 @@
   <meta property="og:url" content="https://manascout.co.uk/deck/">
   <meta property="og:site_name" content="ManaScout">
   <meta name="twitter:card" content="summary">
-  <link rel="stylesheet" href="/assets/css/deck-studio.css?v=identity1-roleux1">
+  <link rel="stylesheet" href="/assets/css/deck-studio.css?v=health1">
   <script type="application/ld+json">
   {"@context":"https://schema.org","@type":"WebPage","name":"ManaScout Deck Studio","url":"https://manascout.co.uk/deck/","description":"ManaScout's artwork-first deck workspace with exact-printing card search and manual deck editing.","isPartOf":{"@type":"WebSite","name":"ManaScout","url":"https://manascout.co.uk/"}}
   </script>
@@ -23,11 +23,12 @@
   <script src="/assets/js/deck-model.js?v=5d1" defer></script>
   <script src="/assets/js/deck-client.js?v=commander-lifecycle1" defer></script>
   <script src="/assets/js/deck-rules.js?v=5d1" defer></script>
-  <script src="/assets/js/deck-view.js?v=5d1" defer></script>
-  <script src="/assets/js/deck-store.js?v=identity1-generate1" defer></script>
-  <script src="/assets/js/deck-identity.js?v=identity1" defer></script>
-  <script src="/assets/js/deck-generator.js?v=commander-lifecycle1" defer></script>
-  <script src="/assets/js/deck-studio.js?v=commander-lifecycle1" defer></script>
+  <script src="/assets/js/deck-view.js?v=health1" defer></script>
+  <script src="/assets/js/deck-store.js?v=health1" defer></script>
+  <script src="/assets/js/deck-identity.js?v=health1" defer></script>
+  <script src="/assets/js/deck-health.js?v=health1" defer></script>
+  <script src="/assets/js/deck-generator.js?v=health1" defer></script>
+  <script src="/assets/js/deck-studio.js?v=health1" defer></script>
 </head>
 <body class="deck-studio" data-active-panel="deck">
   <a class="ds-skip" href="#deck-heading">Skip to deck workspace</a>
@@ -104,6 +105,22 @@
           <button type="button" class="ds-button ds-primary ds-discover-action" id="show-discover" hidden>Discover a card <span aria-hidden="true">→</span></button>
           <a class="ds-text-link ds-nojs-discover" href="/">Discover a card →</a>
         </div>
+        <details class="ds-health" id="deck-health" hidden>
+          <summary><span>Deck Health <strong id="health-state">No generated plan</strong> <span class="ds-health-toggle">Details ▾</span></span><span class="ds-health-brief" id="health-brief"></span></summary>
+          <p class="ds-note" id="health-context"></p><p class="ds-note" id="health-legality" role="status"></p>
+          <h3>Chosen styles</h3><dl class="ds-health-metrics" id="health-style-coverage"></dl>
+          <p class="ds-note">Supporting-card counts can overlap across styles. Select a role count below to inspect matching cards.</p>
+          <h3>Theme targets</h3><dl class="ds-health-metrics" id="health-theme"></dl>
+          <h3>Infrastructure</h3><dl class="ds-health-metrics" id="health-infrastructure"></dl>
+          <ul class="ds-health-warnings" id="health-warnings"></ul>
+          <details class="ds-health-observed"><summary>Other strategy roles · no additional minimums</summary><dl class="ds-health-metrics" id="health-observations"></dl><dl class="ds-health-metrics" id="health-other-roles"></dl></details>
+          <p class="ds-note">Targets use the last generated plan; counts include quantities and update after edits. One card can fill several roles. Roles are Oracle-text heuristics, not proof of gameplay quality or executable combos. Commanders are excluded from main-deck targets.</p>
+        </details>
+        <nav class="ds-deck-filters" id="deck-filters" aria-label="Filter main-deck cards" hidden>
+          <div class="ds-filter-row" id="deck-filter-essential" role="group" aria-label="Card types and infrastructure"></div>
+          <div class="ds-filter-row" id="deck-filter-strategy" role="group" aria-label="Deck strategy categories"></div>
+          <p class="ds-note" id="deck-filter-status" role="status" aria-live="polite"></p>
+        </nav>
         <div id="deck-entries" hidden></div>
       </div>
       <div class="ds-canvas-foot"><span><span class="ds-sage-dot" aria-hidden="true"></span><span id="deck-count">No cards added</span></span><span>Made for the art. Built around you.</span></div>
@@ -180,7 +197,7 @@
       <button class="ds-button ds-secondary ds-future-printing" type="button" disabled aria-describedby="preview-actions-note">Change printing · coming later</button>
       <p class="ds-note" id="preview-actions-note">Adds this exact printing and finish. Choose a role before adding. Commander eligibility is checked separately from main-deck legality; construction warnings still apply.</p>
       <p class="ds-note" id="preview-save-status" role="status">Changes are saved only in this browser.</p>
-      <details class="ds-card-more"><summary>Rules &amp; printing details</summary><p class="ds-oracle" id="preview-oracle"></p><dl class="ds-extra-facts"><div><dt>Available finishes</dt><dd id="preview-finishes"></dd></div><div><dt>Language</dt><dd id="preview-language"></dd></div><div><dt>Released</dt><dd id="preview-released"></dd></div><div><dt>Scryfall printing ID</dt><dd id="preview-id"></dd></div></dl><p class="ds-note">Format availability is distinct from commander eligibility and full-deck construction.</p></details>
+      <details class="ds-card-more"><summary>Roles, rules &amp; printing details</summary><p class="ds-preview-roles" id="preview-roles"></p><p class="ds-oracle" id="preview-oracle"></p><dl class="ds-extra-facts"><div><dt>Available finishes</dt><dd id="preview-finishes"></dd></div><div><dt>Language</dt><dd id="preview-language"></dd></div><div><dt>Released</dt><dd id="preview-released"></dd></div><div><dt>Scryfall printing ID</dt><dd id="preview-id"></dd></div></dl><p class="ds-note">Format availability is distinct from commander eligibility and full-deck construction.</p></details>
       <div class="ds-source-links"><a class="ds-text-link" id="preview-guide" hidden>Full ManaScout guide ↗</a><a class="ds-text-link" id="preview-source" target="_blank" rel="noopener noreferrer" hidden>Printing on Scryfall ↗</a></div>
       <button class="ds-back-button" id="back-to-workspace" type="button">← Back to workspace</button>
     </div>

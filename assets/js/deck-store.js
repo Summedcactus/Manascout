@@ -60,7 +60,11 @@
     const numbers = value => Object.fromEntries(Object.entries(value && typeof value==="object" && !Array.isArray(value)?value:{}).slice(0,60).filter(([k,v])=>/^[a-z][a-zA-Z:0-9-]{0,59}$/.test(k)&&integer(v,0,100)));
     const priorities={};
     for(const k of ["ramp","draw","removal","wipes","protection","tutors","combo","adherence"])if(typeof source.priorities?.[k]==="string"&&["light","normal","heavy","low","high","none","some","loose","balanced","strict"].includes(source.priorities[k]))priorities[k]=source.priorities[k];
-    return {generation:{version:1,primaryStyle:style(source.primaryStyle),secondaryStyle:style(source.secondaryStyle),tertiaryStyle:style(source.tertiaryStyle),priorities,targets:numbers(source.targets),counts:numbers(source.counts)}};
+    return {generation:{version:1,
+      ...(["low","balanced","high"].includes(source.curve)?{curve:source.curve}:{}),
+      ...(integer(source.bracket,1,5)?{bracket:source.bracket}:{}),
+      ...(Array.isArray(source.commanderOracles)&&source.commanderOracles.length<=2&&source.commanderOracles.every(id=>uuid.test(id))?{commanderOracles:[...source.commanderOracles]}:{}),
+      primaryStyle:style(source.primaryStyle),secondaryStyle:style(source.secondaryStyle),tertiaryStyle:style(source.tertiaryStyle),priorities,targets:numbers(source.targets),counts:numbers(source.counts)}};
   }
   function sanitizeDeck(source) {
     if (!source || source.schemaVersion !== 1) invalid("This deck version is not supported. The original has not been changed.");
