@@ -64,6 +64,10 @@
       games: Array.isArray(card.games) ? card.games : [], layout: card.layout || "", oversized: !!card.oversized,
       borderColor: card.border_color || "", securityStamp: card.security_stamp || "",
       printingDataComplete: typeof card.oversized === "boolean" && typeof card.layout === "string" && !!card.layout && typeof card.border_color === "string" && !!card.border_color && Array.isArray(card.games) && typeof card.set === "string" && !!card.set && typeof card.collector_number === "string" && !!card.collector_number,
+      frame: typeof card.frame === "string" ? card.frame : "",
+      frameEffects: Array.isArray(card.frame_effects) ? card.frame_effects.filter(x => typeof x === "string").slice(0,30) : [],
+      fullArt: card.full_art === true,
+      promoTypes: Array.isArray(card.promo_types) ? card.promo_types.filter(x => typeof x === "string").slice(0,30) : [],
       availableFinishes: finishes,
       manaValue: typeof card.cmc === "number" && Number.isFinite(card.cmc) ? String(card.cmc) : "Not supplied",
       setName: card.set_name || "Set not supplied", setCode: String(card.set || "").toUpperCase(),
@@ -99,7 +103,13 @@
     } finally { clearTimeout(timer); }
   }
 
-  const api = Object.freeze({ SelectionError, parseSelection, normaliseCard, fetchPrinting });
+  // Printing, artwork and finish may vary; gameplay facts must agree for a version swap.
+  function sameOracleCard(a, b) {
+    if (!uuid.test(a?.oracleId || "") || a.oracleId !== b?.oracleId) return false;
+    const keys = ["name","type","frontType","frontText","rulesText","manaCost","manaValue","hasPrintedPT","isRebalanced"];
+    return keys.every(key => a[key] === b[key]) && ["colorIdentity","keywords"].every(key => Array.isArray(a[key]) && Array.isArray(b[key]) && JSON.stringify([...a[key]].sort()) === JSON.stringify([...b[key]].sort()));
+  }
+  const api = Object.freeze({ SelectionError, parseSelection, normaliseCard, fetchPrinting, sameOracleCard });
   if (typeof module === "object" && module.exports) module.exports = api;
   else root.ManaScoutDeckData = api;
 })(typeof window === "undefined" ? globalThis : window);

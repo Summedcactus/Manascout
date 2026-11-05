@@ -66,14 +66,8 @@
     return o;
   }
   function roles(c, strategy) {
-    const t = text(c), r = new Set();
-    if (land(c)) return new Set(["land"]);
-    if (/\badd (?:an amount of |one |two |three |[WXUBRGC0-9} {/,]|mana)|search your library[^\n.]*land|additional land|(?:spells? you cast|spells? cost|spells? have)[^\n.]*less/i.test(t)) r.add("ramp");
-    if (/\bdraw (?:a |an |one|two|three|four|\d|X|that many|cards)|draws?[^\n.]*cards?|exile[^\n.]*top[^\n.]*library[^\n.]*(?:play|cast)|look at[^\n.]*top[^\n.]*library/i.test(t)) r.add("draw");
-    if (/destroy all|exile all|each creature gets -|damage to each creature/i.test(t)) r.add("wipe");
-    else if (/destroy target|exile target|counter target|return target[^\n.]*to (?:its|their) owner|damage to any target|damage to target (?:creature|permanent)/i.test(t)) r.add("interaction");
-    if (/hexproof|indestructible|phase out|protection from|counter target spell/i.test(t)) r.add("protection");
-    if (/return[^\n.]*from[^\n.]*graveyard|cast[^\n.]*from[^\n.]*graveyard|escape|flashback|unearth/i.test(t)) r.add("recursion");
+    const t = text(c), r = deckIdentity.infrastructure(c);
+    if(land(c))return r;
     if (affinity(c, strategy) >= 2) r.add("synergy");
     if (/you win the game|loses? the game|each opponent[^\n.]*loses?|damage to each opponent|creatures you control get \+|double strike|extra combat|trample/i.test(t) || (creature(c) && mv(c) >= 5 && affinity(c, strategy) >= 2)) r.add("payoff");
     if (/create[^\n.]*token|mill|sacrifice (?:a|another)|discard|untap|equip|cost[^\n.]*less/i.test(t) && r.has("synergy")) r.add("enabler");
@@ -102,7 +96,7 @@
   }
   function targets(commanders, o, strategy) {
     const high = Math.max(...commanders.map(mv));
-    const lands = Math.max(32, Math.min(40, (o.curve === "low" ? 33 : o.curve === "high" ? 39 : 36) + (high >= 6 ? 2 : 0) + (strategy === "aggro" ? -1 : 0) - Math.max(0, o.bracket - 3)));
+    const lands = deckIdentity.landTarget(commanders,{curve:o.curve,bracket:o.bracket,primaryStyle:strategy});
     return { land: lands, ramp: high >= 6 || strategy === "ramp" ? 12 : 9, draw: 10, interaction: strategy === "control" ? Math.max(11, 6 + o.bracket) : 6 + o.bracket, wipe: strategy === "aggro" ? 1 : 2, protection: strategy === "voltron" ? 5 : 3, recursion: ["graveyard", "aristocrats"].includes(strategy) ? 6 : 2, synergy: 20, enabler: 8, payoff: 5 };
   }
   async function generate(deck, input, { client, signal, random = Math.random, progress = () => {} } = {}) {
@@ -172,14 +166,11 @@
     if (styles.some(k => ["lands","landfall"].includes(k))) target.land = Math.max(target.land, o.curve === "low" ? 38 : 40);
     composition.minima.land = target.land;
     // Each tribal target counts that creature subtype, never incidental Oracle mentions.
-    const tribalStyles = styles.filter(k => k.startsWith("tribal:"));
     const classifications = new WeakMap();
     const classify = c => {
       if(classifications.has(c))return classifications.get(c);
       const result = roles(c, strategy);
-      for (const feature of deckIdentity.features(c)) result.add(feature);
-      if(result.has("blink") || (styles.includes("graveyard") && result.has("recursion")))result.add("protection");
-      for (const key of tribalStyles) if (deckIdentity.features(c, key.slice(7)).has("tribal")) result.add(key);
+      for(const role of deckIdentity.classify(c,{styles}))result.add(role);
       classifications.set(c,result);
       return result;
     };
@@ -342,7 +333,7 @@
     if (cost && (cost.unknown || cost.total > o.budget)) throw Error("Current pricing could not confirm the selected budget after the final check. Your deck is unchanged; try No limit or a higher budget.");
     check(signal); progress("Generation complete · all construction and identity checks passed.");
     return { deck: model.edit(deck, { entries: candidate.entries, cards: candidate.cards, selection: candidate.selection,
-        generation: { version:1, primaryStyle:styles[0], secondaryStyle:styles[1], tertiaryStyle:styles[2], priorities:o.priorities, targets:composition.minima, counts:finalCounts } }), strategy, target, roles: finalCounts, identity: { analysis, styles, priorities:o.priorities, targets:composition.minima, counts:finalCounts, repairs, packages:selectedPackages }, bracket: o.bracket, estimate: cost ? { gbp: cost.total, rateDate: rate.date, budget: o.budget } : null,
+        generation: { version:1, primaryStyle:styles[0], secondaryStyle:styles[1], tertiaryStyle:styles[2], priorities:o.priorities, targets:composition.minima, counts:finalCounts, curve:o.curve, bracket:o.bracket, commanderOracles:commanders.map(c=>c.oracleId) } }), strategy, target, roles: finalCounts, identity: { analysis, styles, priorities:o.priorities, targets:composition.minima, counts:finalCounts, repairs, packages:selectedPackages }, bracket: o.bracket, estimate: cost ? { gbp: cost.total, rateDate: rate.date, budget: o.budget } : null,
       note: `Generated a ${styleDefinition.label.toLowerCase()} starting deck. Bracket ${o.bracket} is a power preference, not certification. Review synergies and win conditions before play; no combo verification is claimed. ${selectedPackages.length ? `${selectedPackages.length} suggested combo package(s); check prerequisites before play.` : "No deliberate combo package was assembled."}${cost ? ` Estimated £${cost.total.toFixed(2)} using Scryfall EUR prices and the ${rate.date} EUR/GBP reference rate; shipping and availability excluded.` : " No budget or price guarantee."}` };
   }
   const api = Object.freeze({ generate, context, needsConfirmation, strategies, analyse: deckIdentity.analyse, affinity, roles, options, estimate, targets });

@@ -16,6 +16,7 @@ function mount({ client, narrow = false, search = '', storage } = {}) {
     get isConnected() { return this === document.body || !!this.parentElement?.isConnected; }
     get classList() { return { contains: c => this.className.split(/\s+/).includes(c), add: c => { if (!this.className.split(/\s+/).includes(c)) this.className += ' ' + c; }, remove: c => { this.className = this.className.split(/\s+/).filter(x => x !== c).join(' '); } }; }
     append(...nodes) { for (const n of nodes) { if (n.tagName === '#FRAGMENT') { this.append(...[...n.children]); n.children = []; continue; } n.parentElement?.removeChild(n); n.parentElement = this; this.children.push(n); } }
+    insertBefore(n, reference) { if (n === reference) return n; n.parentElement?.removeChild(n); n.parentElement = this; const index = reference ? this.children.indexOf(reference) : -1; this.children.splice(index < 0 ? this.children.length : index, 0, n); return n; }
     removeChild(n) { this.children = this.children.filter(c => c !== n); n.parentElement = null; }
     replaceChildren(...nodes) { for (const n of this.children) n.parentElement = null; this.children = []; this._text = ''; this.append(...nodes); }
     remove() { this.parentElement?.removeChild(this); }
@@ -68,12 +69,13 @@ function mount({ client, narrow = false, search = '', storage } = {}) {
   const media = { matches: narrow, listeners: [], addEventListener(_name, fn) { this.listeners.push(fn); } };
   const listeners = {};
   const window = { ManaScoutDeckFormats: require('../../assets/js/deck-formats.js'), location: { search }, matchMedia: () => media, ManaScoutDeckData: require('../../assets/js/deck-data.js'), ManaScoutDeckModel: require('../../assets/js/deck-model.js'), ManaScoutDeckClient: { createClient: () => client }, addEventListener(t, fn) { (listeners[t] ||= []).push(fn); }, localStorage: storage, confirm: () => false };
-  for (const [file, global] of [['deck-rules.js','ManaScoutDeckRules'],['deck-store.js','ManaScoutDeckStore'],['deck-generator.js','ManaScoutDeckGenerator']]) if (fs.existsSync(path.join(root,'assets/js',file))) window[global] = require('../../assets/js/' + file);
+  for (const [file, global] of [['deck-identity.js','ManaScoutDeckIdentity'],['deck-health.js','ManaScoutDeckHealth'],['deck-printings.js','ManaScoutDeckPrintings'],['deck-rules.js','ManaScoutDeckRules'],['deck-store.js','ManaScoutDeckStore'],['deck-generator.js','ManaScoutDeckGenerator']]) if (fs.existsSync(path.join(root,'assets/js',file))) window[global] = require('../../assets/js/' + file);
   const timers = new Set();
   const timerTasks = new Map();
   const context = { window, document, console, URL, URLSearchParams, AbortController, Blob, Date, structuredClone,
     setTimeout(fn,ms) { const t = setTimeout(() => { timerTasks.delete(t); fn(); },ms); timers.add(t); timerTasks.set(t,{fn,ms}); return t; }, clearTimeout(t) { clearTimeout(t); timerTasks.delete(t); }, setInterval: () => 0, clearInterval() {} };
   vm.createContext(context); vm.runInContext(fs.readFileSync(path.join(root,'assets/js/deck-view.js'),'utf8'),context);
+  vm.runInContext(fs.readFileSync(path.join(root,'assets/js/deck-printing-selector.js'),'utf8'),context);
   vm.runInContext(fs.readFileSync(path.join(root,'assets/js/deck-studio.js'),'utf8'),context);
   return { document, window, el: id => document.getElementById(id), resize(value) { media.matches = value; media.listeners.forEach(fn => fn()); }, cleanup() { for (const t of timers) clearTimeout(t); }, async runTimers(ms) { for (const [t,task] of [...timerTasks]) if (task.ms===ms) { clearTimeout(t); timerTasks.delete(t); await task.fn(); } }, listeners, docListeners };
 }

@@ -5,39 +5,39 @@
   const text = c => c.rulesText || c.frontText || "";
   const type = c => c.frontType || "";
   const defs = {
-    artifacts: ["Artifacts", ' (t:artifact or o:artifact)', /artifact (?:spells?|cards?|tokens?)|artifacts? you control|for each artifact/i, {artifact:30, artifactPayoff:7, manaEngine:6}],
-    tokens: ["Tokens / Go-Wide", 'o:token', /create[^\n.]*creature token|populate|tokens? you control|whenever[^\n.]*tokens?/i, {tokenMaker:12, creatureToken:10, tokenPayoff:6}],
-    aristocrats: ["Aristocrats", '(o:sacrifice or o:dies or o:die)', /whenever[^\n.]*(?:dies|die|sacrifice)|sacrifice (?:another|a) creature/i, {outlet:7, fodder:10, deathPayoff:8, recursion:4}],
-    sacrifice: ["Sacrifice", '(o:sacrifice or o:dies or o:token)', /sacrifice (?:another|a)|whenever[^\n.]*sacrifice/i, {outlet:9, fodder:12, deathPayoff:5}],
-    spellslinger: ["Spellslinger", '(t:instant or t:sorcery or o:instant or o:sorcery or o:"noncreature spell")', /instant|sorcery|noncreature spell|magecraft|prowess/i, {spell:28, spellPayoff:6, velocity:8}],
-    graveyard: ["Graveyard", '(o:graveyard or o:mill or o:discard)', /(?:from|in|into|leave|leaves|your) (?:your |a |the |their )?graveyard|\bmill\b|discard[^\n.]*card/i, {graveEnabler:8, recursion:9, gravePayoff:7}],
-    lands: ["Lands", '(t:land or o:landfall or o:"land card" or o:"additional land")', /landfall|lands? (?:you control|enters?|cards?)|additional land/i, {landRamp:10, landPayoff:8}],
-    landfall: ["Landfall", '(o:landfall or o:"land enters" or o:"land you control enters" or o:"additional land" or o:"search your library")', /landfall|whenever[^\n.]*land[^\n.]*enters/i, {landPayoff:10, landRamp:10}],
-    voltron: ["Voltron", '(t:equipment or t:aura or o:equipped or o:enchanted)', /equipment|equipped|enchanted|auras? you control|attach|commander[^\n.]*damage/i, {attachment:14, protection:7, evasion:7}],
-    counters: ["+1/+1 Counters", '(o:"+1/+1 counter" or o:proliferate)', /\+1\/\+1 counter|proliferate/i, {counterMaker:12, counterPayoff:6}],
-    lifegain: ["Lifegain / Drain", '(o:"gain life" or o:"gain that much life" or o:"loses life" or o:lifelink)', /gain[^\n.]*life|loses?[^\n.]*life|lifelink/i, {life:18, lifePayoff:6}],
-    blink: ["Blink", '(o:exile o:return or o:"enters")', /exile[^\n.]*return[^\n.]*battlefield/i, {blink:7, enters:18}],
-    enchantments: ["Enchantments", '(t:enchantment or o:enchantment or o:constellation)', /enchantment (?:spells?|cards?)|enchantments? you control|constellation/i, {enchantment:25, enchantPayoff:6}],
-    vehicles: ["Vehicles", '(t:vehicle or o:crew or o:pilot)', /vehicle|crew|pilot/i, {vehicle:14, crew:10}],
-    treasure: ["Treasure", 'o:treasure', /treasure/i, {treasure:16}],
-    clues: ["Clues / Investigate", '(o:clue or o:investigate)', /clue|investigate/i, {clue:15}],
-    food: ["Food", 'o:food', /food/i, {food:15}],
-    poison: ["Poison", '(o:poison or o:toxic or o:infect or o:proliferate)', /poison|toxic|infect/i, {poison:18}],
-    discard: ["Discard", 'o:discard', /whenever[^\n.]*discard|discard[^\n.]*draw/i, {discard:15}],
-    aggro: ["Aggro", '(t:creature or o:attack or o:combat)', /attack|combat|creatures you control get|haste/i, {creature:26, combat:10}],
-    control: ["Control", '(o:"counter target" or o:destroy or o:exile or o:draw)', /counter[^\n.]*spell|opponents?[^\n.]*can[’']t|opponents?[^\n.]*cast[^\n.]*cost/i, {interaction:14, draw:12}],
-    ramp: ["Mana Engine", '(o:"add" or o:"additional land" or o:"search your library")', /add \{|additional land|double[^\n.]*mana|mana[^\n.]*(?:double|twice)/i, {ramp:14, manaEngine:10}],
-    combo: ["Combo Engines", '(o:untap or o:copy or o:"return")', /\buntap\b|copy[^\n.]*spell|return[^\n.]*graveyard/i, {comboEngine:10}],
-    value: ["Value / Midrange", '(t:creature or o:draw or o:"enters")', /draw|enters|whenever/i, {creature:18, draw:12}]
+    artifacts: ["Artifacts", ' (t:artifact or o:artifact)', /artifact (?:spells?|cards?|tokens?)|artifacts? you control|for each artifact/i, {artifact:30, artifactPayoff:7, manaEngine:6}, ["artifact","artifactPayoff","manaRock","artifactSacrifice","subtype:construct","treasure","comboPiece"]],
+    tokens: ["Tokens / Go-Wide", 'o:token', /create[^\n.]*creature token|populate|tokens? you control|whenever[^\n.]*tokens?/i, {tokenMaker:12, creatureToken:10, tokenPayoff:6}, ["tokenMaker","creatureToken","tokenPayoff","anthem"]],
+    aristocrats: ["Aristocrats", '(o:sacrifice or o:dies or o:die)', /whenever[^\n.]*(?:dies|die|sacrifice)|sacrifice (?:another|a) creature/i, {outlet:7, fodder:10, deathPayoff:8, recursion:4}, ["outlet","fodder","deathPayoff","recursion","drain"]],
+    sacrifice: ["Sacrifice", '(o:sacrifice or o:dies or o:token)', /sacrifice (?:another|a)|whenever[^\n.]*sacrifice/i, {outlet:9, fodder:12, deathPayoff:5}, ["outlet","fodder","deathPayoff","recursion"]],
+    spellslinger: ["Spellslinger", '(t:instant or t:sorcery or o:instant or o:sorcery or o:"noncreature spell")', /instant|sorcery|noncreature spell|magecraft|prowess/i, {spell:28, spellPayoff:6, velocity:8}, ["instant","sorcery","spellPayoff","cantrip","velocity","spellCopy","costReduction","multiSpell"]],
+    graveyard: ["Graveyard", '(o:graveyard or o:mill or o:discard)', /(?:from|in|into|leave|leaves|your) (?:your |a |the |their )?graveyard|\bmill\b|discard[^\n.]*card/i, {graveEnabler:8, recursion:9, gravePayoff:7}, ["graveEnabler","recursion","gravePayoff","selfMill","reanimation"]],
+    lands: ["Lands", '(t:land or o:landfall or o:"land card" or o:"additional land")', /landfall|lands? (?:you control|enters?|cards?)|additional land/i, {landRamp:10, landPayoff:8}, ["land","landUtility","additionalLand","landRamp","landPayoff","landRecursion"]],
+    landfall: ["Landfall", '(o:landfall or o:"land enters" or o:"land you control enters" or o:"additional land" or o:"search your library")', /landfall|whenever[^\n.]*land[^\n.]*enters/i, {landPayoff:10, landRamp:10}, ["land","landUtility","additionalLand","landRamp","landPayoff","landRecursion"]],
+    voltron: ["Voltron", '(t:equipment or t:aura or o:equipped or o:enchanted)', /equipment|equipped|enchanted|auras? you control|attach|commander[^\n.]*damage/i, {attachment:14, protection:7, evasion:7}, ["attachment","equipment","aura","protection","evasion"]],
+    counters: ["+1/+1 Counters", '(o:"+1/+1 counter" or o:proliferate)', /\+1\/\+1 counter|proliferate/i, {counterMaker:12, counterPayoff:6}, ["counterMaker","counterPayoff","proliferate"]],
+    lifegain: ["Lifegain / Drain", '(o:"gain life" or o:"gain that much life" or o:"loses life" or o:lifelink)', /gain[^\n.]*life|loses?[^\n.]*life|lifelink/i, {life:18, lifePayoff:6}, ["lifegain","drain","lifePayoff"]],
+    blink: ["Blink", '(o:exile o:return or o:"enters")', /exile[^\n.]*return[^\n.]*battlefield/i, {blink:7, enters:18}, ["blink","enters"]],
+    enchantments: ["Enchantments", '(t:enchantment or o:enchantment or o:constellation)', /enchantment (?:spells?|cards?)|enchantments? you control|constellation/i, {enchantment:25, enchantPayoff:6}, ["enchantment","enchantPayoff","aura"]],
+    vehicles: ["Vehicles", '(t:vehicle or o:crew or o:pilot)', /vehicle|crew|pilot/i, {vehicle:14, crew:10}, ["vehicle","crew"]],
+    treasure: ["Treasure", 'o:treasure', /treasure/i, {treasure:16}, ["treasure","artifactSacrifice"]],
+    clues: ["Clues / Investigate", '(o:clue or o:investigate)', /clue|investigate/i, {clue:15}, ["clue","draw"]],
+    food: ["Food", 'o:food', /food/i, {food:15}, ["food","lifegain"]],
+    poison: ["Poison", '(o:poison or o:toxic or o:infect or o:proliferate)', /poison|toxic|infect/i, {poison:18}, ["poison","proliferate"]],
+    discard: ["Discard", 'o:discard', /whenever[^\n.]*discard|discard[^\n.]*draw/i, {discard:15}, ["discard","graveEnabler"]],
+    aggro: ["Aggro", '(t:creature or o:attack or o:combat)', /attack|combat|creatures you control get|haste/i, {creature:26, combat:10}, ["combat","anthem","finisher","evasion"]],
+    control: ["Control", '(o:"counter target" or o:destroy or o:exile or o:draw)', /counter[^\n.]*spell|opponents?[^\n.]*can[’']t|opponents?[^\n.]*cast[^\n.]*cost/i, {interaction:14, draw:12}, ["countermagic","removal","stax","draw"]],
+    ramp: ["Mana Engine", '(o:"add" or o:"additional land" or o:"search your library")', /add \{|additional land|double[^\n.]*mana|mana[^\n.]*(?:double|twice)/i, {ramp:14, manaEngine:10}, ["manaRock","landRamp","additionalLand","costReduction"]],
+    combo: ["Combo Engines", '(o:untap or o:copy or o:"return")', /\buntap\b|copy[^\n.]*spell|return[^\n.]*graveyard/i, {comboEngine:10}, ["comboPiece","comboEngine","tutor"]],
+    value: ["Value / Midrange", '(t:creature or o:draw or o:"enters")', /draw|enters|whenever/i, {creature:18, draw:12}, ["draw","enters","recursion"]]
   };
   const escape = s => s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
   function definition(key) {
     if (key?.startsWith("tribal:")) {
       const tribe = key.slice(7);
       if (!/^[a-z]{3,25}$/.test(tribe)) return null;
-      return {key, label: tribe[0].toUpperCase()+tribe.slice(1)+" Tribal", query:`(t:${tribe} or o:changeling)`, components:{[key]:28}, tribe};
+      return {key, label: tribe[0].toUpperCase()+tribe.slice(1)+" Tribal", query:`(t:${tribe} or o:changeling)`, components:{[key]:28}, filters:[key,"tribalPayoff:"+tribe], tribe};
     }
-    const d=defs[key]; return d ? {key,label:d[0],query:d[1],evidence:d[2],components:d[3]} : null;
+    const d=defs[key]; return d ? {key,label:d[0],query:d[1],evidence:d[2],components:d[3],filters:d[4]||Object.keys(d[3])} : null;
   }
   // English creature-type morphology, not a list of commanders.
   const irregular={elves:"elf",wolves:"wolf",dwarves:"dwarf",mice:"mouse",oxen:"ox",allies:"ally",faeries:"faerie",zombies:"zombie",mercenaries:"mercenary"};
@@ -95,25 +95,30 @@
   }
   function features(c, tribal="") {
     const t=text(c), ty=type(c), r=new Set(), add=(key,yes)=>{if(yes)r.add(key);};
-    if(/\bLand\b/.test(ty)){r.add("land");if(/sacrifice[^\n.]*:|search your library[^\n.]*land/i.test(t))r.add("landUtility");return r;}
+    if(/\bLand\b/.test(ty)){
+      r.add("land");if(/sacrifice[^\n.]*:|search your library[^\n.]*land/i.test(t))r.add("landUtility");
+      if(/(?:^|[.:\n]|then)\s*mill\b|you mill|surveil/i.test(t))r.add("graveEnabler");
+      if(/return[^\n.]*graveyard|play[^\n.]*lands?[^\n.]*graveyard/i.test(t))r.add("recursion");
+      return r;
+    }
     add("creature",/Creature/.test(ty)); add("artifact",/Artifact/.test(ty));
     add("tribal",!!tribal && (/changeling/i.test(t)||new RegExp(`\\b${escape(tribal)}\\b`,"i").test(ty.split(/[—–]/)[1]||"")) && /Creature/.test(ty));
-    add("artifactPayoff",/artifact (?:spells?|cards?|tokens?)|artifacts? you control|for each artifact|affinity|improvise|metalcraft/i.test(t));
+    add("artifactPayoff",/whenever you (?:cast|sacrifice)[^\n.]*artifact|artifact (?:spells?|cards?|tokens?)[^\n.]*you (?:cast|control|own)|artifact cards? from your graveyard|artifacts? you control|for each artifact|affinity|improvise|metalcraft/i.test(t));
     add("manaEngine",/add \{|cost[^\n.]*less|additional land|treasure token/i.test(t));
     add("tokenMaker",/create[^\n.]*token|populate/i.test(t));
     add("creatureToken",/create[^\n.]*creature tokens?|create[^\n.]*token[^\n.]*copy[^\n.]*creature|populate/i.test(t));
-    add("tokenPayoff",/tokens? you control|whenever[^\n.]*token|creatures you control get|populate|convoke|twice[^\n.]*tokens|twice[^\n.]*tokens?/i.test(t));
+    add("tokenPayoff",/tokens? you control|whenever you create[^\n.]*tokens?|whenever[^\n.]*tokens? (?:enters?|dies?|leaves?|deals?|attacks?|is|are)|creatures you control get|populate|convoke|twice[^\n.]*tokens?/i.test(t));
     add("outlet",/(?:sacrifice (?:another|a|one or more) (?:artifact|creature|permanent)[^.:]*:|sacrifice (?:another|a) creature[,:])/i.test(t));
     add("fodder",/create[^\n.]*creature token|(?:when|whenever)[^\n.]*dies[^\n.]*return|undying|persist/i.test(t));
     add("deathPayoff",/whenever[^\n.]*(?:dies|die|sacrifice)[^\n.]*(?:lose|loses|damage|draw|counter|create|gain)/i.test(t));
     add("spell",/Instant|Sorcery/.test(ty)); add("spellPayoff",/whenever[^\n.]*(?:instant|sorcery|noncreature spell)|magecraft|prowess|copy[^\n.]*spell|storm/i.test(t));
     add("velocity",/draw (?:a|one|two) cards?|scry|surveil|look at[^\n.]*top/i.test(t)&&Number(c.manaValue)<=3);
-    add("graveEnabler",/\bmill\b|discard|surveil|dredge/i.test(t));
+    add("graveEnabler",/(?:^|[.:\n]|then)\s*(?:mill|discard)\b|you (?:mill|discard)|surveil|dredge/i.test(t));
     add("recursion",/return[^\n.]*graveyard|cast[^\n.]*graveyard|escape|flashback|unearth/i.test(t));
-    add("gravePayoff",/graveyard|dredge|escape|flashback|unearth/i.test(t));
+    add("gravePayoff",/return[^\n.]*from[^\n.]*graveyard|cast[^\n.]*graveyard|(?:cards?|creatures?|lands?)[^\n.]*in your graveyard|whenever[^\n.]*your graveyard|dredge|escape|flashback|unearth/i.test(t));
     add("landRamp",/search your library[^\n.]*land|additional land|play[^\n.]*land[^\n.]*graveyard/i.test(t));
     add("landPayoff",/landfall|whenever[^\n.]*land[^\n.]*enters|lands?[^\n.]*graveyard/i.test(t));
-    add("attachment",/Equipment|Aura/.test(ty)); add("evasion",/flying|trample|menace|unblockable|can[’']t be blocked|double strike/i.test(t));
+    add("attachment",/Equipment/.test(ty)||/Aura/.test(ty)&&/enchant creature you control|enchanted creature[^\n.]*(?:gets? \+|flying|trample|lifelink|hexproof|indestructible|double strike|menace)|whenever enchanted creature[^\n.]*damage/i.test(t)); add("evasion",/flying|trample|menace|unblockable|can[’']t be blocked|double strike/i.test(t));
     add("counterMaker",/put[^\n.]*\+1\/\+1 counter|proliferate|enters[^\n.]*counter/i.test(t));
     add("counterPayoff",/whenever[^\n.]*counter|each[^\n.]*counter|with[^\n.]*counter|double[^\n.]*counter|proliferate/i.test(t));
     add("life",/gain[^\n.]*life|loses?[^\n.]*life|lifelink/i.test(t));add("lifePayoff",/whenever[^\n.]*(?:gain|lose|loses)[^\n.]*life/i.test(t));
@@ -124,6 +129,76 @@
     // Land searches are ramp, not generic card tutors.
     add("tutor",/search your library[^\n.]*for[^\n.]*(?:card|artifact|creature|enchantment|instant|sorcery)/i.test(t)&&!/search your library[^\n.]*land/i.test(t));
     return r;
+  }
+  function infrastructure(c) {
+    const t = text(c), r = new Set();
+    if (/\bLand\b/.test(type(c))) return new Set(["land"]);
+    if (/\badd (?:an amount of |one |two |three |[WXUBRGC0-9} {/,]|mana)|search your library[^\n.]*land|additional land|(?:spells? you cast|spells? cost|spells? have)[^\n.]*less/i.test(t)) r.add("ramp");
+    const drawText=t.replace(/(?:target|each|an?|that|the)?\s*opponent draws?[^,.\n]*/gi, "");
+    if (/\bdraw (?:a |an |one|two|three|four|\d|X|that many|cards)|draws?[^\n.]*cards?|exile[^\n.]*top[^\n.]*library[^\n.]*(?:play|cast)|look at[^\n.]*top[^\n.]*library/i.test(drawText)) r.add("draw");
+    if (/destroy all|exile all|each creature gets -|damage to each creature/i.test(t)) r.add("wipe");
+    else if (/destroy target|exile target|counter target|return target[^\n.]*to (?:its|their) owner|damage to any target|damage to target (?:creature|permanent)/i.test(t)) r.add("interaction");
+    if (/hexproof|indestructible|phase out|protection from|counter target spell/i.test(t)) r.add("protection");
+    if (/return[^\n.]*from[^\n.]*graveyard|cast[^\n.]*from[^\n.]*graveyard|escape|flashback|unearth/i.test(t)) r.add("recursion");
+    return r;
+  }
+  function classify(card,{styles=[]}={}) {
+    const result=infrastructure(card);
+    for(const feature of features(card))result.add(feature);
+    const ty=card.layout==="split"?card.type||type(card):type(card);
+    for(const [key,name]of Object.entries({creature:"Creature",artifact:"Artifact",enchantment:"Enchantment",instant:"Instant",sorcery:"Sorcery",planeswalker:"Planeswalker"}))if(new RegExp("\\b"+name+"\\b").test(ty))result.add(key);
+    if(result.has("blink")||(styles.includes("graveyard")&&result.has("recursion")))result.add("protection");
+    for(const key of styles.filter(k=>k&&k.startsWith("tribal:")))if(features(card,key.slice(7)).has("tribal"))result.add(key);
+    return result;
+  }
+  const roleLabels={
+    land:"Lands",creature:"Creatures",artifact:"Artifacts",enchantment:"Enchantments",instant:"Instants",sorcery:"Sorceries",planeswalker:"Planeswalkers",
+    ramp:"Ramp",draw:"Card draw",interaction:"Removal / interaction",removal:"Targeted removal",countermagic:"Countermagic",wipe:"Board wipes",protection:"Protection",tutor:"Tutors",recursion:"Recursion",
+    graveEnabler:"Graveyard enablers",gravePayoff:"Graveyard payoffs",deathPayoff:"Death / drain payoffs",outlet:"Sacrifice outlets",fodder:"Sacrifice fodder",tokenMaker:"Token makers",creatureToken:"Creature-token makers",tokenPayoff:"Token payoffs",anthem:"Go-wide / pump",finisher:"Finishers",comboPiece:"Potential combo pieces",comboEngine:"Combo engines",stax:"Stax / tax",
+    life:"Lifegain / drain support",lifegain:"Lifegain",drain:"Life drain",lifePayoff:"Life payoffs",reanimation:"Reanimation",selfMill:"Self-mill",discard:"Discard",blink:"Blink / flicker",proliferate:"Proliferate",counterMaker:"Counter generators",counterPayoff:"Counter payoffs",artifactPayoff:"Artifact payoffs",enchantPayoff:"Enchantment payoffs",landPayoff:"Landfall / land payoffs",landRamp:"Land ramp",landUtility:"Fetch / sac lands",additionalLand:"Additional land drops",landRecursion:"Land recursion",equipment:"Equipment",aura:"Auras",attachment:"Equipment / auras",evasion:"Evasion",combat:"Combat support",spell:"Instants / sorceries",spellPayoff:"Spell payoffs",velocity:"Card velocity",cantrip:"Cantrips",spellCopy:"Spell copying",costReduction:"Cost reduction",multiSpell:"Multiple-spell support",manaEngine:"Mana / cost engines",manaRock:"Mana rocks",artifactSacrifice:"Sacrifice artifacts",treasure:"Treasure",clue:"Clues / investigate",food:"Food",poison:"Poison support",vehicle:"Vehicles",crew:"Crew support",enters:"Enters abilities",utility:"Utility lands","subtype:construct":"Constructs"
+  };
+  function label(key) {
+    if(key.startsWith("tribalPayoff:"))return key.slice(13,14).toUpperCase()+key.slice(14)+" payoffs";
+    if(key.startsWith("tribal:")){
+      const word=key.slice(7),plural=Object.keys(irregular).find(k=>irregular[k]===word)|| (word.endsWith("y")?word.slice(0,-1)+"ies":word+"s");
+      return plural[0].toUpperCase()+plural.slice(1);
+    }
+    return roleLabels[key]||key;
+  }
+  function inspect(card,{styles=[],comboIds=new Set()}={}) {
+    const components=classify(card,{styles}),roles=new Set(components),t=text(card),ty=type(card);
+    const add=(key,yes)=>{if(yes)roles.add(key);};
+    for(const [key,word]of Object.entries({land:"Land",creature:"Creature",artifact:"Artifact",enchantment:"Enchantment",instant:"Instant",sorcery:"Sorcery",planeswalker:"Planeswalker"}))add(key,new RegExp("\\b"+word+"\\b").test(card.layout==="split"?card.type||ty:ty));
+    add("countermagic",/counter target (?:spell|activated|triggered|ability|noncreature|creature|instant|sorcery)/i.test(t));
+    add("removal",components.has("interaction")&&/destroy target|exile target|return target[^\n.]*to (?:its|their) owner|damage to (?:any target|target (?:creature|permanent))/i.test(t));
+    add("anthem",/(?:creatures|tokens)[^\n.]*you control[^\n.]*get \+|other[^\n.]*creatures[^\n.]*get \+/i.test(t));
+    add("finisher",/you win the game|each opponent loses|damage to each opponent|additional combat|extra combat|double strike/i.test(t));
+    add("stax",/opponents?[^\n.]*(?:can[’']t|cost[^\n.]*more)|spells[^\n.]*cost[^\n.]*more to cast|players can[’']t/i.test(t));
+    add("lifegain",/(?:you )?gain[^\n.]*life|lifelink/i.test(t));add("drain",/(?:each|target|an?) opponent[^\n.]*loses?[^\n.]*life/i.test(t));
+    add("selfMill",/(?:^|[.:\n]|then)\s*mill\b|you mill/i.test(t));
+    add("reanimation",/return[^\n.]*creature[^\n.]*graveyard[^\n.]*battlefield|put[^\n.]*creature[^\n.]*graveyard[^\n.]*battlefield/i.test(t));
+    add("proliferate",/\bproliferate\b/i.test(t));add("equipment",/\bEquipment\b/.test(ty));add("aura",/\bAura\b/.test(ty));
+    add("cantrip",/Instant|Sorcery/.test(ty)&&Number(card.manaValue)<=3&&/(?:^|[,.\n]|then)\s*(?:you may )?draw (?:a|one) card\b/i.test(t));
+    add("spellCopy",/copy[^\n.]*(?:instant|sorcery|spell)|copy (?:it|that spell)/i.test(t));
+    add("costReduction",/(?:spells|abilities)[^\n.]*cost[^\n.]*less/i.test(t));add("multiSpell",/\bstorm\b|(?:second|third|two or more)[^\n.]*spells?|cast[^\n.]*(?:second|third|two or more)/i.test(t));
+    add("manaRock",/Artifact/.test(ty)&&!roles.has("land")&&components.has("ramp")&&/add \{|add (?:one|two|three|an amount of)[^\n.]*mana/i.test(t));
+    add("artifactSacrifice",/sacrifice (?:an?|another|one or more) artifacts?/i.test(t));
+    add("subtype:construct",/Creature[^—–]*[—–][^\n]*\bConstruct\b/.test(ty));
+    add("additionalLand",/additional lands?|play[^\n.]*lands?[^\n.]*additional/i.test(t));
+    add("landRecursion",/(?:play|return|put)[^\n.]*lands?[^\n.]*graveyard|return[^\n.]*graveyard[^\n.]*land/i.test(t));
+    add("utility",roles.has("land")&&(components.has("landUtility")||/mill|draw|return|graveyard|add \{[WUBRGC]\}\{[WUBRGC]\}/i.test(t)));
+    add("comboPiece",comboIds.has(card.id));
+    for(const key of styles.filter(k=>k&&k.startsWith("tribal:"))){
+      const tribe=key.slice(7),noun="(?:"+forms(tribe).map(escape).join("|")+")";
+      const friendly=new RegExp(noun+" (?:spells? (?:you cast|cost)|you (?:already )?control)|(?:cast|another|other|each) "+noun,"i");
+      if(friendly.test(t)&&/draw|create|counter|cost[^\n.]*less|gets? \+|gain|lose|haste|trample|flying|lifelink|dies|enters/i.test(t))roles.add("tribalPayoff:"+tribe);
+    }
+    return {components:[...components],roles:[...roles],styles:styles.filter(key=>key&&[...Object.keys(definition(key)?.components||{}),...(definition(key)?.filters||[])].some(role=>roles.has(role))),evidence:Object.fromEntries([...roles].map(role=>[role,{source:["land","creature","artifact","enchantment","instant","sorcery","planeswalker","equipment","aura","subtype:construct"].includes(role)?"card type":role==="comboPiece"?"catalogued pair present; prerequisites required":"Oracle-text heuristic"}]))};
+  }
+  function landTarget(commanders,{curve="balanced",bracket=2,primaryStyle=""}={}) {
+    const high=Math.max(...commanders.map(c=>Number(c.manaValue)));
+    const target=Math.max(32,Math.min(40,(curve==="low"?33:curve==="high"?39:36)+(high>=6?2:0)+(primaryStyle==="aggro"?-1:0)-Math.max(0,bracket-3)));
+    return ["lands","landfall"].includes(primaryStyle)?Math.max(target,curve==="low"?38:40):target;
   }
   function plan(cards, styles, p, curve="balanced") {
     const minima={}, weights={}, add=(key,n,w)=>{minima[key]=Math.max(minima[key]||0,n);weights[key]=Math.max(weights[key]||0,w);};
@@ -173,6 +248,6 @@
   function packageConflict(card,existing) {
     return packages.some(p=>p.cards.includes(card.name)&&p.cards.every(name=>name===card.name||existing.some(c=>c.name===name)));
   }
-  const api=Object.freeze({analyse,definition,features,selection,priorities,plan,shortfall,bestSwap,packages,packageConflict});
+  const api=Object.freeze({analyse,definition,features,infrastructure,classify,inspect,label,selection,priorities,landTarget,plan,shortfall,bestSwap,packages,packageConflict});
   if(typeof module==="object"&&module.exports)module.exports=api;else root.ManaScoutDeckIdentity=api;
 })(typeof window==="undefined"?globalThis:window);

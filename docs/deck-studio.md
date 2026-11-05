@@ -121,3 +121,17 @@ Both routes use the same compact preview. In Commander, the two primary actions 
 Regression coverage includes explicit Search clicks and form submission, blank-input guidance, the identical search/random role flow, eligible/ineligible/unknown commander states, blocked banned/platform entries, partner counts and responsive structure. Native browser rendering, real API responses and touch/focus behavior still require smoke testing in an unrestricted browser.
 
 Latest selection/presentation update: **239 JavaScript cases passed, zero failed**, including twelve new role/search/depth checks. Syntax, HTML/ARIA/links/metadata and scoped stylesheet structure checks passed. Browser/live API testing remains unavailable.
+
+## Stage 3 — responsive deck browser
+
+Artwork uses the **canvas's available inline width**: one column below 300px, two at 300px, three at 560px, four at 760px and five at 980px. With the mobile gutters this means one readable card at 320px and two at 360–430px. Tablets and desktop expand with the actual centre panel, including collapsed side panels. Older browsers without container queries keep the readable single-column fallback. Images remain lazy, proportional and uncropped. The active mobile panel remains the sole vertical deck scroller; the canvas has no short height limit or extra scrollport.
+
+The original essential/strategy filter groups share one horizontally scrolling sticky track. Counts still refer to the main deck; command and special zones remain visible. Health stays collapsed by default and is never sticky. Filtering hides existing entries without modifying the model or requesting cards.
+
+`deck-view.js` reconciles articles by **existing entry key**, retaining cards, images and focused controls through quantities and Artwork/List changes. The controller preserves chip scroll and uses a surviving visible card as a scroll anchor, falling back to the previous panel position (subject to the browser's scroll limits). Mobile panel positions and preview focus return are retained. Closing Health restores the browsing anchor captured before expansion. No new display preference storage or deck schema is introduced.
+
+Stage 4 should attach printing controls to `.ds-entry-printing` inside the existing article. Both expose `data-printing-id`; the article also exposes `data-key`, `data-finish` and role metadata. Update records through the existing model, then reconcile: same-key metadata changes update only the printing text/artwork; a replacement key creates only the affected card. Keep classification/filter keys derived from Stage 2. No printing chooser is implemented here.
+
+Responsive space-budget tests and DOM-controller tests are automated; they do not certify native sticky behaviour, touch scrolling, visual quality or browser layout. Those still require a real desktop/phone smoke test.
+
+Stage 4 implements individual exact-printing edits using that prepared component. See [Exact-printing edits](deck-printings.md) for the selector, validation/replacement boundary and future bulk-edit reuse.

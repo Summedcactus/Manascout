@@ -89,8 +89,8 @@ test('late obsolete responses cannot replace a newer search or change Quick Add 
   assert.equal(pending[0].signal.aborted,true);pending[1].resolve({cards:[card(2)],nextPage:''});await drain();pending[0].resolve({cards:[card(1)],nextPage:''});await drain();
   const results=s.el('search-results');assert.match(results.textContent,/Fixture 2/);assert.doesNotMatch(results.textContent,/Fixture 1/);await results.querySelector('[data-action="quick-add"]').emit('click');assert.match(s.el('deck-entries').textContent,/TST #2/);
 });
-test('closing a preview after a quantity edit returns focus to the replacement deck entry control',async t=>{
+test('closing a preview after a quantity edit returns focus to the retained deck entry control',async t=>{
   const s=mount({client:fakeClient()});t.after(s.cleanup);s.el('studio-search').value='Fixture';await s.el('studio-search-form').emit('submit');await drain();await s.el('search-results').querySelector('[data-action="quick-add"]').emit('click');
-  const original=s.el('deck-entries').querySelector('[data-action="inspect-entry"]');await original.emit('click');assert.equal(original.isConnected,true);await s.el('preview-add').emit('click');assert.equal(original.isConnected,false);
-  await s.el('close-preview').emit('click');const replacement=s.el('deck-entries').querySelector('[data-action="inspect-entry"]');assert.ok(s.document.activeElement===replacement,'Focus must return to the remaining deck entry control.');
+  const original=s.el('deck-entries').querySelector('[data-action="inspect-entry"]');await original.emit('click');assert.equal(original.isConnected,true);await s.el('preview-add').emit('click');assert.equal(original.isConnected,true);
+  await s.el('close-preview').emit('click');const replacement=s.el('deck-entries').querySelector('[data-action="inspect-entry"]');assert.equal(replacement,original);assert.ok(s.document.activeElement===original,'Focus must return to the retained deck entry control.');
 });

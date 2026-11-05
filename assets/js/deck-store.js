@@ -37,6 +37,10 @@
       securityStamp: string(source.securityStamp, 40, true), oversized: source.oversized === true, printingDataComplete: source.printingDataComplete === true,
       hasPrintedPT: typeof source.hasPrintedPT === "boolean" ? source.hasPrintedPT : null, isRebalanced: source.isRebalanced === true || /^A-/.test(source.name),
       meldEntry: ["meld_part", "meld_result", "not_meld"].includes(source.meldEntry) ? source.meldEntry : source.layout === "meld" ? "unknown" : "not_meld" };
+    c.frame = typeof source.frame === "string" ? source.frame.slice(0,40) : "";
+    c.frameEffects = Array.isArray(source.frameEffects) ? source.frameEffects.filter(x => typeof x === "string").slice(0,30).map(x => x.slice(0,80)) : [];
+    c.fullArt = source.fullArt === true;
+    c.promoTypes = Array.isArray(source.promoTypes) ? source.promoTypes.filter(x => typeof x === "string").slice(0,30).map(x => x.slice(0,80)) : [];
     c.manaCost = typeof source.manaCost === "string" && source.manaCost.length <= 200 ? source.manaCost : "";
     c.pricesEUR = Object.fromEntries(["nonfoil", "foil", "etched"].map(f => [f, typeof source.pricesEUR?.[f] === "number" && Number.isFinite(source.pricesEUR[f]) && source.pricesEUR[f] > 0 ? source.pricesEUR[f] : null]));
     c.edhrecRank = Number.isSafeInteger(source.edhrecRank) && source.edhrecRank > 0 ? source.edhrecRank : null;
@@ -60,7 +64,11 @@
     const numbers = value => Object.fromEntries(Object.entries(value && typeof value==="object" && !Array.isArray(value)?value:{}).slice(0,60).filter(([k,v])=>/^[a-z][a-zA-Z:0-9-]{0,59}$/.test(k)&&integer(v,0,100)));
     const priorities={};
     for(const k of ["ramp","draw","removal","wipes","protection","tutors","combo","adherence"])if(typeof source.priorities?.[k]==="string"&&["light","normal","heavy","low","high","none","some","loose","balanced","strict"].includes(source.priorities[k]))priorities[k]=source.priorities[k];
-    return {generation:{version:1,primaryStyle:style(source.primaryStyle),secondaryStyle:style(source.secondaryStyle),tertiaryStyle:style(source.tertiaryStyle),priorities,targets:numbers(source.targets),counts:numbers(source.counts)}};
+    return {generation:{version:1,
+      ...(["low","balanced","high"].includes(source.curve)?{curve:source.curve}:{}),
+      ...(integer(source.bracket,1,5)?{bracket:source.bracket}:{}),
+      ...(Array.isArray(source.commanderOracles)&&source.commanderOracles.length<=2&&source.commanderOracles.every(id=>uuid.test(id))?{commanderOracles:[...source.commanderOracles]}:{}),
+      primaryStyle:style(source.primaryStyle),secondaryStyle:style(source.secondaryStyle),tertiaryStyle:style(source.tertiaryStyle),priorities,targets:numbers(source.targets),counts:numbers(source.counts)}};
   }
   function sanitizeDeck(source) {
     if (!source || source.schemaVersion !== 1) invalid("This deck version is not supported. The original has not been changed.");
