@@ -16,6 +16,7 @@ function mount({ client, narrow = false, search = '', storage } = {}) {
     get isConnected() { return this === document.body || !!this.parentElement?.isConnected; }
     get classList() { return { contains: c => this.className.split(/\s+/).includes(c), add: c => { if (!this.className.split(/\s+/).includes(c)) this.className += ' ' + c; }, remove: c => { this.className = this.className.split(/\s+/).filter(x => x !== c).join(' '); } }; }
     append(...nodes) { for (const n of nodes) { if (n.tagName === '#FRAGMENT') { this.append(...[...n.children]); n.children = []; continue; } n.parentElement?.removeChild(n); n.parentElement = this; this.children.push(n); } }
+    insertBefore(n, reference) { if (n === reference) return n; n.parentElement?.removeChild(n); n.parentElement = this; const index = reference ? this.children.indexOf(reference) : -1; this.children.splice(index < 0 ? this.children.length : index, 0, n); return n; }
     removeChild(n) { this.children = this.children.filter(c => c !== n); n.parentElement = null; }
     replaceChildren(...nodes) { for (const n of this.children) n.parentElement = null; this.children = []; this._text = ''; this.append(...nodes); }
     remove() { this.parentElement?.removeChild(this); }

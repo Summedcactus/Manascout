@@ -117,8 +117,10 @@
           <p class="ds-note">Targets use the last generated plan; counts include quantities and update after edits. One card can fill several roles. Roles are Oracle-text heuristics, not proof of gameplay quality or executable combos. Commanders are excluded from main-deck targets.</p>
         </details>
         <nav class="ds-deck-filters" id="deck-filters" aria-label="Filter main-deck cards" hidden>
-          <div class="ds-filter-row" id="deck-filter-essential" role="group" aria-label="Card types and infrastructure"></div>
-          <div class="ds-filter-row" id="deck-filter-strategy" role="group" aria-label="Deck strategy categories"></div>
+          <div class="ds-filter-track" id="deck-filter-track">
+            <div class="ds-filter-row" id="deck-filter-essential" role="group" aria-label="Card types and infrastructure"></div>
+            <div class="ds-filter-row" id="deck-filter-strategy" role="group" aria-label="Deck strategy categories"></div>
+          </div>
           <p class="ds-note" id="deck-filter-status" role="status" aria-live="polite"></p>
         </nav>
         <div id="deck-entries" hidden></div>

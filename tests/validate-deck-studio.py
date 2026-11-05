@@ -109,7 +109,7 @@ def rules(text, keyframes=False):
             end += 1
         assert depth == 0, header
         body = text[opening + 1:end - 1]
-        if header.startswith('@media'):
+        if header.startswith(('@media', '@container')):
             rules(body)
         elif header.startswith('@keyframes'):
             assert header.split()[1].startswith('ds-')

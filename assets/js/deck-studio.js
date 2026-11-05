@@ -64,6 +64,33 @@
     }
   }
 
+  // Capture only UI position, never duplicate the model. A surviving card is a scroll anchor.
+  function captureBrowser() {
+    const panel = panels.deck, track = $("deck-filter-track");
+    const bounds = panel.getBoundingClientRect();
+    const boundary = Math.max(bounds.top, $("deck-filters").getBoundingClientRect().bottom);
+    const anchor = panel.hidden ? null : [...$("deck-entries").querySelectorAll(".ds-deck-entry")].find(entry => {
+      const rect = entry.getBoundingClientRect();
+      return !entry.hidden && rect.bottom > boundary && rect.top < bounds.bottom;
+    });
+    return { id: panel.dataset.deckId, top: panel.hidden ? scrollPositions.get("deck") ?? panel.scrollTop : panel.scrollTop, left: track.scrollLeft || 0, anchor, anchorTop: anchor?.getBoundingClientRect().top };
+  }
+  function restoreBrowser(position) {
+    if (!position || position.id !== panels.deck.dataset.deckId) return;
+    const panel = panels.deck, anchor = position.anchor;
+    if (panel.hidden) scrollPositions.set("deck", position.top);
+    else if (anchor?.isConnected && !anchor.hidden) panel.scrollTop += anchor.getBoundingClientRect().top - position.anchorTop;
+    else panel.scrollTop = position.top;
+    $("deck-filter-track").scrollLeft = position.left;
+  }
+  let healthPosition = null, previewPosition = null;
+  $("deck-health").querySelector("summary").addEventListener("click", () => {
+    if (!$("deck-health").open) healthPosition = captureBrowser();
+  });
+  $("deck-health").addEventListener("toggle", () => {
+    if (!$("deck-health").open) { restoreBrowser(healthPosition); healthPosition = null; }
+  });
+
   function activatePanel(name, focus = true) {
     if (!Object.hasOwn(panels, name)) return;
     if (mobile.matches) scrollPositions.set(activePanel, panels[activePanel].scrollTop);
@@ -118,12 +145,13 @@
     }
     returnFocus = trigger || document.querySelector("#inspiration [data-open-preview]");
     returnFocusKey = returnFocus?.dataset.key ? { key: returnFocus.dataset.key, action: returnFocus.dataset.action } : null;
-    if (!preview.open) preview.showModal();
+    if (!preview.open) { previewPosition = captureBrowser(); preview.showModal(); }
   }
   for (const trigger of document.querySelectorAll("[data-open-preview]")) trigger.addEventListener("click", () => openPreview(trigger));
   $("close-preview").addEventListener("click", closePreview);
   $("back-to-workspace").addEventListener("click", closePreview);
   preview.addEventListener("close", () => {
+    restoreBrowser(previewPosition); previewPosition = null;
     if (returnFocus?.isConnected && returnFocus.getClientRects().length) returnFocus.focus({ preventScroll: true });
     else {
       const replacement = returnFocusKey && [...document.querySelectorAll("button[data-action]")].find(button => button.dataset.key === returnFocusKey.key && button.dataset.action === returnFocusKey.action && button.getClientRects().length);
@@ -285,15 +313,18 @@
   }
   function selectDeckFilter(event){
     const button=event.target.closest("button[data-filter]");if(!button)return;
+    const position=captureBrowser();
     const previous=activeDeckFilter;
     activeDeckFilter=button.dataset.filter;
     const analysis=inspectDeck();
     if(analysis&&analysis.categories.some(category=>category.group==="additional"&&[previous,activeDeckFilter].includes(category.id)))activeDeckFilter=view.renderFilters(analysis,activeDeckFilter,$("deck-filter-essential"),$("deck-filter-strategy"));
     applyDeckFilter();
     if($("deck-health").contains(button)){
+      healthPosition=null;
       $("deck-health").open=false;
       [...$("deck-filters").querySelectorAll("button")].find(control=>control.dataset.filter===activeDeckFilter)?.focus({preventScroll:true});
     }
+    restoreBrowser(position);
   }
   $("deck-filters").addEventListener("click",selectDeckFilter);
   $("deck-health").addEventListener("click",selectDeckFilter);
@@ -302,6 +333,8 @@
     view.renderHealth(inspection.evaluate(analysis,validation),{panel:$("deck-health"),state:$("health-state"),brief:$("health-brief"),context:$("health-context"),legality:$("health-legality"),theme:$("health-theme"),infrastructure:$("health-infrastructure"),coverage:$("health-style-coverage"),activeFilter:activeDeckFilter,observed:$("health-observations"),other:$("health-other-roles"),warnings:$("health-warnings"),styleLabel:key=>window.ManaScoutDeckIdentity.definition(key)?.label||key,roleLabel:inspection.label});
   }
   function renderDeck() {
+    const position=captureBrowser();
+    panels.deck.dataset.deckId=deck.id;
     if (document.activeElement !== $("deck-name")) $("deck-name").value = deck.name;
     $("deck-format").value = deck.format;
     const profile = formats.get(deck.format);
@@ -333,6 +366,7 @@
     applyDeckFilter();
     renderPreviewActions();
     renderStatistics();
+    restoreBrowser(position);
   }
   function addCard(card, zone = "main", quantity = 1, finish = card.finish) {
     if (zone === "sideboard" && !formats.get(deck.format).sideboard) throw Error("This format has no sideboard. Existing entries are preserved.");
