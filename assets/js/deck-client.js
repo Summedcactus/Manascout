@@ -85,7 +85,7 @@
     }
     const sharedKeys=["oracleId","name","type","frontType","frontText","rulesText","colorIdentity","legalities","keywords","hasPrintedPT","isRebalanced","manaValue"];
     const printingKeys=["id","layout","games","oversized","borderColor","securityStamp","printingDataComplete","availableFinishes","meldEntry"];
-    const signature=(card,keys)=>JSON.stringify(keys.map(key=>["colorIdentity","games","availableFinishes","keywords"].includes(key)&&Array.isArray(card[key])?[...card[key]].sort():card[key]));
+    const signature=(card,keys)=>JSON.stringify(keys.map(key=>["colorIdentity","games","availableFinishes","keywords"].includes(key)&&Array.isArray(card[key])?[...card[key]].sort():data.oracleText(card[key])));
     const fresh=record=>!!record&&now()-record.time<currentTTL;
     const freeze=value=>{if(value&&typeof value==="object"&&!Object.isFrozen(value)){Object.values(value).forEach(freeze);Object.freeze(value);}return value;};
     function isVerified(card) {

@@ -102,3 +102,6 @@ test('empty, partial or unrelated eligibility responses stay unavailable rather 
   let incomplete=false;const h=harness({hook:async c=>incomplete&&c.q.includes('oracleid:')?response(payload):null}),card=await h.client.printing({id:h.f.commander.id});assert.equal(await h.client.commanderEligibility(card),true);incomplete=true;await assert.rejects(h.client.commanderEligibility(card,{refresh:true}),/did not confirm/);assert.equal(h.client.proof(card),true);assert.equal(h.client.commanderState(card).state,'verified-legal');
  }
 });
+test('equivalent source newline presentation preserves authoritative commander proof',async()=>{
+ const h=harness(),card=await h.client.printing({id:h.f.commander.id});await h.client.commanderEligibility(card);h.raws[0]={...h.raws[0],oracle_text:h.raws[0].oracle_text.replace(/\n/g,'\r\n')+'  '};const again=await h.client.printing({id:card.id});assert.equal(h.client.isVerified(card),true);assert.equal(h.client.proof(again),true);assert.equal(h.client.commanderState(again).state,'verified-legal');
+});

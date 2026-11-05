@@ -190,11 +190,12 @@
      SCRYFALL NETWORK + CACHE
      ======================================== */
 
-  async function getJson(url) {
+  async function getJson(url, timeout = 12000) {
     const key =
       safeUrl(url);
 
-    if (!key) {
+    const endpoint=key ? new URL(key) : null;
+    if (!endpoint || endpoint.username || endpoint.password || endpoint.origin !== API) {
       throw new Error(
         "Invalid Scryfall URL"
       );
@@ -207,27 +208,17 @@
     }
 
     const request = (async () => {
-      const response = await fetch(
-        key,
-        {
-          headers: {
-            Accept: "application/json"
-          }
-        }
-      );
-
-      if (!response.ok) {
-        const error = new Error(
-          `Scryfall request failed (${response.status})`
-        );
-
-        error.status =
-          response.status;
-
-        throw error;
-      }
-
-      return response.json();
+      const controller = new AbortController();
+      let timer;
+      const boundary = new Promise((_,reject) => { timer=setTimeout(() => { controller.abort(); reject(new Error("Featured card request timed out.")); },timeout); });
+      try {
+        const work=(async()=>{
+          const response=await fetch(key,{signal:controller.signal,headers:{Accept:"application/json"}});
+          if(!response.ok)throw Object.assign(new Error(`Scryfall request failed (${response.status})`),{status:response.status});
+          return response.json();
+        })();
+        return await Promise.race([work,boundary]);
+      } finally { clearTimeout(timer); }
     })();
 
     cache.set(
@@ -235,6 +226,7 @@
       request
     );
 
+    while (cache.size > 64) cache.delete(cache.keys().next().value);
     try {
       return await request;
 
@@ -684,6 +676,7 @@
       for (
         const card of data.data || []
       ) {
+        if (norm(card?.name) !== norm(name)) continue;
         const score =
           scorePrinting(
             card,

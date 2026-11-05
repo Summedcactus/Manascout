@@ -199,6 +199,7 @@
     function checkpoint(deck, expectedToken = null) {
       const value = immutable(deck, "recovery", expectedToken);
       write(key("journal", deck.id), JSON.stringify({ version: 1, token: value.token }));
+      try { prune(deck.id,[value.token,pointer(key("deck",deck.id)),pointer(key("backup",deck.id))].filter(Boolean)); } catch { /* A successful recovery pointer must not be reported lost if cleanup fails. */ }
       try { write(key("active"), deck.id); } catch { /* The snapshot remains discoverable from Recent recovery versions. */ }
       return value;
     }

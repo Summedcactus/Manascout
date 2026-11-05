@@ -334,30 +334,28 @@
      NETWORK REQUESTS
      ======================================== */
 
-  async function readJson(url, signal) {
-    const response = await fetch(
-      url,
-      {
-        signal,
-        headers: {
-          Accept: "application/json"
-        }
-      }
-    );
-
-    if (!response.ok) {
-      const error =
-        new Error(
-          `HTTP ${response.status}`
-        );
-
-      error.status =
-        response.status;
-
-      throw error;
-    }
-
-    return response.json();
+  async function readJson(url, signal, timeout = 12000) {
+    const request = new AbortController();
+    let timer, interrupt;
+    const boundary = new Promise((_, reject) => { interrupt = reject; });
+    const cancel = () => {
+      request.abort();
+      interrupt(signal?.aborted ? Object.assign(new Error("Request cancelled."), { name: "AbortError" }) : new Error("Card data request timed out. Please retry."));
+    };
+    if (signal?.aborted) throw Object.assign(new Error("Request cancelled."), { name: "AbortError" });
+    signal?.addEventListener("abort", cancel, { once: true });
+    timer = setTimeout(cancel, timeout);
+    try {
+      const work = (async () => {
+        const response = await fetch(url, { signal: request.signal, headers: { Accept: "application/json" } });
+        if (!response.ok) throw Object.assign(new Error(`HTTP ${response.status}`), { status: response.status });
+        return response.json();
+      })();
+      return await Promise.race([work, boundary]);
+    } finally { clearTimeout(timer); signal?.removeEventListener("abort", cancel); }
+  }
+  function printingSearchUrl(value) {
+    try { const u = new URL(value); return u.origin === API && !u.username && !u.password && u.pathname === "/cards/search" ? u.href : ""; } catch { return ""; }
   }
 
   async function namedCard(name, signal) {
@@ -542,6 +540,7 @@
       card.id,
       requested
     );
+    while (previews.size > 256) previews.delete(previews.keys().next().value);
 
     return true;
   }
@@ -1239,7 +1238,7 @@
     signal
   ) {
     let first =
-      safe(
+      printingSearchUrl(
         card.prints_search_uri
       );
 
@@ -1294,6 +1293,7 @@
 
     const result = [];
     const ids = new Set();
+    const visited = new Set();
 
     let next = first;
     let pages = 0;
@@ -1304,6 +1304,8 @@
       next &&
       pages < 70
     ) {
+      if (visited.has(next)) { complete = false; notice = "The printing archive repeated a page; results are incomplete."; next = ""; break; }
+      visited.add(next);
       let data;
 
       try {
@@ -1342,8 +1344,11 @@
         };
       }
 
+      if (!Array.isArray(data.data) || data.data.some(item => !item?.id || (card.oracle_id ? item.oracle_id !== card.oracle_id : !sameName(item.name,card.name)))) {
+        complete = false; notice = "The printing archive returned incomplete or mismatched card identities; only accepted pages are shown."; next = ""; break;
+      }
       for (
-        const item of data.data || []
+        const item of data.data
       ) {
         if (
           !item?.id ||
@@ -1358,8 +1363,9 @@
 
       next =
         data.has_more
-          ? safe(data.next_page)
+          ? printingSearchUrl(data.next_page)
           : "";
+      if (data.has_more && !next) { complete = false; notice = "The printing archive omitted a valid next page; results are incomplete."; }
 
       pages++;
 
@@ -1617,6 +1623,7 @@
         key,
         chosen.id
       );
+      while (pickCache.size > 128) pickCache.delete(pickCache.keys().next().value);
     }
 
     return chosen;
