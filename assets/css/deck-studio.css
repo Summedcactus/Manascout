@@ -436,3 +436,8 @@
   .deck-studio[data-discover-collapsed="true"][data-stats-collapsed="true"] .ds-workspace { grid-template-rows: 64px minmax(64px,1fr); }
   .deck-studio[data-stats-collapsed="true"] .ds-stats { align-self: start; height: 64px; }
 }
+
+/* Identity controls stay inside the existing collapsed mobile drawer options. */
+.deck-studio .ds-priorities { min-width: 0; margin: 1rem 0; padding: .8rem 0 0; border: 0; border-top: 1px solid var(--ds-line); }
+.deck-studio .ds-priorities legend { padding: 0 .3rem 0 0; color: var(--ds-linen); font-size: .85rem; }
+.deck-studio .ds-generation-fields select { width: 100%; min-width: 0; }

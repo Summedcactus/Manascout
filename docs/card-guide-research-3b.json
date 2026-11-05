@@ -1567,9 +1567,8 @@
         "path": "card/index.html"
       },
       "https://manascout.co.uk/deck/": {
-        "lastmod": "2026-11-04",
-        "basis": "Add four printing guides and audit six flagship guides with verified records and SEO",
-        "commit": "b5699d635f40505200b6f1440a2dbce8dc4bccce",
+        "lastmod": "2026-11-05",
+        "basis": "Commander-aware deck identity engine, composition targets and progressive style/priority controls in this task",
         "path": "deck/index.html"
       },
       "https://manascout.co.uk/card/captain-jean-luc-picard/": {

@@ -5,6 +5,7 @@
   const common = typeof module === "object" && module.exports;
   const model = common ? require("./deck-model.js") : root.ManaScoutDeckModel;
   const rules = common ? require("./deck-rules.js") : root.ManaScoutDeckRules;
+  const deckIdentity = common ? require("./deck-identity.js") : root.ManaScoutDeckIdentity;
   const themes = {
     artifacts: { label: "Artifacts", query: '(t:artifact or o:"artifact")', leader: /artifact (?:spells?|cards?|tokens?)|artifacts? you control|whenever[^\n.]*artifact|for each artifact/i, seed: /\bArtifact\b/, support: /artifact|affinity|improvise|metalcraft/i },
     graveyard: { label: "Graveyard", query: '(o:"graveyard" or o:"mill" or o:"discard")', leader: /(?:from|in|into|leave|leaves|your) (?:your |a |the |their )?graveyard|\bmill\b|discard[^\n.]*card/i, support: /graveyard|\bmill\b|discard|dredge|flashback|escape|unearth|surveil/i },
@@ -57,11 +58,11 @@
   function strategies(deck) {
     const ctx = context(deck); if (!ctx) return [];
     const cards = ctx.commanders.length ? ctx.commanders.map(e => deck.cards[e.printingId]) : [deck.cards[ctx.seed.printingId]];
-    return infer(cards, !!ctx.commanders.length).map(x => ({ value: x.key, label: themes[x.key].label }));
+    return deckIdentity.analyse(cards).styles.map(x => ({ value: x.key, label: x.label, confidence: x.confidence, evidence: x.evidence }));
   }
   function options(input = {}) {
-    const o = { bracket: Number(input.bracket ?? 2), budget: input.budget === "" || input.budget == null ? null : Number(input.budget), strategy: input.strategy || "auto", curve: input.curve || "balanced", randomness: input.randomness || "reliable" };
-    if (!Number.isInteger(o.bracket) || o.bracket < 1 || o.bracket > 5 || (o.budget !== null && (!Number.isFinite(o.budget) || o.budget < 1 || o.budget > 100000)) || (o.strategy !== "auto" && !themes[o.strategy]) || !["low", "balanced", "high"].includes(o.curve) || !["reliable", "mixed", "wild"].includes(o.randomness)) throw Error("Choose valid deck options. Budgets must be between £1 and £100,000.");
+    const o = { primaryStyle: input.primaryStyle || "", secondaryStyle: input.secondaryStyle || "", tertiaryStyle: input.tertiaryStyle || "", priorities: deckIdentity.priorities(input.priorities), bracket: Number(input.bracket ?? 2), budget: input.budget === "" || input.budget == null ? null : Number(input.budget), strategy: input.strategy || "auto", curve: input.curve || "balanced", randomness: input.randomness || "reliable" };
+    if (!Number.isInteger(o.bracket) || o.bracket < 1 || o.bracket > 5 || (o.budget !== null && (!Number.isFinite(o.budget) || o.budget < 1 || o.budget > 100000)) || (o.strategy !== "auto" && !deckIdentity.definition(o.strategy)) || !["low", "balanced", "high"].includes(o.curve) || !["reliable", "mixed", "wild"].includes(o.randomness)) throw Error("Choose valid deck options. Budgets must be between £1 and £100,000.");
     return o;
   }
   function roles(c, strategy) {
@@ -71,7 +72,7 @@
     if (/\bdraw (?:a |an |one|two|three|four|\d|X|that many|cards)|draws?[^\n.]*cards?|exile[^\n.]*top[^\n.]*library[^\n.]*(?:play|cast)|look at[^\n.]*top[^\n.]*library/i.test(t)) r.add("draw");
     if (/destroy all|exile all|each creature gets -|damage to each creature/i.test(t)) r.add("wipe");
     else if (/destroy target|exile target|counter target|return target[^\n.]*to (?:its|their) owner|damage to any target|damage to target (?:creature|permanent)/i.test(t)) r.add("interaction");
-    if (/hexproof|indestructible|phase out|protection from|counter target spell[^\n.]*targets/i.test(t)) r.add("protection");
+    if (/hexproof|indestructible|phase out|protection from|counter target spell/i.test(t)) r.add("protection");
     if (/return[^\n.]*from[^\n.]*graveyard|cast[^\n.]*from[^\n.]*graveyard|escape|flashback|unearth/i.test(t)) r.add("recursion");
     if (affinity(c, strategy) >= 2) r.add("synergy");
     if (/you win the game|loses? the game|each opponent[^\n.]*loses?|damage to each opponent|creatures you control get \+|double strike|extra combat|trample/i.test(t) || (creature(c) && mv(c) >= 5 && affinity(c, strategy) >= 2)) r.add("payoff");
@@ -160,12 +161,34 @@
     if (blocking) throw Error(`The preserved seed/commander configuration needs correction: ${blocking.message}`);
     const colors = [...new Set(commanders.flatMap(identity))];
     if (strategy === "auto") strategy = infer(commanders, true)[0]?.key || (creature(commanders[0]) ? "aggro" : "control");
-    if (o.strategy !== "auto" && !commanders.some(c => affinity(c, strategy, true) >= 4) && affinity(seed, strategy) < 3) throw Error("That strategy is not a confident match for the seed or commander. Use Auto or another listed strategy.");
-    const target = targets(commanders, o, strategy);
+    if (o.strategy !== "auto" && !deckIdentity.analyse(commanders).styles.some(x => x.key === strategy) && affinity(seed, strategy) < 3) throw Error("That strategy is not a confident match for the seed or commander. Use Auto or another listed strategy.");
+    const analysis = deckIdentity.analyse(commanders);
+    const styles = deckIdentity.selection(analysis, { ...o, strategy: o.strategy === "auto" ? "auto" : strategy });
+    strategy = styles[0];
+    const styleDefinition = deckIdentity.definition(strategy);
+    const composition = deckIdentity.plan(commanders, styles, o.priorities, o.curve);
+    const target = { ...targets(commanders, o, strategy), ...composition.minima };
+    if (styles.some(k => ["lands","landfall"].includes(k))) target.land = Math.max(target.land, o.curve === "low" ? 38 : 40);
+    composition.minima.land = target.land;
+    // Each tribal target counts that creature subtype, never incidental Oracle mentions.
+    const tribalStyles = styles.filter(k => k.startsWith("tribal:"));
+    const classifications = new WeakMap();
+    const classify = c => {
+      if(classifications.has(c))return classifications.get(c);
+      const result = roles(c, strategy);
+      for (const feature of deckIdentity.features(c)) result.add(feature);
+      if(result.has("blink") || (styles.includes("graveyard") && result.has("recursion")))result.add("protection");
+      for (const key of tribalStyles) if (deckIdentity.features(c, key.slice(7)).has("tribal")) result.add(key);
+      classifications.set(c,result);
+      return result;
+    };
     const ci = colors.length ? `id<=${colors.join("").toLowerCase()}` : "id=c";
     const base = `${ci} -t:land`;
     const order = o.budget === null ? "edhrec" : "eur";
     // At most 12 search pages including commander discovery; never fetch each card separately.
+    const supportedPackages = o.priorities.combo === "none" ? [] : deckIdentity.packages.filter(p=>styles.some(k=>p.styles.includes(k)));
+    const extraQueries = styles.filter(Boolean).slice(1).map(k=>deckIdentity.definition(k).query);
+    if(o.priorities.combo!=="none")extraQueries.push('(o:untap or o:copy or o:"return")', ...supportedPackages.flatMap(p=>p.cards.map(name=>`!"${name}"`)));
     const queries = [
       { q: `${ci} t:basic t:land -t:snow`, order: "name" },
       { q: `${ci} t:land -t:basic`, order },
@@ -174,12 +197,13 @@
       { q: `${base} (o:"destroy" or o:"exile" or o:"counter target" or o:"damage to")`, order },
       { q: `${base} (o:"destroy all" or o:"exile all" or o:"each creature gets" or o:"damage to each creature")`, order },
       { q: `${base} (o:"hexproof" or o:"indestructible" or o:"graveyard" or o:"phase out")`, order },
-      { q: `${base} ${themes[strategy].query}`, order, pages: 2 },
+      { q: `${base} ${styleDefinition.query}`, order, pages: 2 },
+      ...(extraQueries.length ? [{ q: `${base} (${extraQueries.join(" or ")})`, order }] : []),
       { q: `${base} (o:"each opponent" or o:"creatures you control get" or o:"trample" or o:"double strike" or o:"win the game")`, order }
     ];
     const found = new Map();
     for (let i = 0; i < queries.length; i++) {
-      check(signal); progress(`Finding ${themes[strategy].label.toLowerCase()} and deck roles (${i + 1}/${queries.length})…`);
+      check(signal); progress(`Finding ${styleDefinition.label.toLowerCase()} and deck roles (${i + 1}/${queries.length})…`);
       const q = queries[i];
       for (const c of await client.candidates(q.q, { signal, pages: q.pages || 1, order: q.order })) found.set(c.id, c);
     }
@@ -187,19 +211,22 @@
     const used = new Set(Object.values(candidate.cards).map(c => c.oracleId));
     const usedNames = new Set(Object.values(candidate.cards).map(c => normal(c.name)));
     // No land destruction, extra turns or one-mana accelerants are slipped into casual targets.
-    const pool = [...found.values()].filter(c => fits(c, colors) && validCard(c, client) && paid(c) && powerAllowed(c, o));
-    const roleMap = new Map(pool.map(c => [c.id, roles(c, strategy)]));
+    const pool = [...found.values()].filter(c => fits(c, colors) && validCard(c, client) && paid(c) && powerAllowed(c, o) && (o.priorities.tutors !== "none" || !deckIdentity.features(c).has("tutor")));
+    const roleMap = new Map(pool.map(c => [c.id, classify(c)]));
+    const useful = c => [...roleMap.get(c.id)].some(role=>(target[role]||0)>0);
     const jitter = new Map(pool.map(c => [c.id, random() * (o.randomness === "wild" ? 3 : o.randomness === "mixed" ? 1.2 : .15)]));
     const counts = () => {
       const result = Object.fromEntries(Object.keys(target).map(k => [k, 0]));
-      for (const e of candidate.entries.filter(e => e.zone === "main")) for (const r of roles(candidate.cards[e.printingId], strategy)) result[r] += e.quantity;
+      for (const e of candidate.entries.filter(e => e.zone === "main")) for (const r of classify(candidate.cards[e.printingId])) result[r] = (result[r] || 0) + e.quantity;
       return result;
     };
     function price(c) { return o.budget === null ? 0 : c.pricesEUR[c.finish] * rate.rate; }
     function add(c) {
       candidate = model.add(candidate, c); used.add(c.oracleId); usedNames.add(normal(c.name));
     }
-    function available(c) { return !used.has(c.oracleId) && !usedNames.has(normal(c.name)); }
+    function available(c) {
+      return !used.has(c.oracleId) && !usedNames.has(normal(c.name)) && (o.priorities.combo !== "none" || !deckIdentity.packageConflict(c,Object.values(candidate.cards)));
+    }
     const basics = pool.filter(basic);
     const basicMap = { W: "Plains", U: "Island", B: "Swamp", R: "Mountain", G: "Forest" };
     const needed = colors.length ? colors : ["C"];
@@ -209,18 +236,34 @@
     const basicReserve = chosenBasics.reduce((n, c) => n + price(c), 0) + Math.max(0, target.land - chosenBasics.length) * basicPrice;
     // Reserve room for remaining cards; the final estimate is checked again after refresh.
     function affordable(c, reserve = 0) { return o.budget === null || estimate(candidate, rate.rate).total + price(c) + reserve <= o.budget; }
+    const selectedPackages=[];
+    const packageIds=new Set();
+    for(const pack of supportedPackages) {
+      if(selectedPackages.length >= (o.priorities.combo==="heavy"?2:1))break;
+      const cards=pack.cards.map((name,i)=>pool.find(c=>c.name===name && pack.checks[i].test(text(c))));
+      if(cards.some(c=>!c))continue;
+      const missing=cards.filter(c=>!used.has(c.oracleId));
+      if(missing.some(c=>!available(c)) || (o.budget!==null && estimate(candidate,rate.rate).total+missing.reduce((n,c)=>n+price(c),0)+basicReserve>o.budget))continue;
+      for(const c of missing)add(c);
+      cards.forEach(c=>packageIds.add(c.id));
+      selectedPackages.push({id:pack.id,requires:pack.requires});
+    }
     // First build spells so the basic allocation can follow their actual coloured mana symbols.
     const spellsNeeded = 100 - commanders.length - target.land;
     while (model.count(candidate, "main") - counts().land < spellsNeeded) {
       check(signal);
       const have = counts();
-      const choices = pool.filter(c => !land(c) && available(c) && roleMap.get(c.id).size && affordable(c, basicReserve));
+      const choices = pool.filter(c => !land(c) && available(c) && useful(c) && affordable(c, basicReserve));
       let best = null, bestScore = -Infinity;
       for (const c of choices) {
         const rs = roleMap.get(c.id);
         let score = 0;
-        for (const r of rs) if (have[r] < target[r]) score += (1 - have[r] / target[r]) * (["ramp", "draw", "interaction", "payoff"].includes(r) ? 5 : r === "synergy" ? 4 : 2);
-        score += affinity(c, strategy) * .75;
+        for (const r of rs) {
+          if (have[r] < target[r]) score += (1 - have[r] / target[r]) * (composition.minima[r] ? 24 * (composition.weights[r] || 4) : 3);
+          // Surplus infrastructure cannot crowd out the theme after its priority is met.
+          else if (["ramp","draw","interaction","wipe","protection","tutor"].includes(r)) score -= 2 + (have[r] - target[r]) * .5;
+        }
+        score += styles.reduce((n,key,i)=>n+(key && Object.keys(deckIdentity.definition(key).components).some(r=>rs.has(r)&&have[r]<composition.minima[r]) ? [3,1.5,.7][i] : 0),0);
         const curve = o.curve === "low" ? 2.8 - o.bracket * .1 : o.curve === "high" ? 5 - o.bracket * .15 : 4 - o.bracket * .25;
         score -= Math.max(0, mv(c) - curve) * (.45 + o.bracket * .13);
         if (o.bracket >= 3 && /search your library for (?:a|any) card\b|untap|copy[^\n.]*spell/i.test(text(c))) score += (o.bracket - 2) * .55;
@@ -233,11 +276,28 @@
       if (!best) throw Error("The bounded candidate pools cannot fill a coherent deck within these options. Try Auto, a higher budget or another commander. Your deck is unchanged.");
       add(best);
     }
-    const have = counts();
-    const minimum = { ramp: Math.min(7, target.ramp), draw: 6, interaction: 5, synergy: 12, payoff: 3 };
-    for (const [role, n] of Object.entries(minimum)) if (have[role] < n) throw Error(`Not enough verified ${role} cards for a coherent ${themes[strategy].label.toLowerCase()} deck. Select a different strategy/commander or increase the budget.`);
+    // Repair deficits by swapping a non-seed spell only when total target shortfall falls.
+    const spellPlan={...composition,minima:Object.fromEntries(Object.entries(composition.minima).filter(([r])=>!["land","landUtility"].includes(r)))};
+    let repairs = 0;
+    while (deckIdentity.shortfall(spellPlan,counts()) > 0 && repairs < 100) {
+      check(signal); progress("Rebalancing deck identity targets…");
+      await new Promise(resolve=>setTimeout(resolve,0)); check(signal);
+      const incoming=pool.filter(c=>!land(c)&&available(c));
+      const outgoing=candidate.entries.filter(e=>e.zone==="main"&&e.printingId!==seed.id&&!packageIds.has(e.printingId)&&!land(candidate.cards[e.printingId]));
+      const currentPrice=o.budget===null?0:estimate(candidate,rate.rate).total;
+      const swap=deckIdentity.bestSwap(spellPlan,counts(),
+        incoming.map(c=>({key:c.id,roles:roleMap.get(c.id)})),
+        outgoing.map(e=>({key:e.key,roles:classify(candidate.cards[e.printingId])})),
+        (add,remove)=>o.budget===null || currentPrice-price(candidate.cards[candidate.entries.find(e=>e.key===remove.key).printingId])+price(found.get(add.key))+basicReserve<=o.budget);
+      if(!swap)break;
+      const removed=candidate.cards[candidate.entries.find(e=>e.key===swap.outgoing).printingId];
+      candidate=model.setQuantity(candidate,swap.outgoing,0);
+      used.delete(removed.oracleId);usedNames.delete(normal(removed.name));add(found.get(swap.incoming));repairs++;
+    }
+    const missing=Object.entries(composition.minima).filter(([role,n])=>!["land","landUtility"].includes(role)&&(counts()[role]||0)<n);
+    if(missing.length)throw Error(`Not enough verified cards to meet ${styleDefinition.label} composition targets (${missing.map(([r,n])=>`${r}: ${counts()[r]||0}/${n}`).join(", ")}). Try lighter priorities, another style or a higher budget. Your deck is unchanged.`);
     // Prefer basics; reserve up to eight useful fixing/utility lands for coloured decks.
-    const nonbasics = pool.filter(c => land(c) && !basic(c) && available(c) && !/destroy target land|sacrifice[^\n.]*destroy[^\n.]*land/i.test(text(c)) && /add \{|any color|any colour|search your library[^\n.]*land/i.test(text(c))).sort((a, b) => price(a) - price(b) || (a.edhrecRank || 100000) - (b.edhrecRank || 100000));
+    const nonbasics = pool.filter(c => land(c) && !basic(c) && available(c) && !/destroy target land|sacrifice[^\n.]*destroy[^\n.]*land/i.test(text(c)) && /add \{|any color|any colour|search your library[^\n.]*land/i.test(text(c))).sort((a, b) => ((composition.minima.landUtility ? Number(classify(b).has("landUtility"))-Number(classify(a).has("landUtility")) : 0) || price(a) - price(b) || (a.edhrecRank || 100000) - (b.edhrecRank || 100000)));
     for (const c of nonbasics.slice(0, colors.length > 1 ? 8 : 3)) if (counts().land < target.land && affordable(c, (target.land - counts().land - 1) * basicPrice)) add(c);
     const weights = Object.fromEntries(needed.map(color => [color, 1]));
     for (const e of candidate.entries) for (const color of needed) weights[color] += ((candidate.cards[e.printingId].manaCost || "").match(new RegExp(`\\{[^}]*${color}[^}]*\\}`, "g")) || []).length * e.quantity;
@@ -262,12 +322,22 @@
     candidate = model.select(candidate, candidate.cards[ctx.seed.printingId], ctx.seed.finish);
     const validation = rules.validate(candidate, client);
     if (!validation.complete) throw Error(`Generation did not pass the existing construction checks: ${validation.issues[0]?.message || validation.label} Your deck is unchanged.`);
+    const currentAnalysis=deckIdentity.analyse(candidate.entries.filter(e=>e.zone==="commander").map(e=>candidate.cards[e.printingId]));
+    if(styles.filter(Boolean).some(k=>!currentAnalysis.styles.some(s=>s.key===k)))throw Error("Refreshed commander text no longer supports the selected identity. Your deck is unchanged.");
+    // Fresh Oracle data must still meet composition targets, not just construction legality.
+    const finalCounts=counts();
+    for(const pack of selectedPackages) {
+      const def=deckIdentity.packages.find(p=>p.id===pack.id);
+      if(def.cards.some((name,i)=>!Object.values(candidate.cards).some(c=>c.name===name&&def.checks[i].test(text(c)))))throw Error("A combo suggestion changed during refresh. Your deck is unchanged.");
+    }
+    if(Object.entries(composition.minima).some(([r,n])=>(finalCounts[r]||0)<n))throw Error("Refreshed card data no longer meets the deck identity targets. Your deck is unchanged.");
     const cost = rate ? estimate(candidate, rate.rate) : null;
     if (cost && (cost.unknown || cost.total > o.budget)) throw Error("Current pricing could not confirm the selected budget after the final check. Your deck is unchanged; try No limit or a higher budget.");
     check(signal);
-    return { deck: model.edit(deck, { entries: candidate.entries, cards: candidate.cards, selection: candidate.selection }), strategy, target, roles: counts(), bracket: o.bracket, estimate: cost ? { gbp: cost.total, rateDate: rate.date, budget: o.budget } : null,
-      note: `Generated a ${themes[strategy].label.toLowerCase()} starting deck. Bracket ${o.bracket} is a power preference, not certification. Review synergies and win conditions before play; no combo verification is claimed.${cost ? ` Estimated £${cost.total.toFixed(2)} using Scryfall EUR prices and the ${rate.date} EUR/GBP reference rate; shipping and availability excluded.` : " No budget or price guarantee."}` };
+    return { deck: model.edit(deck, { entries: candidate.entries, cards: candidate.cards, selection: candidate.selection,
+        generation: { version:1, primaryStyle:styles[0], secondaryStyle:styles[1], tertiaryStyle:styles[2], priorities:o.priorities, targets:composition.minima, counts:finalCounts } }), strategy, target, roles: finalCounts, identity: { analysis, styles, priorities:o.priorities, targets:composition.minima, counts:finalCounts, repairs, packages:selectedPackages }, bracket: o.bracket, estimate: cost ? { gbp: cost.total, rateDate: rate.date, budget: o.budget } : null,
+      note: `Generated a ${styleDefinition.label.toLowerCase()} starting deck. Bracket ${o.bracket} is a power preference, not certification. Review synergies and win conditions before play; no combo verification is claimed. ${selectedPackages.length ? `${selectedPackages.length} suggested combo package(s); check prerequisites before play.` : "No deliberate combo package was assembled."}${cost ? ` Estimated £${cost.total.toFixed(2)} using Scryfall EUR prices and the ${rate.date} EUR/GBP reference rate; shipping and availability excluded.` : " No budget or price guarantee."}` };
   }
-  const api = Object.freeze({ generate, context, needsConfirmation, strategies, affinity, roles, options, estimate, targets });
+  const api = Object.freeze({ generate, context, needsConfirmation, strategies, analyse: deckIdentity.analyse, affinity, roles, options, estimate, targets });
   if (common) module.exports = api; else root.ManaScoutDeckGenerator = api;
 })(typeof window === "undefined" ? globalThis : window);

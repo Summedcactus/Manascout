@@ -54,6 +54,14 @@
     c.sourceUrl = url(source.sourceUrl, ["scryfall.com", "www.scryfall.com"]);
     return c;
   }
+  function generationMetadata(source) {
+    if(!source || source.version!==1) return {};
+    const style = value => typeof value==="string" && /^[a-z][a-z:+0-9-]{0,59}$/.test(value) ? value : "";
+    const numbers = value => Object.fromEntries(Object.entries(value && typeof value==="object" && !Array.isArray(value)?value:{}).slice(0,60).filter(([k,v])=>/^[a-z][a-zA-Z:0-9-]{0,59}$/.test(k)&&integer(v,0,100)));
+    const priorities={};
+    for(const k of ["ramp","draw","removal","wipes","protection","tutors","combo","adherence"])if(typeof source.priorities?.[k]==="string"&&["light","normal","heavy","low","high","none","some","loose","balanced","strict"].includes(source.priorities[k]))priorities[k]=source.priorities[k];
+    return {generation:{version:1,primaryStyle:style(source.primaryStyle),secondaryStyle:style(source.secondaryStyle),tertiaryStyle:style(source.tertiaryStyle),priorities,targets:numbers(source.targets),counts:numbers(source.counts)}};
+  }
   function sanitizeDeck(source) {
     if (!source || source.schemaVersion !== 1) invalid("This deck version is not supported. The original has not been changed.");
     if (!safeId.test(source.id || "") || !formats.get(source.format) || !["artwork", "list"].includes(source.view)) invalid("A draft has an invalid identity, unsupported format or view. The original has not been changed.");
@@ -75,7 +83,7 @@
       selection = { printingId: source.selection.printingId, finish: source.selection.finish };
     }
     const used = new Set([...entries.map(e => e.printingId), selection?.printingId].filter(Boolean));
-    return { schemaVersion: 1, id: source.id, name: string(source.name, 80), format: source.format, view: source.view, entries, selection,
+    return { ...generationMetadata(source.generation), schemaVersion: 1, id: source.id, name: string(source.name, 80), format: source.format, view: source.view, entries, selection,
       cards: Object.fromEntries(Object.entries(records).filter(([id]) => used.has(id))), revision: integer(source.revision, 0, 1000000000) ? source.revision : 0,
       updatedAt: Number.isFinite(source.updatedAt) && source.updatedAt >= 0 ? source.updatedAt : 0 };
   }

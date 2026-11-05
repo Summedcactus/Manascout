@@ -627,15 +627,32 @@
     $("generate-deck").textContent = generationJob ? "Generating…" : "Generate Deck";
     $("generate-deck").setAttribute("aria-busy", String(!!generationJob));
     $("cancel-generation").hidden = !generationJob;
-    const selected = $("generation-strategy").value || "auto";
     const suggested = generator?.strategies(deck) || [];
-    const key = suggested.map(x => x.value).join(":");
-    if ($("generation-strategy").dataset.choices !== key) {
-      const auto = view.node("option", "", "Auto · infer from cards"); auto.value = "auto";
-      $("generation-strategy").replaceChildren(auto, ...suggested.map(x => { const option = view.node("option", "", x.label); option.value = x.value; return option; }));
-      $("generation-strategy").value = suggested.some(x => x.value === selected) ? selected : "auto";
-      $("generation-strategy").dataset.choices = key;
+    const key = deck.id + ":" + (assigned?.commanders.map(e=>e.printingId).join(":") || assigned?.seed.printingId || "") + ":" + suggested.map(x=>x.value).join(":");
+    const primary=$("generation-strategy"), secondary=$("generation-secondary"), tertiary=$("generation-tertiary");
+    const commanderChanged=primary.dataset.identity !== key;
+    const draftChanged=primary.dataset.deck!==deck.id;
+    const savedIdentity=draftChanged?deck.generation:null;
+    if(savedIdentity)for(const k of ["ramp","draw","removal","wipes","protection","tutors","combo","adherence"])if(savedIdentity.priorities[k])$("generation-"+k).value=savedIdentity.priorities[k];
+    const savedPrimary=savedIdentity?.primaryStyle;
+    const selectedPrimary=commanderChanged?(suggested.some(x=>x.value===savedPrimary)?savedPrimary:"auto"):primary.value || "auto";
+    const effectivePrimary=selectedPrimary==="auto"?suggested[0]?.value:selectedPrimary;
+    const selectedSecondary=commanderChanged?savedIdentity?.secondaryStyle||"":secondary.value;
+    const effectiveSecondary=suggested.some(x=>x.value===selectedSecondary&&x.value!==effectivePrimary)?selectedSecondary:"";
+    for(const [select, selected, blocked, first] of [
+      [primary,selectedPrimary,[],"Auto · " + (suggested[0]?.label || "analyse after commander selection")],
+      [secondary,effectiveSecondary,[effectivePrimary],"None"],
+      [tertiary,commanderChanged?savedIdentity?.tertiaryStyle||"":tertiary.value,[effectivePrimary,effectiveSecondary],"None"]
+    ]) {
+      const choices=suggested.filter(x=>!blocked.includes(x.value));
+      const choiceKey=key+":"+blocked.join(":");
+      if(select.dataset.choices===choiceKey)continue;
+      const initial=view.node("option","",first);initial.value=select===primary?"auto":"";
+      select.replaceChildren(initial,...choices.map(x=>{const option=view.node("option","",x.label);option.value=x.value;return option;}));
+      select.value=choices.some(x=>x.value===selected)?selected:initial.value;select.dataset.choices=choiceKey;
     }
+    primary.dataset.identity=key; primary.dataset.deck=deck.id;
+    $("generation-identity-note").textContent = assigned?.commanders.length ? `Commander analysis: ${suggested.map(x=>x.label).join(" · ")}. Targets are checked before the deck is applied.` : "Choose supporting styles after a compatible commander is found. Auto uses that commander's strongest inferred identity.";
   }
   function cancelGeneration(note = "Generation cancelled. Your deck is unchanged.") {
     if (!generationJob) return;
@@ -644,9 +661,10 @@
     syncGeneration();
   }
   $("cancel-generation").addEventListener("click", () => { cancelGeneration(); $("generate-deck").focus({ preventScroll: true }); });
-  for (const id of ["generation-bracket", "generation-budget", "generation-custom-budget", "generation-strategy", "generation-curve", "generation-randomness"]) $(id).addEventListener("change", () => {
+  for (const id of ["generation-bracket", "generation-budget", "generation-custom-budget", "generation-strategy", "generation-curve", "generation-randomness", "generation-secondary", "generation-tertiary", "generation-ramp", "generation-draw", "generation-removal", "generation-wipes", "generation-protection", "generation-tutors", "generation-combo", "generation-adherence"]) $(id).addEventListener("change", () => {
     cancelGeneration("Generation cancelled because deck options changed.");
     $("generation-custom-label").hidden = $("generation-budget").value !== "custom";
+    syncGeneration();
   });
   $("generate-deck").addEventListener("click", async () => {
     if (!generator?.context(deck) || $("generate-deck").disabled || $("generation-controls").hidden || generationJob || loading) return;
@@ -665,7 +683,9 @@
       if ($("generation-budget").value === "custom" && !$("generation-custom-budget").value.trim()) throw Error("Enter a custom GBP budget, or choose No limit.");
       const result = await generator.generate(snapshot, {
         bracket: $("generation-bracket").value, budget: $("generation-budget").value === "custom" ? $("generation-custom-budget").value : $("generation-budget").value,
-        strategy: $("generation-strategy").value, curve: $("generation-curve").value, randomness: $("generation-randomness").value
+        strategy: $("generation-strategy").value,
+        secondaryStyle: $("generation-secondary").value, tertiaryStyle: $("generation-tertiary").value,
+        priorities: Object.fromEntries(["ramp","draw","removal","wipes","protection","tutors","combo","adherence"].map(k=>[k,$("generation-"+k).value])), curve: $("generation-curve").value, randomness: $("generation-randomness").value
       }, { client, signal: job.controller.signal, progress: text => { if (active()) $("generation-status").textContent = text; } });
       if (!active()) return;
       // A recoverable snapshot must precede destructive replacement; failure preserves the deck.
