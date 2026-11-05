@@ -109,10 +109,11 @@
     const ctx = context(deck); if (!ctx) throw Error("In Commander, assign the selected printing as a commander or add it to the 99 first.");
     if (!client?.candidates || !client.refresh) throw Error("Generation is unavailable in this browser. Your deck is unchanged.");
     const o = options(input); check(signal);
+    const at = async (stage, task) => { try { return await task(); } catch(error) { if(error.name!=="AbortError")error.stage=stage; throw error; } };
     // Preserve exact IDs, finishes and assignments; refresh records without mutating the input.
     progress("Checking the seed and commander data…");
     const keep = [...ctx.commanders, ...(!ctx.commanders.some(e => e.key === ctx.seed.key) ? [ctx.seed] : [])];
-    const records = await client.refresh([...new Map(keep.map(e => [e.printingId, deck.cards[e.printingId]])).values()], { signal }); check(signal);
+    const records = await at("Seed/commander data", () => (client.ensure || client.refresh)([...new Map(keep.map(e => [e.printingId, deck.cards[e.printingId]])).values()], { signal })); check(signal);
     const fresh = new Map(records.map(c => [c.id, c]));
     let candidate = model.createDeck({ id: deck.id, name: deck.name });
     for (const e of keep) {
@@ -146,7 +147,7 @@
       let chosen;
       for (const item of ranked.slice(0, 4)) {
         if (o.budget !== null && estimate(candidate, rate.rate).total + item.c.pricesEUR[item.c.finish] * rate.rate > o.budget * .45) continue;
-        if (await client.commanderEligibility(item.c, { signal })) { chosen = item; break; }
+        if (await at("Commander selection", () => client.commanderEligibility(item.c, { signal }))) { chosen = item; break; }
         check(signal);
       }
       check(signal);
@@ -155,7 +156,7 @@
       candidate = model.add(candidate, chosen.c, { zone: "commander" });
       if (strategy === "auto") strategy = chosen.matches[0];
     }
-    for (const c of commanders) if (!rules.background(c)) { await client.commanderEligibility(c, { signal }); check(signal); }
+    for (const c of commanders) if (!rules.background(c)) { await at("Commander eligibility", () => client.commanderEligibility(c, { signal })); check(signal); }
     const precheck = rules.validate(candidate, client);
     const blocking = precheck.issues.find(i => i.code !== "size");
     if (blocking) throw Error(`The preserved seed/commander configuration needs correction: ${blocking.message}`);
@@ -203,11 +204,14 @@
     ];
     const found = new Map();
     for (let i = 0; i < queries.length; i++) {
-      check(signal); progress(`Finding ${styleDefinition.label.toLowerCase()} and deck roles (${i + 1}/${queries.length})…`);
+      check(signal); progress(`Loading role pool ${i + 1}/${queries.length} · ${i}/${queries.length} complete…`);
       const q = queries[i];
-      for (const c of await client.candidates(q.q, { signal, pages: q.pages || 1, order: q.order })) found.set(c.id, c);
+      const cards=await at(`Role pool ${i + 1}/${queries.length}`, () => client.candidates(q.q, { signal, pages: q.pages || 1, order: q.order })); check(signal);
+      for (const c of cards) found.set(c.id, c);
+      progress(`Role pools ${i + 1}/${queries.length} complete.`);
     }
-    check(signal);
+    check(signal); progress("Selecting cards and checking deck identity targets…");
+    await new Promise(resolve=>setTimeout(resolve,0)); check(signal);
     const used = new Set(Object.values(candidate.cards).map(c => c.oracleId));
     const usedNames = new Set(Object.values(candidate.cards).map(c => normal(c.name)));
     // No land destruction, extra turns or one-mana accelerants are slipped into casual targets.
@@ -250,7 +254,9 @@
     }
     // First build spells so the basic allocation can follow their actual coloured mana symbols.
     const spellsNeeded = 100 - commanders.length - target.land;
+    let picks=0;
     while (model.count(candidate, "main") - counts().land < spellsNeeded) {
+      if(picks++ % 8 === 0){await new Promise(resolve=>setTimeout(resolve,0));check(signal);}
       check(signal);
       const have = counts();
       const choices = pool.filter(c => !land(c) && available(c) && useful(c) && affordable(c, basicReserve));
@@ -314,12 +320,13 @@
       if (!choices.length) throw Error("The mana base exceeds the available budget. Your deck is unchanged.");
       const { c, color } = choices[0]; add(c); allocated[color]++;
     }
-    check(signal); progress("Rechecking all printings and final construction…");
-    const refreshed = await client.refresh(Object.values(candidate.cards), { signal }); check(signal);
+    check(signal); progress("Refreshing selected printings · final checks pending…");
+    const refreshed = await at("Final printing refresh", () => client.refresh(Object.values(candidate.cards), { signal })); check(signal);
     if (new Set(refreshed.map(c => c.id)).size !== Object.keys(candidate.cards).length || Object.keys(candidate.cards).some(id => !refreshed.some(c => c.id === id))) throw Error("Some generated printing records could not be rechecked. Your deck is unchanged.");
     candidate = model.replaceRecords(candidate, refreshed);
-    for (const c of candidate.entries.filter(e => e.zone === "commander").map(e => candidate.cards[e.printingId])) if (!rules.background(c)) { await client.commanderEligibility(c, { signal }); check(signal); }
+    for (const c of candidate.entries.filter(e => e.zone === "commander").map(e => candidate.cards[e.printingId])) if (!rules.background(c)) { await at("Commander eligibility", () => client.commanderEligibility(c, { signal })); check(signal); }
     candidate = model.select(candidate, candidate.cards[ctx.seed.printingId], ctx.seed.finish);
+    progress("Checking final commander eligibility, construction and deck identity…");
     const validation = rules.validate(candidate, client);
     if (!validation.complete) throw Error(`Generation did not pass the existing construction checks: ${validation.issues[0]?.message || validation.label} Your deck is unchanged.`);
     const currentAnalysis=deckIdentity.analyse(candidate.entries.filter(e=>e.zone==="commander").map(e=>candidate.cards[e.printingId]));
@@ -333,7 +340,7 @@
     if(Object.entries(composition.minima).some(([r,n])=>(finalCounts[r]||0)<n))throw Error("Refreshed card data no longer meets the deck identity targets. Your deck is unchanged.");
     const cost = rate ? estimate(candidate, rate.rate) : null;
     if (cost && (cost.unknown || cost.total > o.budget)) throw Error("Current pricing could not confirm the selected budget after the final check. Your deck is unchanged; try No limit or a higher budget.");
-    check(signal);
+    check(signal); progress("Generation complete · all construction and identity checks passed.");
     return { deck: model.edit(deck, { entries: candidate.entries, cards: candidate.cards, selection: candidate.selection,
         generation: { version:1, primaryStyle:styles[0], secondaryStyle:styles[1], tertiaryStyle:styles[2], priorities:o.priorities, targets:composition.minima, counts:finalCounts } }), strategy, target, roles: finalCounts, identity: { analysis, styles, priorities:o.priorities, targets:composition.minima, counts:finalCounts, repairs, packages:selectedPackages }, bracket: o.bracket, estimate: cost ? { gbp: cost.total, rateDate: rate.date, budget: o.budget } : null,
       note: `Generated a ${styleDefinition.label.toLowerCase()} starting deck. Bracket ${o.bracket} is a power preference, not certification. Review synergies and win conditions before play; no combo verification is claimed. ${selectedPackages.length ? `${selectedPackages.length} suggested combo package(s); check prerequisites before play.` : "No deliberate combo package was assembled."}${cost ? ` Estimated £${cost.total.toFixed(2)} using Scryfall EUR prices and the ${rate.date} EUR/GBP reference rate; shipping and availability excluded.` : " No budget or price guarantee."}` };

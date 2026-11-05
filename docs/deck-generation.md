@@ -116,3 +116,5 @@ Human gameplay review remains necessary. In this environment the live Scryfall c
 request failed with `Operation not permitted`; it was not retried. Actual API deck quality and
 native desktop/mobile layout, touch and focus remain unverified. Automated DOM/CSS checks do
 not establish browser rendering or playtesting quality.
+
+Commander verification and progress lifecycle: see [deck-commander-lifecycle.md](deck-commander-lifecycle.md). Verified card records are immutable; matching API responses preserve trusted aliases, partial responses cannot replace known facts, and restored JSON still requires session verification.
