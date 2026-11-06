@@ -83,7 +83,9 @@
       if (assignedTo && !uuid.test(assignedTo)) invalid("A signature spell has an invalid Oathbreaker reference.");
       const key = model.entryKey(e.printingId, e.finish, e.zone, assignedTo);
       if (seen.has(key) || e.key !== key) invalid("A draft has duplicate or inconsistent entry keys.");
-      seen.add(key); return { key, printingId: e.printingId, finish: e.finish, zone: e.zone, quantity: e.quantity, ...(e.zone === "signature" ? { assignedTo } : {}) };
+      let choices;
+      if(e.printingChoices!==undefined){try{choices=model.printingChoices(e);}catch{invalid("A draft has inconsistent printing-choice counts.");}}
+      seen.add(key); return { ...(choices?{printingChoices:choices}:{}), key, printingId: e.printingId, finish: e.finish, zone: e.zone, quantity: e.quantity, ...(e.zone === "signature" ? { assignedTo } : {}) };
     });
     let selection = null;
     if (source.selection) {
@@ -199,6 +201,7 @@
     function checkpoint(deck, expectedToken = null) {
       const value = immutable(deck, "recovery", expectedToken);
       write(key("journal", deck.id), JSON.stringify({ version: 1, token: value.token }));
+      try { prune(deck.id,[value.token,pointer(key("deck",deck.id)),pointer(key("backup",deck.id))].filter(Boolean)); } catch { /* A successful recovery pointer must not be reported lost if cleanup fails. */ }
       try { write(key("active"), deck.id); } catch { /* The snapshot remains discoverable from Recent recovery versions. */ }
       return value;
     }

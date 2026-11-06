@@ -18,7 +18,27 @@
     if (patch.name !== undefined) patch = { ...patch, name: String(patch.name).trim().slice(0, 80) || "Untitled deck" };
     return changed(deck, patch);
   }
-  function add(deck, card, { finish = card.finish, zone = "main", quantity = 1, assignedTo = "" } = {}) {
+  const choiceKinds = ["automatic","manual","bulk","unknown"];
+  function printingChoices(entry) {
+    const value=entry.printingChoices;
+    if(value===undefined)return {automatic:0,manual:0,bulk:0,unknown:entry.quantity};
+    if(!value||typeof value!=="object"||Array.isArray(value)||Object.keys(value).some(key=>!choiceKinds.includes(key)))throw Error("Invalid printing-choice history.");
+    const result=Object.fromEntries(choiceKinds.map(key=>[key,Object.hasOwn(value,key)?value[key]:0]));
+    if(Object.values(result).some(n=>!Number.isSafeInteger(n)||n<0)||Object.values(result).reduce((a,b)=>a+b,0)!==entry.quantity)throw Error("Printing-choice counts do not match the entry quantity.");
+    return result;
+  }
+  const choicesFor = (kind,quantity) => {
+    if(!choiceKinds.includes(kind))throw Error("Unknown printing-choice source.");
+    return Object.fromEntries(choiceKinds.map(key=>[key,key===kind?quantity:0]));
+  };
+  const mergeChoices = (a,b) => Object.fromEntries(choiceKinds.map(key=>[key,a[key]+b[key]]));
+  function resizedChoices(entry,quantity) {
+    const result=printingChoices(entry);
+    if(quantity>entry.quantity){const kind=result.unknown?"unknown":result.manual?"manual":result.bulk?"bulk":"automatic";result[kind]+=quantity-entry.quantity;}
+    else {let remove=entry.quantity-quantity;for(const kind of ["automatic","bulk","unknown","manual"]){const count=Math.min(remove,result[kind]);result[kind]-=count;remove-=count;}}
+    return result;
+  }
+  function add(deck, card, { finish = card.finish, zone = "main", quantity = 1, assignedTo = "", printingChoice = "automatic", printingChoices: incoming = null } = {}) {
     if (!uuid.test(card?.id || "") || !card.name) throw Error("This card has no valid printing identity.");
     if (!zones.has(zone)) throw Error("Unsupported deck section.");
     if (!card.availableFinishes?.includes(finish)) throw Error("That finish is not listed for this printing.");
@@ -28,13 +48,14 @@
     const existing = deck.entries.find(e => e.key === key);
     const total = (existing?.quantity || 0) + quantity;
     if (total > 10000) throw Error("One entry cannot exceed 10,000 copies.");
-    const entry = { key, printingId: card.id, finish, zone, quantity: total, ...(zone === "signature" ? { assignedTo } : {}) };
+    const added=incoming?printingChoices({quantity,printingChoices:incoming}):choicesFor(printingChoice,quantity);
+    const entry = { ...existing, key, printingId: card.id, finish, zone, quantity: total, printingChoices:existing?mergeChoices(printingChoices(existing),added):added, ...(zone === "signature" ? { assignedTo } : {}) };
     return changed(deck, { cards: { ...deck.cards, [card.id]: card }, entries: existing ? deck.entries.map(e => e.key === key ? entry : e) : [...deck.entries, entry] });
   }
   function setQuantity(deck, key, quantity) {
     if (!Number.isSafeInteger(quantity) || quantity < 0 || quantity > 10000) throw Error("Enter a quantity from 0 to 10,000.");
     if (!deck.entries.some(e => e.key === key)) throw Error("That entry is no longer in this deck.");
-    const entries = quantity ? deck.entries.map(e => e.key === key ? { ...e, quantity } : e) : deck.entries.filter(e => e.key !== key);
+    const entries = quantity ? deck.entries.map(e => e.key === key ? { ...e, quantity, printingChoices:resizedChoices(e,quantity) } : e) : deck.entries.filter(e => e.key !== key);
     const used = new Set([...entries.map(e => e.printingId), deck.selection?.printingId].filter(Boolean));
     return changed(deck, { entries, cards: Object.fromEntries(Object.entries(deck.cards).filter(([id]) => used.has(id))) });
   }
@@ -43,7 +64,9 @@
     if (!entry) throw Error("That entry is no longer in this deck.");
     if (entry.zone === zone && (zone !== "signature" || entry.assignedTo === assignedTo)) return deck;
     const card = deck.cards[entry.printingId];
-    return add(setQuantity(deck, key, entry.quantity - 1), card, { finish: entry.finish, zone, assignedTo });
+    const full=printingChoices(entry),rest=resizedChoices(entry,entry.quantity-1);
+    const taken=Object.fromEntries(choiceKinds.map(kind=>[kind,full[kind]-rest[kind]]));
+    return add(setQuantity(deck, key, entry.quantity - 1), card, { finish: entry.finish, zone, assignedTo, printingChoices:taken });
   }
   function replaceRecords(deck, cards) {
     const records = { ...deck.cards };
@@ -56,32 +79,42 @@
     const used = new Set([...deck.entries.map(e => e.printingId), card.id]);
     return changed(deck, { selection: { printingId: card.id, finish }, cards: Object.fromEntries(Object.entries({ ...deck.cards, [card.id]: card }).filter(([id]) => used.has(id))) });
   }
-  // Pure atomic replacement; callers verify live legality before committing the candidate.
-  function replacePrinting(deck, key, card, finish) {
-    const original = deck.entries.find(entry => entry.key === key);
-    if (!original) throw Error("That deck entry is no longer available.");
-    if (!uuid.test(card?.id || "") || !data.sameOracleCard(deck.cards[original.printingId], card)) throw Error("Choose a printing of the same Oracle card with equivalent gameplay data.");
-    if (!card.availableFinishes?.includes(finish)) throw Error("That finish is not listed for this printing.");
-    const ownerChanged = original.zone === "commander" && original.printingId !== card.id;
-    const grouped = new Map();
-    for (const entry of deck.entries) {
-      let next = entry.key === key ? { ...entry, printingId: card.id, finish } : entry;
-      if (ownerChanged && next.zone === "signature" && next.assignedTo === original.printingId) next = { ...next, assignedTo: card.id };
-      const newKey = entryKey(next.printingId, next.finish, next.zone, next.assignedTo);
-      next = { ...next, key: newKey };
-      const previous = grouped.get(newKey);
-      if (previous) next = { ...next, quantity: next.quantity + previous.quantity };
-      if (next.quantity > 10000) throw Error("One entry cannot exceed 10,000 copies.");
-      grouped.set(newKey, next);
+  // All changes refer to ORIGINAL entry keys. Group once, so collisions cannot cascade.
+  function replacePrintings(deck, changes) {
+    if(!Array.isArray(changes)||changes.length>deck.entries.length)throw Error("Invalid printing replacement plan.");
+    if(!changes.length)return deck;
+    const byKey=new Map(), owners=new Map(), additions={};
+    for(const change of changes){
+      const original=deck.entries.find(entry=>entry.key===change.key),card=change.card;
+      if(!original||byKey.has(change.key))throw Error("That printing entry is missing or repeated in the plan.");
+      if(!uuid.test(card?.id||"")||!data.sameOracleCard(deck.cards[original.printingId],card))throw Error("Choose a printing of the same Oracle card with equivalent gameplay data.");
+      if(!card.availableFinishes?.includes(change.finish))throw Error("That finish is not listed for this printing.");
+      choicesFor(change.choice||"manual",original.quantity);
+      byKey.set(change.key,change);additions[card.id]=card;
+      if(original.zone==="commander"){
+        if(owners.has(original.printingId)&&owners.get(original.printingId)!==card.id)throw Error("Ambiguous commander printing assignment.");
+        owners.set(original.printingId,card.id);
+      }
     }
-    const entries = [...grouped.values()];
-    const selection = deck.selection?.printingId === original.printingId && deck.selection.finish === original.finish ? { printingId: card.id, finish } : deck.selection;
-    const used = new Set([...entries.map(entry => entry.printingId), selection?.printingId].filter(Boolean));
-    const cards = Object.fromEntries(Object.entries({ ...deck.cards, [card.id]: card }).filter(([id]) => used.has(id)));
-    return changed(deck, { entries, cards, selection });
+    const grouped=new Map();let selection=deck.selection;
+    for(const entry of deck.entries){
+      const change=byKey.get(entry.key);
+      let next=change?{...entry,printingId:change.card.id,finish:change.finish,printingChoices:choicesFor(change.choice||"manual",entry.quantity)}:entry;
+      if(next.zone==="signature"&&owners.has(next.assignedTo))next={...next,assignedTo:owners.get(next.assignedTo)};
+      const newKey=entryKey(next.printingId,next.finish,next.zone,next.assignedTo);next={...next,key:newKey};
+      if(change&&selection===deck.selection&&deck.selection?.printingId===entry.printingId&&deck.selection.finish===entry.finish)selection={printingId:change.card.id,finish:change.finish};
+      const previous=grouped.get(newKey);
+      if(previous)next={...next,quantity:previous.quantity+next.quantity,printingChoices:mergeChoices(printingChoices(previous),printingChoices(next))};
+      if(next.quantity>10000)throw Error("One entry cannot exceed 10,000 copies.");
+      grouped.set(newKey,next);
+    }
+    const entries=[...grouped.values()],used=new Set([...entries.map(entry=>entry.printingId),selection?.printingId].filter(Boolean));
+    const cards=Object.fromEntries(Object.entries({...deck.cards,...additions}).filter(([id])=>used.has(id)));
+    return changed(deck,{entries,cards,selection});
   }
+  function replacePrinting(deck,key,card,finish) { return replacePrintings(deck,[{key,card,finish,choice:"manual"}]); }
   const count = (deck, zone) => deck.entries.filter(e => !zone || e.zone === zone).reduce((sum, e) => sum + e.quantity, 0);
-  const api = Object.freeze({ createDeck, edit, add, setQuantity, moveOne, replaceRecords, replacePrinting, select, count, entryKey, newId });
+  const api = Object.freeze({ createDeck, edit, add, setQuantity, moveOne, replaceRecords, replacePrinting, replacePrintings, printingChoices, select, count, entryKey, newId });
   if (typeof module === "object" && module.exports) module.exports = api;
   else root.ManaScoutDeckModel = api;
 })(typeof window === "undefined" ? globalThis : window);

@@ -1,24 +1,21 @@
 # ManaScout
 
-Static V1 of ManaScout, an independent Magic: The Gathering card discovery and printing explorer.
+ManaScout is a static HTML/CSS/JavaScript site for Magic card discovery, researched printing guides and browser-local Deck Studio editing, Commander generation and individual/bulk exact-printing curation.
 
-## GitHub Pages deployment
+Live catalogue records, artwork and available price fields come from Scryfall. Editorial guides and exact featured-printing fallbacks are curated source-backed content. Missing prices remain unknown; simulated foil effects are illustrative.
 
-1. Upload the contents of this project to the root of the `Summedcactus/Manascout` repository.
-2. In GitHub, open **Settings → Pages**.
-3. Under **Build and deployment**, choose **Deploy from a branch**.
-4. Select the `main` branch and `/ (root)`.
-5. Save.
-6. Set the custom domain to `manascout.co.uk`.
+## Development and validation
 
-The included `CNAME` file already contains `manascout.co.uk`.
+Follow `AGENTS.md`. Work on DEVELOPMENT; publication/PRs/merges remain manual. Preserve the homepage, guides, shared explorer and existing deck data.
 
-## Data
+Run the complete automated checks:
 
-Card data, imagery and price fields are retrieved client-side from the Scryfall API. The application does not hardcode card prices or card facts.
+```sh
+python tests/run-deck-studio.py
+```
 
-## V1 scope
+The runner includes JavaScript regressions, syntax, guide registry, HTML/ARIA/local links, JSON-LD, sitemap and site integrity checks. Native mobile/desktop rendering, live API responses and real storage concurrency require separate browser checks. See `docs/deck-studio.md`, `docs/deck-appearance.md` and `docs/stage5-integrity.md`.
 
-Search → card details → printing table → external marketplace search.
+## Hosting
 
-The future ManaScout recommendation layer should be added separately from factual source data.
+GitHub Pages serves the repository root on the configured publishing branch after the owner's manual release workflow. `CNAME` specifies `manascout.co.uk`. Development tasks must not change hosting settings or publish/merge to main automatically.

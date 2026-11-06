@@ -514,3 +514,22 @@
   .deck-studio #printing-selected-image { display: none; }
 }
 .deck-studio .ds-printing-options > summary { min-height: 44px; padding-block: 8px; cursor: pointer; color: var(--ds-accent-text); font-size: 13px; }
+
+/* Appearance is separate from gameplay and never a sticky control panel. */
+.deck-studio .ds-appearance { min-width: 0; padding: 12px; margin-block: 12px; border: 1px solid var(--ds-line); border-radius: 10px; background: var(--ds-slate); }
+.deck-studio .ds-appearance > summary { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 4px 12px; min-height: 44px; cursor: pointer; font-size: 13px; }
+.deck-studio #appearance-progress { color: var(--ds-sage); font-size: 12px; }
+.deck-studio .ds-appearance-label { display: grid; gap: 6px; font-size: 13px; color: var(--ds-muted); }
+.deck-studio #appearance-preset { min-width: 0; width: 100%; min-height: 44px; padding: 8px; border: 1px solid var(--ds-line); border-radius: 7px; background: var(--ds-midnight); color: var(--ds-linen); font: inherit; }
+.deck-studio .ds-appearance-check { display: flex; align-items: center; gap: 10px; min-height: 44px; font-size: 13px; line-height: 1.5; }
+.deck-studio .ds-appearance-check input { flex: 0 0 auto; width: 20px; height: 20px; accent-color: var(--ds-sage); }
+.deck-studio .ds-appearance-actions { display: flex; flex-wrap: wrap; gap: 8px; margin-block: 8px; }
+.deck-studio .ds-appearance .ds-button { min-height: 44px; max-width: 100%; font-size: 13px; }
+.deck-studio .ds-appearance :is(p,li) { overflow-wrap: anywhere; }
+.deck-studio #appearance-review { border-top: 1px solid var(--ds-line); padding-top: 10px; margin-block: 12px; font-size: 13px; }
+.deck-studio #appearance-review summary { min-height: 44px; padding-block: 8px; cursor: pointer; }
+.deck-studio #appearance-examples { padding-left: 18px; }
+@media (max-width: 430px) {
+  .deck-studio .ds-appearance { padding: 8px 10px; }
+  .deck-studio .ds-appearance-actions > button { flex: 1 1 130px; }
+}

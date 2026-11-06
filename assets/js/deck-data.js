@@ -87,8 +87,10 @@
     if (!uuid.test(selection?.id || "")) throw new SelectionError("This printing link is invalid. Return to ManaScout Search.");
     if (!fetchImpl) throw new SelectionError("Card data cannot be requested in this browser. Return to ManaScout Search.");
     const controller = new AbortController();
-    const timer = setTimeout(() => controller.abort(), timeout);
+    let timer;
+    const boundary = new Promise((_,reject) => { timer=setTimeout(() => { controller.abort(); reject(new SelectionError("The card request timed out. Check your connection and try again.",true)); },timeout); });
     try {
+      const work = (async () => {
       const response = await fetchImpl(`https://api.scryfall.com/cards/${selection.id}`, { headers: { Accept: "application/json" }, signal: controller.signal });
       if (!response.ok) {
         if (response.status === 404) throw new SelectionError("That printing could not be found on Scryfall. Choose another printing in Search.");
@@ -96,6 +98,8 @@
         throw new SelectionError("Scryfall could not load this printing right now. You can try again.", true);
       }
       return normaliseCard(await response.json(), selection);
+      })();
+      return await Promise.race([work,boundary]);
     } catch (error) {
       if (error instanceof SelectionError) throw error;
       if (controller.signal.aborted) throw new SelectionError("The card request timed out. Check your connection and try again.", true);
@@ -104,12 +108,14 @@
   }
 
   // Printing, artwork and finish may vary; gameplay facts must agree for a version swap.
+  const oracleText = value => typeof value === "string" ? value.normalize("NFC").replace(/\r\n?/g,"\n").split("\n").map(line => line.trimEnd()).join("\n").trim() : value;
   function sameOracleCard(a, b) {
     if (!uuid.test(a?.oracleId || "") || a.oracleId !== b?.oracleId) return false;
     const keys = ["name","type","frontType","frontText","rulesText","manaCost","manaValue","hasPrintedPT","isRebalanced"];
-    return keys.every(key => a[key] === b[key]) && ["colorIdentity","keywords"].every(key => Array.isArray(a[key]) && Array.isArray(b[key]) && JSON.stringify([...a[key]].sort()) === JSON.stringify([...b[key]].sort()));
+
+    return keys.every(key => oracleText(a[key]) === oracleText(b[key])) && ["colorIdentity","keywords"].every(key => Array.isArray(a[key]) && Array.isArray(b[key]) && JSON.stringify([...a[key]].sort()) === JSON.stringify([...b[key]].sort()));
   }
-  const api = Object.freeze({ SelectionError, parseSelection, normaliseCard, fetchPrinting, sameOracleCard });
+  const api = Object.freeze({ SelectionError, parseSelection, normaliseCard, fetchPrinting, sameOracleCard, oracleText });
   if (typeof module === "object" && module.exports) module.exports = api;
   else root.ManaScoutDeckData = api;
 })(typeof window === "undefined" ? globalThis : window);

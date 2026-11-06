@@ -14,23 +14,25 @@
   <meta property="og:url" content="https://manascout.co.uk/deck/">
   <meta property="og:site_name" content="ManaScout">
   <meta name="twitter:card" content="summary">
-  <link rel="stylesheet" href="/assets/css/deck-studio.css?v=printing1">
+  <link rel="stylesheet" href="/assets/css/deck-studio.css?v=stage5">
   <script type="application/ld+json">
   {"@context":"https://schema.org","@type":"WebPage","name":"ManaScout Deck Studio","url":"https://manascout.co.uk/deck/","description":"ManaScout's artwork-first deck workspace with exact-printing card search and manual deck editing.","isPartOf":{"@type":"WebSite","name":"ManaScout","url":"https://manascout.co.uk/"}}
   </script>
   <script src="/assets/js/deck-formats.js?v=5d1" defer></script>
-  <script src="/assets/js/deck-data.js?v=printing1" defer></script>
-  <script src="/assets/js/deck-model.js?v=printing1" defer></script>
-  <script src="/assets/js/deck-client.js?v=printing1" defer></script>
-  <script src="/assets/js/deck-rules.js?v=5d1" defer></script>
+  <script src="/assets/js/deck-data.js?v=stage5" defer></script>
+  <script src="/assets/js/deck-model.js?v=stage5" defer></script>
+  <script src="/assets/js/deck-client.js?v=stage5" defer></script>
+  <script src="/assets/js/deck-rules.js?v=stage5" defer></script>
   <script src="/assets/js/deck-view.js?v=printing1" defer></script>
-  <script src="/assets/js/deck-store.js?v=printing1" defer></script>
+  <script src="/assets/js/deck-store.js?v=stage5" defer></script>
   <script src="/assets/js/deck-identity.js?v=health1" defer></script>
   <script src="/assets/js/deck-health.js?v=health1" defer></script>
   <script src="/assets/js/deck-generator.js?v=health1" defer></script>
   <script src="/assets/js/deck-printings.js?v=printing1" defer></script>
   <script src="/assets/js/deck-printing-selector.js?v=printing1" defer></script>
-  <script src="/assets/js/deck-studio.js?v=printing1" defer></script>
+  <script src="/assets/js/deck-appearance.js?v=stage5" defer></script>
+  <script src="/assets/js/deck-appearance-controls.js?v=stage5" defer></script>
+  <script src="/assets/js/deck-studio.js?v=stage5" defer></script>
 </head>
 <body class="deck-studio" data-active-panel="deck">
   <a class="ds-skip" href="#deck-heading">Skip to deck workspace</a>
@@ -107,6 +109,21 @@
           <button type="button" class="ds-button ds-primary ds-discover-action" id="show-discover" hidden>Discover a card <span aria-hidden="true">→</span></button>
           <a class="ds-text-link ds-nojs-discover" href="/">Discover a card →</a>
         </div>
+        <details class="ds-appearance" id="deck-appearance" hidden>
+          <summary><strong>Deck Appearance</strong><span id="appearance-progress">Printings customised: 0 / 0 copies</span></summary>
+          <p class="ds-note">Physical editions and finishes only. Gameplay cards, quantities and strategy stay the same.</p>
+          <p class="ds-note" id="appearance-history"></p>
+          <p class="ds-note" id="appearance-platform" hidden>Bulk physical appearance presets require a Paper format. Individual printing selection remains available.</p>
+          <label class="ds-appearance-label" for="appearance-preset">Printing style<select id="appearance-preset"></select></label>
+          <p class="ds-note" id="appearance-explanation"></p>
+          <label class="ds-appearance-check"><input id="appearance-include-manual" type="checkbox">Include my manually chosen printings</label>
+          <label class="ds-appearance-check"><input id="appearance-include-unknown" type="checkbox">Include older entries with unknown printing history</label>
+          <p class="ds-note">Manual and unknown-history entries are protected by default. Earlier version-1 drafts do not record who chose their printings.</p>
+          <div class="ds-appearance-actions"><button class="ds-button ds-secondary" id="appearance-preview" type="button">Preview appearance</button><button class="ds-button ds-secondary" id="appearance-cancel" type="button" hidden>Cancel</button></div>
+          <p class="ds-note" id="appearance-status" role="status" aria-live="polite"></p>
+          <div id="appearance-review" hidden><p id="appearance-summary"></p><ul class="ds-note" id="appearance-kept"></ul><details><summary>Example changes · up to five entries</summary><ul class="ds-note" id="appearance-examples"></ul></details><button class="ds-button ds-primary" id="appearance-apply" type="button" disabled>Apply to deck</button></div>
+          <button class="ds-button ds-secondary" id="appearance-undo" type="button" hidden>Undo appearance change</button>
+        </details>
         <details class="ds-health" id="deck-health" hidden>
           <summary><span>Deck Health <strong id="health-state">No generated plan</strong> <span class="ds-health-toggle">Details ▾</span></span><span class="ds-health-brief" id="health-brief"></span></summary>
           <p class="ds-note" id="health-context"></p><p class="ds-note" id="health-legality" role="status"></p>

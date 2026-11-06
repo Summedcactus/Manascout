@@ -1453,9 +1453,8 @@
         "path": "card/deflecting-swat/index.html"
       },
       "https://manascout.co.uk/card/demonic-consultation/": {
-        "lastmod": "2026-11-02",
-        "basis": "Upgrade tutor and Mystic Remora printing guides",
-        "commit": "1b62bf3ddc61eea71cd9b138570bde9bc40eabe4",
+        "lastmod": "2026-11-05",
+        "basis": "Stage 5 verified source-link update",
         "path": "card/demonic-consultation/index.html"
       },
       "https://manascout.co.uk/card/demonic-tutor/": {
@@ -1489,15 +1488,13 @@
         "path": "card/lightning-greaves/index.html"
       },
       "https://manascout.co.uk/card/mana-drain/": {
-        "lastmod": "2026-11-02",
-        "basis": "Upgrade four premium interaction card guides",
-        "commit": "126767990c0c73598277f6ccfe4b59577c799bb1",
+        "lastmod": "2026-11-05",
+        "basis": "Stage 5 verified source-link update",
         "path": "card/mana-drain/index.html"
       },
       "https://manascout.co.uk/card/mana-vault/": {
-        "lastmod": "2026-11-01",
-        "basis": "Upgrade essential mana and utility card guides",
-        "commit": "d78ce089b81de7c750f6b7128ad9f7046bac5f8f",
+        "lastmod": "2026-11-05",
+        "basis": "Stage 5 verified source-link update",
         "path": "card/mana-vault/index.html"
       },
       "https://manascout.co.uk/card/mystic-remora/": {
@@ -1555,9 +1552,8 @@
         "path": "card/vampiric-tutor/index.html"
       },
       "https://manascout.co.uk/": {
-        "lastmod": "2026-11-04",
-        "basis": "Polish Card of the Week 3D depth and atmosphere",
-        "commit": "ef9394c69289f63145d4bdaefd83b686812bc625",
+        "lastmod": "2026-11-05",
+        "basis": "Stage 5 shared explorer integrity update and current Deck Studio functionality",
         "path": "index.html"
       },
       "https://manascout.co.uk/card/": {
@@ -1567,8 +1563,8 @@
         "path": "card/index.html"
       },
       "https://manascout.co.uk/deck/": {
-        "lastmod": "2026-11-05",
-        "basis": "Commander-aware deck identity engine, composition targets and progressive style/priority controls in this task",
+        "lastmod": "2026-11-06",
+        "basis": "Stage 5 Deck Appearance controls, atomic exact-printing batch integration and provenance",
         "path": "deck/index.html"
       },
       "https://manascout.co.uk/card/captain-jean-luc-picard/": {
