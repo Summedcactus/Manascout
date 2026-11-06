@@ -83,7 +83,9 @@
       if (assignedTo && !uuid.test(assignedTo)) invalid("A signature spell has an invalid Oathbreaker reference.");
       const key = model.entryKey(e.printingId, e.finish, e.zone, assignedTo);
       if (seen.has(key) || e.key !== key) invalid("A draft has duplicate or inconsistent entry keys.");
-      seen.add(key); return { key, printingId: e.printingId, finish: e.finish, zone: e.zone, quantity: e.quantity, ...(e.zone === "signature" ? { assignedTo } : {}) };
+      let choices;
+      if(e.printingChoices!==undefined){try{choices=model.printingChoices(e);}catch{invalid("A draft has inconsistent printing-choice counts.");}}
+      seen.add(key); return { ...(choices?{printingChoices:choices}:{}), key, printingId: e.printingId, finish: e.finish, zone: e.zone, quantity: e.quantity, ...(e.zone === "signature" ? { assignedTo } : {}) };
     });
     let selection = null;
     if (source.selection) {

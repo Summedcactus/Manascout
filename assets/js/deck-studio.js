@@ -102,9 +102,24 @@
     }
   });
 
+  const appearanceControls = window.ManaScoutDeckAppearanceControls?.create({
+    client, getDeck: () => deck, capture: captureBrowser, restore: restoreBrowser,
+    beforeStart() { printingSelector?.cancel(); cancelGeneration("Generation cancelled while preparing deck appearance."); },
+    onError(error) { renderDeck(); message(`Appearance not applied: ${error.message}`); },
+    onApply(result, context) {
+      let recoveryWarning="";
+      try { store.checkpoint(context.source,savedToken); } catch { recoveryWarning=" Recovery could not be stored; Undo remains in this tab. Download a JSON backup."; }
+      const selected=context.source.selection;
+      commitState(result.deck,"Appearance updated; gameplay composition is unchanged."+recoveryWarning,"appearance");
+      if(context.position.anchor){const key=result.keyMap?.[context.position.anchor.dataset.key];if(key)context.position.anchor=[...$("deck-entries").querySelectorAll(".ds-deck-entry")].find(article=>article.dataset.key===key);}
+      if(current?.id===selected?.printingId&&deck.selection)renderCard(deck.cards[deck.selection.printingId],deck.selection.finish);
+      [...$("deck-filters").querySelectorAll("button")].find(button=>button.dataset.filter===activeDeckFilter)?.focus({preventScroll:true});
+    }
+  });
+
   function activatePanel(name, focus = true) {
     if (!Object.hasOwn(panels, name)) return;
-    if (name !== activePanel) printingSelector?.cancel();
+    if (name !== activePanel) { printingSelector?.cancel(); appearanceControls?.cancel("Appearance preview cancelled during panel navigation."); }
     if (mobile.matches) scrollPositions.set(activePanel, panels[activePanel].scrollTop);
     activePanel = name;
     if (name === "discover") collapsed.delete("discover-body");
@@ -149,7 +164,7 @@
 
   function closePreview() { if (preview.open) preview.close(); }
   function openPreview(trigger) {
-    printingSelector?.cancel();
+    printingSelector?.cancel(); appearanceControls?.cancel("Appearance preview cancelled while inspecting a card.");
     cancelDiscovery("Discovery cancelled while another printing was opened.");
     if (!current) return;
     if (typeof preview.showModal !== "function") {
@@ -231,7 +246,7 @@
     $("selection-status").textContent = "Selected printing loaded. Choose its role in the card preview.";
     const entryMetadataChanged = deck.cards[card.id] && deck.cards[card.id] !== card && deck.entries.some(entry => entry.printingId === card.id);
     const selectedDeck = model.select(deck, card, currentFinish);
-    if (selectedDeck !== deck) { printingSelector?.cancel(); deck = selectedDeck; dirty = true; scheduleSave(); if (entryMetadataChanged) renderDeck(); }
+    if (selectedDeck !== deck) { printingSelector?.cancel(); appearanceControls?.cancel("Appearance preview cancelled because the selected card changed."); deck = selectedDeck; dirty = true; scheduleSave(); if (entryMetadataChanged) renderDeck(); }
     renderPreviewActions();
     if (deck.format === "commander" && !rules.background(card)) checkCommander(card);
   }
@@ -273,6 +288,7 @@
   function message(text) { $("deck-message").textContent = text; }
   function commitState(next, text = "", printingEdit = false) {
     if (next !== deck && !printingEdit) printingSelector?.cancel();
+    if (next !== deck && printingEdit!=="appearance") appearanceControls?.cancel("Appearance preview cancelled because the deck changed.");
     if (next !== deck) { cancelGeneration("Generation cancelled because the deck changed."); deck = next; dirty = true; scheduleSave(); }
     renderDeck();
     const warning = rules.validate(deck, client).issues.find(i => i.severity === "error" || i.severity === "unsupported");
@@ -327,7 +343,7 @@
   }
   function selectDeckFilter(event){
     const button=event.target.closest("button[data-filter]");if(!button)return;
-    printingSelector?.cancel();
+    printingSelector?.cancel(); appearanceControls?.cancel("Appearance preview cancelled while changing deck filters.");
     const position=captureBrowser();
     const previous=activeDeckFilter;
     activeDeckFilter=button.dataset.filter;
@@ -381,6 +397,7 @@
     applyDeckFilter();
     renderPreviewActions();
     renderStatistics();
+    appearanceControls?.sync();
     restoreBrowser(position);
   }
   function addCard(card, zone = "main", quantity = 1, finish = card.finish) {
@@ -388,7 +405,7 @@
     commitState(model.add(deck, card, { zone, quantity, finish }), `Added ${quantity} × ${card.name} to ${zone === "main" ? "the main deck" : "the sideboard"}.`);
   }
   $("deck-name").addEventListener("input", () => {
-    printingSelector?.cancel();
+    printingSelector?.cancel(); appearanceControls?.cancel("Appearance preview cancelled because the deck name changed.");
     const next = model.edit(deck, { name: $("deck-name").value });
     if (next !== deck) { cancelGeneration("Generation cancelled because the deck changed."); deck = next; dirty = true; scheduleSave(); }
   });
@@ -418,6 +435,7 @@
     if (!entry) return;
     try {
       if (button.dataset.action === "change-printing") {
+        appearanceControls?.cancel("Appearance preview cancelled for individual printing selection.");
         cancelDiscovery("Discovery cancelled while editing a deck printing.");
         closePreview(); printingSelector?.open(entry.key, button); return;
       }
@@ -813,7 +831,7 @@
       }
     } finally { if (generationJob === job) generationJob = null; syncGeneration(); }
   });
-  window.addEventListener("pagehide", () => { printingSelector?.cancel(); cancelGeneration(); });
+  window.addEventListener("pagehide", () => { printingSelector?.cancel(); appearanceControls?.cancel(); cancelGeneration(); });
   async function refreshDeckData() {
     if (refreshing || !Object.keys(deck.cards).length) return;
     const snapshot=deck, deckId = deck.id;
@@ -921,7 +939,7 @@
     return leave;
   }
   function activateDraft(record, note = "", markDirty = false) {
-    printingSelector?.cancel();
+    printingSelector?.cancel(); appearanceControls?.cancel("Appearance preview cancelled while switching drafts.");
     cancelGeneration("Generation cancelled because the active draft changed.");
     cancelDiscovery("Discovery cancelled because the active draft changed.");
     clearTimeout(saveTimer);

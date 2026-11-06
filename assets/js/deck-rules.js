@@ -57,6 +57,21 @@
     }
     return null;
   }
+  function printingIssues(card, profile, finish, format = profile?.id || "format") {
+    const result=[];
+    const issue=(code,message,severity="error")=>result.push({code,message,severity});
+    if (!card.oracleId || !Array.isArray(card.colorIdentity) || !card.frontType || card.manaValue === "Not supplied") issue("missing-data", `${card.name}: required card information is missing.`, "pending");
+    if (!card.printingDataComplete || !card.layout || !["black", "white", "borderless", "gold", "silver"].includes(card.borderColor)) issue("printing-data", `${card.name}: printing metadata is incomplete.`, "pending");
+    const legality = card.legalities?.[profile?.legalityKey];
+    if (!legality || legality === "unknown" || !["legal", "not_legal", "banned", "restricted"].includes(legality)) issue("legality-unknown", `${card.name}: ${profile?.name || format} legality is unavailable.`, "pending");
+    else if (!formats.supportedLegality(card, profile)) issue("legality", `${card.name}: ${legality === "banned" ? "banned" : "not legal"} in ${profile?.name || format}.`, "error");
+    if (!card.games?.includes(profile?.platform) || card.oversized || ["gold", "silver"].includes(card.borderColor) || card.securityStamp === "acorn" || ["token", "double_faced_token", "emblem", "art_series", "scheme", "planar", "vanguard"].includes(card.layout)) issue("printing", `${card.name}: this exact printing is not a supported ${profile?.platform || "format"} game card. Select an appropriate printing; the saved entry has been preserved.`, "error");
+    if (/\bAttraction\b|\bContraption\b|\bDungeon\b|\bConspiracy\b|\bStickers\b/.test(card.frontType)) issue("special-deck", `${card.name}: this card belongs to a separate special-card workflow, not the main/side/command zones supported here.`, "unsupported");
+    if (card.layout === "meld" && card.meldEntry !== "meld_part") issue("meld", card.meldEntry === "meld_result" ? `${card.name} is a meld result, not a card that can be included as a deck entry.` : `${card.name}: current meld-component data is required before this entry can pass.`, card.meldEntry === "meld_result" ? "error" : "pending");
+    if (profile?.originalVersions && (card.isRebalanced || /^A-/.test(card.name))) issue("rebalanced", `${card.name}: Gladiator uses original versions, not rebalanced A- cards.`, "error");
+    if (!card.availableFinishes?.includes(finish)) issue("finish", `${card.name}: ${finish} is not available for the saved printing. Choose a supported entry; it has not been removed.`, "error");
+    return result;
+  }
   function validate(deck, { isVerified = () => false, proof = () => null } = {}) {
     const issues = [];
     const issue = (code, message, severity = "error", key = "") => issues.push({ code, message, severity, key });
@@ -143,16 +158,7 @@
       for (const other of matching.slice(1)) { for (const name of other.names) group.names.add(name); for (const id of other.ids) group.ids.add(id); group.cards.push(...other.cards); group.count += other.count; groups.splice(groups.indexOf(other), 1); }
       group.names.add(normal(card.name)); if (card.oracleId) group.ids.add(card.oracleId); group.cards.push(card); group.count += entry.quantity;
       if (!isVerified(card)) issue("stale", `${card.name}: current card data has not been verified in this session.`, "pending", entry.key);
-      if (!card.oracleId || !Array.isArray(card.colorIdentity) || !card.frontType || card.manaValue === "Not supplied") issue("missing-data", `${card.name}: required card information is missing.`, "pending", entry.key);
-      if (!card.printingDataComplete || !card.layout || !["black", "white", "borderless", "gold", "silver"].includes(card.borderColor)) issue("printing-data", `${card.name}: printing metadata is incomplete.`, "pending", entry.key);
-      const legality = card.legalities?.[profile?.legalityKey];
-      if (!legality || legality === "unknown" || !["legal", "not_legal", "banned", "restricted"].includes(legality)) issue("legality-unknown", `${card.name}: ${profile?.name || deck.format} legality is unavailable.`, "pending", entry.key);
-      else if (!formats.supportedLegality(card, profile)) issue("legality", `${card.name}: ${legality === "banned" ? "banned" : "not legal"} in ${profile?.name || deck.format}.`, "error", entry.key);
-      if (!card.games?.includes(profile?.platform) || card.oversized || ["gold", "silver"].includes(card.borderColor) || card.securityStamp === "acorn" || ["token", "double_faced_token", "emblem", "art_series", "scheme", "planar", "vanguard"].includes(card.layout)) issue("printing", `${card.name}: this exact printing is not a supported ${profile?.platform || "format"} game card. Select an appropriate printing; the saved entry has been preserved.`, "error", entry.key);
-      if (/\bAttraction\b|\bContraption\b|\bDungeon\b|\bConspiracy\b|\bStickers\b/.test(card.frontType)) issue("special-deck", `${card.name}: this card belongs to a separate special-card workflow, not the main/side/command zones supported here.`, "unsupported", entry.key);
-      if (card.layout === "meld" && card.meldEntry !== "meld_part") issue("meld", card.meldEntry === "meld_result" ? `${card.name} is a meld result, not a card that can be included as a deck entry.` : `${card.name}: current meld-component data is required before this entry can pass.`, card.meldEntry === "meld_result" ? "error" : "pending", entry.key);
-      if (profile?.originalVersions && (card.isRebalanced || /^A-/.test(card.name))) issue("rebalanced", `${card.name}: Gladiator uses original versions, not rebalanced A- cards.`, "error", entry.key);
-      if (!card.availableFinishes?.includes(entry.finish)) issue("finish", `${card.name}: ${entry.finish} is not available for the saved printing. Choose a supported entry; it has not been removed.`, "error", entry.key);
+      for(const problem of printingIssues(card,profile,entry.finish,deck.format))issue(problem.code,problem.message,problem.severity,entry.key);
     }
     for (const group of groups) {
       const restricted = profile?.restricted && group.cards.some(c => c.legalities?.[profile.legalityKey] === "restricted");
@@ -187,7 +193,7 @@
     }
     return { count, curve, distribution, types, lands: types.Land, creatures: types.Creature, average: spells ? sum / spells : null, unknownMana };
   }
-  const api = Object.freeze({ validate, statistics, copyLimit, leaderEligibility, pair, background, colorChoice, abilities });
+  const api = Object.freeze({ validate, printingIssues, statistics, copyLimit, leaderEligibility, pair, background, colorChoice, abilities });
   if (typeof module === "object" && module.exports) module.exports = api;
   else root.ManaScoutDeckRules = api;
 })(typeof window === "undefined" ? globalThis : window);

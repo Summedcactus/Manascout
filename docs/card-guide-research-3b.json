@@ -1563,8 +1563,8 @@
         "path": "card/index.html"
       },
       "https://manascout.co.uk/deck/": {
-        "lastmod": "2026-11-05",
-        "basis": "Stage 5 shared explorer integrity update and current Deck Studio functionality",
+        "lastmod": "2026-11-06",
+        "basis": "Stage 5 Deck Appearance controls, atomic exact-printing batch integration and provenance",
         "path": "deck/index.html"
       },
       "https://manascout.co.uk/card/captain-jean-luc-picard/": {

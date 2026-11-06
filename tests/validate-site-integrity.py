@@ -37,9 +37,9 @@ for path,page in pages.items():
     scripts=[urlsplit(a['src']).path.rsplit('/',1)[-1] for t,a in page.tags if t=='script' and a.get('src')]
     if 'card-page.js' in scripts:assert scripts.index('app.js')<scripts.index('card-page.js'),path
     if 'deck-studio.js' in scripts:
-        deps=['deck-formats.js','deck-data.js','deck-model.js','deck-client.js','deck-rules.js','deck-view.js','deck-store.js','deck-identity.js','deck-health.js','deck-generator.js','deck-printings.js','deck-printing-selector.js','deck-studio.js']
+        deps=['deck-formats.js','deck-data.js','deck-model.js','deck-client.js','deck-rules.js','deck-view.js','deck-store.js','deck-identity.js','deck-health.js','deck-generator.js','deck-printings.js','deck-printing-selector.js','deck-appearance.js','deck-appearance-controls.js','deck-studio.js']
         assert all(s in scripts for s in deps) and [scripts.index(s) for s in deps]==sorted(scripts.index(s) for s in deps),path
-for name in ['deck-studio.js','deck-printing-selector.js']:
+for name in ['deck-studio.js','deck-printing-selector.js','deck-appearance-controls.js']:
     refs=set(re.findall(r'\$\("([a-z0-9-]+)"\)',(ROOT/'assets/js'/name).read_text()))
     ids={a.get('id') for _,a in pages[ROOT/'deck/index.html'].tags};assert refs<=ids,(name,refs-ids)
 for path in (ROOT/'assets/css').glob('*.css'):

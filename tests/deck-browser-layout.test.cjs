@@ -40,3 +40,9 @@ test('card images preserve proportions and are not cropped; touch controls remai
 test('compact filters keep an unobscured keyboard target and the selected state; no sticky Health expansion',()=>{
  const p=styles('.deck-studio .ds-deck-entry',390);assert.ok(parseFloat(p['scroll-margin-block-start'])>=80);assert.ok(parseFloat(styles('.deck-studio .ds-deck',390)['scroll-padding-block-start'])>=80);assert.ok(styles('.deck-studio .ds-filter-chip[aria-pressed="true"]',390).background);assert.equal(styles('.deck-studio .ds-health',390).position,undefined);
 });
+
+test('Appearance remains collapsed, non-sticky and within mobile control space budgets',()=>{
+ const html=fs.readFileSync('deck/index.html','utf8');assert.match(html,/<details class="ds-appearance" id="deck-appearance" hidden>/);assert.doesNotMatch(html,/<details[^>]+id="deck-appearance"[^>]*\bopen\b/);
+ for(const width of [320,360,390,430,768,1280]){const panel=styles('.deck-studio .ds-appearance',width),actions=styles('.deck-studio .ds-appearance-actions',width);assert.equal(panel.position,undefined);assert.equal(panel['min-width'],'0');assert.equal(actions['flex-wrap'],'wrap');assert.ok(parseFloat(styles('.deck-studio .ds-appearance .ds-button',width)['min-height'])>=44);assert.ok(parseFloat(styles('.deck-studio .ds-appearance-check',width)['min-height'])>=44);assert.equal(styles('.deck-studio #appearance-preset',width).width,'100%');}
+ assert.ok(html.indexOf('id="deck-appearance"')<html.indexOf('id="deck-filters"'));
+});
