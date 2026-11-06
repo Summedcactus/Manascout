@@ -802,64 +802,13 @@
   }
 
   function marketplace(card) {
-    const name =
-      encodeURIComponent(
-        card?.name || ""
-      );
-
-    const buy =
-      card?.purchase_uris || {};
-
-    const urls = {
-      market:
-        safe(buy.cardmarket) ||
-        `https://www.cardmarket.com/en/Magic/Products/Search?searchString=${name}`,
-
-      tcg:
-        safe(buy.tcgplayer) ||
-        `https://www.tcgplayer.com/search/magic/product?q=${name}`,
-
-      scryfall:
-        safe(card?.scryfall_uri)
+    const trusted = (value, hosts) => {
+      try { const u=new URL(value); return u.protocol==="https:"&&!u.username&&!u.password&&hosts.includes(u.hostname)?u.href:""; } catch { return ""; }
     };
-
-    return `
-      <div class="marketplace-links">
-
-        <a
-          href="${esc(urls.market)}"
-          target="_blank"
-          rel="noopener noreferrer sponsored"
-        >
-          ${buy.cardmarket
-            ? "View this printing on Cardmarket"
-            : "Search Cardmarket"}
-        </a>
-
-        <a
-          href="${esc(urls.tcg)}"
-          target="_blank"
-          rel="noopener noreferrer sponsored"
-        >
-          ${buy.tcgplayer
-            ? "View this printing on TCGplayer"
-            : "Search TCGplayer"}
-        </a>
-
-        ${urls.scryfall
-          ? `
-            <a
-              href="${esc(urls.scryfall)}"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Verify on Scryfall
-            </a>
-          `
-          : ""}
-
-      </div>
-    `;
+    const direct=trusted(card?.purchase_uris?.cardmarket,["www.cardmarket.com","cardmarket.com"]);
+    const market=direct||`https://www.cardmarket.com/en/Magic/Products/Search?searchString=${encodeURIComponent(card?.name||"")}`;
+    const source=trusted(card?.scryfall_uri,["scryfall.com","www.scryfall.com"]);
+    return `<div class="marketplace-links"><a href="${esc(market)}" target="_blank" rel="noopener noreferrer">${direct?"View this printing on Cardmarket":"Search Cardmarket"}</a>${source?`<a href="${esc(source)}" target="_blank" rel="noopener noreferrer">Verify on Scryfall</a>`:""}</div>`;
   }
 
   function stat(label, value) {

@@ -36,3 +36,9 @@ Baseline: DEVELOPMENT `97d94269e9d1b3490884630996b837285e4fdbcf`. All local site
 - Cross-tab localStorage without native Web Locks remains best-effort conflict detection backed by immutable recovery, not a transaction guarantee. Native Web Locks, storage events and quota behaviour require real-browser testing.
 - Missing-image rendering remains readable through card names/printing metadata; native image-error layout shifts and mobile sticky/focus behaviour need visual testing. No layout redesign was attempted during this audit.
 - Unsupported special formats/configurations, companion/event workflows, bracket certification, older-browser single-column fallbacks and local-only saving are intentional product restrictions, not defects to “fix”.
+
+## Marketplace/source follow-up
+
+The removed US marketplace has no remaining production, test or research references. Cardmarket remains as a validated HTTPS destination with a card-name search fallback; Scryfall verification links remain separate. No affiliate code or sponsorship claim was added. Terms/Privacy retain third-party responsibility and privacy/tracking notices.
+
+Citation replacements were checked against accessible sources: [official Iconic Masters gallery](https://magic.wizards.com/en/news/card-image-gallery/iconic-masters) for Mana Drain's edition, [catalogue product availability](https://mtg.wtf/card/availability/5ed/388) for Mana Vault's Secret Lair rainbow-foil product, and [MB2 #181 catalogue](https://mtg.wtf/card/mb2/181/Demonic-Consultation) plus the existing official product explanation for Demonic Consultation. Direct IMA catalogue/Scryfall fetches were unavailable; indexed independent catalogue results corroborated its number/artist. No prices were copied. Only source links/review notes changed in these guides. Their lastmod dates, homepage/Deck dates and URL-specific evidence were updated; cache-version edits alone did not reset other guide editorial dates.
