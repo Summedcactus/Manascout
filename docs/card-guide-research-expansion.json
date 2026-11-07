@@ -1,0 +1,563 @@
+{
+  "reviewed": "2026-11-07",
+  "baseline": "226edf7b1f8c9ce5bddbd122e6147a72b7f81c84",
+  "scope": "Six new guides; four source-reviewed in-place upgrades; Contact and discoverability",
+  "research_access": "Direct Scryfall API/shell proxy unavailable and permission request cancelled. Current web-accessible catalogue records and official Wizards sources checked; live explorer uses Scryfall independently. No prices copied.",
+  "new_guides": {
+    "mox-opal": {
+      "name": "Mox Opal",
+      "title": "Mox Opal Printings, First Edition & Foil Guide | ManaScout",
+      "description": "Trace Mox Opal from Scars of Mirrodin #179 through Masters reprints, Judge foil and Kaladesh Invention. Compare artists, frames and real finishes.",
+      "records": [
+        {
+          "set": "Scars of Mirrodin",
+          "code": "SOM",
+          "number": "179",
+          "date": "2010-10-01",
+          "rarity": "mythic",
+          "artist": "Volkan Baga",
+          "finish": "Nonfoil, traditional foil",
+          "art": "Original illustration; Mirran watermark",
+          "source": "https://mtg.wtf/card/som/179"
+        },
+        {
+          "set": "Modern Masters 2015",
+          "code": "MM2",
+          "number": "223",
+          "date": "2015-05-22",
+          "rarity": "mythic",
+          "artist": "Volkan Baga",
+          "finish": "Nonfoil, traditional foil",
+          "art": "Original illustration in a later frame",
+          "source": "https://mtg.wtf/card/mm2/223"
+        },
+        {
+          "set": "Kaladesh Inventions",
+          "code": "MPS",
+          "number": "19",
+          "date": "2016-09-30",
+          "rarity": "special",
+          "artist": "Chris Rahn",
+          "finish": "Traditional foil only",
+          "art": "Invention frame and alternate artwork",
+          "source": "https://mtg.wtf/card/mps/19"
+        },
+        {
+          "set": "Judge Gift Cards 2019",
+          "code": "J19",
+          "number": "3",
+          "date": "2019-04-10",
+          "rarity": "mythic",
+          "artist": "Volkan Baga",
+          "finish": "Traditional foil only",
+          "art": "Judge promo; legendary frame",
+          "source": "https://mtg.wtf/card/j19/3"
+        },
+        {
+          "set": "Double Masters",
+          "code": "2XM",
+          "number": "275",
+          "date": "2020-08-07",
+          "rarity": "mythic",
+          "artist": "Volkan Baga",
+          "finish": "Nonfoil, traditional foil",
+          "art": "Regular-frame reprint",
+          "source": "https://mtg.wtf/card/2xm/275"
+        },
+        {
+          "set": "Double Masters",
+          "code": "2XM",
+          "number": "362",
+          "date": "2020-08-07",
+          "rarity": "mythic",
+          "artist": "Martina Pilcerova",
+          "finish": "Nonfoil, traditional foil",
+          "art": "Borderless box-topper illustration",
+          "source": "https://mtg.wtf/card/2xm/362"
+        }
+      ],
+      "image": "https://mtg.wtf/cards_hq/som/179.png",
+      "sources": [
+        "https://mtg.wtf/card/som/179",
+        "https://mtg.wtf/card/mm2/223",
+        "https://mtg.wtf/card/mps/19",
+        "https://mtg.wtf/card/j19/3",
+        "https://mtg.wtf/card/2xm/275",
+        "https://mtg.wtf/card/2xm/362",
+        "https://magic.wizards.com/en/banned-restricted-list"
+      ]
+    },
+    "jeweled-lotus": {
+      "name": "Jeweled Lotus",
+      "title": "Jeweled Lotus Printings, First Edition & Foil Guide | ManaScout",
+      "description": "Compare Jeweled Lotus’s Commander Legends debut, extended art and Commander Masters etched and textured versions, with its current Commander ban explained.",
+      "records": [
+        {
+          "set": "Commander Legends",
+          "code": "CMR",
+          "number": "319",
+          "date": "2020-11-20",
+          "rarity": "mythic",
+          "artist": "Alayna Danner",
+          "finish": "Nonfoil, traditional foil",
+          "art": "Original illustration; regular frame",
+          "source": "https://mtg.wtf/card/cmr/319"
+        },
+        {
+          "set": "Commander Legends",
+          "code": "CMR",
+          "number": "695",
+          "date": "2020-11-20",
+          "rarity": "mythic",
+          "artist": "Alayna Danner",
+          "finish": "Nonfoil, traditional foil",
+          "art": "Extended-art presentation",
+          "source": "https://mtg.wtf/card/cmr/695"
+        },
+        {
+          "set": "Commander Masters",
+          "code": "CMM",
+          "number": "396",
+          "date": "2023-08-04",
+          "rarity": "mythic",
+          "artist": "Alayna Danner",
+          "finish": "Nonfoil, traditional foil",
+          "art": "Regular-frame reprint",
+          "source": "https://mtg.wtf/card/cmm/396"
+        },
+        {
+          "set": "Commander Masters",
+          "code": "CMM",
+          "number": "611",
+          "date": "2023-08-04",
+          "rarity": "mythic",
+          "artist": "Alayna Danner",
+          "finish": "Etched foil only",
+          "art": "Foil-etched edition; original artwork",
+          "source": "https://mtg.wtf/card/cmm/611"
+        },
+        {
+          "set": "Commander Masters",
+          "code": "CMM",
+          "number": "702",
+          "date": "2023-08-04",
+          "rarity": "mythic",
+          "artist": "Olena Richards",
+          "finish": "Nonfoil, traditional foil",
+          "art": "Borderless frame-break illustration",
+          "source": "https://mtg.wtf/card/cmm/702"
+        },
+        {
+          "set": "Commander Masters",
+          "code": "CMM",
+          "number": "1066",
+          "date": "2023-08-04",
+          "rarity": "mythic",
+          "artist": "Olena Richards",
+          "finish": "Textured foil only",
+          "art": "Textured borderless frame-break counterpart",
+          "source": "https://mtg.wtf/card/cmm/1066"
+        }
+      ],
+      "image": "https://mtg.wtf/cards_hq/cmr/319.png",
+      "sources": [
+        "https://mtg.wtf/card/cmr/319",
+        "https://mtg.wtf/card/cmr/695",
+        "https://mtg.wtf/card/cmm/396",
+        "https://mtg.wtf/card/cmm/611",
+        "https://mtg.wtf/card/cmm/702",
+        "https://mtg.wtf/card/cmm/1066",
+        "https://magic.wizards.com/en/banned-restricted-list",
+        "https://magic.wizards.com/en/news/announcements/commander-banned-and-restricted-announcement-september-23-2024",
+        "https://magic.wizards.com/en/news/feature/collecting-commander-masters",
+        "https://facetofacegames.com/products/jeweled-lotus-319-commander-legends-non-foil",
+        "https://facetofacegames.com/products/jeweled-lotus-319-commander-legends-foil",
+        "https://magicguru.co.za/cards/jeweled-lotus-23216e59/cmm-611"
+      ]
+    },
+    "lotus-petal": {
+      "name": "Lotus Petal",
+      "title": "Lotus Petal Printings, First Edition & Foil Guide | ManaScout",
+      "description": "Explore Lotus Petal’s Tempest common, From the Vault foil, Kaladesh Invention, anniversary etched promo and Mystery Booster 2 reprint.",
+      "records": [
+        {
+          "set": "Tempest",
+          "code": "TMP",
+          "number": "294",
+          "date": "1997-10-14",
+          "rarity": "common",
+          "artist": "April Lee",
+          "finish": "Nonfoil only",
+          "art": "Original illustration and frame",
+          "source": "https://mtg.wtf/card/tmp/294"
+        },
+        {
+          "set": "From the Vault: Exiled",
+          "code": "V09",
+          "number": "7",
+          "date": "2009-08-28",
+          "rarity": "mythic",
+          "artist": "April Lee",
+          "finish": "Traditional foil only",
+          "art": "Original illustration in premium boxed release",
+          "source": "https://mtg.wtf/card/v09/7"
+        },
+        {
+          "set": "Kaladesh Inventions",
+          "code": "MPS",
+          "number": "15",
+          "date": "2016-09-30",
+          "rarity": "special",
+          "artist": "Slawomir Maniak",
+          "finish": "Traditional foil only",
+          "art": "New mechanical-petal illustration; Invention frame",
+          "source": "https://mtg.wtf/card/mps/15"
+        },
+        {
+          "set": "30th Anniversary Misc Promos",
+          "code": "P30M",
+          "number": "2",
+          "date": "2023-08-03",
+          "rarity": "mythic",
+          "artist": "April Lee",
+          "finish": "Etched foil only",
+          "art": "Anniversary foil-etched edition",
+          "source": "https://mtg.wtf/card/p30m/2"
+        },
+        {
+          "set": "Mystery Booster 2",
+          "code": "MB2",
+          "number": "226",
+          "date": "2024-08-02",
+          "rarity": "common",
+          "artist": "April Lee",
+          "finish": "Nonfoil, traditional foil",
+          "art": "Later reprint of the original image",
+          "source": "https://mtg.wtf/card/mb2/226"
+        }
+      ],
+      "image": "https://mtg.wtf/cards_hq/tmp/294.png",
+      "sources": [
+        "https://mtg.wtf/card/tmp/294",
+        "https://mtg.wtf/card/v09/7",
+        "https://mtg.wtf/card/mps/15",
+        "https://mtg.wtf/card/p30m/2",
+        "https://mtg.wtf/card/mb2/226",
+        "https://magic.wizards.com/en/banned-restricted-list"
+      ]
+    },
+    "command-tower": {
+      "name": "Command Tower",
+      "title": "Command Tower Printings, First Edition & Foil Guide | ManaScout",
+      "description": "Compare Command Tower’s 2011 original with Arsenal foil, extended art, Commander Masters borderless art and later setting-specific reprints.",
+      "records": [
+        {
+          "set": "Commander 2011",
+          "code": "CMD",
+          "number": "269",
+          "date": "2011-06-17",
+          "rarity": "common",
+          "artist": "Ryan Yee",
+          "finish": "Nonfoil only",
+          "art": "Original illustration",
+          "source": "https://mtg.wtf/card/cmd/269"
+        },
+        {
+          "set": "Commander’s Arsenal",
+          "code": "CM1",
+          "number": "2",
+          "date": "2012-11-02",
+          "rarity": "common",
+          "artist": "Adam Paquette",
+          "finish": "Traditional foil only",
+          "art": "Alternate illustration; premium boxed release",
+          "source": "https://mtg.wtf/card/cm1/2"
+        },
+        {
+          "set": "Commander Legends",
+          "code": "CMR",
+          "number": "350",
+          "date": "2020-11-20",
+          "rarity": "common",
+          "artist": "Ryan Yee",
+          "finish": "Nonfoil, traditional foil",
+          "art": "Regular-frame original-art reprint",
+          "source": "https://mtg.wtf/card/cmr/350"
+        },
+        {
+          "set": "Commander Legends",
+          "code": "CMR",
+          "number": "705",
+          "date": "2020-11-20",
+          "rarity": "common",
+          "artist": "Ryan Yee",
+          "finish": "Nonfoil, traditional foil",
+          "art": "Extended-art presentation",
+          "source": "https://mtg.wtf/card/cmr/705"
+        },
+        {
+          "set": "Commander Masters",
+          "code": "CMM",
+          "number": "659",
+          "date": "2023-08-04",
+          "rarity": "common",
+          "artist": "Donato Giancola",
+          "finish": "Nonfoil, traditional foil",
+          "art": "Borderless alternate illustration",
+          "source": "https://mtg.wtf/card/cmm/659"
+        },
+        {
+          "set": "Lorwyn Eclipsed Commander",
+          "code": "ECC",
+          "number": "60",
+          "date": "2026-01-23",
+          "rarity": "common",
+          "artist": "Randy Gallegos",
+          "finish": "Nonfoil only",
+          "art": "Boggart tower; setting-specific artwork",
+          "source": "https://mtg.wtf/card/ecc/60"
+        }
+      ],
+      "image": "https://mtg.wtf/cards_hq/cmd/269.png",
+      "sources": [
+        "https://mtg.wtf/card/cmd/269",
+        "https://mtg.wtf/card/cm1/2",
+        "https://mtg.wtf/card/cmr/350",
+        "https://mtg.wtf/card/cmr/705",
+        "https://mtg.wtf/card/cmm/659",
+        "https://mtg.wtf/card/ecc/60",
+        "https://magery.com/mtg/cmr/command-tower-350"
+      ]
+    },
+    "senseis-divining-top": {
+      "name": "Sensei's Divining Top",
+      "title": "Sensei’s Divining Top Printings, Foils & Legality | ManaScout",
+      "description": "Trace Sensei’s Divining Top from Champions of Kamigawa uncommon to Eternal Masters art and Double Masters borderless and etched editions, with legality context.",
+      "records": [
+        {
+          "set": "Champions of Kamigawa",
+          "code": "CHK",
+          "number": "268",
+          "date": "2004-10-01",
+          "rarity": "uncommon",
+          "artist": "Michael Sutfin",
+          "finish": "Nonfoil, traditional foil",
+          "art": "Original illustration",
+          "source": "https://mtg.wtf/card/chk/268"
+        },
+        {
+          "set": "From the Vault: Exiled",
+          "code": "V09",
+          "number": "10",
+          "date": "2009-08-28",
+          "rarity": "mythic",
+          "artist": "Michael Sutfin",
+          "finish": "Traditional foil only",
+          "art": "Original-art premium boxed edition",
+          "source": "https://mtg.wtf/card/v09/10"
+        },
+        {
+          "set": "Eternal Masters",
+          "code": "EMA",
+          "number": "232",
+          "date": "2016-06-10",
+          "rarity": "rare",
+          "artist": "Rob Alexander",
+          "finish": "Nonfoil, traditional foil",
+          "art": "Alternate illustration",
+          "source": "https://mtg.wtf/card/ema/232"
+        },
+        {
+          "set": "Double Masters 2022",
+          "code": "2X2",
+          "number": "314",
+          "date": "2022-07-08",
+          "rarity": "rare",
+          "artist": "Michael Sutfin",
+          "finish": "Nonfoil, traditional foil",
+          "art": "Regular frame; original illustration",
+          "source": "https://mtg.wtf/card/2x2/314"
+        },
+        {
+          "set": "Double Masters 2022",
+          "code": "2X2",
+          "number": "398",
+          "date": "2022-07-08",
+          "rarity": "rare",
+          "artist": "Greg Staples",
+          "finish": "Nonfoil, traditional foil",
+          "art": "Borderless alternate illustration",
+          "source": "https://mtg.wtf/card/2x2/398"
+        },
+        {
+          "set": "Double Masters 2022",
+          "code": "2X2",
+          "number": "566",
+          "date": "2022-07-08",
+          "rarity": "rare",
+          "artist": "Michael Sutfin",
+          "finish": "Etched foil only",
+          "art": "Etched frame; original illustration",
+          "source": "https://mtg.wtf/card/2x2/566"
+        }
+      ],
+      "image": "https://mtg.wtf/cards_hq/chk/268.png",
+      "sources": [
+        "https://mtg.wtf/card/chk/268",
+        "https://mtg.wtf/card/v09/10",
+        "https://mtg.wtf/card/ema/232",
+        "https://mtg.wtf/card/2x2/314",
+        "https://mtg.wtf/card/2x2/398",
+        "https://mtg.wtf/card/2x2/566",
+        "https://magic.wizards.com/en/banned-restricted-list"
+      ]
+    },
+    "edgar-markov": {
+      "name": "Edgar Markov",
+      "title": "Edgar Markov Printings, First Edition & Foil Guide | ManaScout",
+      "description": "Compare Edgar Markov’s foil-only Commander 2017 debut, Judge art, Innistrad Remastered fang and retro frames, and serialized movie-poster edition.",
+      "records": [
+        {
+          "set": "Commander 2017",
+          "code": "C17",
+          "number": "36",
+          "date": "2017-08-25",
+          "rarity": "mythic",
+          "artist": "Volkan Baga",
+          "finish": "Traditional foil only",
+          "art": "Original standard-size commander",
+          "source": "https://mtg.wtf/card/c17/36"
+        },
+        {
+          "set": "Judge Gift Cards 2021",
+          "code": "PJ21",
+          "number": "3",
+          "date": "2021-12-01",
+          "rarity": "mythic",
+          "artist": "Martina Fackova",
+          "finish": "Traditional foil only",
+          "art": "Judge alternate illustration",
+          "source": "https://mtg.wtf/card/pj21/3"
+        },
+        {
+          "set": "Innistrad Remastered",
+          "code": "INR",
+          "number": "234",
+          "date": "2025-01-24",
+          "rarity": "mythic",
+          "artist": "Volkan Baga",
+          "finish": "Nonfoil, traditional foil",
+          "art": "Regular frame; original illustration",
+          "source": "https://mtg.wtf/card/inr/234"
+        },
+        {
+          "set": "Innistrad Remastered",
+          "code": "INR",
+          "number": "328",
+          "date": "2025-01-24",
+          "rarity": "mythic",
+          "artist": "Betty Jiang",
+          "finish": "Nonfoil, traditional foil",
+          "art": "Showcase fang frame and alternate illustration",
+          "source": "https://mtg.wtf/card/inr/328"
+        },
+        {
+          "set": "Innistrad Remastered",
+          "code": "INR",
+          "number": "428",
+          "date": "2025-01-24",
+          "rarity": "mythic",
+          "artist": "Volkan Baga",
+          "finish": "Nonfoil, traditional foil",
+          "art": "Retro frame; original illustration",
+          "source": "https://mtg.wtf/card/inr/428"
+        },
+        {
+          "set": "Innistrad Remastered",
+          "code": "INR",
+          "number": "491",
+          "date": "2025-01-24",
+          "rarity": "mythic",
+          "artist": "Jack Hughes",
+          "finish": "Serialized double rainbow foil only",
+          "art": "Movie-poster headliner; 500 serialized copies",
+          "source": "https://mtg.wtf/card/inr/491"
+        }
+      ],
+      "image": "https://mtg.wtf/cards_hq/c17/36.png",
+      "sources": [
+        "https://mtg.wtf/card/c17/36",
+        "https://mtg.wtf/card/pj21/3",
+        "https://mtg.wtf/card/inr/234",
+        "https://mtg.wtf/card/inr/328",
+        "https://mtg.wtf/card/inr/428",
+        "https://mtg.wtf/card/inr/491",
+        "https://magic.wizards.com/en/news/feature/collecting-innistrad-remastered"
+      ]
+    }
+  },
+  "upgrades": {
+    "sol-ring": {
+      "name": "Sol Ring",
+      "image": "https://mtg.wtf/cards_hq/cmm/410.png",
+      "sources": [
+        "https://www.echomtg.com/mtg/items/sol-ring/80/",
+        "https://mtg.wtf/card/cmd/261/Sol-Ring",
+        "https://magic.wizards.com/en/news/making-magic/masterpiece-series-2016-09-12",
+        "https://magic.wizards.com/en/news/announcements/a-first-look-at-the-lord-of-the-rings-tales-of-middle-earth",
+        "https://magic.wizards.com/en/news/feature/collecting-commander-masters",
+        "https://magic.wizards.com/en/banned-restricted-list",
+        "https://m.mtg.wtf/card/lea/269/Sol-Ring"
+      ],
+      "retained": "Original main editorial sections, tables, exact routes, shared explorer and citations; added controlled-comparison table and practical curation analysis"
+    },
+    "the-one-ring": {
+      "name": "The One Ring",
+      "image": "https://mtg.wtf/cards_hq/ltr/246.png",
+      "sources": [
+        "https://mtg.wtf/card/ltr/246/The-One-Ring",
+        "https://magic.wizards.com/en/news/feature/the-lord-of-the-rings-tales-of-middle-earth-release-notes",
+        "https://magic.wizards.com/en/news/feature/collecting-the-lord-of-the-rings-tales-of-middle-earth",
+        "https://mtg.wtf/card/hoc/44/The-One-Ring",
+        "https://mtg.wtf/card/ltr/748z/The-One-Ring",
+        "https://magic.wizards.com/en/banned-restricted-list",
+        "https://mtg.wtf/card/hoc/84/The-One-Ring"
+      ],
+      "retained": "Original main editorial sections, tables, exact routes, shared explorer and citations; added controlled-comparison table and practical curation analysis"
+    },
+    "demonic-tutor": {
+      "name": "Demonic Tutor",
+      "image": "https://mtg.wtf/cards_hq/uma/93.png",
+      "sources": [
+        "https://mtg.wtf/card/lea/104/Demonic-Tutor",
+        "https://mtg.wtf/card/uma/93/Demonic-Tutor",
+        "https://mtg.wtf/card/puma/U8/Demonic-Tutor",
+        "https://magic.wizards.com/en/news/feature/collecting-strixhaven-school-mages-2021-03-25",
+        "https://magic.wizards.com/en/news/feature/collecting-commander-masters",
+        "https://magic.wizards.com/en/banned-restricted-list",
+        "https://www.mtg.wtf/card/lea/104/Demonic-Tutor",
+        "https://www.mtg.wtf/card/puma/U8/Demonic-Tutor"
+      ],
+      "retained": "Original main editorial sections, tables, exact routes, shared explorer and citations; added controlled-comparison table and practical curation analysis"
+    },
+    "deflecting-swat": {
+      "name": "Deflecting Swat",
+      "image": "https://mtg.wtf/cards_hq/c20/50.png",
+      "sources": [
+        "https://mtg.wtf/card/c20/50/Deflecting-Swat",
+        "https://magic.wizards.com/en/news/feature/ikoria-lair-behemoths-and-commander-2020-edition-release-notes-2020-04-10",
+        "https://mtg.wtf/card/cmm/532/Deflecting-Swat",
+        "https://magic.wizards.com/en/news/announcements/secret-lair-winter-superdrop-2025",
+        "https://mtg.wtf/card/tle/311/Deflecting-Swat",
+        "https://mtg.wtf/card/sld/1552/Deflecting-Swat"
+      ],
+      "retained": "Original main editorial sections, tables, exact routes, shared explorer and citations; added controlled-comparison table and practical curation analysis"
+    }
+  },
+  "qualifications": [
+    "Static images identify exact editions; their network delivery and rendered layout require native browser verification.",
+    "Innistrad collecting article mentions January 25 in one paragraph but January 24 in its launch section; individual catalogue records and that launch section agree on 2025-01-24.",
+    "Commander 2020 catalogue date is 2020-04-17; editorial copy retains the verified year rather than claiming a uniform global launch day.",
+    "This is a curated physical shortlist, not a complete catalogue. Digital and oversized entries are not ordinary paper deck printings."
+  ]
+}
