@@ -1447,9 +1447,8 @@
         "path": "card/cyclonic-rift/index.html"
       },
       "https://manascout.co.uk/card/deflecting-swat/": {
-        "lastmod": "2026-11-02",
-        "basis": "Upgrade four premium interaction card guides",
-        "commit": "126767990c0c73598277f6ccfe4b59577c799bb1",
+        "lastmod": "2026-11-07",
+        "basis": "Source-reviewed guide expansion, shared navigation/privacy/contact or guide registry/discovery update",
         "path": "card/deflecting-swat/index.html"
       },
       "https://manascout.co.uk/card/demonic-consultation/": {
@@ -1458,9 +1457,8 @@
         "path": "card/demonic-consultation/index.html"
       },
       "https://manascout.co.uk/card/demonic-tutor/": {
-        "lastmod": "2026-11-02",
-        "basis": "Upgrade tutor and Mystic Remora printing guides",
-        "commit": "1b62bf3ddc61eea71cd9b138570bde9bc40eabe4",
+        "lastmod": "2026-11-07",
+        "basis": "Source-reviewed guide expansion, shared navigation/privacy/contact or guide registry/discovery update",
         "path": "card/demonic-tutor/index.html"
       },
       "https://manascout.co.uk/card/esper-sentinel/": {
@@ -1522,9 +1520,8 @@
         "path": "card/smothering-tithe/index.html"
       },
       "https://manascout.co.uk/card/sol-ring/": {
-        "lastmod": "2026-11-01",
-        "basis": "Upgrade essential mana and utility card guides",
-        "commit": "d78ce089b81de7c750f6b7128ad9f7046bac5f8f",
+        "lastmod": "2026-11-07",
+        "basis": "Source-reviewed guide expansion, shared navigation/privacy/contact or guide registry/discovery update",
         "path": "card/sol-ring/index.html"
       },
       "https://manascout.co.uk/card/the-great-henge/": {
@@ -1534,9 +1531,8 @@
         "path": "card/the-great-henge/index.html"
       },
       "https://manascout.co.uk/card/the-one-ring/": {
-        "lastmod": "2026-11-01",
-        "basis": "Upgrade four card guides with sourced printing histories",
-        "commit": "b50dd1dc33d49dbdfae8cae04378e41255beda95",
+        "lastmod": "2026-11-07",
+        "basis": "Source-reviewed guide expansion, shared navigation/privacy/contact or guide registry/discovery update",
         "path": "card/the-one-ring/index.html"
       },
       "https://manascout.co.uk/card/urzas-saga/": {
@@ -1552,19 +1548,18 @@
         "path": "card/vampiric-tutor/index.html"
       },
       "https://manascout.co.uk/": {
-        "lastmod": "2026-11-05",
-        "basis": "Stage 5 shared explorer integrity update and current Deck Studio functionality",
+        "lastmod": "2026-11-07",
+        "basis": "Source-reviewed guide expansion, shared navigation/privacy/contact or guide registry/discovery update",
         "path": "index.html"
       },
       "https://manascout.co.uk/card/": {
-        "lastmod": "2026-11-04",
-        "basis": "Add four printing guides and audit six flagship guides with verified records and SEO",
-        "commit": "b5699d635f40505200b6f1440a2dbce8dc4bccce",
+        "lastmod": "2026-11-07",
+        "basis": "Source-reviewed guide expansion, shared navigation/privacy/contact or guide registry/discovery update",
         "path": "card/index.html"
       },
       "https://manascout.co.uk/deck/": {
-        "lastmod": "2026-11-06",
-        "basis": "Stage 5 Deck Appearance controls, atomic exact-printing batch integration and provenance",
+        "lastmod": "2026-11-07",
+        "basis": "Source-reviewed guide expansion, shared navigation/privacy/contact or guide registry/discovery update",
         "path": "deck/index.html"
       },
       "https://manascout.co.uk/card/captain-jean-luc-picard/": {
@@ -1688,6 +1683,41 @@
         "lastmod": "2026-11-04",
         "basis": "Prompt 3B material guide rewrite in this task",
         "path": "card/the-theorist-jace-beleren/index.html"
+      },
+      "https://manascout.co.uk/contact/": {
+        "lastmod": "2026-11-07",
+        "basis": "Source-reviewed guide expansion, shared navigation/privacy/contact or guide registry/discovery update",
+        "path": "contact/index.html"
+      },
+      "https://manascout.co.uk/card/senseis-divining-top/": {
+        "lastmod": "2026-11-07",
+        "basis": "Source-reviewed guide expansion, shared navigation/privacy/contact or guide registry/discovery update",
+        "path": "card/senseis-divining-top/index.html"
+      },
+      "https://manascout.co.uk/card/command-tower/": {
+        "lastmod": "2026-11-07",
+        "basis": "Source-reviewed guide expansion, shared navigation/privacy/contact or guide registry/discovery update",
+        "path": "card/command-tower/index.html"
+      },
+      "https://manascout.co.uk/card/edgar-markov/": {
+        "lastmod": "2026-11-07",
+        "basis": "Source-reviewed guide expansion, shared navigation/privacy/contact or guide registry/discovery update",
+        "path": "card/edgar-markov/index.html"
+      },
+      "https://manascout.co.uk/card/jeweled-lotus/": {
+        "lastmod": "2026-11-07",
+        "basis": "Source-reviewed guide expansion, shared navigation/privacy/contact or guide registry/discovery update",
+        "path": "card/jeweled-lotus/index.html"
+      },
+      "https://manascout.co.uk/card/lotus-petal/": {
+        "lastmod": "2026-11-07",
+        "basis": "Source-reviewed guide expansion, shared navigation/privacy/contact or guide registry/discovery update",
+        "path": "card/lotus-petal/index.html"
+      },
+      "https://manascout.co.uk/card/mox-opal/": {
+        "lastmod": "2026-11-07",
+        "basis": "Source-reviewed guide expansion, shared navigation/privacy/contact or guide registry/discovery update",
+        "path": "card/mox-opal/index.html"
       }
     }
   }

@@ -1,0 +1,24 @@
+/* Contact is an email-only static page; no new tracking or form dependencies. */
+.contact-page main { max-width: 1000px; padding-bottom: 48px; }
+.contact-page .contact-panel, .contact-page .contact-topics article { min-width: 0; padding: clamp(20px,4vw,32px); border: 1px solid var(--line); border-radius: 14px; background: #101114; }
+.contact-page .contact-panel { margin-bottom: 24px; }
+.contact-page h1 { font-size: clamp(36px,7vw,68px); overflow-wrap: anywhere; }
+.contact-page h2 { font-size: clamp(21px,3vw,28px); line-height: 1.3; margin-bottom: 12px; }
+.contact-page p { line-height: 1.8; color: var(--muted); }
+.contact-page .contact-email-action { display: inline-flex; align-items: center; gap: 14px; min-height: 48px; padding: 12px 20px; margin-block: 8px 16px; border-radius: 9px; background: #9B283A; color: #f1eee9; font-weight: 700; }
+.contact-page .contact-email-action:hover { background: #b82c3e; }
+.contact-page .contact-email-action:active { transform: translateY(1px); }
+.contact-page label { display: block; margin-block: 8px; color: var(--muted); font-size: 14px; }
+.contact-page #contact-email { width: 100%; max-width: 440px; min-width: 0; min-height: 48px; padding: 12px; border: 1px solid var(--line); border-radius: 7px; background: #17191f; color: var(--text); font: inherit; font-size: 16px; user-select: all; }
+.contact-page .contact-note { margin-top: 12px; font-size: 14px; }
+.contact-page .contact-topics { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 18px; margin-bottom: 24px; }
+.contact-page .contact-topics a, .contact-page .footer a { display: inline-flex; align-items: center; min-height: 44px; padding-block: 8px; color: var(--text); text-decoration: underline; text-underline-offset: 4px; }
+.contact-page .footer nav { display: flex; flex-wrap: wrap; gap: 8px 18px; }
+.contact-page :is(a,input):focus-visible { outline: 2px solid #dd91a0; outline-offset: 4px; }
+.contact-page .contact-skip { position: absolute; top: -100px; left: 12px; z-index: 100; padding: 12px; background: var(--panel); color: var(--text); }
+.contact-page .contact-skip:focus { top: 12px; }
+@media (max-width: 650px) {
+  .contact-page .contact-topics { grid-template-columns: minmax(0,1fr); }
+  .contact-page .header-inner { flex-wrap: wrap; justify-content: center; gap: 12px; }
+  .contact-page .nav { flex-wrap: wrap; justify-content: center; }
+}

@@ -27,6 +27,7 @@
     "captain-jean-luc-picard",
     "cavern-of-souls",
     "chrome-mox",
+    "command-tower",
     "counterspell",
     "cyclonic-rift",
     "deflecting-swat",
@@ -34,6 +35,7 @@
     "demonic-tutor",
     "dockside-extortionist",
     "doubling-season",
+    "edgar-markov",
     "esper-sentinel",
     "fierce-guardianship",
     "force-of-will",
@@ -41,12 +43,15 @@
     "grim-monolith",
     "jace-the-mind-sculptor",
     "jeskas-will",
+    "jeweled-lotus",
     "lightning-bolt",
     "lightning-greaves",
+    "lotus-petal",
     "mana-crypt",
     "mana-drain",
     "mana-vault",
     "mox-diamond",
+    "mox-opal",
     "mr-spock-science-officer",
     "mystic-remora",
     "mystic-sanctuary",
@@ -54,6 +59,7 @@
     "orcish-bowmasters",
     "path-to-exile",
     "rhystic-study",
+    "senseis-divining-top",
     "smaug-wicked-worm",
     "smothering-tithe",
     "sol-ring",
@@ -442,8 +448,28 @@
     announce("home");
   }
 
+  function guideFallback(message) {
+    const fallback = guideName && ui.details?.querySelector("[data-guide-static]");
+    if (!fallback) return false;
+    const status = fallback.querySelector("[data-static-status]");
+    if (status) status.textContent = message;
+    return true;
+  }
+
+  function installGuideImages() {
+    for (const img of document.querySelectorAll("[data-guide-static] img")) {
+      const failed = () => {
+        img.hidden = true;
+        const notice = img.closest("figure")?.querySelector(".guide-image-error");
+        if (notice) notice.hidden = false;
+      };
+      img.addEventListener("error", failed, { once: true });
+      if (img.complete && !img.naturalWidth) failed();
+    }
+  }
+
   function errorState(message) {
-    if (ui.details) {
+    if (ui.details && !guideFallback(message + " The researched printing reference remains below.")) {
       disposePreview();
       ui.details.innerHTML = `
         <div
@@ -2804,7 +2830,7 @@
       }
     );
 
-    if (ui.details) {
+    if (ui.details && !guideFallback("Loading live Scryfall details; showing the researched printing reference.")) {
       ui.details.innerHTML = `
         <div
           class="empty-state"
@@ -3734,6 +3760,7 @@
     );
   }
 
+  installGuideImages();
   installStyles();
 
   const first =
