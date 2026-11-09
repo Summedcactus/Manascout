@@ -79,83 +79,75 @@
   >
 
   <link rel="stylesheet" href="/assets/css/style.css">
-  <link rel="stylesheet" href="/assets/css/home.css?v=cotw-polish1">
+  <link rel="stylesheet" href="/assets/css/home.css?v=eldrazi1">
 
   <!-- Structured data -->
   <script type="application/ld+json">
-  {
-    "@context": "https://schema.org",
-    "@graph": [
-      {
-        "@type": "Organization",
-        "@id": "https://manascout.co.uk/#organization",
-        "name": "ManaScout",
-        "url": "https://manascout.co.uk/"
-      },
-      {
-        "@type": "WebSite",
-        "@id": "https://manascout.co.uk/#website",
-        "name": "ManaScout",
-        "url": "https://manascout.co.uk/",
-        "description": "Magic: The Gathering card printing and artwork discovery.",
-        "publisher": {
-          "@id": "https://manascout.co.uk/#organization"
-        },
-        "potentialAction": {
-          "@type": "SearchAction",
-          "target": {
-            "@type": "EntryPoint",
-            "urlTemplate": "https://manascout.co.uk/?q={search_term_string}"
-          },
-          "query-input": "required name=search_term_string"
-        }
-      },
-      {
-        "@type": "WebPage",
-        "@id": "https://manascout.co.uk/#webpage",
-        "url": "https://manascout.co.uk/",
-        "name": "MTG Card Printings, Foils & Versions | ManaScout",
-        "description": "Search and compare Magic: The Gathering printings, collector numbers, artwork, foils and special card treatments.",
-        "isPartOf": {
-          "@id": "https://manascout.co.uk/#website"
-        },
-        "about": {
-          "@type": "Thing",
-          "name": "Magic: The Gathering card printings"
-        }
-      },
-      {
-        "@type": "ItemList",
-        "name": "Featured ManaScout printing guides",
-        "itemListElement": [
-          {
-            "@type": "ListItem",
-            "position": 1,
-            "name": "Rhystic Study",
-            "url": "https://manascout.co.uk/card/rhystic-study/"
-          },
-          {
-            "@type": "ListItem",
-            "position": 2,
-            "name": "Sol Ring",
-            "url": "https://manascout.co.uk/card/sol-ring/"
-          },
-          {
-            "@type": "ListItem",
-            "position": 3,
-            "name": "The One Ring",
-            "url": "https://manascout.co.uk/card/the-one-ring/"
-          },
-          {
-            "@type": "ListItem",
-            "position": 4,
-            "name": "Force of Will",
-            "url": "https://manascout.co.uk/card/force-of-will/"
-          }
-        ]
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Organization",
+      "@id": "https://manascout.co.uk/#organization",
+      "name": "ManaScout",
+      "url": "https://manascout.co.uk/"
+    },
+    {
+      "@type": "WebSite",
+      "@id": "https://manascout.co.uk/#website",
+      "name": "ManaScout",
+      "url": "https://manascout.co.uk/",
+      "description": "Magic: The Gathering card printing and artwork discovery.",
+      "publisher": {
+        "@id": "https://manascout.co.uk/#organization"
       }
-    ]
-  }
+    },
+    {
+      "@type": "WebPage",
+      "@id": "https://manascout.co.uk/#webpage",
+      "url": "https://manascout.co.uk/",
+      "name": "MTG Card Printings, Foils & Versions | ManaScout",
+      "description": "Search and compare Magic: The Gathering printings, collector numbers, artwork, foils and special card treatments.",
+      "isPartOf": {
+        "@id": "https://manascout.co.uk/#website"
+      },
+      "about": {
+        "@type": "Thing",
+        "name": "Magic: The Gathering card printings"
+      }
+    },
+    {
+      "@type": "ItemList",
+      "name": "Featured ManaScout printing guides",
+      "itemListElement": [
+        {
+          "@type": "ListItem",
+          "position": 1,
+          "name": "Rhystic Study",
+          "url": "https://manascout.co.uk/card/rhystic-study/"
+        },
+        {
+          "@type": "ListItem",
+          "position": 2,
+          "name": "Sol Ring",
+          "url": "https://manascout.co.uk/card/sol-ring/"
+        },
+        {
+          "@type": "ListItem",
+          "position": 3,
+          "name": "The One Ring",
+          "url": "https://manascout.co.uk/card/the-one-ring/"
+        },
+        {
+          "@type": "ListItem",
+          "position": 4,
+          "name": "Force of Will",
+          "url": "https://manascout.co.uk/card/force-of-will/"
+        }
+      ]
+    }
+  ]
+}
   </script>
 
 
@@ -271,23 +263,23 @@
 
         <span>Try</span>
 
-        <a href="/?q=Sol%20Ring">
+        <a href="/card/sol-ring/">
           Sol Ring
         </a>
 
-        <a href="/?q=Rhystic%20Study">
+        <a href="/card/rhystic-study/">
           Rhystic Study
         </a>
 
-        <a href="/?q=The%20One%20Ring">
+        <a href="/card/the-one-ring/">
           The One Ring
         </a>
 
-        <a href="/?q=Demonic%20Tutor">
+        <a href="/card/demonic-tutor/">
           Demonic Tutor
         </a>
 
-        <a href="/?q=Force%20of%20Will">
+        <a href="/card/force-of-will/">
           Force of Will
         </a>
 
@@ -609,7 +601,7 @@
           <div>
 
             <p class="scoutboard-kicker">
-              CARD OF THE WEEK · WEEK 006
+              CARD OF THE WEEK · WEEK 007
             </p>
 
             <h3 id="weekly-heading">
@@ -624,198 +616,48 @@
           </div>
 
           <span class="weekly-edition-badge">
-            WEEK 006
+            WEEK 007
           </span>
 
         </div>
 
 
-        <article
-          class="weekly-card-feature weekly-theme-morgul"
-          id="card-of-the-week"
-          data-weekly-card="Cabal Coffers"
-          data-weekly-set="ltc"
-          data-weekly-number="390"
-          data-weekly-theme="morgul-shadow"
-          data-weekly-art-ready="false"
-        >
-
-          <!-- Static vignette; the spectral aura is anchored behind the card below. -->
-          <div class="weekly-scene morgul-scene" aria-hidden="true"></div>
-
-
-          <!-- PRINTING ARTWORK -->
-
+        <article class="weekly-card-feature weekly-theme-eldrazi" id="card-of-the-week"
+          data-weekly-card="Ulamog, the Defiler" data-weekly-set="mh3" data-weekly-number="383"
+          data-weekly-artist="Vincent Proce" data-weekly-finish="foil" data-weekly-theme="eldrazi-void" data-weekly-art-ready="false">
+          <div class="weekly-scene eldrazi-void" aria-hidden="true"></div>
           <div class="weekly-card-column">
-
             <div class="weekly-card-stage">
-            <div class="weekly-card-halo" aria-hidden="true"></div>
-            <div class="weekly-card-rest-shadow" aria-hidden="true"></div>
-            <div class="weekly-card-float">
-            <div
-              class="weekly-card-shell"
-              id="weekly-card-shell"
-            >
-
-              <div
-                class="weekly-card-placeholder"
-                id="card-week-placeholder"
-              >
-                <span>◇</span>
-
-                <small>
-                  THE SHADOWS ARE GATHERING…
-                </small>
+              <div class="weekly-card-halo" aria-hidden="true"></div>
+              <div class="weekly-card-rest-shadow" aria-hidden="true"></div>
+              <div class="weekly-card-float">
+                <div class="weekly-card-shell" id="weekly-card-shell">
+                  <div class="weekly-card-placeholder" id="card-week-placeholder"><span aria-hidden="true">◇</span><small>ULAMOG, THE DEFILER · MH3 #383<br>Artwork unavailable? The exact printing link remains below.</small></div>
+                  <img id="card-week-image" class="weekly-card-image" src="https://api.scryfall.com/cards/mh3/383?format=image&amp;version=normal"
+                    alt="Ulamog, the Defiler — Modern Horizons 3 #383, Vincent Proce’s borderless concept artwork; traditional foil selected"
+                    loading="lazy" decoding="async" width="488" height="680">
+                  <div class="weekly-foil-sheen" aria-hidden="true"><span class="weekly-foil-glimmer"></span></div>
+                  <div class="weekly-edge-light" aria-hidden="true"></div>
+                </div>
               </div>
-
-              <img
-                id="card-week-image"
-                class="weekly-card-image"
-                src="https://api.scryfall.com/cards/ltc/390?format=image&amp;version=normal"
-                alt="Minas Morgul — Cabal Coffers, Tales of Middle-earth Commander, surge foil collector number 390"
-                loading="lazy"
-                decoding="async"
-                width="488"
-                height="680"
-              >
-
-              <!-- Pixel-derived green light: same image, no guessed sky/window coordinates. -->
-              <svg class="morgul-art-glow" width="0" height="0" viewBox="0 0 488 680" preserveAspectRatio="none" aria-hidden="true" focusable="false">
-                <defs>
-                  <filter id="morgul-green-light" x="0" y="0" width="100%" height="100%" color-interpolation-filters="sRGB">
-                    <feColorMatrix type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  -0.5 1 -0.5 0 -0.015" result="greenKey"></feColorMatrix>
-                    <feComponentTransfer in="greenKey" result="greenMask"><feFuncA type="linear" slope="7" intercept="0"></feFuncA></feComponentTransfer>
-                    <feGaussianBlur in="greenMask" stdDeviation="0.65" result="softMask"></feGaussianBlur>
-                    <feFlood flood-color="#80c990" result="spectralGreen"></feFlood>
-                    <feComposite in="spectralGreen" in2="softMask" operator="in"></feComposite>
-                  </filter>
-                </defs>
-                <image id="card-week-light-map" href="https://api.scryfall.com/cards/ltc/390?format=image&amp;version=normal" x="0" y="0" width="488" height="680" preserveAspectRatio="none" filter="url(#morgul-green-light)"></image>
-              </svg>
-
-              <div
-                class="morgul-foil-sheen"
-                aria-hidden="true"
-              ><span class="morgul-foil-glimmer"></span></div>
-
-              <div
-                class="morgul-shadow-frame"
-                aria-hidden="true"
-              ></div>
-
             </div>
-            </div>
-            </div>
-
-
-            <p
-              class="weekly-printing"
-              id="card-week-printing"
-            >
-              TALES OF MIDDLE-EARTH COMMANDER · #390
-            </p>
-
-            <p class="morgul-printing-detail">
-              MINAS MORGUL · SURGE FOIL · SEAN VO
-            </p>
-
+            <p class="weekly-printing" id="card-week-printing">MODERN HORIZONS 3 · #383</p>
+            <p class="weekly-printing-detail">BORDERLESS CONCEPT · TRADITIONAL FOIL · VINCENT PROCE</p>
           </div>
-
-
-          <!-- EDITORIAL -->
-
           <div class="weekly-story">
-
-            <p class="weekly-kicker">
-              CABAL COFFERS · REALMS AND RELICS · SURGE FOIL
-            </p>
-
-            <h3>
-              Minas Morgul
-            </h3>
-
-            <p class="weekly-intro">
-              A city once claimed by Gondor, transformed into
-              a place of darkness — and one of Magic's
-              most striking land treatments.
-            </p>
-
-            <p>
-              <strong>Minas Morgul</strong> is the
-              <strong>Lord of the Rings-themed version of Cabal Coffers</strong>,
-              one of black mana's most famous lands.
-              For two mana and a tap, Cabal Coffers
-              produces one black mana for each Swamp
-              you control.
-            </p>
-
-            <p>
-              The card rewards a mana base built around Swamps,
-              making it especially powerful in mono-black
-              Commander decks. What begins as an ordinary
-              land can become a source of enormous mana
-              as the game progresses.
-            </p>
-
-            <p>
-              The original Cabal Coffers appeared in
-              <strong>Torment</strong> in 2002.
-              Its Minas Morgul interpretation arrived in
-              <strong>The Lord of the Rings: Tales of Middle-earth Commander</strong>.
-              This borderless Realms and Relics treatment
-              was illustrated by <strong>Sean Vo</strong>.
-            </p>
-
-            <div class="weekly-fact">
-
-              <span
-                class="weekly-fact-mark"
-                aria-hidden="true"
-              >
-                ◇
-              </span>
-
-              <div>
-
-                <small>
-                  MANASCOUT'S PRINTING
-                </small>
-
-                <p>
-                  LTC #390 is the surge foil version of
-                  Minas Morgul / Cabal Coffers. Its
-                  spectral architecture and ominous atmosphere
-                  make it a natural choice for this week's
-                  shadow-themed feature.
-                </p>
-
-                <p>
-                  The drifting shadows and simulated foil
-                  reflections on this page are ManaScout
-                  presentation effects, not animations
-                  on the physical card.
-                </p>
-
-              </div>
-
-            </div>
-
-            <a
-              class="weekly-link"
-              id="card-week-link"
-              href="/?q=Cabal%20Coffers&amp;printing=cce035f4-5ba4-4e9d-ab26-d5d0290de74d"
-            >
-              Scout this printing
-              <span aria-hidden="true">→</span>
-            </a>
-
-            <p class="weekly-source">
-              Card information and artwork supplied by Scryfall.
-              Collector number LTC #390.
-            </p>
-
+            <p class="weekly-kicker">ELDRAZI TITAN · BORDERLESS CONCEPT ART</p>
+            <h3>Ulamog, the Defiler</h3>
+            <p class="weekly-intro">An impossible presence at the edge of the frame. Vincent Proce’s concept-art Ulamog brings the Eldrazi’s alien scale to this week’s floating showcase.</p>
+            <p><strong>Ulamog, the Defiler</strong> arrived in <strong>Modern Horizons 3</strong> on 14 June 2024. This is <strong>MH3 #383</strong>, the mythic rare borderless concept edition illustrated by <strong>Vincent Proce</strong>, with traditional foil selected.</p>
+            <p>When you cast this ten-mana titan, a targeted opponent exiles the top half of their library, rounded up. Ulamog enters with +1/+1 counters based on the greatest mana value among cards in exile, then ties annihilator to those counters. Its ward asks for two permanents, reinforcing the sense that even interacting with it has a cost.</p>
+            <p>The original main-set #15 uses Chase Stone’s artwork; #383 is an artistic alternative, not just a foil of that image. Its concept treatment makes the creature’s strange silhouette the collecting decision before the finish.</p>
+            <div class="weekly-fact"><span class="weekly-fact-mark" aria-hidden="true">◇</span><div><small>MANASCOUT’S PRINTING</small>
+              <p><strong>#383 traditional foil</strong> is distinct from serialized #383z in double rainbow foil and etched #476. Wizards confirms nonfoil and traditional foil versions of the borderless concept Eldrazi; this feature does not imply serialization, texture or surge foiling.</p>
+              <p>The slow void lighting and simulated reflections are ManaScout presentation effects. They do not animate or photograph the physical card’s foil surface.</p>
+            </div></div>
+            <a class="weekly-link" id="card-week-link" href="https://scryfall.com/card/mh3/383/ulamog-the-defiler" target="_blank" rel="noopener noreferrer">View this exact printing <span aria-hidden="true">→</span></a>
+            <p class="weekly-source">Artwork and current card data: Scryfall. <a href="https://mtg.wtf/card/mh3/383/Ulamog-the-Defiler">Exact edition catalogue</a> · <a href="https://magic.wizards.com/en/news/feature/collecting-modern-horizons-3">Wizards’ concept and foil treatment guide</a>. Reviewed 9 November 2026.</p>
           </div>
-
         </article>
 
 
@@ -826,63 +668,74 @@
           id="card-week-archive-data"
           type="application/json"
         >
-        {
-          "currentWeek": 6,
-          "entries": [
-            {
-              "week": 1,
-              "card": "Thassa, Deep-Dwelling",
-              "set": "Theros Beyond Death",
-              "collectorNumber": "261",
-              "status": "archived"
-            },
-            {
-              "week": 2,
-              "card": "Rhystic Study",
-              "set": "Wilds of Eldraine: Enchanting Tales",
-              "collectorNumber": "71",
-              "status": "archived"
-            },
-            {
-              "week": 3,
-              "card": "Wildfire",
-              "set": "Urza's Saga",
-              "collectorNumber": "228",
-              "status": "archived"
-            },
-            {
-              "week": 4,
-              "card": "Edgar Markov",
-              "set": "Innistrad Remastered",
-              "collectorNumber": "328",
-              "artist": "Betty Jiang",
-              "theme": "blood-moon-court",
-              "status": "archived"
-            },
-            {
-              "week": 5,
-              "card": "Mystic Sanctuary",
-              "set": "Secret Lair Drop",
-              "collectorNumber": "2143",
-              "artist": "Amélie Fléchais",
-              "theme": "sanctuary-tide",
-              "status": "archived"
-            },
-            {
-              "week": 6,
-              "card": "Cabal Coffers",
-              "displayName": "Minas Morgul",
-              "set": "Tales of Middle-earth Commander",
-              "setCode": "ltc",
-              "collectorNumber": "390",
-              "artist": "Sean Vo",
-              "treatment": "Surge Foil",
-              "theme": "morgul-shadow",
-              "status": "current"
-            }
-          ]
-        }
-        </script>
+{
+  "currentWeek": 7,
+  "entries": [
+    {
+      "week": 1,
+      "card": "Thassa, Deep-Dwelling",
+      "set": "Theros Beyond Death",
+      "collectorNumber": "261",
+      "status": "archived"
+    },
+    {
+      "week": 2,
+      "card": "Rhystic Study",
+      "set": "Wilds of Eldraine: Enchanting Tales",
+      "collectorNumber": "71",
+      "status": "archived"
+    },
+    {
+      "week": 3,
+      "card": "Wildfire",
+      "set": "Urza's Saga",
+      "collectorNumber": "228",
+      "status": "archived"
+    },
+    {
+      "week": 4,
+      "card": "Edgar Markov",
+      "set": "Innistrad Remastered",
+      "collectorNumber": "328",
+      "artist": "Betty Jiang",
+      "theme": "blood-moon-court",
+      "status": "archived"
+    },
+    {
+      "week": 5,
+      "card": "Mystic Sanctuary",
+      "set": "Secret Lair Drop",
+      "collectorNumber": "2143",
+      "artist": "Amélie Fléchais",
+      "theme": "sanctuary-tide",
+      "status": "archived"
+    },
+    {
+      "week": 6,
+      "card": "Cabal Coffers",
+      "displayName": "Minas Morgul",
+      "set": "Tales of Middle-earth Commander",
+      "setCode": "ltc",
+      "collectorNumber": "390",
+      "artist": "Sean Vo",
+      "treatment": "Surge Foil",
+      "theme": "morgul-shadow",
+      "status": "archived"
+    },
+    {
+      "week": 7,
+      "card": "Ulamog, the Defiler",
+      "set": "Modern Horizons 3",
+      "setCode": "mh3",
+      "collectorNumber": "383",
+      "artist": "Vincent Proce",
+      "treatment": "Traditional foil",
+      "theme": "eldrazi-void",
+      "status": "current"
+    }
+  ]
+}
+</script>
 
       </section>
 
@@ -1201,8 +1054,8 @@
   <!-- EXISTING SCRIPT FILES -->
   <!-- Keep these until their full replacements are ready -->
 
-  <script src="/assets/js/app.js?v=expansion1"></script>
-  <script src="/assets/js/scoutboard.js?v=stage5"></script>
+  <script src="/assets/js/app.js?v=eldrazi-guides1"></script>
+  <script src="/assets/js/scoutboard.js?v=eldrazi1"></script>
 
 </body>
 

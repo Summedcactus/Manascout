@@ -19,9 +19,9 @@ class ArtworkStructure(HTMLParser):
     def handle_starttag(self, tag, attrs):
         attrs = dict(attrs)
         ancestors = [item[1] for item in self.stack]
-        if attrs.get('id') in ['card-week-image', 'card-week-light-map']:
+        if attrs.get('id') in ['card-week-image']:
             self.image_urls[attrs['id']] = attrs.get('src') or attrs.get('href')
-        if set(attrs.get('class', '').split()) & {'morgul-art-glow', 'morgul-foil-sheen', 'morgul-shadow-frame'}:
+        if set(attrs.get('class', '').split()) & {'weekly-foil-sheen', 'weekly-foil-glimmer', 'weekly-edge-light'}:
             assert any(a.get('id') == 'weekly-card-shell' for a in ancestors)
             assert any('weekly-card-float' in a.get('class', '').split() for a in ancestors)
             self.layers.update(attrs['class'].split())
@@ -33,8 +33,8 @@ class ArtworkStructure(HTMLParser):
 
 
 structure = ArtworkStructure(html)
-assert structure.image_urls['card-week-image'] == structure.image_urls['card-week-light-map']
-assert {'morgul-art-glow', 'morgul-foil-sheen', 'morgul-shadow-frame'} <= structure.layers
+assert structure.image_urls['card-week-image'] == 'https://api.scryfall.com/cards/mh3/383?format=image&version=normal'
+assert {'weekly-foil-sheen', 'weekly-foil-glimmer', 'weekly-edge-light'} <= structure.layers
 
 
 def validate_css(text):
@@ -63,23 +63,18 @@ validate_css(home)
 validate_css(css)
 keyframes = re.findall(r'@keyframes\s+([\w-]+)', home)
 assert len(keyframes) == len(set(keyframes)), 'Duplicate homepage keyframes'
-assert 'morgul' not in ''.join(re.findall(r'<style[^>]*>(.*?)</style>', html, re.S)), 'Inline atmospheric override'
-assert 'data-weekly-set="ltc"' in html and 'data-weekly-number="390"' in html
-assert 'https://api.scryfall.com/cards/ltc/390?format=image&amp;version=normal' in html
-assert 'printing=cce035f4-5ba4-4e9d-ab26-d5d0290de74d' in html
-assert 'Sean Vo' in html
+assert 'data-weekly-set="mh3"' in html and 'data-weekly-number="383"' in html
+assert 'https://scryfall.com/card/mh3/383/ulamog-the-defiler' in html
+assert 'Vincent Proce' in html and 'BORDERLESS CONCEPT · TRADITIONAL FOIL' in html
 assert 'perspective(1100px)' in home and 'rotateX(var(--weekly-rx))' in home and 'rotateY(var(--weekly-ry))' in home
-morgul = home.split('/* Week 006', 1)[1]
-for selector in re.findall(r'([^{}]+)\{', morgul):
-    if '.morgul-' in selector and '@media' not in selector and not selector.lstrip().startswith('/*'):
-        assert selector.strip() == '.morgul-art-glow' or 'data-weekly-' in selector or 'prefers-reduced-motion' in selector or '.weekly-theme-morgul *' in selector or '.weekly-theme-morgul .morgul-' in selector, selector
-assert 'saturate(' not in morgul and 'brightness(' not in morgul
-assert all(float(radius) <= 8 for radius in re.findall(r'blur\(([0-9.]+)px\)', morgul))
-for block in re.findall(r'@keyframes msMorgul[^\{]*\{(.*?)(?=\n(?:@|/|\.)|$)', morgul, re.S):
+eldrazi = home.split('/* Week 007', 1)[1]
+assert 'saturate(' not in eldrazi and 'brightness(' not in eldrazi
+assert all(float(radius) <= 8 for radius in re.findall(r'blur\(([0-9.]+)px\)', eldrazi))
+for block in re.findall(r'@keyframes ms(?:Weekly|Void)[^\{]*\{(.*?)(?=\n(?:@|/|\.)|$)', eldrazi, re.S):
     assert 'filter:' not in block, 'Decorative filters must remain static'
-assert 'morgul-window' not in html, 'Unverified window coordinates must not ship'
-assert 'class="morgul-art-glow"' in html and 'id="morgul-green-light"' in html
-assert 'id="card-week-light-map"' in html and 'feColorMatrix' in html
+assert 'morgul-window' not in html and 'card-week-light-map' not in html
+assert 'class="weekly-foil-sheen"' in html and 'class="weekly-edge-light"' in html
+assert 'touch-action: pan-y pinch-zoom' in eldrazi
 assert 'animation-play-state: paused' in home and 'animation-play-state: paused' in css
 assert 'data-weekly-effects-paused="true"' not in html
 assert 'data-weekly-art-ready="false"' in html and 'data-ms-image-ready="false"' in css
@@ -88,4 +83,4 @@ assert 'backface-visibility: hidden' in css and 'rotateY(180deg)' in css
 assert 'width: 44px; height: 44px;' in css and ':focus-visible' in css
 assert 'ms-finish-control' not in app and 'ms-thumb-toggle' not in app and 'data-ms-finish-toggle' not in app
 print('PASS homepage/shared-preview CSS structure, unique keyframes, exact featured printing, preserved 3D, conditional overlays, motion and touch/focus structure')
-print('LIMITATION: no pixels, native 3D compositing or Android performance are verified here. Individual window/sky coordinates remain unverified; the green light map is image-derived.')
+print('LIMITATION: no pixels, native 3D compositing or Android performance are verified here. Traditional foil is a restrained digital illustration; physical reflectivity and native touch scrolling need owner review.')

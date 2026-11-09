@@ -10,7 +10,7 @@
  * - Search paginated Scryfall printings for featured art
  * - Preserve exact printing IDs in featured links
  * - Resolve exact printings for archived Cards of the Week
- * - Preserve Minas Morgul LTC #390 (not #390z)
+ * - Verify Ulamog MH3 #383 concept traditional foil (not #383z)
  * - Preserve Discover a Card
  * - Preserve pointer-based card atmosphere
  * - No roulette, tabs or floating dock
@@ -1047,18 +1047,8 @@
   }
 
 
-  /* ========================================
-     CARD OF THE WEEK — MINAS MORGUL
-
-     Actual card: Cabal Coffers
-     Set: LTC
-     Collector number: 390
-     Artwork: Sean Vo
-     Treatment: Surge foil
-
-     IMPORTANT: NOT #390z, the
-     serialized printing.
-     ======================================== */
+  /* Card of the Week — exact MH3 #383 concept / traditional foil.
+     API failures retain the independent static image and catalogue link. */
 
   async function loadWeekly() {
     if (!weekly) {
@@ -1068,7 +1058,7 @@
     const set =
       String(
         weekly.dataset.weeklySet ||
-        "ltc"
+        "mh3"
       )
         .trim()
         .toLowerCase();
@@ -1076,7 +1066,7 @@
     const number =
       String(
         weekly.dataset.weeklyNumber ||
-        "390"
+        "383"
       ).trim();
 
     try {
@@ -1098,8 +1088,9 @@
         );
       }
 
-      const exactMorgul = set === "ltc" && number === "390";
-      if (exactMorgul && (card.name !== "Cabal Coffers" || card.artist !== "Sean Vo" || !card.finishes?.includes("foil") || !card.promo_types?.includes("surgefoil"))) throw new Error("Featured artwork/treatment mismatch; retaining the exact static fallback.");
+      if (!/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(card.id || "") || set !== "mh3" || number !== "383" || card.name !== "Ulamog, the Defiler" || card.artist !== "Vincent Proce" || !card.finishes?.includes("foil") || !card.promo_types?.includes("concept") || card.promo_types?.includes("serialized")) {
+        throw new Error("Featured artwork/treatment mismatch; retaining the exact static fallback.");
+      }
       if (card.id) weekly.dataset.weeklyPrintingId = card.id;
 
       const art =
@@ -1112,13 +1103,11 @@
         if (weeklyImage.src !== art) weekly.dataset.weeklyArtReady = "false";
         weeklyImage.src =
           art;
-        document.getElementById("card-week-light-map")?.setAttribute("href", art);
         weekly.dataset.weeklyArtReady = String(!!(weeklyImage.complete && weeklyImage.naturalWidth));
 
         weeklyImage.alt =
-          "Minas Morgul (Cabal Coffers) — " +
-          `${card.set_name}, ` +
-          `surge foil #${number}`;
+          `Ulamog, the Defiler — ${card.set_name}, ` +
+          `borderless concept traditional foil #${number}, Vincent Proce`;
       }
 
       if (
@@ -1126,7 +1115,7 @@
       ) {
         weeklyPrinting.textContent =
           (
-            `${card.set_name || "Tales of Middle-earth Commander"}` +
+            `${card.set_name || "Modern Horizons 3"}` +
             ` · #${number}`
           ).toUpperCase();
       }
@@ -1138,7 +1127,7 @@
         weeklyLink.href =
           linkToCard(
             card.name ||
-              "Cabal Coffers",
+              "Ulamog, the Defiler",
             card
           );
       }
@@ -1492,7 +1481,7 @@
     let visible = false;
     let homeVisible = !initialQuery?.trim();
     let touchPointer = null;
-    const exactMorgul = () => weekly.dataset.weeklySet === "ltc" && weekly.dataset.weeklyNumber === "390" && weekly.dataset.weeklyCard === "Cabal Coffers";
+    const exactEldrazi = () => weekly.dataset.weeklySet === "mh3" && weekly.dataset.weeklyNumber === "383" && weekly.dataset.weeklyCard === "Ulamog, the Defiler";
     const syncEffects = () => {
       weekly.dataset.weeklyEffectsPaused = String(!visible || !homeVisible || document.hidden || reducedMotion.matches);
     };
@@ -1500,7 +1489,7 @@
       touchPointer = null;
       weekly.dataset.weeklyInteracting = "false";
       const values = { "--weekly-x": "50%", "--weekly-y": "42%", "--weekly-rx": "0deg", "--weekly-ry": "0deg" };
-      if (exactMorgul()) Object.assign(values, { "--morgul-reflection": ".68", "--morgul-light-x": "0%", "--morgul-light-y": "0%" });
+      if (exactEldrazi()) Object.assign(values, { "--weekly-reflection": ".34", "--weekly-light-x": "0%", "--weekly-light-y": "0%" });
       for (const [name, value] of Object.entries(values)) weekly.style.setProperty(name, value);
     };
     const checkVisibility = () => {
@@ -1513,11 +1502,12 @@
       syncEffects();
     };
     const artReady = () => {
+      if (weeklyImage?.complete && weeklyImage.naturalWidth) weeklyImage.style.visibility = "visible";
       weekly.dataset.weeklyArtReady = String(!!(weeklyImage?.complete && weeklyImage.naturalWidth));
       checkVisibility();
     };
     weeklyImage?.addEventListener("load", artReady);
-    weeklyImage?.addEventListener("error", () => { weekly.dataset.weeklyArtReady = "false"; });
+    weeklyImage?.addEventListener("error", () => { weekly.dataset.weeklyArtReady = "false"; weeklyImage.style.visibility = "hidden"; });
     artReady(); // Also repairs cached images whose load event happened before this script.
     if (typeof IntersectionObserver === "function") {
       const observer = new IntersectionObserver(entries => {
@@ -1561,11 +1551,11 @@
       weekly.style.setProperty("--weekly-y", `${y}%`);
       weekly.style.setProperty("--weekly-rx", `${(50 - y) * (event.pointerType === "touch" ? .05 : .16)}deg`);
       weekly.style.setProperty("--weekly-ry", `${(x - 50) * (event.pointerType === "touch" ? .06 : .20)}deg`);
-      if (exactMorgul()) {
-        const intensity = .48 + .36 * (1 - Math.min(1, Math.hypot(x - 30, y - 25) / 100));
-        weekly.style.setProperty("--morgul-reflection", intensity.toFixed(3));
-        weekly.style.setProperty("--morgul-light-x", `${((x - 50) * .10).toFixed(2)}%`);
-        weekly.style.setProperty("--morgul-light-y", `${((y - 50) * .08).toFixed(2)}%`);
+      if (exactEldrazi()) {
+        const intensity = .24 + .20 * (1 - Math.min(1, Math.hypot(x - 30, y - 25) / 100));
+        weekly.style.setProperty("--weekly-reflection", intensity.toFixed(3));
+        weekly.style.setProperty("--weekly-light-x", `${((x - 50) * .10).toFixed(2)}%`);
+        weekly.style.setProperty("--weekly-light-y", `${((y - 50) * .08).toFixed(2)}%`);
       }
     };
     weeklyShell.addEventListener("pointerdown", event => {

@@ -4,12 +4,12 @@
 
   <url>
     <loc>https://manascout.co.uk/</loc>
-    <lastmod>2026-11-07</lastmod>
+    <lastmod>2026-11-09</lastmod>
   </url>
 
   <url>
     <loc>https://manascout.co.uk/card/</loc>
-    <lastmod>2026-11-07</lastmod>
+    <lastmod>2026-11-09</lastmod>
   </url>
 
   <url>
@@ -263,5 +263,25 @@
   <url>
     <loc>https://manascout.co.uk/contact/</loc>
     <lastmod>2026-11-07</lastmod>
+  </url>
+  <url>
+    <loc>https://manascout.co.uk/card/skullclamp/</loc>
+    <lastmod>2026-11-09</lastmod>
+  </url>
+  <url>
+    <loc>https://manascout.co.uk/card/enlightened-tutor/</loc>
+    <lastmod>2026-11-09</lastmod>
+  </url>
+  <url>
+    <loc>https://manascout.co.uk/card/worldly-tutor/</loc>
+    <lastmod>2026-11-09</lastmod>
+  </url>
+  <url>
+    <loc>https://manascout.co.uk/card/swan-song/</loc>
+    <lastmod>2026-11-09</lastmod>
+  </url>
+  <url>
+    <loc>https://manascout.co.uk/card/living-death/</loc>
+    <lastmod>2026-11-09</lastmod>
   </url>
 </urlset>
