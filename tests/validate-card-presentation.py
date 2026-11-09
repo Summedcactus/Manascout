@@ -20,9 +20,11 @@ class ArtworkStructure(HTMLParser):
         attrs = dict(attrs)
         ancestors = [item[1] for item in self.stack]
         if attrs.get('id') in ['card-week-image']:
+            assert any('weekly-card-face' in a.get('class', '').split() for a in ancestors)
             self.image_urls[attrs['id']] = attrs.get('src') or attrs.get('href')
         if set(attrs.get('class', '').split()) & {'weekly-foil-sheen', 'weekly-foil-glimmer', 'weekly-edge-light'}:
             assert any(a.get('id') == 'weekly-card-shell' for a in ancestors)
+            assert any('weekly-card-face' in a.get('class', '').split() for a in ancestors)
             assert any('weekly-card-float' in a.get('class', '').split() for a in ancestors)
             self.layers.update(attrs['class'].split())
         if tag not in {'area', 'base', 'br', 'col', 'embed', 'hr', 'img', 'input', 'link', 'meta', 'param', 'source', 'track', 'wbr'}:

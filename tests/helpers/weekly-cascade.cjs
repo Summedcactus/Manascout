@@ -33,7 +33,7 @@ function computed(node,{width=1280,reduced=false,pseudo='',hover=false}={}){
   if(!pe)for(const [name,value]of Object.entries(el.style))if(typeof value==='string')set(name,value,false,1000,all.length);
   const vars={...Object.fromEntries(Object.entries(inherited).filter(([k])=>k.startsWith('--'))),...Object.fromEntries(Object.entries(values).filter(([k])=>k.startsWith('--')))};
   const expand=(s,depth=0)=>{if(depth>8)throw Error('Unresolved variable cycle');return s.replace(/var\((--[\w-]+)(?:,([^()]+))?\)/g,(_,name,fallback)=>expand(vars[name]??fallback??'UNDEFINED',depth+1));};
-  const result={...vars,...Object.fromEntries(Object.entries(values).map(([k,v])=>[k,expand(v)]))};if(!pe)memo.set(el,result);return result;
+  const result={...vars,...Object.fromEntries(Object.entries(values).map(([k,v])=>[k,v==='inherit'?inherited[k]:expand(v)]))};if(!pe)memo.set(el,result);return result;
  }return resolve(node,pseudo);
 }
 module.exports={computed};
