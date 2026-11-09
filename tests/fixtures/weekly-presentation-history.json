@@ -1,0 +1,14 @@
+{
+  "commit": "ef9394c69289f63145d4bdaefd83b686812bc625",
+  "path": "assets/css/home.css",
+  "durationSeconds": 13,
+  "timing": "ease-in-out",
+  "direction": "alternate",
+  "stops": [
+    { "percent": 0, "x": 2.8, "y": -5.5, "lift": 2, "zOffset": 0, "shadowXScale": 0.94, "shadowYScale": 0.9, "shadowOpacity": 0.76 },
+    { "percent": 48, "x": -2.1, "y": 4.2, "lift": -6, "zOffset": 5, "shadowXScale": 1.05, "shadowYScale": 1.15, "shadowOpacity": 0.48 },
+    { "percent": 100, "x": 1.3, "y": -3.2, "lift": 0, "zOffset": 1, "shadowXScale": 0.98, "shadowYScale": 1, "shadowOpacity": 0.67 }
+  ],
+  "historicalBaseZ": 8,
+  "adaptation": "Keep Ulamog's 38px desktop and 24px mobile base Z plus 8px shell, stronger mobile angles and current foil. Restore historical phase stops, delta-Z, desktop angles, lift and shadow modulation."
+}

@@ -1479,6 +1479,43 @@
   /* One input system on the stationary perspective stage; no continuous JS loop. */
   if (weekly && weeklyShell) {
     const stage = weeklyShell.closest(".weekly-card-stage") || weeklyShell;
+    const floating = weeklyShell.parentElement;
+    let presentationPose = null;
+    let handoff = null;
+    let handoffVersion = 0;
+    // Keep the historical CSS idle clock authoritative. Web Animations is used
+    // only for bounded takeover/return transitions, never a second idle loop.
+    const samplePose = () => typeof window.getComputedStyle === "function" ? window.getComputedStyle(floating).transform : null;
+    const translation = pose => {
+      const match = /^(matrix3d|matrix)\(([^)]+)\)$/.exec(pose || "");
+      if (!match) return null;
+      const values = match[2].split(",").map(Number);
+      if (!values.every(Number.isFinite) || values.length !== (match[1] === "matrix3d" ? 16 : 6)) return null;
+      const xyz = match[1] === "matrix3d" ? values.slice(12, 15) : [values[4], values[5], 0];
+      return `translate3d(${xyz[0]}px,${xyz[1]}px,${xyz[2]}px)`;
+    };
+    const cancelHandoff = () => {
+      handoffVersion++;
+      const previous = handoff;
+      handoff = null;
+      previous?.cancel();
+    };
+    const takeControl = () => {
+      if (weekly.dataset.weeklyPresentation === "interactive") return;
+      weekly.dataset.weeklyPresentation = "interactive"; // Pause at this CSS phase before sampling.
+      if (typeof floating?.animate !== "function") return;
+      try {
+        const current = samplePose();
+        if (!presentationPose) presentationPose = current;
+        const forward = translation(presentationPose);
+        if (!forward || !current) { presentationPose = null; return; }
+        cancelHandoff();
+        handoff = floating.animate([{ transform: current }, { transform: forward }], {
+          duration: 320, easing: "cubic-bezier(.2,.7,.25,1)", fill: "forwards"
+        });
+        handoff.finished?.catch?.(() => {}); // Cancellation is expected on release/re-entry.
+      } catch (_) { cancelHandoff(); presentationPose = null; }
+    };
     let visible = false;
     let homeVisible = !initialQuery?.trim();
     let touchPointer = null;
@@ -1486,15 +1523,44 @@
     const syncEffects = () => {
       weekly.dataset.weeklyEffectsPaused = String(!visible || !homeVisible || document.hidden || reducedMotion.matches);
     };
-    const reset = () => {
+    const reset = (immediate = false) => {
+      if (!immediate && weekly.dataset.weeklyPresentation === "returning" && handoff) return;
       touchPointer = null;
       weekly.dataset.weeklyInteracting = "false";
-      const values = { "--weekly-x": "50%", "--weekly-y": "42%", "--weekly-rx": "0deg", "--weekly-ry": "0deg" };
+      const style = typeof window.getComputedStyle === "function" ? window.getComputedStyle(weekly) : null;
+      const restX = style?.getPropertyValue("--weekly-idle-xa").trim() || "2.8deg";
+      const restY = style?.getPropertyValue("--weekly-idle-ya").trim() || "-5.5deg";
+      const values = { "--weekly-x": "50%", "--weekly-y": "42%", "--weekly-rx": restX, "--weekly-ry": restY };
       if (exactEldrazi()) Object.assign(values, {
         "--weekly-reflection": ".70", "--weekly-light-x": "-2%", "--weekly-light-y": "1%",
         "--weekly-light-angle": "-6deg", "--weekly-shadow-x": "0px", "--weekly-shadow-y": "0px", "--weekly-edge": ".78"
       });
       for (const [name, value] of Object.entries(values)) weekly.style.setProperty(name, value);
+      if (!immediate && presentationPose && !reducedMotion.matches && visible && homeVisible && !document.hidden) {
+        const target = presentationPose;
+        const current = samplePose();
+        cancelHandoff();
+        const version = handoffVersion;
+        weekly.dataset.weeklyPresentation = "returning";
+        try {
+          const returning = floating.animate([{ transform: current }, { transform: target }], {
+            duration: 550, easing: "cubic-bezier(.2,.7,.25,1)", fill: "forwards"
+          });
+          handoff = returning;
+          const finish = () => {
+            if (version !== handoffVersion || handoff !== returning) return;
+            cancelHandoff();
+            presentationPose = null;
+            weekly.dataset.weeklyPresentation = "idle"; // Resume the same paused idle/shadow phase.
+          };
+          if (returning.finished?.then) returning.finished.then(finish, finish);
+          else returning.onfinish = finish;
+          return;
+        } catch (_) { /* Older/failed animation implementations retain the CSS presentation. */ }
+      }
+      cancelHandoff();
+      presentationPose = null;
+      weekly.dataset.weeklyPresentation = "idle";
     };
     const checkVisibility = () => {
       const rect = stage.getBoundingClientRect();
@@ -1502,7 +1568,7 @@
       const viewportWidth = window.innerWidth || document.documentElement?.clientWidth || 0;
       const rendered = !stage.getClientRects || stage.getClientRects().length > 0;
       visible = !!(rendered && rect.width && rect.height && rect.top < viewportHeight && rect.top + rect.height > 0 && rect.left < viewportWidth && rect.left + rect.width > 0);
-      if (!visible) reset();
+      if (!visible) reset(true);
       syncEffects();
     };
     const artReady = () => {
@@ -1528,11 +1594,11 @@
     window.addEventListener("scroll", scheduleVisibility, { passive: true });
     window.addEventListener("resize", scheduleVisibility, { passive: true });
     window.addEventListener("pageshow", artReady);
-    document.addEventListener("visibilitychange", () => { if (document.hidden) reset(); artReady(); });
+    document.addEventListener("visibilitychange", () => { if (document.hidden) reset(true); artReady(); });
     window.addEventListener("manascout:statechange", event => {
       if (["home", "loading", "card"].includes(event.detail?.state)) {
         homeVisible = event.detail.state === "home";
-        if (!homeVisible) reset();
+        if (!homeVisible) reset(true);
         artReady();
       }
     });
@@ -1542,8 +1608,8 @@
       if (typeof media.addEventListener === "function") media.addEventListener("change", listener);
       else if (typeof media.addListener === "function") media.addListener(listener);
     };
-    watchMedia(reducedMotion, () => { reset(); artReady(); });
-    watchMedia(finePointer, reset);
+    watchMedia(reducedMotion, () => { reset(true); artReady(); });
+    watchMedia(finePointer, () => reset(true));
     const canTilt = () => {
       artReady(); // Repairs stale visibility/image flags at the point of interaction.
       return !reducedMotion.matches && visible && homeVisible && !document.hidden;
@@ -1555,6 +1621,7 @@
       const x = Math.max(0, Math.min(100, (event.clientX - rect.left) / rect.width * 100));
       const y = Math.max(0, Math.min(100, (event.clientY - rect.top) / rect.height * 100));
       const touch = event.pointerType === "touch";
+      takeControl();
       weekly.dataset.weeklyInteracting = "true";
       weekly.style.setProperty("--weekly-x", `${x}%`);
       weekly.style.setProperty("--weekly-y", `${y}%`);
