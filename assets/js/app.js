@@ -36,6 +36,7 @@
     "dockside-extortionist",
     "doubling-season",
     "edgar-markov",
+    "enlightened-tutor",
     "esper-sentinel",
     "fierce-guardianship",
     "force-of-will",
@@ -46,6 +47,7 @@
     "jeweled-lotus",
     "lightning-bolt",
     "lightning-greaves",
+    "living-death",
     "lotus-petal",
     "mana-crypt",
     "mana-drain",
@@ -60,16 +62,19 @@
     "path-to-exile",
     "rhystic-study",
     "senseis-divining-top",
+    "skullclamp",
     "smaug-wicked-worm",
     "smothering-tithe",
     "sol-ring",
+    "swan-song",
     "swords-to-plowshares",
     "teferis-protection",
     "the-great-henge",
     "the-one-ring",
     "the-theorist-jace-beleren",
     "urzas-saga",
-    "vampiric-tutor"
+    "vampiric-tutor",
+    "worldly-tutor"
   ]);
 
   const TREATMENT = {

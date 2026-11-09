@@ -1548,13 +1548,13 @@
         "path": "card/vampiric-tutor/index.html"
       },
       "https://manascout.co.uk/": {
-        "lastmod": "2026-11-07",
-        "basis": "Source-reviewed guide expansion, shared navigation/privacy/contact or guide registry/discovery update",
+        "lastmod": "2026-11-09",
+        "basis": "Ulamog feature and homepage canonical/schema cleanup",
         "path": "index.html"
       },
       "https://manascout.co.uk/card/": {
-        "lastmod": "2026-11-07",
-        "basis": "Source-reviewed guide expansion, shared navigation/privacy/contact or guide registry/discovery update",
+        "lastmod": "2026-11-09",
+        "basis": "Five researched permanent guides and directory expansion",
         "path": "card/index.html"
       },
       "https://manascout.co.uk/deck/": {
@@ -1718,6 +1718,31 @@
         "lastmod": "2026-11-07",
         "basis": "Source-reviewed guide expansion, shared navigation/privacy/contact or guide registry/discovery update",
         "path": "card/mox-opal/index.html"
+      },
+      "https://manascout.co.uk/card/skullclamp/": {
+        "lastmod": "2026-11-09",
+        "basis": "Five researched permanent guides and directory expansion",
+        "path": "card/skullclamp/index.html"
+      },
+      "https://manascout.co.uk/card/enlightened-tutor/": {
+        "lastmod": "2026-11-09",
+        "basis": "Five researched permanent guides and directory expansion",
+        "path": "card/enlightened-tutor/index.html"
+      },
+      "https://manascout.co.uk/card/worldly-tutor/": {
+        "lastmod": "2026-11-09",
+        "basis": "Five researched permanent guides and directory expansion",
+        "path": "card/worldly-tutor/index.html"
+      },
+      "https://manascout.co.uk/card/swan-song/": {
+        "lastmod": "2026-11-09",
+        "basis": "Five researched permanent guides and directory expansion",
+        "path": "card/swan-song/index.html"
+      },
+      "https://manascout.co.uk/card/living-death/": {
+        "lastmod": "2026-11-09",
+        "basis": "Five researched permanent guides and directory expansion",
+        "path": "card/living-death/index.html"
       }
     }
   }

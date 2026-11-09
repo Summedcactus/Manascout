@@ -1,0 +1,431 @@
+{
+  "reviewed": "2026-11-09",
+  "baseline": "d61e9a7278f54558184b834d7073539c2c412583",
+  "scope": "Five permanent guides and Ulamog COTW; homepage canonical links and schema",
+  "research_access": "Accessible exact MTG.wtf catalogue records and official Wizards references checked through web research. Direct Scryfall API unavailable in this execution environment. No prices copied.",
+  "new_guides": {
+    "skullclamp": {
+      "name": "Skullclamp",
+      "title": "Skullclamp Printings, Original Art & Foil Guide | ManaScout",
+      "description": "Identify Skullclamp’s Darksteel debut, original foil, From the Vault edition, Warhammer surge foil and Secret Lair art, with exact collector records.",
+      "records": [
+        {
+          "set": "Darksteel",
+          "code": "DST",
+          "number": "140",
+          "date": "2004-02-06",
+          "rarity": "uncommon",
+          "artist": "Luca Zontini",
+          "finish": "Nonfoil, traditional foil",
+          "art": "Original illustration",
+          "source": "https://mtg.wtf/card/dst/140"
+        },
+        {
+          "set": "From the Vault: Exiled",
+          "code": "V09",
+          "number": "12",
+          "date": "2009-08-28",
+          "rarity": "mythic",
+          "artist": "Luca Zontini",
+          "finish": "Traditional foil only",
+          "art": "Original-art premium boxed edition",
+          "source": "https://mtg.wtf/card/v09/12"
+        },
+        {
+          "set": "Commander 2011",
+          "code": "CMD",
+          "number": "260",
+          "date": "2011-06-17",
+          "rarity": "uncommon",
+          "artist": "Luca Zontini",
+          "finish": "Nonfoil only",
+          "art": "Commander deck reprint",
+          "source": "https://mtg.wtf/card/cmd/260"
+        },
+        {
+          "set": "Warhammer 40,000 Commander",
+          "code": "40K",
+          "number": "248",
+          "date": "2022-10-07",
+          "rarity": "uncommon",
+          "artist": "Helge C. Balzer",
+          "finish": "Nonfoil only",
+          "art": "Warhammer alternate illustration",
+          "source": "https://mtg.wtf/card/40k/248"
+        },
+        {
+          "set": "Warhammer 40,000 Commander",
+          "code": "40K",
+          "number": "248★",
+          "date": "2022-10-07",
+          "rarity": "uncommon",
+          "artist": "Helge C. Balzer",
+          "finish": "Surge foil only",
+          "art": "Collector’s Edition; separate starred record",
+          "source": "https://mtg.wtf/card/40k/248%E2%98%85"
+        },
+        {
+          "set": "Secret Lair Drop",
+          "code": "SLD",
+          "number": "1112",
+          "date": "2022-11-28",
+          "rarity": "rare",
+          "artist": "Yoji Shinkawa",
+          "finish": "Nonfoil, traditional foil",
+          "art": "Artist-led alternate illustration",
+          "source": "https://mtg.wtf/card/sld/1112"
+        }
+      ],
+      "image": "https://mtg.wtf/cards_hq/dst/140.png",
+      "sources": [
+        "https://mtg.wtf/card/dst/140",
+        "https://mtg.wtf/card/v09/12",
+        "https://mtg.wtf/card/cmd/260",
+        "https://mtg.wtf/card/40k/248",
+        "https://mtg.wtf/card/40k/248%E2%98%85",
+        "https://mtg.wtf/card/sld/1112",
+        "https://magic.wizards.com/en/banned-restricted-list"
+      ]
+    },
+    "enlightened-tutor": {
+      "name": "Enlightened Tutor",
+      "title": "Enlightened Tutor Printings, Original Art & Foil Guide | ManaScout",
+      "description": "Compare Enlightened Tutor’s Mirage original, Arena and Judge foils, Eternal Masters art and Dominaria Remastered retro and borderless editions.",
+      "records": [
+        {
+          "set": "Mirage",
+          "code": "MIR",
+          "number": "14",
+          "date": "1996-10-08",
+          "rarity": "uncommon",
+          "artist": "Dan Frazier",
+          "finish": "Nonfoil only",
+          "art": "Original illustration",
+          "source": "https://mtg.wtf/card/mir/14"
+        },
+        {
+          "set": "Arena League 2000",
+          "code": "PAL00",
+          "number": "6",
+          "date": "2000-01-01",
+          "rarity": "rare",
+          "artist": "Dan Frazier",
+          "finish": "Traditional foil only",
+          "art": "Arena promo; catalogue year date",
+          "source": "https://mtg.wtf/card/pal00/6"
+        },
+        {
+          "set": "Eternal Masters",
+          "code": "EMA",
+          "number": "9",
+          "date": "2016-06-10",
+          "rarity": "rare",
+          "artist": "Howard Lyon",
+          "finish": "Nonfoil, traditional foil",
+          "art": "Alternate illustration",
+          "source": "https://mtg.wtf/card/ema/9"
+        },
+        {
+          "set": "Judge Gift Cards 2020",
+          "code": "J20",
+          "number": "2",
+          "date": "2020-01-01",
+          "rarity": "rare",
+          "artist": "Aaron Miller",
+          "finish": "Traditional foil only",
+          "art": "Judge promo; catalogue year date",
+          "source": "https://mtg.wtf/card/j20/2"
+        },
+        {
+          "set": "Dominaria Remastered",
+          "code": "DMR",
+          "number": "6",
+          "date": "2023-01-13",
+          "rarity": "rare",
+          "artist": "Howard Lyon",
+          "finish": "Nonfoil, traditional foil",
+          "art": "Regular modern frame",
+          "source": "https://mtg.wtf/card/dmr/6"
+        },
+        {
+          "set": "Dominaria Remastered",
+          "code": "DMR",
+          "number": "263",
+          "date": "2023-01-13",
+          "rarity": "rare",
+          "artist": "Howard Lyon",
+          "finish": "Nonfoil, traditional foil",
+          "art": "Retro-frame edition",
+          "source": "https://mtg.wtf/card/dmr/263"
+        },
+        {
+          "set": "Dominaria Remastered",
+          "code": "DMR",
+          "number": "412",
+          "date": "2023-01-13",
+          "rarity": "rare",
+          "artist": "Richard Kane Ferguson",
+          "finish": "Nonfoil, traditional foil",
+          "art": "Borderless alternate illustration",
+          "source": "https://mtg.wtf/card/dmr/412"
+        }
+      ],
+      "image": "https://mtg.wtf/cards_hq/mir/14.png",
+      "sources": [
+        "https://mtg.wtf/card/mir/14",
+        "https://mtg.wtf/card/pal00/6",
+        "https://mtg.wtf/card/ema/9",
+        "https://mtg.wtf/card/j20/2",
+        "https://mtg.wtf/card/dmr/6",
+        "https://mtg.wtf/card/dmr/263",
+        "https://mtg.wtf/card/dmr/412",
+        "https://magic.wizards.com/en/news/feature/collecting-dominaria-remastered-and-product-overview"
+      ]
+    },
+    "worldly-tutor": {
+      "name": "Worldly Tutor",
+      "title": "Worldly Tutor Printings, Original Art & Foil Guide | ManaScout",
+      "description": "Trace Worldly Tutor from Mirage and Sixth Edition to Commander Collection: Green and Dominaria Remastered, comparing art, retro frames and real foils.",
+      "records": [
+        {
+          "set": "Mirage",
+          "code": "MIR",
+          "number": "255",
+          "date": "1996-10-08",
+          "rarity": "uncommon",
+          "artist": "David O’Connor",
+          "finish": "Nonfoil only",
+          "art": "Original illustration",
+          "source": "https://mtg.wtf/card/mir/255"
+        },
+        {
+          "set": "Sixth Edition",
+          "code": "6ED",
+          "number": "269",
+          "date": "1999-04-21",
+          "rarity": "uncommon",
+          "artist": "David O’Connor",
+          "finish": "Nonfoil only",
+          "art": "White-border reprint; original artist",
+          "source": "https://mtg.wtf/card/6ed/269"
+        },
+        {
+          "set": "Commander Collection: Green",
+          "code": "CC1",
+          "number": "6",
+          "date": "2020-12-04",
+          "rarity": "rare",
+          "artist": "Cristi Balanescu",
+          "finish": "Nonfoil, traditional foil",
+          "art": "Collection artwork; standard and premium products",
+          "source": "https://mtg.wtf/card/cc1/6"
+        },
+        {
+          "set": "Dominaria Remastered",
+          "code": "DMR",
+          "number": "185",
+          "date": "2023-01-13",
+          "rarity": "rare",
+          "artist": "Volkan Baga",
+          "finish": "Nonfoil, traditional foil",
+          "art": "Regular modern frame; alternate illustration",
+          "source": "https://mtg.wtf/card/dmr/185"
+        },
+        {
+          "set": "Dominaria Remastered",
+          "code": "DMR",
+          "number": "353",
+          "date": "2023-01-13",
+          "rarity": "rare",
+          "artist": "Volkan Baga",
+          "finish": "Nonfoil, traditional foil",
+          "art": "Retro-frame edition",
+          "source": "https://mtg.wtf/card/dmr/353"
+        },
+        {
+          "set": "Dominaria Remastered",
+          "code": "DMR",
+          "number": "442",
+          "date": "2023-01-13",
+          "rarity": "rare",
+          "artist": "Richard Kane Ferguson",
+          "finish": "Nonfoil, traditional foil",
+          "art": "Borderless alternate illustration",
+          "source": "https://mtg.wtf/card/dmr/442"
+        }
+      ],
+      "image": "https://mtg.wtf/cards_hq/mir/255.png",
+      "sources": [
+        "https://mtg.wtf/card/mir/255",
+        "https://mtg.wtf/card/6ed/269",
+        "https://mtg.wtf/card/cc1/6",
+        "https://mtg.wtf/card/dmr/185",
+        "https://mtg.wtf/card/dmr/353",
+        "https://mtg.wtf/card/dmr/442",
+        "https://magic.wizards.com/en/news/card-preview/commander-collection-green-packaging-and-contents-2020-08-22",
+        "https://magic.wizards.com/en/news/feature/collecting-dominaria-remastered-and-product-overview"
+      ]
+    },
+    "swan-song": {
+      "name": "Swan Song",
+      "title": "Swan Song Printings, Original Art & Foil Guide | ManaScout",
+      "description": "Compare Swan Song’s Theros original with Commander reprints and Secret Lair artwork. Identify artists, collector numbers and legitimate foil choices.",
+      "records": [
+        {
+          "set": "Theros",
+          "code": "THS",
+          "number": "65",
+          "date": "2013-09-27",
+          "rarity": "rare",
+          "artist": "Peter Mohrbacher",
+          "finish": "Nonfoil, traditional foil",
+          "art": "Original illustration",
+          "source": "https://mtg.wtf/card/ths/65"
+        },
+        {
+          "set": "Commander 2016",
+          "code": "C16",
+          "number": "98",
+          "date": "2016-11-11",
+          "rarity": "rare",
+          "artist": "Peter Mohrbacher",
+          "finish": "Nonfoil only",
+          "art": "Original-art deck reprint",
+          "source": "https://mtg.wtf/card/c16/98"
+        },
+        {
+          "set": "Secret Lair Drop",
+          "code": "SLD",
+          "number": "91",
+          "date": "2020-06-05",
+          "rarity": "rare",
+          "artist": "Allen Douglas",
+          "finish": "Nonfoil only",
+          "art": "Alternate illustration",
+          "source": "https://mtg.wtf/card/sld/91"
+        },
+        {
+          "set": "Tales of Middle-earth Commander",
+          "code": "LTC",
+          "number": "197",
+          "date": "2023-06-23",
+          "rarity": "rare",
+          "artist": "Axel Sauerwald",
+          "finish": "Nonfoil only",
+          "art": "Middle-earth alternate illustration",
+          "source": "https://mtg.wtf/card/ltc/197"
+        },
+        {
+          "set": "Secret Lair Drop",
+          "code": "SLD",
+          "number": "1591",
+          "date": "2025-02-10",
+          "rarity": "rare",
+          "artist": "Kelogsloops",
+          "finish": "Nonfoil, traditional foil",
+          "art": "Alternate illustration; inverted frame effect",
+          "source": "https://mtg.wtf/card/sld/1591"
+        }
+      ],
+      "image": "https://mtg.wtf/cards_hq/ths/65.png",
+      "sources": [
+        "https://mtg.wtf/card/ths/65",
+        "https://mtg.wtf/card/c16/98",
+        "https://mtg.wtf/card/sld/91",
+        "https://mtg.wtf/card/ltc/197",
+        "https://mtg.wtf/card/sld/1591"
+      ]
+    },
+    "living-death": {
+      "name": "Living Death",
+      "title": "Living Death Printings, Original Art & Foil Guide | ManaScout",
+      "description": "Trace Living Death from Tempest #142 to Masters 25 and Warhammer surge foil. Compare exact artworks, physical finishes and its symmetrical graveyard rules.",
+      "records": [
+        {
+          "set": "Tempest",
+          "code": "TMP",
+          "number": "142",
+          "date": "1997-10-14",
+          "rarity": "rare",
+          "artist": "Charles Gillespie",
+          "finish": "Nonfoil only",
+          "art": "Original illustration",
+          "source": "https://mtg.wtf/card/tmp/142"
+        },
+        {
+          "set": "Masters 25",
+          "code": "A25",
+          "number": "96",
+          "date": "2018-03-16",
+          "rarity": "rare",
+          "artist": "Mark Winters",
+          "finish": "Nonfoil, traditional foil",
+          "art": "Alternate illustration",
+          "source": "https://mtg.wtf/card/a25/96"
+        },
+        {
+          "set": "Warhammer 40,000 Commander",
+          "code": "40K",
+          "number": "202",
+          "date": "2022-10-07",
+          "rarity": "rare",
+          "artist": "L J Koh",
+          "finish": "Nonfoil only",
+          "art": "Warhammer alternate illustration",
+          "source": "https://mtg.wtf/card/40k/202"
+        },
+        {
+          "set": "Warhammer 40,000 Commander",
+          "code": "40K",
+          "number": "202★",
+          "date": "2022-10-07",
+          "rarity": "rare",
+          "artist": "L J Koh",
+          "finish": "Surge foil only",
+          "art": "Collector’s Edition; separate starred record",
+          "source": "https://mtg.wtf/card/40k/202%E2%98%85"
+        },
+        {
+          "set": "Tarkir: Dragonstorm Commander",
+          "code": "TDC",
+          "number": "185",
+          "date": "2025-04-11",
+          "rarity": "rare",
+          "artist": "Mark Winters",
+          "finish": "Nonfoil only",
+          "art": "Later Commander deck reprint",
+          "source": "https://mtg.wtf/card/tdc/185"
+        }
+      ],
+      "image": "https://mtg.wtf/cards_hq/tmp/142.png",
+      "sources": [
+        "https://mtg.wtf/card/tmp/142",
+        "https://mtg.wtf/card/a25/96",
+        "https://mtg.wtf/card/40k/202",
+        "https://mtg.wtf/card/40k/202%E2%98%85",
+        "https://mtg.wtf/card/tdc/185"
+      ]
+    }
+  },
+  "qualifications": [
+    "Curated physical shortlist, not a complete catalogue.",
+    "Arena League and Judge January dates are catalogue year placeholders, not verified universal promo distribution days.",
+    "Retro-frame Tutor records cross-checked against independent catalogue listings; modern retro does not mean original art or release.",
+    "Static image URLs and native rendered animations require owner visual review."
+  ],
+  "cotw": {
+    "name": "Ulamog, the Defiler",
+    "set": "MH3",
+    "number": "383",
+    "release": "2024-06-14",
+    "artist": "Vincent Proce",
+    "rarity": "mythic",
+    "treatment": "Borderless concept",
+    "finish": "Traditional foil",
+    "sources": [
+      "https://mtg.wtf/card/mh3/383/Ulamog-the-Defiler",
+      "https://magic.wizards.com/en/news/feature/collecting-modern-horizons-3"
+    ],
+    "distinctions": "383 is nonfoil/traditional foil; 383z is the separate serialized double-rainbow record; 476 is an etched record with Chase Stone art."
+  }
+}
