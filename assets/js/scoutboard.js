@@ -1476,8 +1476,46 @@
   void loadArchive();
 
 
-  /* Event-driven tilt plus CSS idle motion; no perpetual JavaScript loop. */
+  /* One input system on the stationary perspective stage; no continuous JS loop. */
   if (weekly && weeklyShell) {
+    const stage = weeklyShell.closest(".weekly-card-stage") || weeklyShell;
+    const floating = weeklyShell.parentElement;
+    let presentationPose = null;
+    let handoff = null;
+    let handoffVersion = 0;
+    // Keep the historical CSS idle clock authoritative. Web Animations is used
+    // only for bounded takeover/return transitions, never a second idle loop.
+    const samplePose = () => typeof window.getComputedStyle === "function" ? window.getComputedStyle(floating).transform : null;
+    const translation = pose => {
+      const match = /^(matrix3d|matrix)\(([^)]+)\)$/.exec(pose || "");
+      if (!match) return null;
+      const values = match[2].split(",").map(Number);
+      if (!values.every(Number.isFinite) || values.length !== (match[1] === "matrix3d" ? 16 : 6)) return null;
+      const xyz = match[1] === "matrix3d" ? values.slice(12, 15) : [values[4], values[5], 0];
+      return `translate3d(${xyz[0]}px,${xyz[1]}px,${xyz[2]}px)`;
+    };
+    const cancelHandoff = () => {
+      handoffVersion++;
+      const previous = handoff;
+      handoff = null;
+      previous?.cancel();
+    };
+    const takeControl = () => {
+      if (weekly.dataset.weeklyPresentation === "interactive") return;
+      weekly.dataset.weeklyPresentation = "interactive"; // Pause at this CSS phase before sampling.
+      if (typeof floating?.animate !== "function") return;
+      try {
+        const current = samplePose();
+        if (!presentationPose) presentationPose = current;
+        const forward = translation(presentationPose);
+        if (!forward || !current) { presentationPose = null; return; }
+        cancelHandoff();
+        handoff = floating.animate([{ transform: current }, { transform: forward }], {
+          duration: 320, easing: "cubic-bezier(.2,.7,.25,1)", fill: "forwards"
+        });
+        handoff.finished?.catch?.(() => {}); // Cancellation is expected on release/re-entry.
+      } catch (_) { cancelHandoff(); presentationPose = null; }
+    };
     let visible = false;
     let homeVisible = !initialQuery?.trim();
     let touchPointer = null;
@@ -1485,20 +1523,52 @@
     const syncEffects = () => {
       weekly.dataset.weeklyEffectsPaused = String(!visible || !homeVisible || document.hidden || reducedMotion.matches);
     };
-    const reset = () => {
+    const reset = (immediate = false) => {
+      if (!immediate && weekly.dataset.weeklyPresentation === "returning" && handoff) return;
       touchPointer = null;
       weekly.dataset.weeklyInteracting = "false";
-      const values = { "--weekly-x": "50%", "--weekly-y": "42%", "--weekly-rx": "0deg", "--weekly-ry": "0deg" };
-      if (exactEldrazi()) Object.assign(values, { "--weekly-reflection": ".34", "--weekly-light-x": "0%", "--weekly-light-y": "0%" });
+      const style = typeof window.getComputedStyle === "function" ? window.getComputedStyle(weekly) : null;
+      const restX = style?.getPropertyValue("--weekly-idle-xa").trim() || "2.8deg";
+      const restY = style?.getPropertyValue("--weekly-idle-ya").trim() || "-5.5deg";
+      const values = { "--weekly-x": "50%", "--weekly-y": "42%", "--weekly-rx": restX, "--weekly-ry": restY };
+      if (exactEldrazi()) Object.assign(values, {
+        "--weekly-reflection": ".70", "--weekly-light-x": "-2%", "--weekly-light-y": "1%",
+        "--weekly-light-angle": "-6deg", "--weekly-shadow-x": "0px", "--weekly-shadow-y": "0px", "--weekly-edge": ".78"
+      });
       for (const [name, value] of Object.entries(values)) weekly.style.setProperty(name, value);
+      if (!immediate && presentationPose && !reducedMotion.matches && visible && homeVisible && !document.hidden) {
+        const target = presentationPose;
+        const current = samplePose();
+        cancelHandoff();
+        const version = handoffVersion;
+        weekly.dataset.weeklyPresentation = "returning";
+        try {
+          const returning = floating.animate([{ transform: current }, { transform: target }], {
+            duration: 550, easing: "cubic-bezier(.2,.7,.25,1)", fill: "forwards"
+          });
+          handoff = returning;
+          const finish = () => {
+            if (version !== handoffVersion || handoff !== returning) return;
+            cancelHandoff();
+            presentationPose = null;
+            weekly.dataset.weeklyPresentation = "idle"; // Resume the same paused idle/shadow phase.
+          };
+          if (returning.finished?.then) returning.finished.then(finish, finish);
+          else returning.onfinish = finish;
+          return;
+        } catch (_) { /* Older/failed animation implementations retain the CSS presentation. */ }
+      }
+      cancelHandoff();
+      presentationPose = null;
+      weekly.dataset.weeklyPresentation = "idle";
     };
     const checkVisibility = () => {
-      const rect = weeklyShell.getBoundingClientRect();
+      const rect = stage.getBoundingClientRect();
       const viewportHeight = window.innerHeight || document.documentElement?.clientHeight || 0;
       const viewportWidth = window.innerWidth || document.documentElement?.clientWidth || 0;
-      const rendered = !weeklyShell.getClientRects || weeklyShell.getClientRects().length > 0;
+      const rendered = !stage.getClientRects || stage.getClientRects().length > 0;
       visible = !!(rendered && rect.width && rect.height && rect.top < viewportHeight && rect.top + rect.height > 0 && rect.left < viewportWidth && rect.left + rect.width > 0);
-      if (!visible) reset();
+      if (!visible) reset(true);
       syncEffects();
     };
     const artReady = () => {
@@ -1508,18 +1578,13 @@
     };
     weeklyImage?.addEventListener("load", artReady);
     weeklyImage?.addEventListener("error", () => { weekly.dataset.weeklyArtReady = "false"; weeklyImage.style.visibility = "hidden"; });
-    artReady(); // Also repairs cached images whose load event happened before this script.
+    artReady();
     if (typeof IntersectionObserver === "function") {
-      const observer = new IntersectionObserver(entries => {
-        const entry = entries.find(entry => entry.target === weeklyShell);
-        if (!entry) return;
-        visible = entry.isIntersecting;
-        if (!visible) reset();
-        syncEffects();
-      }, { threshold: 0 });
-      observer.observe(weeklyShell);
+      // Observer notifications can be queued before a panel/layout change. Measure
+      // the stationary stage now instead of trusting an old transformed-shell entry.
+      const observer = new IntersectionObserver(checkVisibility, { threshold: 0 });
+      observer.observe(stage);
     }
-    // A bounded scroll/resize fallback also recovers a missed observer callback.
     let visibilityFrame = null;
     const scheduleVisibility = () => {
       if (typeof window.requestAnimationFrame !== "function") { checkVisibility(); return; }
@@ -1528,46 +1593,65 @@
     };
     window.addEventListener("scroll", scheduleVisibility, { passive: true });
     window.addEventListener("resize", scheduleVisibility, { passive: true });
-    window.addEventListener("pageshow", () => { artReady(); checkVisibility(); });
-    document.addEventListener("visibilitychange", () => { if (document.hidden) reset(); artReady(); checkVisibility(); });
+    window.addEventListener("pageshow", artReady);
+    document.addEventListener("visibilitychange", () => { if (document.hidden) reset(true); artReady(); });
     window.addEventListener("manascout:statechange", event => {
       if (["home", "loading", "card"].includes(event.detail?.state)) {
         homeVisible = event.detail.state === "home";
-        if (!homeVisible) reset();
-        checkVisibility();
+        if (!homeVisible) reset(true);
+        artReady();
       }
     });
-    reducedMotion.addEventListener("change", () => { reset(); checkVisibility(); });
-    finePointer.addEventListener("change", reset);
-    const canTilt = () => !reducedMotion.matches && visible && homeVisible && !document.hidden;
+    // Older MediaQueryList implementations use addListener. Neither hover nor
+    // pointer-coarseness is a reduced-motion preference.
+    const watchMedia = (media, listener) => {
+      if (typeof media.addEventListener === "function") media.addEventListener("change", listener);
+      else if (typeof media.addListener === "function") media.addListener(listener);
+    };
+    watchMedia(reducedMotion, () => { reset(true); artReady(); });
+    watchMedia(finePointer, () => reset(true));
+    const canTilt = () => {
+      artReady(); // Repairs stale visibility/image flags at the point of interaction.
+      return !reducedMotion.matches && visible && homeVisible && !document.hidden;
+    };
     const tilt = event => {
       if (!canTilt()) return;
-      const rect = weeklyShell.getBoundingClientRect();
+      const rect = stage.getBoundingClientRect();
       if (!rect.width || !rect.height) return;
       const x = Math.max(0, Math.min(100, (event.clientX - rect.left) / rect.width * 100));
       const y = Math.max(0, Math.min(100, (event.clientY - rect.top) / rect.height * 100));
+      const touch = event.pointerType === "touch";
+      takeControl();
       weekly.dataset.weeklyInteracting = "true";
       weekly.style.setProperty("--weekly-x", `${x}%`);
       weekly.style.setProperty("--weekly-y", `${y}%`);
-      weekly.style.setProperty("--weekly-rx", `${(50 - y) * (event.pointerType === "touch" ? .05 : .16)}deg`);
-      weekly.style.setProperty("--weekly-ry", `${(x - 50) * (event.pointerType === "touch" ? .06 : .20)}deg`);
+      weekly.style.setProperty("--weekly-rx", `${Number(((50 - y) * (touch ? .12 : .22)).toFixed(2))}deg`);
+      weekly.style.setProperty("--weekly-ry", `${Number(((x - 50) * (touch ? .14 : .28)).toFixed(2))}deg`);
       if (exactEldrazi()) {
-        const intensity = .24 + .20 * (1 - Math.min(1, Math.hypot(x - 30, y - 25) / 100));
-        weekly.style.setProperty("--weekly-reflection", intensity.toFixed(3));
-        weekly.style.setProperty("--weekly-light-x", `${((x - 50) * .10).toFixed(2)}%`);
-        weekly.style.setProperty("--weekly-light-y", `${((y - 50) * .08).toFixed(2)}%`);
+        const incidence = Math.min(1, Math.hypot(x - 50, y - 50) / Math.hypot(50, 50));
+        weekly.style.setProperty("--weekly-reflection", (.76 + .24 * incidence).toFixed(3));
+        weekly.style.setProperty("--weekly-light-x", `${((x - 50) * .24).toFixed(2)}%`);
+        weekly.style.setProperty("--weekly-light-y", `${((y - 50) * .20).toFixed(2)}%`);
+        weekly.style.setProperty("--weekly-light-angle", `${((x - 50) * .36).toFixed(2)}deg`);
+        weekly.style.setProperty("--weekly-shadow-x", `${((50 - x) * .20).toFixed(2)}px`);
+        weekly.style.setProperty("--weekly-shadow-y", `${((50 - y) * .12).toFixed(2)}px`);
+        weekly.style.setProperty("--weekly-edge", (.78 + .22 * incidence).toFixed(3));
       }
     };
-    weeklyShell.addEventListener("pointerdown", event => {
+    stage.addEventListener("pointerdown", event => {
       if (event.pointerType !== "touch" || !event.isPrimary || !canTilt()) return;
       touchPointer = event.pointerId;
-      tilt(event); // Passive: page scrolling and pinch zoom remain available.
+      tilt(event); // Passive: vertical scrolling and pinch zoom remain available.
     }, { passive: true });
-    weeklyShell.addEventListener("pointermove", event => {
+    stage.addEventListener("pointermove", event => {
       if (event.pointerType === "touch") { if (event.pointerId === touchPointer) tilt(event); }
-      else if (finePointer.matches) tilt(event);
+      else if (finePointer.matches || ["mouse", "pen"].includes(event.pointerType)) tilt(event);
     }, { passive: true });
-    for (const name of ["pointerleave", "pointercancel", "pointerup"]) weeklyShell.addEventListener(name, reset);
+    const endInteraction = event => {
+      if (event.pointerType === "touch" && touchPointer !== null && event.pointerId !== touchPointer) return;
+      reset();
+    };
+    for (const name of ["pointerleave", "pointercancel", "pointerup", "lostpointercapture"]) stage.addEventListener(name, endInteraction, { passive: true });
     reset();
     checkVisibility();
   }
