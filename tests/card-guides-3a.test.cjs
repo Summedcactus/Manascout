@@ -85,7 +85,7 @@ test('59-guide catalogue, directory ItemList, registry, canonical URLs and sitem
  const urls=[...read('sitemap.xml').matchAll(/<loc>([^<]+)<\/loc>/g)].map(x=>x[1]);assert.equal(new Set(urls).size,63);assert.equal(urls.length,63);
  const canonical=[];for(const slug of dirs){const html=read(`card/${slug}/index.html`),url=`https://manascout.co.uk/card/${slug}/`;assert.equal(html.match(/<link\s+rel="canonical"\s+href="([^"]+)"/)[1],url);canonical.push(url);assert.equal(urls.filter(x=>x===url).length,1);}assert.equal(new Set(canonical).size,59);
  for(const slug of slugs.slice(0,4)){const group=dir.slice(dir.indexOf('id="tutors-power"'),dir.indexOf('id="showcase-releases"'));assert.ok(group.includes(`href="/card/${slug}/"`));}
- assert.doesNotMatch(dir,/\b40 (?:Magic|ManaScout|guides)|<strong>40<\/strong>/);assert.match(read('deck/index.html'),/Explore 55 card guides/);
+ assert.doesNotMatch(dir,/\b40 (?:Magic|ManaScout|guides)|<strong>40<\/strong>/);assert.match(read('deck/index.html'),/Explore 59 card guides/);
 });
 test('new registry entries use actual shared guide link and exact-printing/finish handoff helpers',()=>{
  const GUIDE_SLUGS=new Set([...app.match(/const GUIDE_SLUGS = new Set\(\[([^]*?)\]\)/)[1].matchAll(/"([a-z0-9-]+)"/g)].map(x=>x[1]));
