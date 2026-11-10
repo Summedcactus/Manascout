@@ -1,0 +1,546 @@
+{
+  "reviewed": "2026-11-10",
+  "baseline": "0126895309c3620cec692a283bc8ecd21a42a60b",
+  "branch_comparison": "main is three merge commits ahead, with identical tree; DEVELOPMENT history retained",
+  "new_guides": {
+    "brainstorm": {
+      "name": "Brainstorm",
+      "title": "Brainstorm Printings, Artwork & Versions | ManaScout",
+      "description": "Compare Brainstorm’s Ice Age original, Masques foil, Mark Poole art and Mystical Archive versions. Identify exact artists, collector numbers and finishes.",
+      "records": [
+        {
+          "set": "Ice Age",
+          "code": "ICE",
+          "number": "61",
+          "date": "1995-06-03",
+          "rarity": "common",
+          "artist": "Christopher Rush",
+          "finish": "Nonfoil only",
+          "art": "Original illustration; original frame",
+          "source": "https://mtg.wtf/card/ice/61"
+        },
+        {
+          "set": "Mercadian Masques",
+          "code": "MMQ",
+          "number": "61",
+          "date": "1999-10-04",
+          "rarity": "common",
+          "artist": "DiTerlizzi",
+          "finish": "Nonfoil, traditional foil",
+          "art": "Alternate illustration; old-border booster edition",
+          "source": "https://mtg.wtf/card/mmq/61"
+        },
+        {
+          "set": "Masters 25",
+          "code": "A25",
+          "number": "46",
+          "date": "2018-03-16",
+          "rarity": "common",
+          "artist": "Chris Rahn",
+          "finish": "Nonfoil, traditional foil",
+          "art": "Modern-frame illustration; Ice Age watermark",
+          "source": "https://mtg.wtf/card/a25/46"
+        },
+        {
+          "set": "Strixhaven Mystical Archive",
+          "code": "STA",
+          "number": "13",
+          "date": "2021-04-23",
+          "rarity": "rare",
+          "artist": "Justin Hernandez & Alexis Hernandez",
+          "finish": "Nonfoil, traditional foil, etched",
+          "art": "Global showcase illustration",
+          "source": "https://mtg.wtf/card/sta/13"
+        },
+        {
+          "set": "Strixhaven Mystical Archive",
+          "code": "STA",
+          "number": "76",
+          "date": "2021-04-23",
+          "rarity": "rare",
+          "artist": "Ayako Ishiguro",
+          "finish": "Nonfoil, traditional foil, etched",
+          "art": "Japanese-language alternate-art edition",
+          "source": "https://mtg.wtf/card/sta/76"
+        },
+        {
+          "set": "Secret Lair Drop",
+          "code": "SLD",
+          "number": "174",
+          "date": "2021-06-21",
+          "rarity": "rare",
+          "artist": "Mark Poole",
+          "finish": "Nonfoil, traditional foil",
+          "art": "Artist Series: Mark Poole; alternate illustration",
+          "source": "https://mtg.wtf/card/sld/174"
+        }
+      ],
+      "image": "https://mtg.wtf/cards_hq/ice/61.png",
+      "sources": [
+        "https://mtg.wtf/card/ice/61",
+        "https://mtg.wtf/card/mmq/61",
+        "https://mtg.wtf/card/a25/46",
+        "https://mtg.wtf/card/sta/13",
+        "https://mtg.wtf/card/sta/76",
+        "https://mtg.wtf/card/sld/174",
+        "https://magic.wizards.com/en/banned-restricted-list"
+      ]
+    },
+    "thoughtseize": {
+      "name": "Thoughtseize",
+      "title": "Thoughtseize Printings, Artwork & Versions | ManaScout",
+      "description": "Identify Thoughtseize’s Lorwyn original, Theros art, Invocation, retro frame, borderless and Junji Ito editions, plus Breaking News textured foil.",
+      "records": [
+        {
+          "set": "Lorwyn",
+          "code": "LRW",
+          "number": "145",
+          "date": "2007-10-12",
+          "rarity": "rare",
+          "artist": "Aleksi Briclot",
+          "finish": "Nonfoil, traditional foil",
+          "art": "Original illustration",
+          "source": "https://mtg.wtf/card/lrw/145"
+        },
+        {
+          "set": "Theros",
+          "code": "THS",
+          "number": "107",
+          "date": "2013-09-27",
+          "rarity": "rare",
+          "artist": "Lucas Graciano",
+          "finish": "Nonfoil, traditional foil",
+          "art": "Alternate illustration",
+          "source": "https://mtg.wtf/card/ths/107"
+        },
+        {
+          "set": "Amonkhet Invocations",
+          "code": "MP2",
+          "number": "45",
+          "date": "2017-04-28",
+          "rarity": "special",
+          "artist": "James Ryman",
+          "finish": "Traditional foil only",
+          "art": "Invocation frame; catalogue set date",
+          "source": "https://mtg.wtf/card/mp2/45"
+        },
+        {
+          "set": "Double Masters",
+          "code": "2XM",
+          "number": "109",
+          "date": "2020-08-07",
+          "rarity": "rare",
+          "artist": "Aleksi Briclot",
+          "finish": "Nonfoil, traditional foil",
+          "art": "Regular-frame original-art reprint",
+          "source": "https://mtg.wtf/card/2xm/109"
+        },
+        {
+          "set": "Double Masters",
+          "code": "2XM",
+          "number": "344",
+          "date": "2020-08-07",
+          "rarity": "rare",
+          "artist": "Chuck Lukacs",
+          "finish": "Nonfoil, traditional foil",
+          "art": "Borderless box-topper illustration",
+          "source": "https://mtg.wtf/card/2xm/344"
+        },
+        {
+          "set": "Time Spiral Remastered",
+          "code": "TSR",
+          "number": "334",
+          "date": "2021-03-19",
+          "rarity": "special",
+          "artist": "Aleksi Briclot",
+          "finish": "Nonfoil, traditional foil",
+          "art": "Retro-frame original-art reprint",
+          "source": "https://mtg.wtf/card/tsr/334"
+        },
+        {
+          "set": "Secret Lair Drop",
+          "code": "SLD",
+          "number": "1117",
+          "date": "2022-11-28",
+          "rarity": "rare",
+          "artist": "Junji Ito",
+          "finish": "Nonfoil, etched",
+          "art": "Special Guest: Junji Ito; alternate illustration",
+          "source": "https://mtg.wtf/card/sld/1117"
+        },
+        {
+          "set": "Breaking News",
+          "code": "OTP",
+          "number": "20",
+          "date": "2024-04-19",
+          "rarity": "mythic",
+          "artist": "William Tempest",
+          "finish": "Nonfoil, traditional foil",
+          "art": "Newspaper showcase illustration",
+          "source": "https://mtg.wtf/card/otp/20"
+        },
+        {
+          "set": "Breaking News",
+          "code": "OTP",
+          "number": "70",
+          "date": "2024-04-19",
+          "rarity": "mythic",
+          "artist": "William Tempest",
+          "finish": "Textured foil only",
+          "art": "Textured edition of the newspaper artwork",
+          "source": "https://mtg.wtf/card/otp/70"
+        }
+      ],
+      "image": "https://mtg.wtf/cards_hq/lrw/145.png",
+      "sources": [
+        "https://mtg.wtf/card/lrw/145",
+        "https://mtg.wtf/card/ths/107",
+        "https://mtg.wtf/card/mp2/45",
+        "https://mtg.wtf/card/2xm/109",
+        "https://mtg.wtf/card/2xm/344",
+        "https://mtg.wtf/card/tsr/334",
+        "https://mtg.wtf/card/sld/1117",
+        "https://mtg.wtf/card/otp/20",
+        "https://mtg.wtf/card/otp/70"
+      ]
+    },
+    "mystical-tutor": {
+      "name": "Mystical Tutor",
+      "title": "Mystical Tutor Printings, Artwork & Versions | ManaScout",
+      "description": "Compare Mystical Tutor’s Mirage original with boxed foils, Jace art, Secret Lair, retro and borderless reprints. Check collector numbers and real finishes.",
+      "records": [
+        {
+          "set": "Mirage",
+          "code": "MIR",
+          "number": "80",
+          "date": "1996-10-08",
+          "rarity": "uncommon",
+          "artist": "David O’Connor",
+          "finish": "Nonfoil only",
+          "art": "Original illustration",
+          "source": "https://mtg.wtf/card/mir/80"
+        },
+        {
+          "set": "From the Vault: Exiled",
+          "code": "V09",
+          "number": "8",
+          "date": "2009-08-28",
+          "rarity": "mythic",
+          "artist": "David O’Connor",
+          "finish": "Traditional foil only",
+          "art": "Original-art premium boxed edition",
+          "source": "https://mtg.wtf/card/v09/8"
+        },
+        {
+          "set": "Eternal Masters",
+          "code": "EMA",
+          "number": "62",
+          "date": "2016-06-10",
+          "rarity": "rare",
+          "artist": "Lindsey Look",
+          "finish": "Nonfoil, traditional foil",
+          "art": "Alternate illustration",
+          "source": "https://mtg.wtf/card/ema/62"
+        },
+        {
+          "set": "Signature Spellbook: Jace",
+          "code": "SS1",
+          "number": "6",
+          "date": "2018-06-15",
+          "rarity": "rare",
+          "artist": "Yongjae Choi",
+          "finish": "Nonfoil, traditional foil",
+          "art": "Jace-themed illustration and frame",
+          "source": "https://mtg.wtf/card/ss1/6"
+        },
+        {
+          "set": "Secret Lair Drop",
+          "code": "SLD",
+          "number": "334",
+          "date": "2021-11-29",
+          "rarity": "rare",
+          "artist": "Mateus Manhanini",
+          "finish": "Nonfoil, traditional foil",
+          "art": "Far Out, Man; alternate illustration",
+          "source": "https://mtg.wtf/card/sld/334"
+        },
+        {
+          "set": "Dominaria Remastered",
+          "code": "DMR",
+          "number": "60",
+          "date": "2023-01-13",
+          "rarity": "rare",
+          "artist": "Lindsey Look",
+          "finish": "Nonfoil, traditional foil",
+          "art": "Regular modern-frame reprint",
+          "source": "https://mtg.wtf/card/dmr/60"
+        },
+        {
+          "set": "Dominaria Remastered",
+          "code": "DMR",
+          "number": "289",
+          "date": "2023-01-13",
+          "rarity": "rare",
+          "artist": "Lindsey Look",
+          "finish": "Nonfoil, traditional foil",
+          "art": "Retro-frame reprint",
+          "source": "https://mtg.wtf/card/dmr/289"
+        },
+        {
+          "set": "Dominaria Remastered",
+          "code": "DMR",
+          "number": "421",
+          "date": "2023-01-13",
+          "rarity": "rare",
+          "artist": "Richard Kane Ferguson",
+          "finish": "Nonfoil, traditional foil",
+          "art": "Borderless alternate illustration",
+          "source": "https://mtg.wtf/card/dmr/421"
+        },
+        {
+          "set": "Avatar: The Last Airbender Eternal",
+          "code": "TLE",
+          "number": "308",
+          "date": "2025-11-21",
+          "rarity": "rare",
+          "artist": "Shane Beresford",
+          "finish": "Nonfoil only",
+          "art": "Showcase crossover illustration",
+          "source": "https://mtg.wtf/card/tle/308"
+        }
+      ],
+      "image": "https://mtg.wtf/cards_hq/mir/80.png",
+      "sources": [
+        "https://mtg.wtf/card/mir/80",
+        "https://mtg.wtf/card/v09/8",
+        "https://mtg.wtf/card/ema/62",
+        "https://mtg.wtf/card/ss1/6",
+        "https://mtg.wtf/card/sld/334",
+        "https://mtg.wtf/card/dmr/60",
+        "https://mtg.wtf/card/dmr/289",
+        "https://mtg.wtf/card/dmr/421",
+        "https://mtg.wtf/card/tle/308",
+        "https://magic.wizards.com/en/banned-restricted-list",
+        "https://magic.wizards.com/en/news/feature/collecting-dominaria-remastered-and-product-overview",
+        "https://magery.com/mtg/card/mystical-tutor"
+      ]
+    },
+    "dark-ritual": {
+      "name": "Dark Ritual",
+      "title": "Dark Ritual Printings, Artwork & Versions | ManaScout",
+      "description": "Trace Dark Ritual from Alpha through old-border art, Masques foil, Amonkhet Invocation and Mystical Archive editions. Compare exact artists and finishes.",
+      "records": [
+        {
+          "set": "Limited Edition Alpha",
+          "code": "LEA",
+          "number": "98",
+          "date": "1993-08-05",
+          "rarity": "common",
+          "artist": "Sandra Everingham",
+          "finish": "Nonfoil only",
+          "art": "Original illustration; database collector index",
+          "source": "https://mtg.wtf/card/lea/98"
+        },
+        {
+          "set": "Urza’s Saga",
+          "code": "USG",
+          "number": "127",
+          "date": "1998-10-12",
+          "rarity": "common",
+          "artist": "Tom Fleming",
+          "finish": "Nonfoil only",
+          "art": "Old-border alternate illustration",
+          "source": "https://mtg.wtf/card/usg/127"
+        },
+        {
+          "set": "Mercadian Masques",
+          "code": "MMQ",
+          "number": "129",
+          "date": "1999-10-04",
+          "rarity": "common",
+          "artist": "Rebecca Guay",
+          "finish": "Nonfoil, traditional foil",
+          "art": "Old-border alternate illustration; booster foil available",
+          "source": "https://mtg.wtf/card/mmq/129"
+        },
+        {
+          "set": "Amonkhet Invocations",
+          "code": "MP2",
+          "number": "21",
+          "date": "2017-04-28",
+          "rarity": "special",
+          "artist": "Richard Wright",
+          "finish": "Traditional foil only",
+          "art": "Invocation frame and alternate illustration",
+          "source": "https://mtg.wtf/card/mp2/21"
+        },
+        {
+          "set": "Masters 25",
+          "code": "A25",
+          "number": "82",
+          "date": "2018-03-16",
+          "rarity": "common",
+          "artist": "Clint Langley",
+          "finish": "Nonfoil, traditional foil",
+          "art": "Modern-frame illustration; Alpha watermark",
+          "source": "https://mtg.wtf/card/a25/82"
+        },
+        {
+          "set": "Strixhaven Mystical Archive",
+          "code": "STA",
+          "number": "26",
+          "date": "2021-04-23",
+          "rarity": "rare",
+          "artist": "Robbie Trevino",
+          "finish": "Nonfoil, traditional foil, etched",
+          "art": "Global showcase illustration",
+          "source": "https://mtg.wtf/card/sta/26"
+        },
+        {
+          "set": "Strixhaven Mystical Archive",
+          "code": "STA",
+          "number": "89",
+          "date": "2021-04-23",
+          "rarity": "rare",
+          "artist": "Rien.",
+          "finish": "Nonfoil, traditional foil, etched",
+          "art": "Japanese-language alternate-art edition",
+          "source": "https://mtg.wtf/card/sta/89"
+        }
+      ],
+      "image": "https://mtg.wtf/cards_hq/lea/98.png",
+      "sources": [
+        "https://mtg.wtf/card/lea/98",
+        "https://mtg.wtf/card/usg/127",
+        "https://mtg.wtf/card/mmq/129",
+        "https://mtg.wtf/card/mp2/21",
+        "https://mtg.wtf/card/a25/82",
+        "https://mtg.wtf/card/sta/26",
+        "https://mtg.wtf/card/sta/89",
+        "https://magery.com/mtg/mp2/dark-ritual",
+        "https://mtgprices.io/set/lea/card/98-dark-ritual"
+      ]
+    }
+  },
+  "upgrades": {
+    "sol-ring": {
+      "name": "Sol Ring",
+      "title": "Sol Ring Printings, Artwork & Versions | ManaScout",
+      "description": "Compare Sol Ring’s Alpha original, Mark Tedin and Mark Poole artwork, Commander reprints, borderless editions, foils and Middle-earth collector versions.",
+      "image": "https://mtg.wtf/cards_hq/cmm/410.png",
+      "sources": [
+        "https://mtgprices.io/set/lea/card/269-sol-ring",
+        "https://mtg.wtf/card/v10/12/Sol-Ring",
+        "https://mtg.wtf/card/cmd/261/Sol-Ring",
+        "https://mtg.wtf/card/mps/24/Sol-Ring",
+        "https://mtg.wtf/card/cmm/410/Sol-Ring",
+        "https://mtg.wtf/card/cmm/703/Sol-Ring",
+        "https://mtg.wtf/card/ltc/408/Sol-Ring",
+        "https://mtg.wtf/card/ltc/408z/Sol-Ring",
+        "https://mtg.wtf/card/ltc/410/Sol-Ring",
+        "https://magic.wizards.com/en/news/feature/collecting-the-lord-of-the-rings-tales-of-middle-earth"
+      ],
+      "reviewed": "2026-11-10",
+      "original_table_retained": true,
+      "identification_paragraphs": [
+        "<strong>Original Sol Ring:</strong> LEA #269 is the Alpha catalogue identity. Early cards do not print that collector number on the face; familiar Tedin artwork and a black border alone are not authentication.",
+        "<strong>Familiar Commander art:</strong> CMD #261 and CMM #410 credit Mike Bierek. The former is nonfoil; the latter has nonfoil and traditional foil. V10 #12 is a separate foil-only boxed edition.",
+        "<strong>“Mark Poole Sol Ring” or “full art”:</strong> check CMM #703, the borderless Poole illustration. It is neither the original Tedin image nor Bierek’s standard-frame #410, and it offers both ordinary finishes.",
+        "<strong>Ornate or Tolkien-themed:</strong> MPS #24 is Baga’s foil-only Invention. LTC #408 and #410 are Quenya-language Sol Rings; a serialized #408z has its own physical serial and double-rainbow treatment. None is <a href=\"/card/the-one-ring/\">The One Ring</a>."
+      ],
+      "factual_corrections": []
+    },
+    "rhystic-study": {
+      "name": "Rhystic Study",
+      "title": "Rhystic Study Printings, Artwork & Foil Versions | ManaScout",
+      "description": "Identify Rhystic Study’s Prophecy common, original foil, Judge and Jumpstart art, anime and confetti editions by set, artist and collector number.",
+      "image": "https://mtg.wtf/cards_hq/pcy/45.png",
+      "sources": [
+        "https://mtg.wtf/card/pcy/45/Rhystic-Study",
+        "https://mtg.wtf/card/cm1/15/Rhystic-Study",
+        "https://mtg.wtf/card/j18/7/Rhystic-Study",
+        "https://mtg.wtf/card/jmp/169/Rhystic-Study",
+        "https://mtg.wtf/card/j22/114/Rhystic-Study",
+        "https://mtg.wtf/card/wot/25/Rhystic-Study",
+        "https://mtg.wtf/card/wot/71/Rhystic-Study",
+        "https://mtg.wtf/card/wot/91/Rhystic-Study",
+        "https://mtg.wtf/card/fca/31/Rhystic-Study"
+      ],
+      "reviewed": "2026-11-10",
+      "original_table_retained": true,
+      "identification_paragraphs": [
+        "<strong>Original or original-art reprint?</strong> PCY #45 is Prophecy, with both finishes. JMP #169 reuses Nielsen’s image in nonfoil; CM1 #15 is a foil-only Commander’s Arsenal edition. The same artist does not mean the same release.",
+        "<strong>Different painting?</strong> J18 #7 credits Canavan and is foil-only. J22 #114 credits Kirgetova and is nonfoil-only. Neither is simply a new frame around the Prophecy illustration.",
+        "<strong>Enchanting Tales?</strong> WOT #25 is Malyon’s showcase art. #71 is Fuzichoco’s anime image in nonfoil or traditional foil; #91 is the separate confetti record using that anime art. A glittering scan is not enough to distinguish them.",
+        "<strong>Final Fantasy?</strong> FCA #31 credits Square Enix and supports nonfoil/traditional foil. Its mythic rarity belongs to that later record, not the original Prophecy common."
+      ],
+      "factual_corrections": []
+    },
+    "the-one-ring": {
+      "name": "The One Ring",
+      "title": "The One Ring Printings, Artwork & Foil Versions | ManaScout",
+      "description": "Compare The One Ring’s original, extended art, scene, scroll and poster versions. Separate surge foil, serialized editions and the unique 001/001 card.",
+      "image": "https://mtg.wtf/cards_hq/ltr/246.png",
+      "sources": [
+        "https://mtg.wtf/card/ltr/246/The-One-Ring",
+        "https://mtg.wtf/card/ltr/380/The-One-Ring",
+        "https://mtg.wtf/card/ltr/451/The-One-Ring",
+        "https://mtg.wtf/card/ltr/0/The-One-Ring",
+        "https://www.mtg.wtf/card/ltr/697/The-One-Ring",
+        "https://mtg.wtf/card/ltr/748/The-One-Ring",
+        "https://mtg.wtf/card/ltr/748z/The-One-Ring",
+        "https://mtg.wtf/card/ltr/791/The-One-Ring",
+        "https://mtg.wtf/card/hoc/44/The-One-Ring",
+        "https://mtg.wtf/card/hoc/84/The-One-Ring",
+        "https://magic.wizards.com/en/banned-restricted-list"
+      ],
+      "reviewed": "2026-11-10",
+      "original_table_retained": true,
+      "identification_paragraphs": [
+        "<strong>Ordinary versus expanded original art:</strong> LTR #246 is standard-frame and #380 is extended art. Both credit Nystrom and have nonfoil/foil records. “Full art” without a number does not tell you whether this is the original image or a scene/poster illustration.",
+        "<strong>Scene or scroll?</strong> LTR #451 credits Marta Nael and forms part of the Mount Doom scene. Scroll #697 retains Nystrom’s credit with its own frame and silver-foil product treatment. They are not interchangeable alternate-art labels.",
+        "<strong>Poster or serialized poster?</strong> #748 and #748z credit Justine Jones. The regular poster supports nonfoil/traditional foil; the serialized record is double rainbow foil. Inspect the physical serial, not just the poster artwork.",
+        "<strong>The one-of-one or a later reprint?</strong> Catalogue #0 is the unique 001/001 Ring, not the later poster serial. HOC #44/#84 instead credit Dan Frazier for The Hobbit Eternal: ordinary nonfoil/foil and a separate surge-foil record."
+      ],
+      "factual_corrections": []
+    },
+    "arcane-signet": {
+      "name": "Arcane Signet",
+      "title": "Arcane Signet First Printing, Artwork & Versions | ManaScout",
+      "description": "When was Arcane Signet first printed? Identify the 2019 Brawl original, later artwork, extended art, borderless versions and verified foil treatments.",
+      "image": "https://mtg.wtf/cards_hq/eld/331.png",
+      "sources": [
+        "https://mtg.wtf/card/eld/331/Arcane-Signet",
+        "https://www.mtg.wtf/card/cmr/297/Arcane-Signet",
+        "https://mtg.wtf/card/cmr/689/Arcane-Signet",
+        "https://mtg.wtf/card/sld/201/Arcane-Signet",
+        "https://mtg.wtf/card/cmm/653/Arcane-Signet",
+        "https://www.mtg.wtf/card/pip/752/Arcane-Signet",
+        "https://mtg.wtf/card/mb2/254/Arcane-Signet",
+        "https://magic.wizards.com/en/news/feature/throne-eldraine-release-notes-2019-09-20"
+      ],
+      "reviewed": "2026-11-10",
+      "original_table_retained": true,
+      "identification_paragraphs": [
+        "<strong>Original release:</strong> ELD #331 is the Brawl-deck common. The set code does not mean the card was in ordinary Eldraine Draft Boosters, and there is no foil option for that exact original record.",
+        "<strong>Same art, different frame:</strong> CMR #297 is the regular-frame Commander Legends reprint; #689 is extended art. Both credit Scott and support nonfoil/traditional foil.",
+        "<strong>New illustration:</strong> SLD #201 credits Pendergast; CMM #653 credits Tucker. Both have nonfoil/foil choices. The borderless #653 is an artistic change, not a new finish you can apply to ELD #331.",
+        "<strong>Unusual frame or reflective surface:</strong> MB2 #254 is the later foil-only Future Sight-frame record using Scott’s art. PIP #752 is Mendoza’s separate surge-foil record. A Future Sight frame does not move Arcane Signet’s debut back to 2007."
+      ],
+      "factual_corrections": []
+    }
+  },
+  "qualifications": [
+    "Curated physical shortlists, not claimed complete counts of all languages, digital cards or minor reprints.",
+    "Alpha collector numbers are database identifiers, not printed collector lines.",
+    "Invocation dates are catalogue product dates; not a claim of identical distribution timing for all waves.",
+    "No fixed prices copied; the shared explorer supplies live data independently.",
+    "Direct API/native browser availability is reported separately from web catalogue research."
+  ],
+  "adsense": {
+    "publisher": "ca-pub-2249291081711812",
+    "ads_txt": "google.com, pub-2249291081711812, DIRECT, f08c47fec0942fa0",
+    "baseline_meta_pages": 49,
+    "conflicts": []
+  }
+}

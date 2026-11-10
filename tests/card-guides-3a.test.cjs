@@ -5,6 +5,7 @@ const assert=require('node:assert/strict');
 const fs=require('node:fs'),vm=require('node:vm');
 const read=p=>fs.readFileSync(p,'utf8');
 const ledger=JSON.parse(read('docs/card-guide-research-3a.json'));
+const revisions=JSON.parse(read('docs/card-guide-research-seo-ctr.json')).upgrades;
 const plain=s=>s.replace(/<[^>]+>/g,' ').replace(/&amp;/g,'&').replace(/&#x27;/g,"'").replace(/&quot;/g,'"').replace(/\s+/g,' ').trim();
 const graph=html=>JSON.parse(html.match(/<script type="application\/ld\+json">([^]*?)<\/script>/)[1])['@graph'];
 const expected={
@@ -21,15 +22,15 @@ const expected={
 };
 const slugs=Object.keys(expected),app=read('assets/js/app.js');
 for(const slug of slugs){
- const html=read(`card/${slug}/index.html`),g=ledger.cards.find(x=>x.slug===slug),[name,code,num,artist,count]=expected[slug],url=`https://manascout.co.uk/card/${slug}/`;
+ const html=read(`card/${slug}/index.html`),g=ledger.cards.find(x=>x.slug===slug),revision=revisions[slug]||g,[name,code,num,artist,count]=expected[slug],url=`https://manascout.co.uk/card/${slug}/`;
  test(`${name}: researched original, precise card identity, metadata and linked Article graph`,()=>{
   assert.equal(g.name,name);assert.deepEqual(g.first.slice(1,3),[code,num]);assert.equal(g.first[5],artist);
   assert.ok(plain(html).includes(`${code} #${num}`));assert.ok(plain(html).includes(artist));
   assert.ok(html.includes(`class="printing-guide" data-card-name="${name.replace(/'/g,'&#x27;')}"`));
-  const meta=html.match(/<meta name="description" content="([^"]+)"/)[1];assert.ok(meta.length>100);assert.equal(plain(html.match(/<title>([^]*?)<\/title>/)[1]),g.title);assert.match(g.title,/Printings|First Printing/);
+  const meta=html.match(/<meta name="description" content="([^"]+)"/)[1];assert.ok(meta.length>100);assert.equal(plain(html.match(/<title>([^]*?)<\/title>/)[1]),revision.title);assert.match(g.title,/Printings|First Printing/);
   assert.ok(html.includes(`<link rel="canonical" href="${url}">`));assert.ok(html.includes(`<meta property="og:url" content="${url}">`));
   const ld=graph(html),page=ld.find(x=>x['@type']==='WebPage'),article=ld.find(x=>x['@type']==='Article'),crumb=ld.find(x=>x['@type']==='BreadcrumbList');
-  assert.equal(page.url,url);assert.equal(page.mainEntity['@id'],article['@id']);assert.equal(article.mainEntityOfPage['@id'],page['@id']);assert.equal(article.about.name,name);assert.equal(article.description,g.description);assert.equal(article.dateModified,'2026-11-04');assert.ok(article.citation.length>=count);assert.ok(article.citation.every(x=>/^https:\/\//.test(x)));assert.equal(crumb.itemListElement.at(-1).item,url);
+  assert.equal(page.url,url);assert.equal(page.mainEntity['@id'],article['@id']);assert.equal(article.mainEntityOfPage['@id'],page['@id']);assert.equal(article.about.name,name);assert.equal(article.description,revision.description);assert.equal(article.dateModified,revisions[slug]?.reviewed||'2026-11-04');assert.ok(article.citation.length>=count);assert.ok(article.citation.every(x=>/^https:\/\//.test(x)));assert.equal(crumb.itemListElement.at(-1).item,url);
   assert.doesNotMatch(JSON.stringify(ld),/"(?:Offer|Product|AggregateRating|price|ratingValue)"/);
  });
  test(`${name}: independently scoped shortlist, artists and finish records agree with research ledger`,()=>{
@@ -42,7 +43,7 @@ for(const slug of slugs){
  });
  test(`${name}: shared explorer, precise name lookup and optional guide/deck links remain functional`,async()=>{
   for(const id of ['card-details','printings-status','printings-container'])assert.equal((html.match(new RegExp(`id="${id}"`,'g'))||[]).length,1);
-  assert.ok(html.includes('/assets/js/card-page.js'));assert.ok(html.includes('/assets/js/app.js?v=eldrazi-guides1'));assert.match(html,/<noscript>/);assert.doesNotMatch(html,/data-ms-flip|data-ms-nonfoil|<img[^>]+src=/);
+  assert.ok(html.includes('/assets/js/card-page.js'));assert.ok(html.includes('/assets/js/app.js?v='+ (revisions[slug]?'seo-ctr1':'eldrazi-guides1')));assert.match(html,/<noscript>/);assert.doesNotMatch(html,/data-ms-flip|data-ms-nonfoil/);assert.equal((html.match(/<img\b/g)||[]).length,slug==='rhystic-study'?1:0);
   for(const link of g.related)assert.ok(html.includes(`href="/card/${link}/"`));
   const calls=[],ctx={API:'https://api.scryfall.com',encodeURIComponent,readJson:async u=>{calls.push(u);return{name};}};vm.createContext(ctx);vm.runInContext(app.slice(app.indexOf('  async function namedCard('),app.indexOf('  async function cardId(')),ctx);assert.equal((await ctx.namedCard(name)).name,name);assert.equal(new URL(calls[0]).searchParams.get('exact'),name);assert.equal(calls.length,1);
  });
@@ -77,12 +78,12 @@ test('Jace, Bolt and Ancient Tomb protect artist/finish distinctions and correct
  for(const [num,artist]of [['83','Noah Bradley'],['84','Brigitte Roka'],['85','Robbie Trevino'],['86','Alexis Ziritt']]){assert.equal(row('lightning-bolt','SLD',num).artist,artist);assert.equal(row('lightning-bolt','SLD',num).finish,'Traditional foil only');}
  assert.equal(row('lightning-bolt','STA','105').finish,'Nonfoil, traditional foil, etched foil');assert.match(plain(read('card/ancient-tomb/index.html')),/deals two damage.*not an additional cost/);assert.equal(card('ancient-tomb').first[4],'uncommon');assert.equal(row('ancient-tomb','LTC','387').finish,'Surge foil only');
 });
-test('55-guide catalogue, directory ItemList, registry, canonical URLs and sitemap agree exactly',()=>{
- const dirs=fs.readdirSync('card',{withFileTypes:true}).filter(x=>x.isDirectory()&&fs.existsSync(`card/${x.name}/index.html`)&&/data-card-name=/.test(read(`card/${x.name}/index.html`))).map(x=>x.name).sort();assert.equal(dirs.length,55);
- const registry=[...app.match(/const GUIDE_SLUGS = new Set\(\[([^]*?)\]\)/)[1].matchAll(/"([a-z0-9-]+)"/g)].map(x=>x[1]);assert.equal(registry.length,55);assert.deepEqual(registry.sort(),dirs);
- const dir=read('card/index.html'),list=graph(dir).find(x=>x['@type']==='ItemList');assert.equal(list.numberOfItems,55);assert.equal(list.itemListElement.length,55);assert.deepEqual(list.itemListElement.map(x=>x.position),Array.from({length:55},(_,i)=>i+1));assert.deepEqual(list.itemListElement.map(x=>new URL(x.url).pathname.split('/')[2]).sort(),dirs);
- const urls=[...read('sitemap.xml').matchAll(/<loc>([^<]+)<\/loc>/g)].map(x=>x[1]);assert.equal(new Set(urls).size,59);assert.equal(urls.length,59);
- const canonical=[];for(const slug of dirs){const html=read(`card/${slug}/index.html`),url=`https://manascout.co.uk/card/${slug}/`;assert.equal(html.match(/<link\s+rel="canonical"\s+href="([^"]+)"/)[1],url);canonical.push(url);assert.equal(urls.filter(x=>x===url).length,1);}assert.equal(new Set(canonical).size,55);
+test('59-guide catalogue, directory ItemList, registry, canonical URLs and sitemap agree exactly',()=>{
+ const dirs=fs.readdirSync('card',{withFileTypes:true}).filter(x=>x.isDirectory()&&fs.existsSync(`card/${x.name}/index.html`)&&/data-card-name=/.test(read(`card/${x.name}/index.html`))).map(x=>x.name).sort();assert.equal(dirs.length,59);
+ const registry=[...app.match(/const GUIDE_SLUGS = new Set\(\[([^]*?)\]\)/)[1].matchAll(/"([a-z0-9-]+)"/g)].map(x=>x[1]);assert.equal(registry.length,59);assert.deepEqual(registry.sort(),dirs);
+ const dir=read('card/index.html'),list=graph(dir).find(x=>x['@type']==='ItemList');assert.equal(list.numberOfItems,59);assert.equal(list.itemListElement.length,59);assert.deepEqual(list.itemListElement.map(x=>x.position),Array.from({length:59},(_,i)=>i+1));assert.deepEqual(list.itemListElement.map(x=>new URL(x.url).pathname.split('/')[2]).sort(),dirs);
+ const urls=[...read('sitemap.xml').matchAll(/<loc>([^<]+)<\/loc>/g)].map(x=>x[1]);assert.equal(new Set(urls).size,63);assert.equal(urls.length,63);
+ const canonical=[];for(const slug of dirs){const html=read(`card/${slug}/index.html`),url=`https://manascout.co.uk/card/${slug}/`;assert.equal(html.match(/<link\s+rel="canonical"\s+href="([^"]+)"/)[1],url);canonical.push(url);assert.equal(urls.filter(x=>x===url).length,1);}assert.equal(new Set(canonical).size,59);
  for(const slug of slugs.slice(0,4)){const group=dir.slice(dir.indexOf('id="tutors-power"'),dir.indexOf('id="showcase-releases"'));assert.ok(group.includes(`href="/card/${slug}/"`));}
  assert.doesNotMatch(dir,/\b40 (?:Magic|ManaScout|guides)|<strong>40<\/strong>/);assert.match(read('deck/index.html'),/Explore 55 card guides/);
 });
@@ -95,7 +96,7 @@ test('new registry entries use actual shared guide link and exact-printing/finis
 test('all ten headers retain working search toggle, submit, Escape and focus restoration',async()=>{
  const {dom}=require('./helpers/card-dom.cjs');for(const slug of slugs){const d=dom();const make=(tag,id)=>{const x=new d.Element(tag);x.setAttribute('id',id);d.document.body.append(x);return x;};const toggle=make('button','guide-search-toggle'),panel=make('div','guide-search-panel'),form=make('form','guide-search-form'),input=make('input','guide-card-search');panel.hidden=true;const window={setTimeout:fn=>fn(),location:{href:''}},c={document:d.document,window,encodeURIComponent};vm.createContext(c);const code=[...read(`card/${slug}/index.html`).matchAll(/<script>([^]*?)<\/script>/g)].at(-1)[1];vm.runInContext(code,c);await toggle.emit('click');assert.equal(panel.hidden,false);assert.equal(d.document.activeElement,input);input.value=expected[slug][0];await form.emit('submit');assert.equal(window.location.href,'/?q='+encodeURIComponent(input.value));for(const fn of d.document.listeners.keydown)fn({key:'Escape'});assert.equal(panel.hidden,true);assert.equal(d.document.activeElement,toggle);}
 });
-test('all 55 permanent guides retain existing local navigation and asset targets',()=>{
- const path=require('node:path');const dirs=fs.readdirSync('card',{withFileTypes:true}).filter(x=>x.isDirectory()&&fs.existsSync(`card/${x.name}/index.html`));assert.equal(dirs.length,55);
+test('all 59 permanent guides retain existing local navigation and asset targets',()=>{
+ const path=require('node:path');const dirs=fs.readdirSync('card',{withFileTypes:true}).filter(x=>x.isDirectory()&&fs.existsSync(`card/${x.name}/index.html`));assert.equal(dirs.length,59);
  for(const d of dirs){const file=`card/${d.name}/index.html`,html=read(file);for(const m of html.matchAll(/\b(?:href|src)="([^"]+)"/g)){const href=m[1].replace(/&amp;/g,'&');if(/^(?:[a-z][a-z\d+.-]*:|\/\/)/i.test(href))continue;const url=new URL(href,'https://local.invalid/'+file);let target=decodeURIComponent(url.pathname).replace(/^\//,'');if(!target||target.endsWith('/'))target+='index.html';assert.ok(fs.existsSync(target),`${file}: ${href}`);if(url.hash&&path.resolve(target)===path.resolve(file)){const ids=new Set([...html.matchAll(/\bid="([^"]+)"/g)].map(x=>x[1]));assert.ok(ids.has(decodeURIComponent(url.hash.slice(1))),`${file}: ${href}`);}}}
 });

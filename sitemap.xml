@@ -9,7 +9,7 @@
 
   <url>
     <loc>https://manascout.co.uk/card/</loc>
-    <lastmod>2026-11-09</lastmod>
+    <lastmod>2026-11-10</lastmod>
   </url>
 
   <url>
@@ -19,7 +19,7 @@
 
   <url>
     <loc>https://manascout.co.uk/card/arcane-signet/</loc>
-    <lastmod>2026-11-01</lastmod>
+    <lastmod>2026-11-10</lastmod>
   </url>
 
   <url>
@@ -129,7 +129,7 @@
 
   <url>
     <loc>https://manascout.co.uk/card/rhystic-study/</loc>
-    <lastmod>2026-11-04</lastmod>
+    <lastmod>2026-11-10</lastmod>
   </url>
 
   <url>
@@ -144,7 +144,7 @@
 
   <url>
     <loc>https://manascout.co.uk/card/sol-ring/</loc>
-    <lastmod>2026-11-07</lastmod>
+    <lastmod>2026-11-10</lastmod>
   </url>
 
   <url>
@@ -159,7 +159,7 @@
 
   <url>
     <loc>https://manascout.co.uk/card/the-one-ring/</loc>
-    <lastmod>2026-11-07</lastmod>
+    <lastmod>2026-11-10</lastmod>
   </url>
 
   <url>
@@ -283,5 +283,21 @@
   <url>
     <loc>https://manascout.co.uk/card/living-death/</loc>
     <lastmod>2026-11-09</lastmod>
+  </url>
+  <url>
+    <loc>https://manascout.co.uk/card/brainstorm/</loc>
+    <lastmod>2026-11-10</lastmod>
+  </url>
+  <url>
+    <loc>https://manascout.co.uk/card/thoughtseize/</loc>
+    <lastmod>2026-11-10</lastmod>
+  </url>
+  <url>
+    <loc>https://manascout.co.uk/card/mystical-tutor/</loc>
+    <lastmod>2026-11-10</lastmod>
+  </url>
+  <url>
+    <loc>https://manascout.co.uk/card/dark-ritual/</loc>
+    <lastmod>2026-11-10</lastmod>
   </url>
 </urlset>

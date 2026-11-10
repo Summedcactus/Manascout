@@ -1423,9 +1423,8 @@
     "baseline_commit": "b5699d635f40505200b6f1440a2dbce8dc4bccce",
     "entries": {
       "https://manascout.co.uk/card/arcane-signet/": {
-        "lastmod": "2026-11-01",
-        "basis": "Upgrade essential mana and utility card guides",
-        "commit": "d78ce089b81de7c750f6b7128ad9f7046bac5f8f",
+        "lastmod": "2026-11-10",
+        "basis": "Source-reviewed first-printing, artwork and finish comparison update; four new guides and directory discovery expansion",
         "path": "card/arcane-signet/index.html"
       },
       "https://manascout.co.uk/card/chrome-mox/": {
@@ -1520,8 +1519,8 @@
         "path": "card/smothering-tithe/index.html"
       },
       "https://manascout.co.uk/card/sol-ring/": {
-        "lastmod": "2026-11-07",
-        "basis": "Source-reviewed guide expansion, shared navigation/privacy/contact or guide registry/discovery update",
+        "lastmod": "2026-11-10",
+        "basis": "Source-reviewed first-printing, artwork and finish comparison update; four new guides and directory discovery expansion",
         "path": "card/sol-ring/index.html"
       },
       "https://manascout.co.uk/card/the-great-henge/": {
@@ -1531,8 +1530,8 @@
         "path": "card/the-great-henge/index.html"
       },
       "https://manascout.co.uk/card/the-one-ring/": {
-        "lastmod": "2026-11-07",
-        "basis": "Source-reviewed guide expansion, shared navigation/privacy/contact or guide registry/discovery update",
+        "lastmod": "2026-11-10",
+        "basis": "Source-reviewed first-printing, artwork and finish comparison update; four new guides and directory discovery expansion",
         "path": "card/the-one-ring/index.html"
       },
       "https://manascout.co.uk/card/urzas-saga/": {
@@ -1553,8 +1552,8 @@
         "path": "index.html"
       },
       "https://manascout.co.uk/card/": {
-        "lastmod": "2026-11-09",
-        "basis": "Five researched permanent guides and directory expansion",
+        "lastmod": "2026-11-10",
+        "basis": "Source-reviewed first-printing, artwork and finish comparison update; four new guides and directory discovery expansion",
         "path": "card/index.html"
       },
       "https://manascout.co.uk/deck/": {
@@ -1599,9 +1598,8 @@
         "path": "card/cavern-of-souls/index.html"
       },
       "https://manascout.co.uk/card/rhystic-study/": {
-        "lastmod": "2026-11-04",
-        "basis": "Prompt 2 or Prompt 3A material guide creation/rewrite, verified against GitHub commit history",
-        "commit": "b5699d635f40505200b6f1440a2dbce8dc4bccce",
+        "lastmod": "2026-11-10",
+        "basis": "Source-reviewed first-printing, artwork and finish comparison update; four new guides and directory discovery expansion",
         "path": "card/rhystic-study/index.html"
       },
       "https://manascout.co.uk/card/black-lotus/": {
@@ -1743,6 +1741,26 @@
         "lastmod": "2026-11-09",
         "basis": "Five researched permanent guides and directory expansion",
         "path": "card/living-death/index.html"
+      },
+      "https://manascout.co.uk/card/mystical-tutor/": {
+        "lastmod": "2026-11-10",
+        "basis": "Source-reviewed first-printing, artwork and finish comparison update; four new guides and directory discovery expansion",
+        "path": "card/mystical-tutor/index.html"
+      },
+      "https://manascout.co.uk/card/thoughtseize/": {
+        "lastmod": "2026-11-10",
+        "basis": "Source-reviewed first-printing, artwork and finish comparison update; four new guides and directory discovery expansion",
+        "path": "card/thoughtseize/index.html"
+      },
+      "https://manascout.co.uk/card/dark-ritual/": {
+        "lastmod": "2026-11-10",
+        "basis": "Source-reviewed first-printing, artwork and finish comparison update; four new guides and directory discovery expansion",
+        "path": "card/dark-ritual/index.html"
+      },
+      "https://manascout.co.uk/card/brainstorm/": {
+        "lastmod": "2026-11-10",
+        "basis": "Source-reviewed first-printing, artwork and finish comparison update; four new guides and directory discovery expansion",
+        "path": "card/brainstorm/index.html"
       }
     }
   }
