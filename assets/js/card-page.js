@@ -99,6 +99,8 @@
       );
     }
 
+    const finish = parameters().get("finish");
+    if (["nonfoil", "foil", "etched"].includes(finish)) url.searchParams.set("finish", finish);
     return url.href;
   }
 
@@ -185,326 +187,41 @@
   }
 
 
-  /* ========================================
-     TOOLBAR STYLING
-     ======================================== */
-
-  function installStyles() {
-    if (
-      document.getElementById(
-        "ms-card-guide-styles"
-      )
-    ) {
-      return;
-    }
-
-    const style =
-      document.createElement("style");
-
-    style.id = "ms-card-guide-styles";
-
-    style.textContent = `
-      .ms-guide-toolbar {
-        display:flex;
-        flex-wrap:wrap;
-        align-items:center;
-        gap:8px;
-        margin:0 0 2rem;
-        padding:12px;
-        border:1px solid rgba(255,255,255,.1);
-        border-radius:12px;
-        background:linear-gradient(
-          135deg,
-          rgba(139,40,56,.095),
-          rgba(255,255,255,.018)
-        );
-      }
-
-      .ms-guide-toolbar a,
-      .ms-guide-toolbar button {
-        display:inline-flex;
-        align-items:center;
-        justify-content:center;
-        min-height:38px;
-        padding:8px 11px;
-        border:1px solid rgba(255,255,255,.11);
-        border-radius:8px;
-        background:rgba(255,255,255,.025);
-        color:#e9e0e3;
-        font:inherit;
-        font-size:11px;
-        font-weight:800;
-        line-height:1.3;
-        text-decoration:none;
-        cursor:pointer;
-        transition:
-          background .18s ease,
-          border-color .18s ease;
-      }
-
-      .ms-guide-toolbar a:hover,
-      .ms-guide-toolbar button:hover {
-        border-color:rgba(210,85,104,.55);
-        background:rgba(146,43,61,.13);
-      }
-
-      .ms-guide-toolbar a:focus-visible,
-      .ms-guide-toolbar button:focus-visible {
-        outline:2px solid #d36a7b;
-        outline-offset:3px;
-      }
-
-      .ms-guide-toolbar button:disabled {
-        opacity:.45;
-        cursor:not-allowed;
-      }
-
-      .ms-guide-toolbar .ms-guide-primary {
-        color:#ffe6ea;
-        border-color:rgba(208,75,96,.48);
-        background:rgba(142,38,55,.15);
-      }
-
-      .ms-guide-status {
-        flex-basis:100%;
-        display:block;
-        min-height:16px;
-        margin:3px 2px 0;
-        color:#aaa0a4;
-        font-size:11px;
-        line-height:1.55;
-      }
-
-      .ms-guide-toolbar + .results {
-        scroll-margin-top:2rem;
-      }
-
-      #card-details,
-      #printings-container {
-        scroll-margin-top:2rem;
-      }
-
-      .ms-guide-error {
-        padding:18px;
-        border:1px solid rgba(209,79,96,.3);
-        border-radius:11px;
-        background:rgba(137,41,57,.07);
-        color:#f0e7e9;
-      }
-
-      .ms-guide-error h2 {
-        margin:0 0 8px;
-        font-size:1.2rem;
-      }
-
-      .ms-guide-error p {
-        color:#bcb0b4;
-        font-size:13px;
-        line-height:1.7;
-      }
-
-      .ms-guide-retry {
-        margin-top:8px;
-        padding:9px 12px;
-        border:1px solid rgba(208,79,99,.5);
-        border-radius:8px;
-        background:rgba(143,44,61,.16);
-        color:#fff0f2;
-        font:inherit;
-        font-size:12px;
-        cursor:pointer;
-      }
-
-      @media(max-width:620px) {
-        .ms-guide-toolbar {
-          gap:6px;
-          padding:9px;
-          border-radius:10px;
-        }
-
-        .ms-guide-toolbar a,
-        .ms-guide-toolbar button {
-          flex:1 1 auto;
-          min-height:39px;
-          padding:8px;
-          font-size:10px;
-        }
-
-        .ms-guide-status {
-          font-size:10px;
-          padding:3px;
-        }
-      }
-
-      @media(prefers-reduced-motion:reduce) {
-        .ms-guide-toolbar a,
-        .ms-guide-toolbar button {
-          transition:none!important;
-        }
-      }
-    `;
-
-    document.head.appendChild(style);
-  }
-
-
-  /* ========================================
-     GUIDE SHORTCUT NAVIGATION
-     ======================================== */
-
+  /* Reuse the static section links; sharing stays secondary. */
   function createToolbar() {
-    const main =
-      document.querySelector("main");
-
-    const hero =
-      main?.querySelector(".hero");
-
-    if (
-      !main ||
-      !hero ||
-      !details ||
-      !printings
-    ) {
-      return;
-    }
-
-    if (
-      document.getElementById(
-        "ms-guide-toolbar"
-      )
-    ) {
-      return;
-    }
-
-    if (!hero.id) {
-      hero.id = "ms-guide-overview";
-    }
-
-    toolbar =
-      document.createElement("nav");
-
+    const hero = document.querySelector("main .hero");
+    if (!hero || !details || !printings) return;
+    toolbar = hero.querySelector(".guide-jump-links");
+    if (!toolbar) return;
     toolbar.id = "ms-guide-toolbar";
-
-    toolbar.className =
-      "ms-guide-toolbar";
-
-    toolbar.setAttribute(
-      "aria-label",
-      "ManaScout card guide shortcuts"
-    );
-
-    toolbar.innerHTML = `
-      <a href="#${hero.id}">
-        Overview
-      </a>
-
-      <a href="#card-details">
-        Card details
-      </a>
-
-      <a
-        href="#printings-container"
-        class="ms-guide-primary"
-      >
-        Compare printings
-      </a>
-
-      <a href="/card/">
-        All guides
-      </a>
-
-      <button
-        type="button"
-        data-ms-copy-guide
-      >
-        Copy guide link
-      </button>
-
-      <button
-        type="button"
-        data-ms-copy-printing
-        disabled
-      >
-        Copy exact printing
-      </button>
-
-      <span
-        class="ms-guide-status"
-        role="status"
-        aria-live="polite"
-      >
-        Loading live card and printing information…
-      </span>
-    `;
-
-    hero.insertAdjacentElement(
-      "afterend",
-      toolbar
-    );
-
-    statusElement =
-      toolbar.querySelector(
-        ".ms-guide-status"
-      );
-
-    printingButton =
-      toolbar.querySelector(
-        "[data-ms-copy-printing]"
-      );
-
-
-    /* Copy the permanent guide URL */
-
-    toolbar
-      .querySelector(
-        "[data-ms-copy-guide]"
-      )
-      ?.addEventListener(
-        "click",
-        async () => {
-          const success =
-            await copyText(
-              guideUrl()
-            );
-
-          updateStatus(
-            success
-              ? "Permanent guide link copied."
-              : "Copy the guide URL from your browser address bar."
-          );
-        }
-      );
-
-
-    /* Copy the specific selected printing */
-
-    printingButton?.addEventListener(
-      "click",
-      async () => {
-        const id =
-          currentPrintingId ||
-          getPrintingId();
-
-        if (!id) {
-          updateStatus(
-            "Select a card printing first."
-          );
-
-          return;
-        }
-
-        const success =
-          await copyText(
-            printingUrl(id)
-          );
-
-        updateStatus(
-          success
-            ? "Exact printing link copied."
-            : "Could not copy automatically. Use your browser address bar."
-        );
-      }
-    );
+    const tools = document.createElement("details");
+    tools.className = "guide-tools";
+    tools.innerHTML = `<summary>Copy links</summary>
+      <div class="guide-copy-actions">
+        <button type="button" data-ms-copy-guide>Copy guide link</button>
+        <button type="button" data-ms-copy-printing disabled>Copy exact printing</button>
+      </div>`;
+    toolbar.appendChild(tools);
+    statusElement = document.createElement("p");
+    statusElement.className = "ms-guide-status sr-only";
+    statusElement.setAttribute("role", "status");
+    statusElement.setAttribute("aria-live", "polite");
+    toolbar.insertAdjacentElement("afterend", statusElement);
+    printingButton = tools.querySelector("[data-ms-copy-printing]");
+    const reportCopy = message => {
+      statusElement.className = "ms-guide-status";
+      updateStatus(message);
+    };
+    tools.querySelector("[data-ms-copy-guide]").addEventListener("click", async () => {
+      const success = await copyText(guideUrl());
+      reportCopy(success ? "Permanent guide link copied." : "Copy the guide URL from your browser address bar.");
+    });
+    printingButton.addEventListener("click", async () => {
+      const id = currentPrintingId || getPrintingId();
+      if (!id) return;
+      const success = await copyText(printingUrl(id));
+      reportCopy(success ? "Exact printing link copied." : "Copy the current URL from your browser address bar.");
+    });
   }
 
 
@@ -616,7 +333,9 @@
       return;
     }
 
-    details.replaceChildren();
+    const fallback = details.querySelector("[data-guide-static]");
+    if (!fallback) details.replaceChildren();
+    details.querySelector(".ms-guide-error")?.remove();
 
     const box =
       document.createElement("div");
@@ -633,7 +352,7 @@
       document.createElement("h2");
 
     heading.textContent =
-      "ManaScout couldn't load this guide";
+      "Live card data is unavailable";
 
     const paragraph =
       document.createElement("p");
@@ -820,7 +539,6 @@
 
 
   function initialiseCardPage() {
-    installStyles();
     createToolbar();
     listenToExplorer();
     preserveGuideTitle();

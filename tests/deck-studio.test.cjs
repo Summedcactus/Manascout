@@ -101,7 +101,7 @@ function rendererContext(card, pathname) {
   const registry = new Set([...source.match(/const GUIDE_SLUGS = new Set\(\[([\s\S]*?)\]\)/)[1].matchAll(/"([a-z0-9-]+)"/g)].map(m => m[1]));
   const blank = () => '';
   const c = { card, URLSearchParams, GUIDE_SLUGS: registry, window: { location: { pathname } }, ui: { details: { innerHTML: '' } },
-    currentCard: null, currentPick: false, slug: x => x.toLowerCase().replace(/['’]/g, '').replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, ''),
+    currentCard: null, currentPick: false, updateGuideReference: blank, slug: x => x.toLowerCase().replace(/['’]/g, '').replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, ''),
     esc: x => String(x ?? '').replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;'),
     selectedFinish: c => c.testFinish, previewImage: blank, finishSelector: blank, activatePreview: blank, stat: blank, pretty: blank, finishText: blank, finishLabel: blank,
     treatmentText: blank, legalFormats: blank, oracleHtml: blank, guideLink: blank, marketplace: blank, announce: blank, LANGS: {}, safe: blank };

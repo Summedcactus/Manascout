@@ -19,3 +19,7 @@ The runner includes JavaScript regressions, syntax, guide registry, HTML/ARIA/lo
 ## Hosting
 
 GitHub Pages serves the repository root on the configured publishing branch after the owner's manual release workflow. `CNAME` specifies `manascout.co.uk`. Development tasks must not change hosting settings or publish/merge to main automatically.
+
+## Growth and ownership roadmap
+
+Before planning growth, revenue or a broad site update, read [the consolidated roadmap](docs/growth-and-ownership-roadmap.md). It preserves the owner's uncluttered, useful-product requirements, verified November audit findings, revenue/rights/hosting constraints and ordered implementation checklist. Planned items are not shipped features.

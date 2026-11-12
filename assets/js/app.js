@@ -466,13 +466,13 @@
   }
 
   function installGuideImages() {
-    for (const img of document.querySelectorAll("[data-guide-static] img")) {
+    for (const img of document.querySelectorAll(".guide-static-art img")) {
       const failed = () => {
         img.hidden = true;
         const notice = img.closest("figure")?.querySelector(".guide-image-error");
         if (notice) notice.hidden = false;
       };
-      img.addEventListener("error", failed, { once: true });
+      img.addEventListener("error", failed);
       if (img.complete && !img.naturalWidth) failed();
     }
   }
@@ -810,8 +810,8 @@
 
     return `
       <div class="manascout-guide-link">
-        <a href="/card/${esc(path)}/">
-          ◇ View ManaScout Guide →
+        <a href="/card/${esc(path)}/${card?.id ? `?${esc(new URLSearchParams({printing: card.id, finish: selectedFinish(card)}).toString())}` : ""}">
+          ◇ View this printing in the guide →
         </a>
       </div>
     `;
@@ -855,6 +855,29 @@
     `;
   }
 
+  function updateGuideReference(card) {
+    if (!guideName || !sameName(card.name, guideName)) return;
+    const figure = document.querySelector("[data-guide-reference]");
+    if (!figure) return;
+    const image = figure.querySelector("img"), label = figure.querySelector("[data-guide-reference-label]");
+    const link = figure.querySelector("[data-guide-reference-link]"), notice = figure.querySelector(".guide-image-error");
+    const imageUrl = img(card), sourceUrl = safe(card.scryfall_uri);
+    if (image && !imageUrl) {
+      image.hidden = true;
+      if (notice) notice.hidden = false;
+    } else if (image && image.getAttribute("src") !== imageUrl) {
+      image.hidden = false;
+      if (notice) notice.hidden = true;
+      image.src = imageUrl;
+    }
+    if (image) image.alt = `${card.name} — ${String(card.set || "").toUpperCase()} #${card.collector_number}, ${finishLabel(selectedFinish(card))}`;
+    if (label) label.textContent = `Selected printing · ${String(card.set || "").toUpperCase()} #${card.collector_number} · ${card.artist || "Artist not listed"} · ${LANGS[card.lang] || card.lang || "Language not listed"} · ${finishLabel(selectedFinish(card))}. Catalogue image; physical finishes vary.`;
+    if (link) {
+      if (sourceUrl) link.href = sourceUrl;
+      else link.removeAttribute("href");
+    }
+  }
+
   function renderCard(
     card,
     isPick = false
@@ -868,6 +891,7 @@
 
     currentCard = card;
     currentPick = isPick;
+    updateGuideReference(card);
 
     const artwork = (
       card.card_faces || []
@@ -1781,7 +1805,7 @@
           ${snapshotButton(
             "all",
             cards.length,
-            "Printings"
+            "Catalogue records"
           )}
 
           ${snapshotButton(
@@ -1829,14 +1853,14 @@
           ${snapshotButton(
             "foil",
             s.foil.length,
-            "Foil versions",
+            "Records with foil",
             !s.foil.length
           )}
 
           ${snapshotButton(
             "etched",
             s.etched.length,
-            "Etched versions",
+            "Records with etched",
             !s.etched.length
           )}
 
@@ -2077,8 +2101,6 @@
     archive = state;
 
     ui.printings.innerHTML = `
-      ${snapshotMarkup(cards, rates, s)}
-
       ${result.notice
         ? `
           <p
@@ -2089,6 +2111,10 @@
           </p>
         `
         : ""}
+
+      <details class="ms-archive-options">
+      <summary>Filter and sort catalogue records</summary>
+      ${snapshotMarkup(cards, rates, s)}
 
       <div class="ms-controls printing-controls">
 
@@ -2227,7 +2253,9 @@
 
       </div>
 
-      <div class="table-wrap">
+      </details>
+
+      <div class="table-wrap" role="region" aria-label="Printing catalogue records" tabindex="0">
 
         <table class="printings-table">
 
@@ -2239,9 +2267,9 @@
               <th scope="col">Collector #</th>
               <th scope="col">Rarity</th>
               <th scope="col">Finishes / Treatments</th>
-              <th scope="col">Price</th>
-              <th scope="col">Foil</th>
-              <th scope="col">Etched</th>
+              <th scope="col">Nonfoil reference</th>
+              <th scope="col">Foil reference</th>
+              <th scope="col">Etched reference</th>
             </tr>
           </thead>
 
@@ -2257,10 +2285,10 @@
       ></div>
 
       <p class="ms-help">
-        These are Scryfall printing records.
-        A printing can have multiple available
-        physical finishes, shown as separate
-        price columns. The foil shimmer is illustrative.
+        Each row is a catalogue record for a set, collector number and language;
+        another language does not necessarily mean different artwork.
+        One record can offer several physical finishes. Price columns are
+        source references, not shop offers. The foil shimmer is illustrative.
       </p>
     `;
 
@@ -2528,7 +2556,8 @@
         `;
 
       ui.status.textContent =
-        `${list.length} matching printings · ` +
+        `${list.length} matching records · ` +
+        `${new Set(list.map(card => `${card.set}/${card.collector_number}`)).size} set/number pairs · ` +
         `${cards.length} Scryfall records loaded · ` +
         `${rates ? "GBP estimates" : "source currencies"}` +
         `${result.complete ? "" : " · partial data"}`;
@@ -2877,14 +2906,13 @@
           ) {
             card = candidate;
             exact = true;
+          } else {
+            throw Object.assign(new Error("The requested printing belongs to a different card. Your exact link has been kept."), {exactPrinting: true});
           }
 
         } catch (error) {
-          if (
-            error.name === "AbortError"
-          ) {
-            throw error;
-          }
+          if (error.name === "AbortError" || error.exactPrinting) throw error;
+          throw Object.assign(new Error("The requested printing could not be loaded. Your exact link has been kept; please retry."), {exactPrinting: true});
         }
       }
 
@@ -2906,10 +2934,11 @@
         exact &&
         requestedFinish
       ) {
-        chooseFinish(
+        const accepted = chooseFinish(
           card,
           requestedFinish
         );
+        if (!accepted) throw Object.assign(new Error("That finish is not available for the requested printing. Your exact link has been kept."), {exactPrinting: true});
       }
 
       renderCard(
@@ -3037,7 +3066,7 @@
       );
 
       errorState(
-        error.status === 404
+        error.exactPrinting ? error.message : error.status === 404
           ? `No card matched “${query}”. Check the spelling and try again.`
           : "Scryfall could not be reached. Please try again."
       );
@@ -3512,6 +3541,10 @@
   window.ManaScout =
     Object.freeze({
       loadCard,
+      guidePath: name => {
+        const path = slug(name);
+        return GUIDE_SLUGS.has(path) ? `/card/${path}/` : "";
+      },
 
       scoutRandom: async () => {
         const result =
@@ -3554,6 +3587,11 @@
       "ms-search-upgrade-styles";
 
     style.textContent = `
+      .ms-archive-options { margin-bottom: 16px; }
+      .ms-archive-options > summary { min-height: 44px; padding: 12px 0; cursor: pointer; font-weight: 600; }
+      .ms-archive-options > summary:focus-visible,
+      .table-wrap[tabindex]:focus-visible { outline: 2px solid var(--accent-bright); outline-offset: 3px; }
+
       .ms-preview { position: relative; isolation: isolate; display: inline-block; width: 100%; max-width: 100%; border-radius: 11px; overflow: hidden; perspective: 1100px; }
       .ms-face-turner { position: relative; width: 100%; transform-style: preserve-3d; transform: rotateY(0deg); transition: transform .62s cubic-bezier(.3,.05,.25,1); }
       .ms-face-turner[data-ms-face="back"] { transform: rotateY(180deg); }
