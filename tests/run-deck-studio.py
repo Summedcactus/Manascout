@@ -21,7 +21,7 @@ for file in files:
         totals[key] += counts[key]
     print(f"PASS {file.name}: {counts['pass']} passed, {counts['fail']} failed", flush=True)
 
-for file in sorted((ROOT / 'assets/js').glob('deck-*.js')) + [ROOT / 'assets/js/app.js', ROOT / 'assets/js/card-page.js', ROOT / 'assets/js/scoutboard.js']:
+for file in sorted((ROOT / 'assets/js').glob('deck-*.js')) + [ROOT / 'assets/js/app.js', ROOT / 'assets/js/card-page.js', ROOT / 'assets/js/scoutboard.js', ROOT / 'assets/js/comparisons.js']:
     subprocess.run(['node', '--check', str(file)], cwd=ROOT, check=True)
 print('PASS Deck Studio, shared explorer, card-page and homepage JavaScript syntax', flush=True)
 subprocess.run([sys.executable, str(ROOT / 'tests/validate-deck-studio.py')], cwd=ROOT, check=True)

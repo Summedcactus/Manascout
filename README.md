@@ -23,3 +23,5 @@ GitHub Pages serves the repository root on the configured publishing branch afte
 ## Growth and ownership roadmap
 
 Before planning growth, revenue or a broad site update, read [the consolidated roadmap](docs/growth-and-ownership-roadmap.md). It preserves the owner's uncluttered, useful-product requirements, verified November audit findings, revenue/rights/hosting constraints and ordered implementation checklist. Planned items are not shipped features.
+
+Exact-printing comparison supports 1–4 selections (two or more for comparison), named browser-local saves, JSON portability and CSV/exact-link export. See [comparison formats and limitations](docs/phase2-comparisons.md).

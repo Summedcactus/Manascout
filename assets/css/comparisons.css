@@ -1,0 +1,20 @@
+.ms-comparisons {margin:1.5rem 0; max-width:100%; overflow-wrap:anywhere}
+.ms-comparisons [hidden] {display:none!important}
+.ms-comparisons .cmp-grid {display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,260px),1fr));gap:1rem;margin:1rem 0}
+.ms-comparisons article {padding:1rem;border:1px solid var(--border-color,#675c7c);border-radius:12px;min-width:0}
+.ms-comparisons img {display:block;max-width:100%;width:180px;height:auto;margin:0 auto 1rem;animation:none;filter:none}
+.ms-comparisons dt {font-weight:bold;margin-top:.5rem}
+.ms-comparisons dd {margin:0}
+.ms-comparisons button,.ms-comparisons input,.ms-comparisons summary,[data-compare-id] {min-height:44px;max-width:100%;margin:.25rem;padding:.5rem;white-space:normal}
+.ms-comparisons summary {cursor:pointer}
+.ms-comparisons input,.ms-comparisons textarea {color:inherit;background:transparent;border:1px solid #80728f;border-radius:5px}
+.ms-comparisons textarea {display:block;width:100%;min-height:8rem}
+.ms-comparisons :focus-visible,[data-compare-id]:focus-visible {outline:3px solid #e5c77b;outline-offset:3px}
+[data-compare-id][aria-pressed=true] {border:2px solid #e5c77b}
+.ms-comparisons .cmp-status:empty {display:none}
+@media(max-width:600px){.ms-comparisons .cmp-grid{grid-template-columns:1fr}}
+.ms-comparisons button,[data-compare-id] {background:#21151a;color:#f4e9ec;border:1px solid #6c2634;border-radius:7px;font:inherit;cursor:pointer}
+.ms-comparisons button:hover,[data-compare-id]:hover {background:#3b1b26}
+.ms-comparisons h3 {font-size:1.1rem;line-height:1.4;margin:0 0 1rem}
+.ms-comparisons :focus-visible,[data-compare-id]:focus-visible {outline-color:#d7768b}
+[data-compare-id][aria-pressed=true] {border-color:#d7768b}

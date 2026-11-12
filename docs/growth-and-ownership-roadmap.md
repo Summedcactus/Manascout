@@ -132,10 +132,10 @@ Phase 1 implementation is committed on DEVELOPMENT; publication remains manual. 
 
 - [x] T07 Reorganize shared guide presentation around task/visual answer first, comparison next, optional history and sources below. Consolidate duplicate navigation and repair clipped mobile headers. Preserve existing guides, URLs, facts and styling identity.
 - [x] T08 Add verified static representative references/fallbacks where missing. Respect image rights, useful alt text, dimensions, loading priority and error behavior. Do not label this a guaranteed CTR improvement.
-- [ ] T09 Add 2–4-printing comparison with exact identity, image, artist/frame, physical finishes and sourced reference prices. Clearly show differences and selected versions; support readable mobile output.
+- [x] T09 Add 2–4-printing comparison with exact identity, image, artist/frame, physical finishes and sourced reference prices. Clearly show differences and selected versions; support readable mobile output.
 - [ ] T10 Separate edition/art variants from multilingual catalogue records in counts and default views. Expose language choice without hiding a specifically linked exact printing.
 - [x] T11 Improve internal routing: known curated cards link to their guide while preserving printing/finish context; arbitrary utility results remain deliberate search utilities. Do not index every query/filter permutation or remove canonicals indiscriminately.
-- [ ] T12 Add a minimal local shortlist/saved comparison and robust export. Reuse existing persistence where practical. No account requirement for the useful core.
+- [x] T12 Add a minimal local shortlist/saved comparison and robust export. Reuse existing persistence where practical. No account requirement for the useful core.
 
 ### Interoperability and revenue readiness
 
@@ -182,3 +182,7 @@ The asset becomes more durable when users can complete a valuable task, return t
 ## Phase 1 implementation record — 12 November 2026
 
 See [Phase 1 changes and validation](phase1-usability.md) for implemented scope, actual checks and the file manifest. T10 is partially addressed by record/set-number counts and language explanations; artwork grouping and default-view changes remain open. T21 has Phase 1 browser coverage; later import, storage-restriction and broader release checks remain open. T02 remains open: semantic role fixes do not certify generated deck strategy. No analytics, payment, advertising, hosting, account, DNS or publication changes were made.
+
+## Phase 2 implementation record — 12 November 2026
+
+Exact printing/finish comparisons, browser-local named saves and portable JSON/CSV/exact-link output are implemented on DEVELOPMENT. See [formats, checks and limitations](phase2-comparisons.md). T14 is partially addressed by portable files and exact individual links; public comparison hosting remains unimplemented. T13 remains open: comparison CSV is not decklist interoperability. T21 has additional Phase 2 storage/import/failure and native browser coverage, rather than a blanket completion claim. Publication remains manual.

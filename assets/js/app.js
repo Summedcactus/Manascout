@@ -1003,6 +1003,7 @@
             `
             : ""}
 
+          <button type="button" data-compare-id="${esc(card.id)}">Compare this version</button><a href="#ms-comparison-current" data-compare-jump hidden>View comparison</a>
           ${deckLink(card)}
           ${guideLink(card)}
 
@@ -1953,6 +1954,7 @@
             ${esc(String(card.set || "").toUpperCase())}
           </span>
 
+          <button type="button" data-compare-id="${esc(card.id)}">Compare version</button><a href="#ms-comparison-current" data-compare-jump hidden>View comparison</a>
           <span class="ms-note">
             ${esc(card.artist || "Artist not listed")}
           </span>
@@ -3541,6 +3543,17 @@
   window.ManaScout =
     Object.freeze({
       loadCard,
+      comparison: Object.freeze({
+        card: id => currentCard?.id === id ? currentCard : archive?.cards.find(c => c.id === id),
+        finish: selectedFinish,
+        exact: cardId,
+        present: (card, finish) => ({
+          image: img(card), language: LANGS[card.lang] || card.lang || "Unknown",
+          treatment: treatmentText(card), priceHtml: priceHtml(card, finish, null),
+          estimate: archive?.rates ? gbp(card, finish, archive.rates) : null,
+          link: pageUrl(card, finish)
+        })
+      }),
       guidePath: name => {
         const path = slug(name);
         return GUIDE_SLUGS.has(path) ? `/card/${path}/` : "";
