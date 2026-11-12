@@ -117,11 +117,11 @@ Sources:
 
 ## Today's implementation queue
 
-All items below are open. This roadmap does not mark planned work as shipped. Work as one coordinated release with reviewable increments. This is an ordered queue, not a promise that all 22 items fit into one day. The first release should concentrate on correctness, shared guide usability, useful comparisons, portable output and measurement; payment activation, hosting changes and private-account checks depend on real owner setup. Leave unimplemented features out of the public interface.
+Phase 1 implementation is committed on DEVELOPMENT; publication remains manual. Checked items below are implemented for this phase. All other items remain open. Work as one coordinated release with reviewable increments. This is an ordered queue, not a promise that all 22 items fit into one day. The first release should concentrate on correctness, shared guide usability, useful comparisons, portable output and measurement; payment activation, hosting changes and private-account checks depend on real owner setup. Leave unimplemented features out of the public interface.
 
 ### Foundation and truth
 
-- [ ] T01 Fix the land/nonland classifier defect and audit related semantic matches. Add meaningful positive/negative regression cases using real Oracle text. Validate all affected role and generation checks.
+- [x] T01 Fix the land/nonland classifier defect and audit related semantic matches. Add meaningful positive/negative regression cases using real Oracle text. Validate all affected role and generation checks.
 - [ ] T02 Audit generator payoff/enabler compatibility with representative commanders. Assess output strategy and draw/ramp/interaction; preserve honest bracket/price qualifications. Do not market role counts as proof of deck quality.
 - [ ] T03 Verify HTTP/HTTPS behavior and plan draft recovery before HTTPS enforcement. Hosting changes remain manual under repository rules.
 - [ ] T04 Obtain missing indexing/Google-selected-canonical and private AdSense evidence through available authorized access. Keep unknowns recorded; no paid Windsor upgrade is required merely to provide exports from native GSC.
@@ -130,11 +130,11 @@ All items below are open. This roadmap does not mark planned work as shipped. Wo
 
 ### Whole-site usefulness and presentation
 
-- [ ] T07 Reorganize shared guide presentation around task/visual answer first, comparison next, optional history and sources below. Consolidate duplicate navigation and repair clipped mobile headers. Preserve existing guides, URLs, facts and styling identity.
-- [ ] T08 Add verified static representative references/fallbacks where missing. Respect image rights, useful alt text, dimensions, loading priority and error behavior. Do not label this a guaranteed CTR improvement.
+- [x] T07 Reorganize shared guide presentation around task/visual answer first, comparison next, optional history and sources below. Consolidate duplicate navigation and repair clipped mobile headers. Preserve existing guides, URLs, facts and styling identity.
+- [x] T08 Add verified static representative references/fallbacks where missing. Respect image rights, useful alt text, dimensions, loading priority and error behavior. Do not label this a guaranteed CTR improvement.
 - [ ] T09 Add 2–4-printing comparison with exact identity, image, artist/frame, physical finishes and sourced reference prices. Clearly show differences and selected versions; support readable mobile output.
 - [ ] T10 Separate edition/art variants from multilingual catalogue records in counts and default views. Expose language choice without hiding a specifically linked exact printing.
-- [ ] T11 Improve internal routing: known curated cards link to their guide while preserving printing/finish context; arbitrary utility results remain deliberate search utilities. Do not index every query/filter permutation or remove canonicals indiscriminately.
+- [x] T11 Improve internal routing: known curated cards link to their guide while preserving printing/finish context; arbitrary utility results remain deliberate search utilities. Do not index every query/filter permutation or remove canonicals indiscriminately.
 - [ ] T12 Add a minimal local shortlist/saved comparison and robust export. Reuse existing persistence where practical. No account requirement for the useful core.
 
 ### Interoperability and revenue readiness
@@ -178,3 +178,7 @@ Maintain a simple ledger: revenue by source minus processor/platform fees, refun
 Illustrations only, not forecasts: 50 supporters at GBP 2/month produce GBP 100/month gross; at a hypothetical GBP 5 page RPM, GBP 100 requires 20,000 monetized pageviews. Neither rate, audience size nor conversion is established for ManaScout.
 
 The asset becomes more durable when users can complete a valuable task, return to saved work and support a reliable service, with the owner able to back up, move and maintain it independently.
+
+## Phase 1 implementation record — 12 November 2026
+
+See [Phase 1 changes and validation](phase1-usability.md) for implemented scope, actual checks and the file manifest. T10 is partially addressed by record/set-number counts and language explanations; artwork grouping and default-view changes remain open. T21 has Phase 1 browser coverage; later import, storage-restriction and broader release checks remain open. T02 remains open: semantic role fixes do not certify generated deck strategy. No analytics, payment, advertising, hosting, account, DNS or publication changes were made.

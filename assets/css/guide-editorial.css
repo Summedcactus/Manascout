@@ -1,4 +1,4 @@
-/* Only the new editorial guide class; existing guides and homepage retain their styling. */
+/* Shared by permanent card guides; homepage and Deck Studio retain their styling. */
 .printing-guide main.container { min-width: 0; }
 .printing-guide .hero h1 { max-width: 22ch; font-size: clamp(36px,5.5vw,72px); line-height: 1.08; overflow-wrap: anywhere; text-wrap: balance; }
 .printing-guide .section-heading h2 { line-height: 1.25; overflow-wrap: anywhere; }
@@ -27,4 +27,62 @@
 .printing-guide [data-guide-static] a { display: inline-block; min-height: 44px; padding-block: 10px; overflow-wrap: anywhere; }
 @media (max-width: 600px) {
   .printing-guide [data-guide-static] { grid-template-columns: minmax(0,1fr); }
+}
+
+/* Task-first spacing and a single compact section-navigation block. */
+.printing-guide .header-inner { gap: 12px; flex-wrap: wrap; }
+.printing-guide .nav { flex-wrap: wrap; overflow: visible; gap: 14px; }
+.printing-guide .nav a[aria-current="page"] { display: none; }
+.printing-guide #guide-search-toggle { min-width: 44px; min-height: 44px; flex-shrink: 0; }
+.printing-guide .hero.compact { min-height: 0; padding: 28px 0 12px; margin: 0; }
+.printing-guide .hero::after { display: none; }
+.printing-guide .hero h1 { margin: 8px auto 14px; font-size: clamp(32px,5vw,60px); }
+.printing-guide .hero-copy { max-width: 70ch; margin: 12px auto; font-size: 16px; line-height: 1.65; }
+.printing-guide .guide-jump-links { align-items: center; gap: 4px 16px; margin-top: 12px; }
+.printing-guide .guide-jump-links a { padding: 6px 0; }
+.printing-guide .guide-tools { position: relative; font-size: 13px; text-align: left; }
+.printing-guide .guide-tools summary { display: list-item; padding: 12px 4px; min-height: 44px; cursor: pointer; }
+.printing-guide .guide-copy-actions { display: flex; flex-wrap: wrap; gap: 8px; padding-bottom: 8px; }
+.printing-guide .guide-copy-actions button, .printing-guide .ms-guide-retry { min-height: 44px; padding: 9px 12px; border: 1px solid var(--line); border-radius: 8px; background: var(--panel); color: var(--text); font: inherit; cursor: pointer; }
+.printing-guide .guide-copy-actions button:disabled { opacity: .5; cursor: default; }
+.printing-guide .guide-tools summary:focus-visible, .printing-guide .guide-copy-actions button:focus-visible, .printing-guide .ms-guide-retry:focus-visible { outline: 2px solid var(--accent-bright); outline-offset: 3px; }
+.printing-guide .ms-guide-status { font-size: 13px; color: var(--muted); margin: 8px 0; }
+.printing-guide .printings-section { margin-block: 28px; }
+.printing-guide .results { margin-block: 20px; }
+.printing-guide .section-heading h2 { font-size: clamp(22px,3vw,32px); }
+.printing-guide [id] { scroll-margin-top: 90px; }
+.printing-guide .ms-guide-error { padding: 16px; margin-top: 12px; border: 1px solid var(--line); border-radius: 10px; }
+.printing-guide .ms-guide-error h2 { font-size: 20px; }
+.printing-guide .ms-guide-error p { font-size: 14px; color: var(--muted); }
+.printing-guide [data-guide-static] { grid-template-columns: minmax(0,220px) minmax(0,1fr); align-items: start; gap: 24px; }
+.printing-guide .guide-static-art { max-width: 220px; }
+.printing-guide .guide-overview { display: grid; grid-template-columns: minmax(0,1fr) 220px; gap: 32px; align-items: start; text-align: left; }
+.printing-guide .guide-overview-copy { min-width: 0; }
+.printing-guide .guide-overview .guide-jump-links { justify-content: flex-start; }
+.printing-guide .guide-overview .guide-static-art { margin-top: 8px; }
+.printing-guide [data-guide-static] { display: block; }
+.printing-guide .guide-context { margin-top: 16px; font-size: 14px; }
+.printing-guide .guide-context summary { min-height: 44px; padding: 12px 0; cursor: pointer; }
+.printing-guide .guide-context .hero-copy { margin: 8px 0; }
+.printing-guide [data-guide-static] h2 { font-size: clamp(20px,3vw,30px); overflow-wrap: anywhere; }
+@media (max-width: 600px) {
+  .printing-guide .hero.compact { padding-top: 20px; }
+  .printing-guide .hero-copy { font-size: 15px; line-height: 1.6; }
+  .printing-guide .guide-jump-links { gap: 0 14px; }
+  .printing-guide [data-guide-static] { grid-template-columns: minmax(0,120px) minmax(0,1fr); gap: 14px; padding: 14px; }
+  .printing-guide .guide-static-art figcaption { font-size: 11px; }
+  .printing-guide [data-guide-static] .card-text-details p { font-size: 13px; }
+  .printing-guide .guide-overview { grid-template-columns: minmax(0,1fr) 120px; gap: 12px; }
+  .printing-guide .guide-overview-copy { display: contents; }
+  .printing-guide .guide-overview-copy > .eyebrow,
+  .printing-guide .guide-overview-copy > h1,
+  .printing-guide .guide-overview-copy > .guide-jump-links,
+  .printing-guide .guide-overview-copy > .ms-guide-status { grid-column: 1 / -1; }
+  .printing-guide .guide-overview-copy > h1 { margin: 0; text-align: left; }
+  .printing-guide .guide-overview-copy > .hero-copy { grid-column: 1; margin: 0; }
+  .printing-guide .guide-overview > .guide-static-art { grid-column: 2; grid-row: 3; margin: 0; }
+}
+@media (max-width: 350px) {
+  .printing-guide [data-guide-static] { grid-template-columns: minmax(0,1fr); }
+  .printing-guide .guide-static-art { max-width: 170px; }
 }

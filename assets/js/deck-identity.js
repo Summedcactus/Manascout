@@ -11,8 +11,8 @@
     sacrifice: ["Sacrifice", '(o:sacrifice or o:dies or o:token)', /sacrifice (?:another|a)|whenever[^\n.]*sacrifice/i, {outlet:9, fodder:12, deathPayoff:5}, ["outlet","fodder","deathPayoff","recursion"]],
     spellslinger: ["Spellslinger", '(t:instant or t:sorcery or o:instant or o:sorcery or o:"noncreature spell")', /instant|sorcery|noncreature spell|magecraft|prowess/i, {spell:28, spellPayoff:6, velocity:8}, ["instant","sorcery","spellPayoff","cantrip","velocity","spellCopy","costReduction","multiSpell"]],
     graveyard: ["Graveyard", '(o:graveyard or o:mill or o:discard)', /(?:from|in|into|leave|leaves|your) (?:your |a |the |their )?graveyard|\bmill\b|discard[^\n.]*card/i, {graveEnabler:8, recursion:9, gravePayoff:7}, ["graveEnabler","recursion","gravePayoff","selfMill","reanimation"]],
-    lands: ["Lands", '(t:land or o:landfall or o:"land card" or o:"additional land")', /landfall|lands? (?:you control|enters?|cards?)|additional land/i, {landRamp:10, landPayoff:8}, ["land","landUtility","additionalLand","landRamp","landPayoff","landRecursion"]],
-    landfall: ["Landfall", '(o:landfall or o:"land enters" or o:"land you control enters" or o:"additional land" or o:"search your library")', /landfall|whenever[^\n.]*land[^\n.]*enters/i, {landPayoff:10, landRamp:10}, ["land","landUtility","additionalLand","landRamp","landPayoff","landRecursion"]],
+    lands: ["Lands", '(t:land or o:landfall or o:"land card" or o:"additional land")', /\blandfall\b|\blands?\b (?:you control|enters?|cards?)|additional land/i, {landRamp:10, landPayoff:8}, ["land","landUtility","additionalLand","landRamp","landPayoff","landRecursion"]],
+    landfall: ["Landfall", '(o:landfall or o:"land enters" or o:"land you control enters" or o:"additional land" or o:"search your library")', /\blandfall\b|whenever[^\n.]*\blands?\b[^\n.]*enters/i, {landPayoff:10, landRamp:10}, ["land","landUtility","additionalLand","landRamp","landPayoff","landRecursion"]],
     voltron: ["Voltron", '(t:equipment or t:aura or o:equipped or o:enchanted)', /equipment|equipped|enchanted|auras? you control|attach|commander[^\n.]*damage/i, {attachment:14, protection:7, evasion:7}, ["attachment","equipment","aura","protection","evasion"]],
     counters: ["+1/+1 Counters", '(o:"+1/+1 counter" or o:proliferate)', /\+1\/\+1 counter|proliferate/i, {counterMaker:12, counterPayoff:6}, ["counterMaker","counterPayoff","proliferate"]],
     lifegain: ["Lifegain / Drain", '(o:"gain life" or o:"gain that much life" or o:"loses life" or o:lifelink)', /gain[^\n.]*life|loses?[^\n.]*life|lifelink/i, {life:18, lifePayoff:6}, ["lifegain","drain","lifePayoff"]],
@@ -96,9 +96,9 @@
   function features(c, tribal="") {
     const t=text(c), ty=type(c), r=new Set(), add=(key,yes)=>{if(yes)r.add(key);};
     if(/\bLand\b/.test(ty)){
-      r.add("land");if(/sacrifice[^\n.]*:|search your library[^\n.]*land/i.test(t))r.add("landUtility");
+      r.add("land");if(/sacrifice[^\n.]*:|search your library[^\n.]*\blands?\b/i.test(t))r.add("landUtility");
       if(/(?:^|[.:\n]|then)\s*mill\b|you mill|surveil/i.test(t))r.add("graveEnabler");
-      if(/return[^\n.]*graveyard|play[^\n.]*lands?[^\n.]*graveyard/i.test(t))r.add("recursion");
+      if(/return[^\n.]*graveyard|play[^\n.]*\blands?\b[^\n.]*graveyard/i.test(t))r.add("recursion");
       return r;
     }
     add("creature",/Creature/.test(ty)); add("artifact",/Artifact/.test(ty));
@@ -114,10 +114,11 @@
     add("spell",/Instant|Sorcery/.test(ty)); add("spellPayoff",/whenever[^\n.]*(?:instant|sorcery|noncreature spell)|magecraft|prowess|copy[^\n.]*spell|storm/i.test(t));
     add("velocity",/draw (?:a|one|two) cards?|scry|surveil|look at[^\n.]*top/i.test(t)&&Number(c.manaValue)<=3);
     add("graveEnabler",/(?:^|[.:\n]|then)\s*(?:mill|discard)\b|you (?:mill|discard)|surveil|dredge/i.test(t));
-    add("recursion",/return[^\n.]*graveyard|cast[^\n.]*graveyard|escape|flashback|unearth/i.test(t));
+    add("recursion",/return[^\n.]*graveyard|cast[^\n.]*graveyard|play[^\n.]*\blands?\b[^\n.]*graveyard|escape|flashback|unearth/i.test(t));
     add("gravePayoff",/return[^\n.]*from[^\n.]*graveyard|cast[^\n.]*graveyard|(?:cards?|creatures?|lands?)[^\n.]*in your graveyard|whenever[^\n.]*your graveyard|dredge|escape|flashback|unearth/i.test(t));
-    add("landRamp",/search your library[^\n.]*land|additional land|play[^\n.]*land[^\n.]*graveyard/i.test(t));
-    add("landPayoff",/landfall|whenever[^\n.]*land[^\n.]*enters|lands?[^\n.]*graveyard/i.test(t));
+    // A nonland card is not evidence of land ramp or land recursion.
+    add("landRamp",/search your library[^\n.]*\blands?\b|additional land|play[^\n.]*\blands?\b[^\n.]*graveyard/i.test(t));
+    add("landPayoff",/\blandfall\b|whenever[^\n.]*\blands?\b[^\n.]*enters|\blands?\b[^\n.]*graveyard/i.test(t));
     add("attachment",/Equipment/.test(ty)||/Aura/.test(ty)&&/enchant creature you control|enchanted creature[^\n.]*(?:gets? \+|flying|trample|lifelink|hexproof|indestructible|double strike|menace)|whenever enchanted creature[^\n.]*damage/i.test(t)); add("evasion",/flying|trample|menace|unblockable|can[’']t be blocked|double strike/i.test(t));
     add("counterMaker",/put[^\n.]*\+1\/\+1 counter|proliferate|enters[^\n.]*counter/i.test(t));
     add("counterPayoff",/whenever[^\n.]*counter|each[^\n.]*counter|with[^\n.]*counter|double[^\n.]*counter|proliferate/i.test(t));
@@ -127,19 +128,19 @@
     add("vehicle",/Vehicle/.test(ty));add("crew",/crew|pilot|create[^\n.]*creature token/i.test(t));
     for(const [k,re]of Object.entries({treasure:/treasure/i,clue:/clue|investigate/i,food:/food/i,poison:/poison|infect|toxic|proliferate/i,discard:/discard/i,combat:/attack|combat|haste|trample|creatures you control get/i,comboEngine:/\buntap\b|copy[^\n.]*spell|:[^\n.]*return[^\n.]*graveyard/i}))add(k,re.test(t));
     // Land searches are ramp, not generic card tutors.
-    add("tutor",/search your library[^\n.]*for[^\n.]*(?:card|artifact|creature|enchantment|instant|sorcery)/i.test(t)&&!/search your library[^\n.]*land/i.test(t));
+    add("tutor",/search your library[^\n.]*for[^\n.]*(?:card|artifact|creature|enchantment|instant|sorcery)/i.test(t)&&!/search your library[^\n.]*\blands?\b/i.test(t));
     return r;
   }
   function infrastructure(c) {
     const t = text(c), r = new Set();
     if (/\bLand\b/.test(type(c))) return new Set(["land"]);
-    if (/\badd (?:an amount of |one |two |three |[WXUBRGC0-9} {/,]|mana)|search your library[^\n.]*land|additional land|(?:spells? you cast|spells? cost|spells? have)[^\n.]*less/i.test(t)) r.add("ramp");
+    if (/\badd (?:an amount of |one |two |three |[WXUBRGC0-9} {/,]|mana)|search your library[^\n.]*\blands?\b|additional land|(?:spells? you cast|spells? cost|spells? have)[^\n.]*less/i.test(t)) r.add("ramp");
     const drawText=t.replace(/(?:target|each|an?|that|the)?\s*opponent draws?[^,.\n]*/gi, "");
     if (/\bdraw (?:a |an |one|two|three|four|\d|X|that many|cards)|draws?[^\n.]*cards?|exile[^\n.]*top[^\n.]*library[^\n.]*(?:play|cast)|look at[^\n.]*top[^\n.]*library/i.test(drawText)) r.add("draw");
     if (/destroy all|exile all|each creature gets -|damage to each creature/i.test(t)) r.add("wipe");
     else if (/destroy target|exile target|counter target|return target[^\n.]*to (?:its|their) owner|damage to any target|damage to target (?:creature|permanent)/i.test(t)) r.add("interaction");
     if (/hexproof|indestructible|phase out|protection from|counter target spell/i.test(t)) r.add("protection");
-    if (/return[^\n.]*from[^\n.]*graveyard|cast[^\n.]*from[^\n.]*graveyard|escape|flashback|unearth/i.test(t)) r.add("recursion");
+    if (/return[^\n.]*from[^\n.]*graveyard|cast[^\n.]*from[^\n.]*graveyard|play[^\n.]*\blands?\b[^\n.]*graveyard|escape|flashback|unearth/i.test(t)) r.add("recursion");
     return r;
   }
   function classify(card,{styles=[]}={}) {
@@ -184,8 +185,8 @@
     add("manaRock",/Artifact/.test(ty)&&!roles.has("land")&&components.has("ramp")&&/add \{|add (?:one|two|three|an amount of)[^\n.]*mana/i.test(t));
     add("artifactSacrifice",/sacrifice (?:an?|another|one or more) artifacts?/i.test(t));
     add("subtype:construct",/Creature[^—–]*[—–][^\n]*\bConstruct\b/.test(ty));
-    add("additionalLand",/additional lands?|play[^\n.]*lands?[^\n.]*additional/i.test(t));
-    add("landRecursion",/(?:play|return|put)[^\n.]*lands?[^\n.]*graveyard|return[^\n.]*graveyard[^\n.]*land/i.test(t));
+    add("additionalLand",/additional lands?\b|play[^\n.]*\blands?\b[^\n.]*additional/i.test(t));
+    add("landRecursion",/(?:play|return|put)[^\n.]*\blands?\b[^\n.]*graveyard|return[^\n.]*graveyard[^\n.]*\blands?\b/i.test(t));
     add("utility",roles.has("land")&&(components.has("landUtility")||/mill|draw|return|graveyard|add \{[WUBRGC]\}\{[WUBRGC]\}/i.test(t)));
     add("comboPiece",comboIds.has(card.id));
     for(const key of styles.filter(k=>k&&k.startsWith("tribal:"))){
