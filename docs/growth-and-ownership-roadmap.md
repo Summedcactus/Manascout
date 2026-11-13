@@ -139,8 +139,8 @@ Phase 1 implementation is committed on DEVELOPMENT; publication remains manual. 
 
 ### Interoperability and revenue readiness
 
-- [ ] T13 Add explicitly supported text/CSV deck import and export alongside existing JSON recovery. Preview matches; preserve set/number/finish where supplied; flag ambiguity. Never silently substitute an edition or overwrite an existing deck.
-- [ ] T14 Provide useful sharing of selected printings/comparisons. Decide separately whether public deck storage is justified; do not imply browser-local decks are already publicly shareable.
+- [x] T13 Add explicitly supported text/CSV deck import and export alongside existing JSON recovery. Preview matches; preserve set/number/finish where supplied; flag ambiguity. Never silently substitute an edition or overwrite an existing deck.
+- [x] T14 Provide useful sharing of selected printings/comparisons. Decide separately whether public deck storage is justified; do not imply browser-local decks are already publicly shareable.
 - [ ] T15 Add a restrained Support page once an actual owner-controlled payment destination exists. Offer voluntary one-off/monthly support; keep fan content free. No fake checkout or placeholder contribution counters.
 - [ ] T16 Prepare limited ad placements and accurate privacy/consent implementation tied to real AdSense setup. Verify approval/status separately; avoid activating a cluttered ad layout.
 - [ ] T17 Prepare a truthful sponsor offering with actual audience metrics when available, a single labelled placement and written boundaries on editorial independence. Do not contact prospects without authorization.
@@ -150,7 +150,7 @@ Phase 1 implementation is committed on DEVELOPMENT; publication remains manual. 
 
 - [ ] T19 Record domain/hosting/payment/analytics/data dependencies and recurring costs in a private-safe ownership inventory; verify owner access without exposing secrets.
 - [ ] T20 Assess commercially appropriate hosting and migration/rollback requirements, retaining all URLs and data backups. Choose after cost/terms comparison; no automatic DNS changes.
-- [ ] T21 Run required repository validation and focused mobile/desktop browser journeys, including API failure, unresolved import, browser storage restrictions and export recovery. Check keyboard access and reduced motion.
+- [x] T21 Run required repository validation and focused mobile/desktop browser journeys, including API failure, unresolved import, browser storage restrictions and export recovery. Check keyboard access and reduced motion.
 - [ ] T22 Preserve DEVELOPMENT and unrelated work, provide a concrete change summary, and leave publication/PR/merge to the owner's established manual process.
 
 Additional evidence references:
@@ -186,3 +186,7 @@ See [Phase 1 changes and validation](phase1-usability.md) for implemented scope,
 ## Phase 2 implementation record — 12 November 2026
 
 Exact printing/finish comparisons, browser-local named saves and portable JSON/CSV/exact-link output are implemented on DEVELOPMENT. See [formats, checks and limitations](phase2-comparisons.md). T14 is partially addressed by portable files and exact individual links; public comparison hosting remains unimplemented. T13 remains open: comparison CSV is not decklist interoperability. T21 has additional Phase 2 storage/import/failure and native browser coverage, rather than a blanket completion claim. Publication remains manual.
+
+## Phase 3 implementation record — 13 November 2026
+
+See [Phase 3 interoperability, compatibility and validation](phase3-interoperability.md). T13 is implemented for the documented text/CSV subset with preview, exact identity/finish checks, explicit new-draft acceptance and retained JSON recovery. T14 now includes bounded, identity-only whole-comparison links on the existing canonical homepage; opening is memory-only and saving is explicit. This does not implement public deck hosting. T21 records the automated and focused native Phase 1/2/3 release checks, including unresolved imports, API/storage failures, mobile widths, keyboard/focus, exports and reduced motion; future releases still require their own checks. T02 remains open. The generator change only carries identity metadata when copying seeds; it is not a strategic-quality audit. Main, DEVELOPMENT-2, publication, hosting, accounts and monetisation remain untouched.

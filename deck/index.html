@@ -14,25 +14,27 @@
   <meta property="og:url" content="https://manascout.co.uk/deck/">
   <meta property="og:site_name" content="ManaScout">
   <meta name="twitter:card" content="summary">
-  <link rel="stylesheet" href="/assets/css/deck-studio.css?v=stage5">
+  <link rel="stylesheet" href="/assets/css/deck-studio.css?v=phase3">
   <script type="application/ld+json">
   {"@context":"https://schema.org","@type":"WebPage","name":"ManaScout Deck Studio","url":"https://manascout.co.uk/deck/","description":"ManaScout's artwork-first deck workspace with exact-printing card search and manual deck editing.","isPartOf":{"@type":"WebSite","name":"ManaScout","url":"https://manascout.co.uk/"}}
   </script>
   <script src="/assets/js/deck-formats.js?v=5d1" defer></script>
   <script src="/assets/js/deck-data.js?v=stage5" defer></script>
-  <script src="/assets/js/deck-model.js?v=stage5" defer></script>
-  <script src="/assets/js/deck-client.js?v=stage5" defer></script>
-  <script src="/assets/js/deck-rules.js?v=stage5" defer></script>
-  <script src="/assets/js/deck-view.js?v=printing1" defer></script>
-  <script src="/assets/js/deck-store.js?v=stage5" defer></script>
+  <script src="/assets/js/deck-model.js?v=phase3" defer></script>
+  <script src="/assets/js/deck-client.js?v=phase3" defer></script>
+  <script src="/assets/js/deck-rules.js?v=phase3" defer></script>
+  <script src="/assets/js/deck-view.js?v=phase3" defer></script>
+  <script src="/assets/js/deck-store.js?v=phase3" defer></script>
   <script src="/assets/js/deck-identity.js?v=health1&amp;phase=1" defer></script>
   <script src="/assets/js/deck-health.js?v=health1" defer></script>
-  <script src="/assets/js/deck-generator.js?v=health1" defer></script>
+  <script src="/assets/js/deck-generator.js?v=phase3" defer></script>
   <script src="/assets/js/deck-printings.js?v=printing1" defer></script>
   <script src="/assets/js/deck-printing-selector.js?v=printing1" defer></script>
   <script src="/assets/js/deck-appearance.js?v=stage5" defer></script>
   <script src="/assets/js/deck-appearance-controls.js?v=stage5" defer></script>
-  <script src="/assets/js/deck-studio.js?v=stage5" defer></script>
+  <script src="/assets/js/deck-interoperability.js?v=3" defer></script>
+  <script src="/assets/js/deck-interoperability-controls.js?v=3" defer></script>
+  <script src="/assets/js/deck-studio.js?v=phase3" defer></script>
 </head>
 <body class="deck-studio" data-active-panel="deck">
   <a class="ds-skip" href="#deck-heading">Skip to deck workspace</a>
@@ -88,6 +90,7 @@
     <section class="ds-panel ds-deck" id="studio-deck" aria-labelledby="deck-heading">
       <div class="ds-deck-top"><div class="ds-deck-title"><p class="ds-eyebrow">YOUR WORKSPACE</p><h2 id="deck-heading" class="ds-sr-only" tabindex="-1">Deck workspace</h2><label class="ds-sr-only" for="deck-name">Deck name</label><input id="deck-name" type="text" value="Untitled deck" maxlength="80" spellcheck="false" aria-describedby="deck-state"></div><span class="ds-unsaved" id="deck-state" role="status">Not saved</span></div>
       <div class="ds-draft-bar"><label class="ds-sr-only" for="saved-decks">Switch saved deck</label><select id="saved-decks"><option value="">Current unsaved draft</option></select><button type="button" class="ds-button ds-secondary" id="new-deck">New</button><button type="button" class="ds-button ds-primary" id="save-deck">Save Deck</button></div>
+      <div class="ds-portable-actions"><button class="ds-button ds-secondary" type="button" id="deck-import">Import</button><button class="ds-button ds-secondary" type="button" id="deck-export">Export</button></div>
       <div class="ds-deck-toolbar"><div class="ds-format"><div class="ds-primary-formats" role="group" aria-label="Popular formats"><button type="button" id="format-commander" aria-pressed="true">Commander</button><button type="button" id="format-standard" aria-pressed="false">Standard</button></div><label for="deck-format">Format</label><select id="deck-format" aria-describedby="format-note"><option value="commander">Commander</option><option value="standard">Standard</option></select></div><div class="ds-view-controls" role="group" aria-label="Deck view"><button class="ds-icon" type="button" id="view-artwork" aria-pressed="true" aria-label="Artwork view" title="Artwork view">▦</button><button class="ds-icon" type="button" id="view-list" aria-pressed="false" aria-label="List view" title="List view">☷</button></div></div>
       <p class="ds-note" id="format-note">Changing format preserves every card and updates construction warnings.</p>
 
@@ -247,6 +250,28 @@
       <button class="ds-button ds-primary" id="printing-apply" type="button" disabled>Use this printing</button>
       <p class="ds-note" id="printing-apply-status" role="status" aria-live="polite"></p>
     </div>
+  </dialog>
+  <dialog class="ds-portable-dialog" id="deck-portable" aria-labelledby="portable-title">
+    <div class="ds-portable-heading"><h2 id="portable-title">Import a decklist</h2><button class="ds-icon" type="button" id="portable-close" aria-label="Close import or export">×</button></div>
+    <p id="portable-status" role="status" aria-live="polite"></p>
+    <section id="portable-import">
+      <p>Preview first. Acceptance opens a new draft in the current format. Existing saved decks stay intact; unsaved work must be saved or explicitly left before switching.</p>
+      <label for="portable-kind">Input format</label><select id="portable-kind"><option value="text">Plain text decklist</option><option value="csv">ManaScout / documented CSV</option></select>
+      <label for="portable-text">Paste decklist</label><textarea id="portable-text" rows="8" maxlength="250000" spellcheck="false" placeholder="Commander&#10;1 Your commander&#10;Deck&#10;1 Sol Ring (CMM) 396 [foil]"></textarea>
+      <label for="portable-file">Or choose a UTF-8 TXT / CSV file (250 KB maximum)</label><input id="portable-file" type="file" accept=".txt,.csv,text/plain,text/csv">
+      <details><summary>Supported formats and privacy</summary><p>Quantity + name, optional (SET) or [SET] + collector number, then [foil], [nonfoil], [etched], *F*, *E* or | finish. Sections: Commander, Deck/Mainboard, Sideboard, Maybeboard. Explicit [Commander] or !Commander suffix supported. A trailing [lang:de] annotation can retain a language code. CSV columns and limits are documented below. Exact requests never fall back to another edition. Generic matches use representative records for display, with no printing/finish claimed in export.</p><p>Text/files stay in this browser. Names and supplied identities are sent to Scryfall to resolve them. No deck backend or account is used.</p><a href="/docs/phase3-interoperability.md">Formats and limitations</a></details>
+      <button class="ds-button ds-secondary" id="portable-restore" type="button">Restore existing JSON backup</button>
+      <div class="ds-portable-actions"><button class="ds-button ds-primary" id="portable-preview" type="button">Preview import</button><button class="ds-button ds-secondary" id="portable-busy-cancel" type="button" hidden>Cancel lookup</button></div>
+      <h3>Import preview</h3><p id="portable-review-summary"></p><div id="portable-review"></div>
+      <label for="portable-name">New deck name</label><input id="portable-name" maxlength="80" value="Imported deck">
+      <button class="ds-button ds-primary" id="portable-accept" type="button" disabled>Accept preview · open as new draft</button>
+    </section>
+    <section id="portable-export" hidden>
+      <p>Text and CSV preserve supplied or chosen printings. Unspecified printings/finishes stay unspecified. JSON preserves all workspace details, including signature assignments.</p>
+      <label class="ds-portable-check"><input type="checkbox" id="portable-detailed">Include selected/supplied finishes in text</label>
+      <div class="ds-portable-actions"><button class="ds-button ds-primary" id="portable-copy" type="button">Copy decklist</button><button class="ds-button ds-secondary" id="portable-txt" type="button">Download TXT</button><button class="ds-button ds-secondary" id="portable-csv" type="button">Download CSV</button><button class="ds-button ds-secondary" id="portable-json" type="button">Download JSON</button></div>
+      <textarea id="portable-output" readonly hidden rows="8" aria-label="Decklist for manual copying"></textarea>
+    </section>
   </dialog>
   <dialog class="ds-confirm-dialog" id="draft-confirm" aria-labelledby="draft-confirm-title" aria-describedby="draft-confirm-message"><h2 id="draft-confirm-title">Confirm action</h2><p id="draft-confirm-message"></p><div class="ds-confirm-actions"><button class="ds-button ds-secondary" id="draft-confirm-cancel" type="button" autofocus>Keep editing</button><button class="ds-button ds-secondary" id="draft-confirm-backup" type="button">Download backup</button><button class="ds-button ds-primary" id="draft-confirm-accept" type="button">Continue</button></div></dialog>
 </body>

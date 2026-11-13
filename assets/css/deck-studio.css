@@ -533,3 +533,19 @@
   .deck-studio .ds-appearance { padding: 8px 10px; }
   .deck-studio .ds-appearance-actions > button { flex: 1 1 130px; }
 }
+
+/* Phase 3: one compact portable-data dialog; all styles stay in Deck Studio. */
+.deck-studio .ds-portable-actions {display:flex;gap:8px;flex-wrap:wrap;margin:10px 0}
+.deck-studio .ds-portable-dialog {width:min(700px,calc(100vw - 24px));max-height:90vh;max-height:90dvh;overflow:auto;box-sizing:border-box;padding:20px;border:1px solid var(--ds-line);border-radius:12px;background:var(--ds-midnight);color:var(--ds-linen);overflow-wrap:anywhere}
+.deck-studio .ds-portable-dialog::backdrop {background:#000a}
+.deck-studio .ds-portable-heading {display:flex;align-items:center;justify-content:space-between;gap:12px}
+.deck-studio .ds-portable-dialog h3 {font-size:16px;margin:16px 0 8px}
+.deck-studio .ds-portable-dialog p {font-size:14px;line-height:1.6;margin:10px 0}
+.deck-studio .ds-portable-dialog label {display:block;margin-top:12px;font-size:14px}
+.deck-studio .ds-portable-dialog :is(textarea,input:not([type=checkbox]),select) {display:block;box-sizing:border-box;width:100%;max-width:100%;margin:8px 0;min-height:44px;padding:10px;border:1px solid var(--ds-line);border-radius:6px;background:var(--ds-slate);color:var(--ds-linen);font:inherit}
+.deck-studio .ds-portable-dialog textarea {resize:vertical;min-height:150px}
+.deck-studio .ds-portable-dialog :is(button,summary) {min-height:44px}
+.deck-studio .ds-portable-dialog [hidden] {display:none!important}
+.deck-studio #portable-review {max-height:42vh;overflow:auto}
+.deck-studio #portable-review article {border-top:1px solid var(--ds-line);padding:8px 0}
+.deck-studio .ds-portable-dialog :focus-visible {outline:2px solid var(--ds-linen);outline-offset:3px}

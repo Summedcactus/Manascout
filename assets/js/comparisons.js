@@ -23,14 +23,14 @@
     if (!Array.isArray(source.items) || source.items.length < 1 || source.items.length > 4) fail('A comparison must contain 1–4 exact versions.');
     const seen = new Set(); let oracle;
     const items = source.items.map(x => {
-      if (!x || !UUID.test(x.id) || !UUID.test(x.oracleId) || !FINISHES.includes(x.finish)) fail('Invalid exact printing, gameplay identity or finish.');
+      if (!x || !UUID.test(x.id) || !(UUID.test(x.oracleId) || x.oracleId === '' && x.unresolved === true) || !FINISHES.includes(x.finish)) fail('Invalid exact printing, gameplay identity or finish.');
       if (seen.has(key(x))) fail('Duplicate printing and finish.');
       seen.add(key(x));
-      if (oracle && oracle !== x.oracleId) fail('Compare versions of the same gameplay card.');
-      oracle = x.oracleId;
+      if (oracle && x.oracleId && oracle !== x.oracleId) fail('Compare versions of the same gameplay card.');
+      oracle = x.oracleId || oracle;
       const card = snapshot(x.card || {});
       // Imported metadata is display-only. Exact records are independently checked on open.
-      return {id:x.id, oracleId:x.oracleId, finish:x.finish, card, status:'Cached snapshot; exact record not checked', live:false};
+      return {id:x.id, oracleId:x.oracleId, ...(x.oracleId?{}:{unresolved:true}), finish:x.finish, card, status:'Cached snapshot; exact record not checked', live:false};
     });
     return {format:source.format, version:1, name:source.name.trim(), items};
   }
@@ -61,9 +61,34 @@
   async function refresh(item, exact) {
     try {
       const card = await exact(item.id);
-      if(card.id !== item.id || card.oracle_id !== item.oracleId || !card.finishes?.includes(item.finish) || !card.games?.includes('paper')) fail('Exact identity or finish could not be confirmed');
-      return {...item,card:snapshot(card),live:true,status:'Exact record refreshed this session; source price timestamp unknown'};
+      if(card.id !== item.id || !UUID.test(card.oracle_id) || (item.oracleId && card.oracle_id !== item.oracleId) || !card.finishes?.includes(item.finish) || !card.games?.includes('paper')) fail('Exact identity or finish could not be confirmed');
+      return {...item,oracleId:card.oracle_id,unresolved:false,card:snapshot(card),live:true,status:'Exact record refreshed this session; source price timestamp unknown'};
     } catch { return {...item,live:false,status:'Exact record unavailable or incompatible; cached snapshot only. No substitute selected.'}; }
+  }
+  const SHARE_MAX = 240;
+  function parseShared(raw) {
+    if(typeof raw !== 'string' || raw.length>SHARE_MAX || !raw.startsWith('v1:'))fail('Invalid or unsupported shared comparison. Use a link with 1–4 exact versions.');
+    const entries=raw.slice(3).split(',');if(entries.length<1||entries.length>4)fail('Shared comparisons support 1–4 versions.');
+    const seen=new Set();
+    return entries.map(value=>{const parts=value.split('~');const [id,finish]=parts;if(parts.length!==2||!UUID.test(id)||!FINISHES.includes(finish))fail('Invalid shared printing UUID or finish.');const item={id,finish};if(seen.has(key(item)))fail('Duplicate shared printing and finish.');seen.add(key(item));return item;});
+  }
+  function shareState(items) {const raw='v1:'+items.map(x=>`${x.id}~${x.finish}`).join(',');parseShared(raw);return raw;}
+  async function reconstructShared(raw,exact) {
+    const requested=parseShared(raw),items=[];let oracle='';
+    for(const x of requested){
+      let item={...x,oracleId:'',unresolved:true,card:snapshot({}),live:false,status:'Exact record unavailable. Requested UUID and finish retained; no substitute selected.'};
+      try {
+        const card=await exact(x.id);
+        if(card.id!==x.id||!UUID.test(card.oracle_id))throw Error('Invalid exact identity');
+        if(oracle && oracle!==card.oracle_id)fail('mixed-gameplay-identities');
+        oracle=card.oracle_id;
+        item={...item,oracleId:card.oracle_id,unresolved:false,card:snapshot(card)};
+        if(!card.games?.includes('paper')||!card.finishes?.includes(x.finish))item.status='Requested physical finish unavailable; no substitute selected.';
+        else item={...item,live:true,status:'Exact shared record loaded this session; source price timestamp unknown'};
+      } catch(err) {if(err.message==='mixed-gameplay-identities')fail('Shared versions refer to different gameplay cards. Comparison rejected; existing choices retained.');}
+      items.push(item);
+    }
+    return items;
   }
   const link = x => `https://manascout.co.uk/?q=${encodeURIComponent(x.card.name || '')}&printing=${x.id}&finish=${x.finish}`;
   const cell = value => '"' + (/^[\s]*[=+\-@\t\r\n]/.test(String(value)) ? "'" : '') + String(value ?? '').replaceAll('"','""') + '"';
@@ -73,7 +98,7 @@
     return '\ufeff'+rows.map(row=>row.map(cell).join(',')).join('\r\n');
   }
   function source(raw) { try {const u=new URL(raw);return u.protocol==='https:' && u.hostname==='scryfall.com'?u.href:'';}catch{return '';} }
-  const api={KEY,key,snapshot,validate,add,encode,decode,read,write,refresh,csv,link,source};
+  const api={KEY,key,snapshot,validate,add,encode,decode,read,write,refresh,csv,link,source,SHARE_MAX,parseShared,shareState,reconstructShared};
   if(typeof module==='object' && module.exports) {module.exports=api;return;}
   root.ManaScoutComparisons=Object.freeze(api);
   document.addEventListener('DOMContentLoaded',mount);
@@ -81,8 +106,10 @@
     const anchor=document.getElementById('card-details'), bridge=root.ManaScout?.comparison;
     if(!anchor || !bridge) return;
     let items=[],saved=[],preview=null,busy=false,storageOkay=true,storedRevision=null;
-    const host=document.createElement('section');host.className='ms-comparisons';host.setAttribute('aria-label','Exact printing comparisons');anchor.after(host);
-    host.innerHTML=`<p role="status" aria-live="polite" class="cmp-status"></p><section class="cmp-current" id="ms-comparison-current" hidden><h2 tabindex="-1">Compare exact versions</h2><p class="cmp-summary"></p><div class="cmp-grid"></div><button type="button" data-cmp="clear">Clear comparison</button><details><summary>Save and export</summary><label>Comparison name <input class="cmp-name" maxlength="100" value="My comparison"></label><button type="button" data-cmp="save">Save in this browser</button><button type="button" data-cmp="json">Export JSON</button><button type="button" data-cmp="csv">Export CSV</button><button type="button" data-cmp="links">Copy exact links</button><textarea class="cmp-links" aria-label="Exact links to copy" hidden readonly></textarea></details></section><details class="cmp-library"><summary>Saved comparisons and import</summary><p>Saved in this browser only. Export a backup to keep or move your work. Decks are separate.</p><div class="cmp-saved"></div><label>Import comparison JSON <input type="file" accept=".json,application/json" class="cmp-file"></label><div class="cmp-preview" hidden></div></details>`;
+    const host=document.createElement('section');host.className='ms-comparisons';host.setAttribute('aria-label','Exact printing comparisons');
+    const homeResults=document.getElementById('card-details-section');
+    if(homeResults)homeResults.after(host);else anchor.after(host);
+    host.innerHTML=`<p role="status" aria-live="polite" class="cmp-status"></p><section class="cmp-current" id="ms-comparison-current" hidden><h2 tabindex="-1">Compare exact versions</h2><p class="cmp-summary"></p><div class="cmp-grid"></div><button type="button" data-cmp="clear">Clear comparison</button><details><summary>Save and export</summary><label>Comparison name <input class="cmp-name" maxlength="100" value="My comparison"></label><button type="button" data-cmp="save">Save in this browser</button><button type="button" data-cmp="json">Export JSON</button><button type="button" data-cmp="csv">Export CSV</button><button type="button" data-cmp="links">Copy exact links</button><button type="button" data-cmp="share">Copy comparison link</button><textarea class="cmp-links" aria-label="Exact links to copy" hidden readonly></textarea></details></section><details class="cmp-library"><summary>Saved comparisons and import</summary><p>Saved in this browser only. Export a backup to keep or move your work. Decks are separate.</p><div class="cmp-saved"></div><label>Import comparison JSON <input type="file" accept=".json,application/json" class="cmp-file"></label><div class="cmp-preview" hidden></div></details>`;
     const $=s=>host.querySelector(s), say=m=>{$('.cmp-status').textContent=m;};
     try{saved=read(root.localStorage);storedRevision=root.localStorage.getItem(KEY);}catch{storageOkay=false;say('Saved library unavailable or damaged. Current comparisons and exports still work; existing storage is left untouched.');}
     const esc=s=>String(s??'Unknown').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -119,6 +146,7 @@
       busy=true;say('Checking exact records…');items=validate(s).items;$('.cmp-name').value=s.name;draw();
       // At most four requests, sequentially using the shared exact-record client.
       for(let i=0;i<items.length;i++){items[i]=await refresh(items[i],bridge.exact);draw();}
+      if(new Set(items.filter(x=>x.oracleId).map(x=>x.oracleId)).size>1){items=[];draw();say('Saved comparison has mixed gameplay identities after refresh. Rejected without edition substitution.');busy=false;return;}
       busy=false;say('Comparison opened. Unavailable records are retained as cached snapshots.');$('.cmp-current h2').focus();
     }
     host.addEventListener('click',async e=>{
@@ -130,7 +158,7 @@
         if(b.dataset.cmp==='save'){const s=decode(encode($('.cmp-name').value,items));persist([...saved,s]);renderLibrary();}
         if(b.dataset.cmp==='json')download(encode($('.cmp-name').value,items),'json','application/json');
         if(b.dataset.cmp==='csv')download(csv(items),'csv','text/csv;charset=utf-8');
-        if(b.dataset.cmp==='links'){const t=$('.cmp-links');t.hidden=false;t.value=items.map(link).join('\n');t.focus();t.select();try{await navigator.clipboard.writeText(t.value);say('Exact links copied.');}catch{say('Select and copy the exact links below.');}}
+        if(b.dataset.cmp==='links'||b.dataset.cmp==='share'){const t=$('.cmp-links');t.hidden=false;const shared=new URL('/',location.origin);shared.hash='compare='+shareState(items);t.value=b.dataset.cmp==='share'?shared.href:items.map(link).join('\n');t.focus();t.select();try{await navigator.clipboard.writeText(t.value);say(b.dataset.cmp==='share'?'Whole comparison link copied. Opening it does not save it automatically.':'Exact links copied.');}catch{say('Select and copy the exact links below.');}}
         if(b.dataset.open!==undefined)await open(saved[Number(b.dataset.open)]);
         if(b.dataset.rename!==undefined){const i=Number(b.dataset.rename),next=[...saved];next[i]=validate({...next[i],name:host.querySelector(`[data-saved-name="${i}"]`).value});persist(next);renderLibrary();}
         if(b.dataset.delete!==undefined){const next=saved.filter((_,i)=>i!==Number(b.dataset.delete));persist(next);renderLibrary();$('.cmp-library summary').focus();}
@@ -143,5 +171,19 @@
       try{const file=e.target.files[0];if(!file)return;if(file.size>150000)fail('Comparison file is too large.');preview=decode(await file.text());const box=$('.cmp-preview');box.hidden=false;box.innerHTML=`<h3>Import preview: ${esc(preview.name)}</h3><p>${preview.items.map(x=>`${esc(x.card.name||x.id)} · ${esc(x.card.set)} #${esc(x.card.collector_number)} · ${esc(x.card.lang)} · ${esc(x.finish)}`).join('<br>')}</p><p>${preview.items.length} exact versions. Imported snapshots are unverified until checked. Import adds a new saved entry; existing saved work is retained. The current working comparison will be replaced.</p><button data-cmp="import">Import and open</button><button data-cmp="cancel">Cancel</button>`;box.querySelector('button').focus();}catch(err){say(err.message);}
     });
     renderLibrary();
+    async function fromSharedLink(){
+      if(!location.hash.startsWith('#compare='))return;
+      if(busy){say('Wait for the current exact lookup before opening another comparison link.');return;}
+      busy=true;
+      try{
+        if(location.hash.length>SHARE_MAX+20)fail('Shared comparison URL state is too long.');
+        const raw=decodeURIComponent(location.hash.slice('#compare='.length));
+        say('Loading shared exact versions…');
+        const result=await reconstructShared(raw,bridge.exact);
+        items=result;$('.cmp-name').value='Shared comparison';draw();say('Shared comparison opened in memory only. Choose Save to keep it in this browser.');$('.cmp-current h2').focus();
+      }catch(err){say(err.message);}
+      finally{busy=false;}
+    }
+    window.addEventListener('hashchange',fromSharedLink);fromSharedLink();
   }
 })(typeof window==='undefined'?globalThis:window);

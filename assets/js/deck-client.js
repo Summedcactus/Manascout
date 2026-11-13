@@ -165,6 +165,28 @@
       const cards=result.cards.map(current);
       return cards.every((card,index)=>card===result.cards[index])?result:{...result,cards};
     }
+    // Interoperability shares this queue, timeout, normalisation and verification boundary.
+    async function resolveDeckRow(row, {signal,format="commander"}={}) {
+      const normal=value=>String(value||"").normalize("NFC").trim().replace(/\s*\/\/\s*/g," // ").replace(/[’]/g,"'").toLocaleLowerCase("en");
+      let raw;
+      if(row.id) {
+        if(!/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/.test(row.id))throw Error("Invalid printing UUID.");
+        raw=await request(`${API}/cards/${row.id}`,{signal});
+      } else if(row.set && row.number) {
+        raw=await request(`${API}/cards/${encodeURIComponent(row.set)}/${encodeURIComponent(row.number)}${row.language?"/"+encodeURIComponent(row.language):""}`,{signal});
+      } else {
+        const escaped=row.name.replace(/[\\"]/g,"\\$&");
+        const result=await request(`${API}/cards/search?${new URLSearchParams({q:`!"${escaped}" game:${formats.get(format)?.platform||"paper"}`,unique:"cards",include_extras:"false"})}`,{signal});
+        if(!Array.isArray(result.data)||!result.data.length)throw Error("No exact card-name match. Check the name; no substitute selected.");
+        if(result.has_more||result.data.length!==1)throw Object.assign(Error("Multiple matches. Supply the full card name or an exact printing; no choice was made."),{code:"ambiguous"});
+        raw=result.data[0];
+      }
+      if(!raw || normal(raw.name)!==normal(row.name))throw Error("Requested name and returned printing do not match. No substitute selected.");
+      if(row.id && raw.id!==row.id || row.set && (String(raw.set).toLowerCase()!==row.set.toLowerCase() || String(raw.collector_number)!==row.number) || row.language && String(raw.lang).toLowerCase()!==row.language || row.oracleId && raw.oracle_id!==row.oracleId)throw Error("The exact set, number, language or UUID could not be verified. No substitute selected.");
+      if(row.finish && !raw.finishes?.includes(row.finish))throw Object.assign(Error("Requested finish is unavailable for this record. No other finish was selected."),{code:"finish"});
+      const card=remember(raw,{requestedFinish:row.finish});
+      return {card};
+    }
     async function random({ format = "commander", signal, excludeOracleId = "", commanderOnly = false } = {}) {
       const profile = formats.get(format);
       if (!profile) throw new data.SelectionError("Choose a supported format before discovering a card.");
@@ -328,7 +350,7 @@
       }
       return updated;
     }
-    return { search, random, candidates, euroRate, autocomplete, printing, printings, commanderEligibility, refresh, ensure, current, commanderState,
+    return { search, resolveDeckRow, random, candidates, euroRate, autocomplete, printing, printings, commanderEligibility, refresh, ensure, current, commanderState,
       isVerified, proof, diagnostics:()=>events.map(event=>({...event})),
       clearProofs:()=>{proofEra++;proofs.clear();} };
   }

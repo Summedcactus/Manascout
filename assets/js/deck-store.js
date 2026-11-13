@@ -71,21 +71,23 @@
       primaryStyle:style(source.primaryStyle),secondaryStyle:style(source.secondaryStyle),tertiaryStyle:style(source.tertiaryStyle),priorities,targets:numbers(source.targets),counts:numbers(source.counts)}};
   }
   function sanitizeDeck(source) {
-    if (!source || source.schemaVersion !== 1) invalid("This deck version is not supported. The original has not been changed.");
+    if (!source || ![1,2].includes(source.schemaVersion)) invalid("This deck version is not supported. The original has not been changed.");
     if (!safeId.test(source.id || "") || !formats.get(source.format) || !["artwork", "list"].includes(source.view)) invalid("A draft has an invalid identity, unsupported format or view. The original has not been changed.");
     if (!Array.isArray(source.entries) || source.entries.length > 2000 || !source.cards || typeof source.cards !== "object" || Array.isArray(source.cards) || Object.keys(source.cards).length > 2001) invalid("A draft exceeds the supported 2,000-entry workspace limit or has invalid card records.");
     const records = {};
     for (const [id, record] of Object.entries(source.cards)) records[id] = sanitizeCard(record, id);
     const seen = new Set();
     const entries = source.entries.map(e => {
-      if (!e || !records[e.printingId] || !finishes.has(e.finish) || !["main", "sideboard", "commander", "signature"].includes(e.zone) || !integer(e.quantity, 1, 10000)) invalid("A draft contains an invalid entry, quantity, finish or section.");
+      if (!e || !records[e.printingId] || !finishes.has(e.finish) || !["main", "sideboard", "commander", "signature", "maybeboard"].includes(e.zone) || !integer(e.quantity, 1, 10000)) invalid("A draft contains an invalid entry, quantity, finish or section.");
       const assignedTo = e.zone === "signature" ? e.assignedTo || "" : "";
       if (assignedTo && !uuid.test(assignedTo)) invalid("A signature spell has an invalid Oathbreaker reference.");
       const key = model.entryKey(e.printingId, e.finish, e.zone, assignedTo);
       if (seen.has(key) || e.key !== key) invalid("A draft has duplicate or inconsistent entry keys.");
       let choices;
       if(e.printingChoices!==undefined){try{choices=model.printingChoices(e);}catch{invalid("A draft has inconsistent printing-choice counts.");}}
-      seen.add(key); return { ...(choices?{printingChoices:choices}:{}), key, printingId: e.printingId, finish: e.finish, zone: e.zone, quantity: e.quantity, ...(e.zone === "signature" ? { assignedTo } : {}) };
+      let identity;
+      if(e.identityChoices!==undefined){try{identity={version:1,...model.identityChoices(e)};}catch{invalid("A draft has inconsistent imported identity counts.");}}
+      seen.add(key); return { ...(identity?{identityChoices:identity}:{}), ...(choices?{printingChoices:choices}:{}), key, printingId: e.printingId, finish: e.finish, zone: e.zone, quantity: e.quantity, ...(e.zone === "signature" ? { assignedTo } : {}) };
     });
     let selection = null;
     if (source.selection) {
@@ -93,19 +95,20 @@
       selection = { printingId: source.selection.printingId, finish: source.selection.finish };
     }
     const used = new Set([...entries.map(e => e.printingId), selection?.printingId].filter(Boolean));
-    return { ...generationMetadata(source.generation), schemaVersion: 1, id: source.id, name: string(source.name, 80), format: source.format, view: source.view, entries, selection,
+    return { ...generationMetadata(source.generation), schemaVersion: source.schemaVersion===2||entries.some(e=>e.identityChoices||e.zone==="maybeboard")?2:1, id: source.id, name: string(source.name, 80), format: source.format, view: source.view, entries, selection,
       cards: Object.fromEntries(Object.entries(records).filter(([id]) => used.has(id))), revision: integer(source.revision, 0, 1000000000) ? source.revision : 0,
       updatedAt: Number.isFinite(source.updatedAt) && source.updatedAt >= 0 ? source.updatedAt : 0 };
   }
   function encodeBackup(deck) {
-    const text = JSON.stringify({ application: "ManaScout Deck Studio", version: 1, exportedAt: new Date().toISOString(), deck: sanitizeDeck(deck) });
+    const clean = sanitizeDeck(deck);
+    const text = JSON.stringify({ application: "ManaScout Deck Studio", version: clean.schemaVersion===2?2:1, exportedAt: new Date().toISOString(), deck: clean });
     if (bytes(text) > maxBytes) invalid("This backup exceeds the supported 20 MB file limit.");
     return text;
   }
   function decodeBackup(text) {
     if (typeof text !== "string" || bytes(text) > maxBytes) invalid("Backup files must be JSON under 20 MB.");
     let payload; try { payload = JSON.parse(text); } catch { invalid("That file is not valid JSON."); }
-    if (!payload || payload.application !== "ManaScout Deck Studio" || payload.version !== 1) invalid("That backup format/version is not supported. Existing drafts have not been changed.");
+    if (!payload || payload.application !== "ManaScout Deck Studio" || ![1,2].includes(payload.version)) invalid("That backup format/version is not supported. Existing drafts have not been changed.");
     const deck = sanitizeDeck(payload.deck);
     return { ...deck, id: model.newId(), revision: 0, updatedAt: Date.now() };
   }
