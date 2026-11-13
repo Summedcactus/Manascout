@@ -48,9 +48,10 @@ test('damaged primary recovers backup without modifying damaged bytes; bad journ
  const recovered=store.load(d.id);assert.equal(recovered.recovered,true);assert.equal(recovered.deck.name,d.name);assert.equal(storage.getItem(store.pointerKey(d.id)),'{broken');assert.equal(store.list().issues.length,1);
  const separate=fixture(),saved=store.save(separate);storage.setItem(persistence.PREFIX+'journal.'+separate.id,'{broken');assert.equal(store.load(separate.id).token,saved.token);
 });
+// Phase 3 explicitly supports version 2; version 3 remains an unknown future schema.
 test('version/schema/entry errors are rejected without deleting or repairing originals',()=>{
- const d=fixture();for(const mutate of [x=>x.schemaVersion=2,x=>x.entries[0].quantity=-1,x=>x.entries.push({...x.entries[0]}),x=>x.entries[0].printingId='invalid',x=>x.entries[0].zone='companion',x=>x.entries[0].finish='invented']){const bad=clone(d);mutate(bad);assert.throws(()=>persistence.sanitizeDeck(bad),persistence.StorageError);}
- for(const text of ['null','{broken',JSON.stringify({application:'ManaScout Deck Studio',version:2,deck:d})])assert.throws(()=>persistence.decodeBackup(text),persistence.StorageError);
+ const d=fixture();for(const mutate of [x=>x.schemaVersion=3,x=>x.entries[0].quantity=-1,x=>x.entries.push({...x.entries[0]}),x=>x.entries[0].printingId='invalid',x=>x.entries[0].zone='companion',x=>x.entries[0].finish='invented']){const bad=clone(d);mutate(bad);assert.throws(()=>persistence.sanitizeDeck(bad),persistence.StorageError);}
+ for(const text of ['null','{broken',JSON.stringify({application:'ManaScout Deck Studio',version:3,deck:d})])assert.throws(()=>persistence.decodeBackup(text),persistence.StorageError);
  assert.throws(()=>persistence.decodeBackup('x'.repeat(persistence.maxBytes+1)),/under 20 MB/);
 });
 test('backup roundtrip makes a new identity and blocks untrusted image/source/guide URLs',()=>{

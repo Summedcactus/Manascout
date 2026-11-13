@@ -56,7 +56,7 @@
     const active = container.contains(document.activeElement) ? document.activeElement : null;
     const articles = new Map([...container.querySelectorAll(".ds-deck-entry")].map(a => [a.dataset.key, a]));
     const sections = [];
-    for (const zone of ["commander", "signature", "main", "sideboard"]) {
+    for (const zone of ["commander", "signature", "main", "sideboard", "maybeboard"]) {
       const entries = deck.entries.filter(e => e.zone === zone);
       if (!entries.length) continue;
       let section = container.querySelector(`.ds-deck-zone[data-zone="${zone}"]`);
@@ -65,7 +65,7 @@
         section.append(node("h3", "ds-zone-heading"), node("div", "ds-card-grid"));
       }
       const heading = section.querySelector("h3"), grid = section.querySelector(".ds-card-grid");
-      text(heading, `${zone === "signature" ? "Signature spells" : zone === "commander" ? "Command zone" : zone === "sideboard" ? "Sideboard" : "Main deck"} · ${entries.reduce((n, e) => n + e.quantity, 0)}`);
+      text(heading, `${zone === "signature" ? "Signature spells" : zone === "commander" ? "Command zone" : zone === "sideboard" ? "Sideboard" : zone === "maybeboard" ? "Maybeboard (outside deck)" : "Main deck"} · ${entries.reduce((n, e) => n + e.quantity, 0)}`);
       grid.dataset.view = deck.view;
       const children = entries.map(entry => {
         const card = deck.cards[entry.printingId];
@@ -78,7 +78,7 @@
           ui.inspect.insertBefore(ui.art, ui.name);
         }
         text(ui.name, card.name);
-        text(ui.info, `${card.setCode} #${card.collectorNumber} · ${entry.finish}`);
+        text(ui.info, `${card.setCode} #${card.collectorNumber} · ${entry.finish}${entry.identityChoices ? ` · Import: ${entry.identityChoices.unspecified||entry.identityChoices.finishOnly ? "printing unspecified; representative record" : "exact printing supplied"}${entry.identityChoices.unspecified||entry.identityChoices.printingOnly ? "; finish unspecified" : ""}` : ""}`);
         ui.printing.dataset.printingId = entry.printingId;
         ui.change.hidden = !card.oracleId; ui.change.disabled = !card.oracleId;
         ui.change.setAttribute("aria-label", `Change printing of ${card.name}, ${card.setCode} #${card.collectorNumber}, ${entry.finish}`);
@@ -92,7 +92,7 @@
         ui.roles.hidden = !meaningful.length; ui.roles.title = meaningful.map(role => inspection.labels[role]).join(" · ");
         ui.owner.hidden = zone !== "signature";
         text(ui.owner, zone === "signature" ? `For: ${deck.cards[entry.assignedTo]?.name || "Unassigned Oathbreaker"}` : "");
-        ui.move.hidden = !(["commander","signature","sideboard"].includes(zone) || profile.sideboard);
+        ui.move.hidden = !(["commander","signature","sideboard","maybeboard"].includes(zone) || profile.sideboard);
         ui.move.dataset.action = zone === "main" ? "move-sideboard" : "move-main";
         text(ui.move, ["commander","signature"].includes(zone) ? "Move one to main" : zone === "main" ? "To sideboard" : "To main deck");
         return article;

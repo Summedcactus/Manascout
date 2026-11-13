@@ -113,7 +113,7 @@
     for (const e of keep) {
       const c = fresh.get(e.printingId);
       if (!c || !c.availableFinishes.includes(e.finish)) throw Error("The seed or commander printing could not be rechecked with its saved finish. Your deck is unchanged.");
-      candidate = model.add(candidate, c, { finish: e.finish, zone: e.zone, quantity: e.quantity });
+      candidate = model.add(candidate, c, { finish: e.finish, zone: e.zone, quantity: e.quantity, ...(e.identityChoices?{identityChoices:e.identityChoices}:{}) });
     }
     const seed = fresh.get(ctx.seed.printingId);
     let commanders = candidate.entries.filter(e => e.zone === "commander").map(e => candidate.cards[e.printingId]);

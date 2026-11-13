@@ -151,7 +151,8 @@
       const card = deck.cards[entry.printingId];
       if (!card) { issue("missing-card", "A preserved entry has no card record.", "pending", entry.key); continue; }
       if (!Number.isInteger(entry.quantity) || entry.quantity < 1) issue("quantity", `${card.name}: invalid quantity.`, "error", entry.key);
-      if (!["main", "sideboard", "commander", "signature"].includes(entry.zone)) issue("zone", `${card.name}: unsupported deck section.`, "error", entry.key);
+      if (entry.zone === "maybeboard") continue;
+      if (!["main", "sideboard", "commander", "signature", "maybeboard"].includes(entry.zone)) issue("zone", `${card.name}: unsupported deck section.`, "error", entry.key);
       const matching = groups.filter(g => g.names.has(normal(card.name)) || (card.oracleId && g.ids.has(card.oracleId)));
       let group = matching[0];
       if (!group) { group = { names: new Set(), ids: new Set(), cards: [], count: 0 }; groups.push(group); }
@@ -175,7 +176,7 @@
     const types = Object.fromEntries(["Land", "Creature", "Artifact", "Enchantment", "Instant", "Sorcery", "Planeswalker", "Battle", "Other"].map(t => [t, 0]));
     let count = 0, sum = 0, spells = 0, unknownMana = 0;
     for (const entry of deck.entries) {
-      if (entry.zone === "sideboard" || (entry.zone === "commander" && !profile?.leaders) || (entry.zone === "signature" && !profile?.signature)) continue;
+      if (["sideboard", "maybeboard"].includes(entry.zone) || (entry.zone === "commander" && !profile?.leaders) || (entry.zone === "signature" && !profile?.signature)) continue;
       const card = deck.cards[entry.printingId], q = entry.quantity;
       count += q;
       const type = card.layout === "split" ? card.type : card.frontType;

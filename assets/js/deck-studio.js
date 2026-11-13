@@ -686,7 +686,7 @@
       if (!unchanged()) return;
       let next = deck;
       if (!pairing) for (const entry of deck.entries.filter(e => e.zone === "commander" || e.zone === "signature")) {
-        next = model.add(model.setQuantity(next, entry.key, 0), deck.cards[entry.printingId], { finish: entry.finish, quantity: entry.quantity, zone: "main" });
+        next = model.add(model.setQuantity(next, entry.key, 0), deck.cards[entry.printingId], { finish: entry.finish, quantity: entry.quantity, zone: "main", ...(entry.identityChoices?{identityChoices:entry.identityChoices}:{}) });
       }
       const inMain = next.entries.find(e => e.printingId === card.id && e.finish === finish && e.zone === "main");
       next = inMain ? model.moveOne(next, inMain.key, "commander") : model.add(next, card, { finish, zone: "commander" });
@@ -1038,6 +1038,18 @@
   window.addEventListener("pagehide", checkpointIfNeeded);
   document.addEventListener("visibilitychange", () => { if (document.visibilityState === "hidden") { checkpointIfNeeded(); if (dirty && !storagePaused) saveNow(false); } });
   window.addEventListener("beforeunload", event => { if (dirty) { event.preventDefault(); event.returnValue = ""; checkpointIfNeeded(); } });
+
+  window.ManaScoutDeckInteroperabilityControls?.create({
+    client, getDeck:()=>deck, onJSON:downloadBackup, onRestore:()=>$("backup-file").click(),
+    beforeOpen(){printingSelector?.cancel();appearanceControls?.cancel("Import/export opened.");cancelGeneration("Generation cancelled while opening import/export.");cancelDiscovery("Discovery cancelled while opening import/export.");},
+    async onImport(next, original, isActive){
+      if(`${deck.id}:${deck.revision}`!==original)return false;
+      if(!(await canLeaveDraft()))return false;
+      if(`${deck.id}:${deck.revision}`!==original||!isActive())return false;
+      activateDraft({deck:next,token:null,dirty:true},"Imported as a new draft. Existing saved decks are retained; generic printing/finish choices remain unspecified in portable exports.");
+      activatePanel("deck",false);await saveNow(true);return true;
+    }
+  });
 
   try { selection = data.parseSelection(window.location.search); }
   catch (error) { showError(error); }
