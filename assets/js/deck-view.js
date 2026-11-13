@@ -135,6 +135,7 @@
     const metric=key=>report.metrics.find(m=>m.key===key);
     dom.brief.textContent=[`Theme: ${report.themeState}`,...["ramp","draw","interaction","protection"].map(key=>{const m=metric(key);return m?`${({ramp:"Ramp",draw:"Draw",interaction:"Interaction",protection:"Protection"})[key]}: ${m.count<m.target?"Low":"Met"}`:"";})].filter(Boolean).join(" · ");
     dom.context.textContent=`${report.styles.map(key=>dom.styleLabel(key)).join(" → ")} · ${report.priorities.adherence} adherence · Average nonland mana value ${report.stats.average===null?"unknown":report.stats.average.toFixed(2)}. Targets count the main deck.`;
+    if(report.strategicQuality){const q=report.strategicQuality,i=q.infrastructure;dom.brief.textContent+=` · Dependencies: ${q.unsupported.length?"Review":"Met"}`;dom.context.textContent+=` Supported sources: ${i.ramp} ramp, ${i.draw} draw, ${i.interaction} interaction. ${q.counts.instant} instants/sorceries; ${q.counts.token} creature-token sources; ${q.counts.outlet} outlets. Role presence is distinct from dependency support.`;}
     dom.legality.textContent=`Construction: ${report.validation.label}. Composition is separate from current legality.`;
     function rows(metrics,container){container.replaceChildren(...metrics.map(m=>{
       const row=node("div");row.dataset.role=m.key;row.dataset.state=m.state||"observed";

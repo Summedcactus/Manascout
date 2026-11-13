@@ -6,6 +6,7 @@
   const model = common ? require("./deck-model.js") : root.ManaScoutDeckModel;
   const rules = common ? require("./deck-rules.js") : root.ManaScoutDeckRules;
   const deckIdentity = common ? require("./deck-identity.js") : root.ManaScoutDeckIdentity;
+  const quality = common ? require("./deck-quality.js") : root.ManaScoutDeckQuality;
   const themes = {
     artifacts: { label: "Artifacts", query: '(t:artifact or o:"artifact")', leader: /artifact (?:spells?|cards?|tokens?)|artifacts? you control|whenever[^\n.]*artifact|for each artifact/i, seed: /\bArtifact\b/, support: /artifact|affinity|improvise|metalcraft/i },
     graveyard: { label: "Graveyard", query: '(o:"graveyard" or o:"mill" or o:"discard")', leader: /(?:from|in|into|leave|leaves|your) (?:your |a |the |their )?graveyard|\bmill\b|discard[^\n.]*card/i, support: /graveyard|\bmill\b|discard|dredge|flashback|escape|unearth|surveil/i },
@@ -75,7 +76,7 @@
   }
   function powerAllowed(c, o) {
     const t = text(c);
-    if (o.bracket <= 2 && (/search your library for (?:a|any) card\b/i.test(t) || /extra turn|you win the game|loses the game|destroy (?:all|target) lands?/i.test(t) || (mv(c) <= 1 && /\bArtifact\b/.test(c.frontType) && /add \{/i.test(t)))) return false;
+    if (o.bracket <= 2 && (/search your library for (?:a|any) card\b/i.test(t) || /extra turn|you win the game|loses the game|(?:destroy|exile) all[^\n.]*\blands?\b|(?:destroy|exile) all permanents|destroy (?:all|target) lands?|each player sacrifices?[^\n.]*lands?|sacrifice all lands/i.test(t) || (mv(c) <= 1 && /\bArtifact\b/.test(c.frontType) && /\badd (?:\{|one mana|two mana|three mana|an amount of|mana)/i.test(t)))) return false;
     return true;
   }
   function validCard(c, client) {
@@ -115,6 +116,8 @@
       if (!c || !c.availableFinishes.includes(e.finish)) throw Error("The seed or commander printing could not be rechecked with its saved finish. Your deck is unchanged.");
       candidate = model.add(candidate, c, { finish: e.finish, zone: e.zone, quantity: e.quantity, ...(e.identityChoices?{identityChoices:e.identityChoices}:{}) });
     }
+    if(Object.values(candidate.cards).some(c=>!powerAllowed(c,o)))throw Error("A preserved seed/commander conflicts with the requested bracket filters. Choose another target or seed; your deck is unchanged.");
+    if(o.priorities.combo==="none"&&deckIdentity.packages.some(p=>p.cards.every((name,i)=>Object.values(candidate.cards).some(c=>c.name===name&&p.checks[i].test(text(c))))))throw Error("The preserved seed/commander already contains a catalogued combo pair. Change Combo None or choose another seed; your deck is unchanged.");
     const seed = fresh.get(ctx.seed.printingId);
     let commanders = candidate.entries.filter(e => e.zone === "commander").map(e => candidate.cards[e.printingId]);
     let strategy = o.strategy;
@@ -165,6 +168,8 @@
     const target = { ...targets(commanders, o, strategy), ...composition.minima };
     if (styles.some(k => ["lands","landfall"].includes(k))) target.land = Math.max(target.land, o.curve === "low" ? 38 : 40);
     composition.minima.land = target.land;
+    if(styles.some(k=>["lands","landfall"].includes(k)))composition.minima.landEntry=target.landEntry={loose:8,balanced:10,strict:12}[o.priorities.adherence];
+    if(styles.includes("spellslinger"))composition.minima.spell=target.spell=Math.max(quality.thresholds.instant,composition.minima.spell||0);
     // Each tribal target counts that creature subtype, never incidental Oracle mentions.
     const classifications = new WeakMap();
     const classify = c => {
@@ -199,6 +204,7 @@
       const q = queries[i];
       const cards=await at(`Role pool ${i + 1}/${queries.length}`, () => client.candidates(q.q, { signal, pages: q.pages || 1, order: q.order })); check(signal);
       for (const c of cards) found.set(c.id, c);
+      if(found.size>2100)throw Error("The bounded candidate limit was exceeded. Your deck is unchanged.");
       progress(`Role pools ${i + 1}/${queries.length} complete.`);
     }
     check(signal); progress("Selecting cards and checking deck identity targets…");
@@ -206,7 +212,9 @@
     const used = new Set(Object.values(candidate.cards).map(c => c.oracleId));
     const usedNames = new Set(Object.values(candidate.cards).map(c => normal(c.name)));
     // No land destruction, extra turns or one-mana accelerants are slipped into casual targets.
-    const pool = [...found.values()].filter(c => fits(c, colors) && validCard(c, client) && paid(c) && powerAllowed(c, o) && (o.priorities.tutors !== "none" || !deckIdentity.features(c).has("tutor")));
+    let pool = [...found.values()].filter(c => fits(c, colors) && validCard(c, client) && paid(c) && powerAllowed(c, o) && (o.priorities.tutors !== "none" || !deckIdentity.features(c).has("tutor")));
+    const optimistic=quality.composition({entries:pool.map(c=>({printingId:c.id,quantity:1,zone:"main"})),cards:Object.fromEntries(pool.map(c=>[c.id,c]))});
+    pool=pool.filter(c=>quality.supported(quality.profile(c),optimistic).length===0);
     const roleMap = new Map(pool.map(c => [c.id, classify(c)]));
     const useful = c => [...roleMap.get(c.id)].some(role=>(target[role]||0)>0);
     const jitter = new Map(pool.map(c => [c.id, random() * (o.randomness === "wild" ? 3 : o.randomness === "mixed" ? 1.2 : .15)]));
@@ -250,6 +258,7 @@
       if(picks++ % 8 === 0){await new Promise(resolve=>setTimeout(resolve,0));check(signal);}
       check(signal);
       const have = counts();
+      const supportContext=quality.prepareScore(candidate);
       const choices = pool.filter(c => !land(c) && available(c) && useful(c) && affordable(c, basicReserve));
       let best = null, bestScore = -Infinity;
       for (const c of choices) {
@@ -266,6 +275,12 @@
         if (o.bracket >= 3 && /search your library for (?:a|any) card\b|untap|copy[^\n.]*spell/i.test(text(c))) score += (o.bracket - 2) * .55;
         const rank = c.edhrecRank || 100000;
         score += o.randomness === "reliable" ? Math.max(0, 2 - Math.log10(rank) / 2.5) : o.randomness === "wild" ? Math.min(1, Math.log10(rank) / 5) : 0;
+        score += quality.score(c,supportContext)+quality.overlap(c,styles)+quality.curveScore(c,supportContext,o.curve);
+        const mechanics=quality.profile(c);
+        if(have.draw<target.draw&&!quality.supported(mechanics,supportContext.counts).length)score+=mechanics.drawKind.includes("engine")?1.5:mechanics.drawKind==="card advantage"?1:0;
+        if(mechanics.blocksGraveyard&&styles.includes("graveyard"))score-=25;
+        if(mechanics.tutorKind==="equipment"&&styles.includes("voltron")||mechanics.tutorKind==="creature"&&styles.some(k=>k.startsWith("tribal:")))score+=1.5;
+        if(quality.profile(c).outlet&&(have.outlet||0)>=Math.max(3,target.outlet||3))score-=4+Math.max(0,(have.outlet||0)-(target.outlet||3))*1.5;
         score += jitter.get(c.id);
         if (o.budget !== null) score -= price(c) * 1.5;
         if (score > bestScore) { bestScore = score; best = c; }
@@ -273,6 +288,7 @@
       if (!best) throw Error("The bounded candidate pools cannot fill a coherent deck within these options. Try Auto, a higher budget or another commander. Your deck is unchanged.");
       add(best);
     }
+    if(o.priorities.ramp==="normal"&&(quality.analyse(candidate).average||0)>4)composition.minima.ramp=target.ramp=Math.max(12,target.ramp);
     // Repair deficits by swapping a non-seed spell only when total target shortfall falls.
     const spellPlan={...composition,minima:Object.fromEntries(Object.entries(composition.minima).filter(([r])=>!["land","landUtility"].includes(r)))};
     let repairs = 0;
@@ -285,7 +301,7 @@
       const swap=deckIdentity.bestSwap(spellPlan,counts(),
         incoming.map(c=>({key:c.id,roles:roleMap.get(c.id)})),
         outgoing.map(e=>({key:e.key,roles:classify(candidate.cards[e.printingId])})),
-        (add,remove)=>o.budget===null || currentPrice-price(candidate.cards[candidate.entries.find(e=>e.key===remove.key).printingId])+price(found.get(add.key))+basicReserve<=o.budget);
+        (add,remove)=>(o.priorities.combo!=="none"||!deckIdentity.packageConflict(found.get(add.key),Object.values(candidate.cards).filter(c=>c.id!==candidate.entries.find(e=>e.key===remove.key).printingId))) && (o.budget===null || currentPrice-price(candidate.cards[candidate.entries.find(e=>e.key===remove.key).printingId])+price(found.get(add.key))+basicReserve<=o.budget));
       if(!swap)break;
       const removed=candidate.cards[candidate.entries.find(e=>e.key===swap.outgoing).printingId];
       candidate=model.setQuantity(candidate,swap.outgoing,0);
@@ -311,6 +327,32 @@
       if (!choices.length) throw Error("The mana base exceeds the available budget. Your deck is unchanged.");
       const { c, color } = choices[0]; add(c); allocated[color]++;
     }
+    // Separate dependency repair: fixed pool, at most twelve accepted swaps.
+    // Preserve seed/package IDs, all composition minima, colours, prices and singleton rules.
+    const supportCounts=state=>{const n=quality.composition(state),result={};for(const e of state.entries.filter(e=>e.zone==="main"))for(const role of quality.effectiveRoles(state.cards[e.printingId],classify(state.cards[e.printingId]),n))result[role]=(result[role]||0)+e.quantity;return result;};
+    const qualityDebt=state=>{const q=quality.analyse(state,{styles,priorities:o.priorities,curve:o.curve});return {q,debt:quality.dependencyDebt(q)+deckIdentity.shortfall(composition,supportCounts(state))};};
+    let strategicRepairs=0,currentQuality=qualityDebt(candidate);
+    while(currentQuality.debt>0&&strategicRepairs<12){
+      check(signal);progress(`Checking package support · repair ${strategicRepairs+1}/12…`);await new Promise(r=>setTimeout(r,0));check(signal);
+      const context=quality.prepareScore(candidate);
+      const incoming=pool.filter(c=>!land(c)&&available(c)).sort((a,b)=>quality.score(b,context)-quality.score(a,context)).slice(0,60);
+      const broken=new Set(currentQuality.q.unsupported.map(x=>x.id));
+      const rawCounts=counts(),essential=e=>[...classify(candidate.cards[e.printingId])].reduce((n,r)=>n+Math.max(0,(composition.minima[r]||0)-((rawCounts[r]||0)-e.quantity))*(composition.weights[r]||4),0);
+      const outgoing=candidate.entries.filter(e=>e.zone==="main"&&!land(candidate.cards[e.printingId])&&e.printingId!==seed.id&&!packageIds.has(e.printingId)).sort((a,b)=>Number(broken.has(b.printingId))-Number(broken.has(a.printingId))||essential(a)-essential(b)).slice(0,12);
+      let best=null,bestDebt=currentQuality.debt;
+      for(const c of incoming){for(const e of outgoing){
+        if(o.priorities.combo==="none"&&deckIdentity.packageConflict(c,Object.values(candidate.cards).filter(x=>x.id!==e.printingId)))continue;
+        let next=model.add(model.setQuantity(candidate,e.key,0),c);
+        if(o.budget!==null&&estimate(next,rate.rate).total>o.budget)continue;
+        const raw={};for(const x of next.entries.filter(x=>x.zone==="main"))for(const r of classify(next.cards[x.printingId]))raw[r]=(raw[r]||0)+x.quantity;
+        if(Object.entries(composition.minima).some(([r,n])=>(raw[r]||0)<n))continue;
+        const checked=qualityDebt(next);
+        if(checked.debt<bestDebt){bestDebt=checked.debt;best={next,checked,added:c,removed:candidate.cards[e.printingId]};}
+      }}
+      if(!best)break;
+      candidate=best.next;used.delete(best.removed.oracleId);usedNames.delete(normal(best.removed.name));used.add(best.added.oracleId);usedNames.add(normal(best.added.name));currentQuality=best.checked;strategicRepairs++;
+    }
+    if(currentQuality.debt>0)throw Error(`The bounded pools cannot support the proposed strategy package (${currentQuality.q.unsupported.slice(0,3).map(x=>x.name+": "+x.missing.join("/")).join(", ")||"conditional infrastructure shortfall"}). Try a compatible style or lighter priorities. Your deck is unchanged.`);
     check(signal); progress("Refreshing selected printings · final checks pending…");
     const refreshed = await at("Final printing refresh", () => client.refresh(Object.values(candidate.cards), { signal })); check(signal);
     if (new Set(refreshed.map(c => c.id)).size !== Object.keys(candidate.cards).length || Object.keys(candidate.cards).some(id => !refreshed.some(c => c.id === id))) throw Error("Some generated printing records could not be rechecked. Your deck is unchanged.");
@@ -329,12 +371,15 @@
       if(def.cards.some((name,i)=>!Object.values(candidate.cards).some(c=>c.name===name&&def.checks[i].test(text(c)))))throw Error("A combo suggestion changed during refresh. Your deck is unchanged.");
     }
     if(Object.entries(composition.minima).some(([r,n])=>(finalCounts[r]||0)<n))throw Error("Refreshed card data no longer meets the deck identity targets. Your deck is unchanged.");
+    const finalQuality=quality.analyse(candidate,{styles,priorities:o.priorities,curve:o.curve});
+    const verifiedSupport=supportCounts(candidate);
+    if(finalQuality.unsupported.length||Object.entries(composition.minima).some(([r,n])=>(verifiedSupport[r]||0)<n))throw Error("Refreshed Oracle data no longer meets dependency/support requirements. Your deck is unchanged.");
     const cost = rate ? estimate(candidate, rate.rate) : null;
     if (cost && (cost.unknown || cost.total > o.budget)) throw Error("Current pricing could not confirm the selected budget after the final check. Your deck is unchanged; try No limit or a higher budget.");
     check(signal); progress("Generation complete · all construction and identity checks passed.");
     return { deck: model.edit(deck, { entries: candidate.entries, cards: candidate.cards, selection: candidate.selection,
-        generation: { version:1, primaryStyle:styles[0], secondaryStyle:styles[1], tertiaryStyle:styles[2], priorities:o.priorities, targets:composition.minima, counts:finalCounts, curve:o.curve, bracket:o.bracket, commanderOracles:commanders.map(c=>c.oracleId) } }), strategy, target, roles: finalCounts, identity: { analysis, styles, priorities:o.priorities, targets:composition.minima, counts:finalCounts, repairs, packages:selectedPackages }, bracket: o.bracket, estimate: cost ? { gbp: cost.total, rateDate: rate.date, budget: o.budget } : null,
-      note: `Generated a ${styleDefinition.label.toLowerCase()} starting deck. Bracket ${o.bracket} is a power preference, not certification. Review synergies and win conditions before play; no combo verification is claimed. ${selectedPackages.length ? `${selectedPackages.length} suggested combo package(s); check prerequisites before play.` : "No deliberate combo package was assembled."}${cost ? ` Estimated £${cost.total.toFixed(2)} using Scryfall EUR prices and the ${rate.date} EUR/GBP reference rate; shipping and availability excluded.` : " No budget or price guarantee."}` };
+        generation: { version:1, primaryStyle:styles[0], secondaryStyle:styles[1], tertiaryStyle:styles[2], priorities:o.priorities, targets:composition.minima, counts:finalCounts, curve:o.curve, bracket:o.bracket, commanderOracles:commanders.map(c=>c.oracleId) } }), strategy, target, roles: finalCounts, quality:finalQuality, identity: { strategicRepairs, analysis, styles, priorities:o.priorities, targets:composition.minima, counts:finalCounts, repairs, packages:selectedPackages }, bracket: o.bracket, estimate: cost ? { gbp: cost.total, rateDate: rate.date, budget: o.budget } : null,
+      note: `${quality.summary(finalQuality)} Generated a ${styleDefinition.label.toLowerCase()} starting deck. Bracket ${o.bracket} is a power preference, not certification. Review synergies and win conditions before play; no combo verification is claimed. ${selectedPackages.length ? `${selectedPackages.length} suggested combo package(s); check prerequisites before play.` : "No deliberate combo package was assembled."}${cost ? ` Estimated £${cost.total.toFixed(2)} using Scryfall EUR prices and the ${rate.date} EUR/GBP reference rate; shipping and availability excluded.` : " No budget or price guarantee."}` };
   }
   const api = Object.freeze({ generate, context, needsConfirmation, strategies, analyse: deckIdentity.analyse, affinity, roles, options, estimate, targets });
   if (common) module.exports = api; else root.ManaScoutDeckGenerator = api;
