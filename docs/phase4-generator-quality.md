@@ -159,6 +159,28 @@ Playwright/Chromium are optional native-test dependencies. The explicit no-sandb
 
 ## Known limits
 
+### Independent revalidation, 13 November 2026
+
+The requested work was already present on remote `DEVELOPMENT` at
+`e8b26748f177ca0467d36048b827c5876445758f`. The initial environment checkout
+was older; it was replaced by a checkout of that existing development head
+before edits. No generator rewrite or additional production change was needed.
+
+Fresh runs passed **1,092/1,092 automated JavaScript cases**, the runner's syntax
+and structural/catalogue/site checks, and **308 native browser checks**:
+Phase 1 **71** (including live catalogue coverage), Phase 2 **28**, Phase 3
+**44**, Phase 4 **157** across seven archetypes at 320/390/1280px, and
+Sram/Voltron **8** at 390px. There were no uncaught page errors. The 320px
+Goblin screenshot was visually inspected; the five-spell payoff rejection,
+100-card results, supported infrastructure, save/reload and export checks passed.
+
+During concurrent regression execution, the seven-archetype generation timings
+were **1.421–6.789 seconds**, and Sram took **5.350 seconds**. These mocked-pool
+UI timings include shared-machine contention and do not measure live catalogue
+latency. The local server and Chromium required sandbox escalation; the approved
+runs completed successfully. The earlier sandbox launch failure is not counted
+as a passing test. T02 remains complete for the documented heuristic scope.
+
 These English Oracle heuristics intentionally trade completeness for inspectable, bounded behavior. They do not model timing, activation costs, opponent behavior, board wipes, exact token yields, hidden choices, full replacement effects, MDFC sequencing or every graveyard/tribal engine. A card with an unsupported optional ability can be conservatively rejected despite a useful independent mode. Unusual plurals/wording may be missed. Creature-token sources and commander credits are opportunities, not guaranteed bodies/activations; toughness-specific Skullclamp optimization is not inferred from missing data.
 
 Pool feasibility does not guarantee the greedy builder/limited repairs find an existing solution. Narrow/multi-style/high-priority/budget configurations can fail honestly. Some and Heavy combo settings are not complete combo solvers. No representative fixture or passing count establishes optimality, real-game strength, official bracket accuracy, verified infinite combos, delivered budget, win-rate uplift or increased revenue. Live pilot review remains necessary.
