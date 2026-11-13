@@ -99,6 +99,9 @@ for(const strategy of ['spellslinger','graveyard','tokens'])test(`${strategy} us
   if(!f.spells.some(x=>x.id===c.id))return c;
   const type=strategy==='spellslinger'?'Sorcery':'Creature — Test';
   let text=(c.frontText.startsWith('{T}: Add')?'Search your library for a basic land card, put it onto the battlefield tapped, then shuffle.':c.frontText)+suffix;
+  // Converted non-artifact fixtures need matching mechanics: they previously retained
+  // artifact-only triggers after their card types were changed to creatures/spells.
+  text=text.replace('Artifacts you control have hexproof.','Target creature gains hexproof until end of turn.').replace(/Whenever you cast an artifact spell/g,strategy==='spellslinger'?'Whenever you cast an instant or sorcery spell':'Whenever another creature you control enters');
   // These synthetic pools now need actual theme payoffs/recursion for hard targets.
   if(strategy==='spellslinger' && f.spells.indexOf(c)<8)text+=' Whenever you cast an instant or sorcery spell this turn, draw a card.';
   if(strategy==='graveyard' && f.spells.indexOf(c)<4)text+=' Return target creature card from your graveyard to your hand.';

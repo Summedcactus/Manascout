@@ -27,3 +27,5 @@ Before planning growth, revenue or a broad site update, read [the consolidated r
 Exact-printing comparison supports 1–4 selections (two or more for comparison), named browser-local saves, JSON portability and CSV/exact-link export. See [comparison formats and limitations](docs/phase2-comparisons.md).
 
 Deck Studio supports previewed text/CSV imports, copy/TXT/CSV/JSON exports and separate new drafts. Whole printing comparisons can be shared without an account. See [Phase 3 formats, storage compatibility and validation](docs/phase3-interoperability.md).
+
+Commander generation now checks dependent engines/payoffs against actual package support and reports supported infrastructure. See [Phase 4 generator policy, bounds and validation](docs/phase4-generator-quality.md).

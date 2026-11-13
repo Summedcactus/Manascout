@@ -5,6 +5,7 @@
   const common=typeof module==="object"&&module.exports;
   const identity=common?require("./deck-identity.js"):root.ManaScoutDeckIdentity;
   const rules=common?require("./deck-rules.js"):root.ManaScoutDeckRules;
+  const quality=common?require("./deck-quality.js"):root.ManaScoutDeckQuality;
   const essentials=["land","creature","artifact","enchantment","instant","sorcery","planeswalker","ramp","draw","interaction","protection"];
   const priorityKey={ramp:"ramp",draw:"draw",interaction:"removal",wipe:"wipes",protection:"protection",tutor:"tutors",comboEngine:"combo"};
   const titles={removal:"Removal",ramp:"Ramp",draw:"Card Draw",wipes:"Board Wipes",protection:"Protection",tutors:"Tutors",combo:"Combo Engines"};
@@ -90,16 +91,19 @@
       for(const key of dynamic)if(!metrics.some(m=>m.key===key))observations.push({key,label:identity.label(key),count:counts[key]||0,commanderCount:commanderCounts[key]||0,target:null});
       if(context.mismatch)warnings.unshift("The assigned commander no longer matches the saved generation identity. Review the commander/styles or generate a new deck; cards have been preserved.");
     }
+    const strategicQuality=deck.format==="commander"?quality.analyse(deck,{styles,priorities,curve:saved?.curve||"balanced"}):null;
+    if(strategicQuality)warnings.unshift(...strategicQuality.warnings.slice(0,2));
     const lows=metrics.filter(m=>m.count<m.target),tooLow=lows.filter(m=>m.state==="too-low");
     const theme=metrics.filter(m=>m.section==="theme"&&m.target>0);
     const structuralState=!configured||!metrics.length||targetIncomplete?"not-assessed":context.mismatch||tooLow.length>=2||theme.some(m=>m.count<m.target*.5)?"major-gaps":lows.length?"needs-attention":"healthy";
     const themeState=!configured||targetIncomplete?"Not assessed":theme.some(m=>m.count<m.target)?"Below target":"Meets target";
     const styleCoverage=styles.map((key,index)=>({key,label:identity.definition(key).label,rank:["Primary","Secondary","Tertiary"][index],count:main.filter(entry=>entry.styles.includes(key)).reduce((n,entry)=>n+entry.quantity,0),entryKeys:main.filter(entry=>entry.styles.includes(key)).map(e=>e.key)}));
     const labels=Object.fromEntries([...new Set(Object.values(cardRoles).flatMap(c=>c.roles))].map(key=>[key,identity.label(key)]));
-    return {version:1,labels,styleCoverage,hasSavedPlan:!!saved,deckId:deck.id,format:deck.format,configured,styles,priorities,curve:saved?.curve||"",identityMismatch:!!context.mismatch,cardRoles,entries,counts,componentCounts,commanderCounts,roleCounts,categories,metrics,observations,warnings,structuralState,themeState,stats:rules.statistics(deck),problem:context.problem};
+    return {strategicQuality,version:1,labels,styleCoverage,hasSavedPlan:!!saved,deckId:deck.id,format:deck.format,configured,styles,priorities,curve:saved?.curve||"",identityMismatch:!!context.mismatch,cardRoles,entries,counts,componentCounts,commanderCounts,roleCounts,categories,metrics,observations,warnings:[...new Set(warnings)].slice(0,5),structuralState,themeState,stats:rules.statistics(deck),problem:context.problem};
   }
   function evaluate(analysis,validation){
     let state=analysis.structuralState;
+    if(analysis.configured&&analysis.strategicQuality?.unsupported.length&&state==="healthy")state="needs-attention";
     if(analysis.configured&&state==="healthy"&&!validation.complete)state=validation.status==="unverified"?"needs-verification":"needs-attention";
     const labels={healthy:"Healthy", "needs-attention":"Needs attention", "major-gaps":"Major gaps", "needs-verification":"Needs verification", "not-assessed":"No generated plan"};
     return {...analysis,state,label:labels[state],validation};

@@ -122,7 +122,7 @@ Phase 1 implementation is committed on DEVELOPMENT; publication remains manual. 
 ### Foundation and truth
 
 - [x] T01 Fix the land/nonland classifier defect and audit related semantic matches. Add meaningful positive/negative regression cases using real Oracle text. Validate all affected role and generation checks.
-- [ ] T02 Audit generator payoff/enabler compatibility with representative commanders. Assess output strategy and draw/ramp/interaction; preserve honest bracket/price qualifications. Do not market role counts as proof of deck quality.
+- [x] T02 Audit generator payoff/enabler compatibility with representative commanders. Assess output strategy and draw/ramp/interaction; preserve honest bracket/price qualifications. Do not market role counts as proof of deck quality.
 - [ ] T03 Verify HTTP/HTTPS behavior and plan draft recovery before HTTPS enforcement. Hosting changes remain manual under repository rules.
 - [ ] T04 Obtain missing indexing/Google-selected-canonical and private AdSense evidence through available authorized access. Keep unknowns recorded; no paid Windsor upgrade is required merely to provide exports from native GSC.
 - [ ] T05 Establish a small privacy-appropriate event schema: successful search, compare selection, saved shortlist, deck import/export, merchant exit and completed support. Do not collect raw deck contents, emails or unrestricted search strings by default.
@@ -190,3 +190,7 @@ Exact printing/finish comparisons, browser-local named saves and portable JSON/C
 ## Phase 3 implementation record — 13 November 2026
 
 See [Phase 3 interoperability, compatibility and validation](phase3-interoperability.md). T13 is implemented for the documented text/CSV subset with preview, exact identity/finish checks, explicit new-draft acceptance and retained JSON recovery. T14 now includes bounded, identity-only whole-comparison links on the existing canonical homepage; opening is memory-only and saving is explicit. This does not implement public deck hosting. T21 records the automated and focused native Phase 1/2/3 release checks, including unresolved imports, API/storage failures, mobile widths, keyboard/focus, exports and reduced motion; future releases still require their own checks. T02 remains open. The generator change only carries identity metadata when copying seeds; it is not a strategic-quality audit. Main, DEVELOPMENT-2, publication, hosting, accounts and monetisation remain untouched.
+
+## Phase 4 implementation record — 13 November 2026
+
+T02 is complete for the documented bounded heuristic scope: actual generator-pipeline audit, shared dependency/support classes, package-aware selection, conditional infrastructure, commander/curve response, strategic repair, refreshed-data acceptance checks and contextual Deck Health reporting. See [thresholds, fixtures, tests and limitations](phase4-generator-quality.md). Eleven canonical commander Oracle fixtures and adversarial support/failure cases exercise the policy; this is not certification of optimal, tournament-ready or officially bracketed decks. Existing controls, bounded catalogue requests, exact seeds/finishes, pricing qualifications and atomic cancellation/failure remain. No accounts/backend generation, LLM service, monetisation changes, publication, PR, main or DEVELOPMENT-2 change is included.

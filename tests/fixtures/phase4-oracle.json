@@ -1,0 +1,1224 @@
+{
+  "fetchedAt": "2026-11-13",
+  "source": "https://api.scryfall.com/cards/named",
+  "records": [
+    {
+      "object": "card",
+      "id": "824b2d73-2151-4e5e-9f05-8f63e2bdcaa9",
+      "oracle_id": "68418069-f615-40ef-ae0d-764192acae00",
+      "name": "Krenko, Mob Boss",
+      "type_line": "Legendary Creature — Goblin Warrior",
+      "oracle_text": "{T}: Create X 1/1 red Goblin creature tokens, where X is the number of Goblins you control.",
+      "mana_cost": "{2}{R}{R}",
+      "cmc": 4.0,
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "keywords": [],
+      "legalities": {
+        "standard": "legal",
+        "future": "legal",
+        "historic": "legal",
+        "timeless": "legal",
+        "gladiator": "legal",
+        "pioneer": "legal",
+        "modern": "legal",
+        "legacy": "legal",
+        "pauper": "not_legal",
+        "vintage": "legal",
+        "penny": "legal",
+        "commander": "legal",
+        "oathbreaker": "legal",
+        "standardbrawl": "legal",
+        "brawl": "legal",
+        "competitivebrawl": "legal",
+        "alchemy": "legal",
+        "paupercommander": "not_legal",
+        "duel": "legal",
+        "oldschool": "not_legal",
+        "premodern": "not_legal",
+        "predh": "not_legal",
+        "tlr": "not_legal"
+      },
+      "games": [
+        "paper",
+        "arena",
+        "mtgo"
+      ],
+      "layout": "normal",
+      "oversized": false,
+      "border_color": "black",
+      "set": "fdn",
+      "set_name": "Foundations",
+      "collector_number": "204",
+      "lang": "en",
+      "finishes": [
+        "nonfoil",
+        "foil"
+      ],
+      "scryfall_uri": "https://scryfall.com/card/fdn/204/krenko-mob-boss?utm_source=api",
+      "power": "3",
+      "toughness": "3"
+    },
+    {
+      "object": "card",
+      "id": "b91dadcb-31e9-43b0-b425-c9311af3e9d7",
+      "oracle_id": "f7252190-ad24-4ba3-a644-2790dd1d680d",
+      "name": "Rhys the Redeemed",
+      "type_line": "Legendary Creature — Elf Warrior",
+      "oracle_text": "{2}{G/W}, {T}: Create a 1/1 green and white Elf Warrior creature token.\n{4}{G/W}{G/W}, {T}: For each creature token you control, create a token that's a copy of that creature.",
+      "mana_cost": "{G/W}",
+      "cmc": 1.0,
+      "colors": [
+        "G",
+        "W"
+      ],
+      "color_identity": [
+        "G",
+        "W"
+      ],
+      "keywords": [],
+      "legalities": {
+        "standard": "not_legal",
+        "future": "not_legal",
+        "historic": "legal",
+        "timeless": "legal",
+        "gladiator": "legal",
+        "pioneer": "not_legal",
+        "modern": "legal",
+        "legacy": "legal",
+        "pauper": "not_legal",
+        "vintage": "legal",
+        "penny": "legal",
+        "commander": "legal",
+        "oathbreaker": "legal",
+        "standardbrawl": "not_legal",
+        "brawl": "legal",
+        "competitivebrawl": "legal",
+        "alchemy": "not_legal",
+        "paupercommander": "not_legal",
+        "duel": "legal",
+        "oldschool": "not_legal",
+        "premodern": "not_legal",
+        "predh": "legal",
+        "tlr": "legal"
+      },
+      "games": [
+        "paper",
+        "mtgo"
+      ],
+      "layout": "normal",
+      "oversized": false,
+      "border_color": "black",
+      "set": "2xm",
+      "set_name": "Double Masters",
+      "collector_number": "213",
+      "lang": "en",
+      "finishes": [
+        "nonfoil",
+        "foil"
+      ],
+      "scryfall_uri": "https://scryfall.com/card/2xm/213/rhys-the-redeemed?utm_source=api",
+      "power": "1",
+      "toughness": "1"
+    },
+    {
+      "object": "card",
+      "id": "cd14f1ce-7fcd-485c-b7ca-01c5b45fdc01",
+      "oracle_id": "644eeefd-e684-4ca8-8aef-a892ca130c07",
+      "name": "Teysa Karlov",
+      "type_line": "Legendary Creature — Human Advisor",
+      "oracle_text": "If a creature dying causes a triggered ability of a permanent you control to trigger, that ability triggers an additional time.\nCreature tokens you control have vigilance and lifelink.",
+      "mana_cost": "{2}{W}{B}",
+      "cmc": 4.0,
+      "colors": [
+        "B",
+        "W"
+      ],
+      "color_identity": [
+        "B",
+        "W"
+      ],
+      "keywords": [],
+      "legalities": {
+        "standard": "not_legal",
+        "future": "not_legal",
+        "historic": "legal",
+        "timeless": "legal",
+        "gladiator": "legal",
+        "pioneer": "legal",
+        "modern": "legal",
+        "legacy": "legal",
+        "pauper": "not_legal",
+        "vintage": "legal",
+        "penny": "legal",
+        "commander": "legal",
+        "oathbreaker": "legal",
+        "standardbrawl": "not_legal",
+        "brawl": "legal",
+        "competitivebrawl": "legal",
+        "alchemy": "not_legal",
+        "paupercommander": "not_legal",
+        "duel": "legal",
+        "oldschool": "not_legal",
+        "premodern": "not_legal",
+        "predh": "not_legal",
+        "tlr": "not_legal"
+      },
+      "games": [
+        "paper",
+        "mtgo"
+      ],
+      "layout": "normal",
+      "oversized": false,
+      "border_color": "black",
+      "set": "cmm",
+      "set_name": "Commander Masters",
+      "collector_number": "359",
+      "lang": "en",
+      "finishes": [
+        "nonfoil",
+        "foil"
+      ],
+      "scryfall_uri": "https://scryfall.com/card/cmm/359/teysa-karlov?utm_source=api",
+      "power": "2",
+      "toughness": "4"
+    },
+    {
+      "object": "card",
+      "id": "1be3ed47-072e-481a-b3d9-dc232ac4b24f",
+      "oracle_id": "ea1eb902-a23c-44ff-9169-19baf71de238",
+      "name": "Talrand, Sky Summoner",
+      "type_line": "Legendary Creature — Merfolk Wizard",
+      "oracle_text": "Whenever you cast an instant or sorcery spell, create a 2/2 blue Drake creature token with flying.",
+      "mana_cost": "{2}{U}{U}",
+      "cmc": 4.0,
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "keywords": [],
+      "legalities": {
+        "standard": "not_legal",
+        "future": "not_legal",
+        "historic": "legal",
+        "timeless": "legal",
+        "gladiator": "legal",
+        "pioneer": "not_legal",
+        "modern": "legal",
+        "legacy": "legal",
+        "pauper": "not_legal",
+        "vintage": "legal",
+        "penny": "legal",
+        "commander": "legal",
+        "oathbreaker": "legal",
+        "standardbrawl": "not_legal",
+        "brawl": "legal",
+        "competitivebrawl": "legal",
+        "alchemy": "not_legal",
+        "paupercommander": "not_legal",
+        "duel": "legal",
+        "oldschool": "not_legal",
+        "premodern": "not_legal",
+        "predh": "not_legal",
+        "tlr": "not_legal"
+      },
+      "games": [
+        "paper",
+        "mtgo"
+      ],
+      "layout": "normal",
+      "oversized": false,
+      "border_color": "black",
+      "set": "otc",
+      "set_name": "Outlaws of Thunder Junction Commander",
+      "collector_number": "116",
+      "lang": "en",
+      "finishes": [
+        "nonfoil"
+      ],
+      "scryfall_uri": "https://scryfall.com/card/otc/116/talrand-sky-summoner?utm_source=api",
+      "power": "2",
+      "toughness": "2"
+    },
+    {
+      "object": "card",
+      "id": "7b7a348a-51f7-4dc5-8fe7-1c70fea5e050",
+      "oracle_id": "e87906d2-db1a-4e19-b910-adb4eb339945",
+      "name": "Urza, Lord High Artificer",
+      "type_line": "Legendary Creature — Human Artificer",
+      "oracle_text": "When Urza enters, create a 0/0 colorless Construct artifact creature token with \"This token gets +1/+1 for each artifact you control.\"\nTap an untapped artifact you control: Add {U}.\n{5}: Shuffle your library, then exile the top card. Until end of turn, you may play that card without paying its mana cost.",
+      "mana_cost": "{2}{U}{U}",
+      "cmc": 4.0,
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "keywords": [],
+      "legalities": {
+        "standard": "not_legal",
+        "future": "not_legal",
+        "historic": "legal",
+        "timeless": "legal",
+        "gladiator": "legal",
+        "pioneer": "not_legal",
+        "modern": "legal",
+        "legacy": "legal",
+        "pauper": "not_legal",
+        "vintage": "legal",
+        "penny": "not_legal",
+        "commander": "legal",
+        "oathbreaker": "legal",
+        "standardbrawl": "not_legal",
+        "brawl": "legal",
+        "competitivebrawl": "legal",
+        "alchemy": "not_legal",
+        "paupercommander": "not_legal",
+        "duel": "restricted",
+        "oldschool": "not_legal",
+        "premodern": "not_legal",
+        "predh": "not_legal",
+        "tlr": "not_legal"
+      },
+      "games": [
+        "paper",
+        "mtgo"
+      ],
+      "layout": "normal",
+      "oversized": false,
+      "border_color": "black",
+      "set": "cmm",
+      "set_name": "Commander Masters",
+      "collector_number": "130",
+      "lang": "en",
+      "finishes": [
+        "nonfoil",
+        "foil"
+      ],
+      "scryfall_uri": "https://scryfall.com/card/cmm/130/urza-lord-high-artificer?utm_source=api",
+      "power": "1",
+      "toughness": "4"
+    },
+    {
+      "object": "card",
+      "id": "508b1442-bf2c-4ad6-9bcf-bd894e081ab6",
+      "oracle_id": "0310dfdb-0498-488d-9f1a-279f8239e024",
+      "name": "Meren of Clan Nel Toth",
+      "type_line": "Legendary Creature — Human Shaman",
+      "oracle_text": "Whenever another creature you control dies, you get an experience counter.\nAt the beginning of your end step, choose target creature card in your graveyard. If that card's mana value is less than or equal to the number of experience counters you have, return it to the battlefield. Otherwise, put it into your hand.",
+      "mana_cost": "{2}{B}{G}",
+      "cmc": 4.0,
+      "colors": [
+        "B",
+        "G"
+      ],
+      "color_identity": [
+        "B",
+        "G"
+      ],
+      "keywords": [],
+      "legalities": {
+        "standard": "not_legal",
+        "future": "not_legal",
+        "historic": "not_legal",
+        "timeless": "not_legal",
+        "gladiator": "not_legal",
+        "pioneer": "not_legal",
+        "modern": "not_legal",
+        "legacy": "legal",
+        "pauper": "not_legal",
+        "vintage": "legal",
+        "penny": "not_legal",
+        "commander": "legal",
+        "oathbreaker": "legal",
+        "standardbrawl": "not_legal",
+        "brawl": "not_legal",
+        "competitivebrawl": "not_legal",
+        "alchemy": "not_legal",
+        "paupercommander": "not_legal",
+        "duel": "legal",
+        "oldschool": "not_legal",
+        "premodern": "not_legal",
+        "predh": "not_legal",
+        "tlr": "not_legal"
+      },
+      "games": [
+        "paper",
+        "mtgo"
+      ],
+      "layout": "normal",
+      "oversized": false,
+      "border_color": "black",
+      "set": "tdc",
+      "set_name": "Tarkir: Dragonstorm Commander",
+      "collector_number": "297",
+      "lang": "en",
+      "finishes": [
+        "nonfoil"
+      ],
+      "scryfall_uri": "https://scryfall.com/card/tdc/297/meren-of-clan-nel-toth?utm_source=api",
+      "power": "3",
+      "toughness": "4"
+    },
+    {
+      "object": "card",
+      "id": "eabc978a-0666-472d-bdc6-d4b29d29eca4",
+      "oracle_id": "0715e860-3b3b-4331-9718-207973e94fee",
+      "name": "Tatyova, Benthic Druid",
+      "type_line": "Legendary Creature — Merfolk Druid",
+      "oracle_text": "Landfall — Whenever a land you control enters, you gain 1 life and draw a card.",
+      "mana_cost": "{3}{G}{U}",
+      "cmc": 5.0,
+      "colors": [
+        "G",
+        "U"
+      ],
+      "color_identity": [
+        "G",
+        "U"
+      ],
+      "keywords": [
+        "Landfall"
+      ],
+      "legalities": {
+        "standard": "legal",
+        "future": "legal",
+        "historic": "legal",
+        "timeless": "legal",
+        "gladiator": "legal",
+        "pioneer": "legal",
+        "modern": "legal",
+        "legacy": "legal",
+        "pauper": "not_legal",
+        "vintage": "legal",
+        "penny": "not_legal",
+        "commander": "legal",
+        "oathbreaker": "legal",
+        "standardbrawl": "legal",
+        "brawl": "legal",
+        "competitivebrawl": "legal",
+        "alchemy": "legal",
+        "paupercommander": "not_legal",
+        "duel": "legal",
+        "oldschool": "not_legal",
+        "premodern": "not_legal",
+        "predh": "not_legal",
+        "tlr": "not_legal"
+      },
+      "games": [
+        "paper",
+        "arena",
+        "mtgo"
+      ],
+      "layout": "normal",
+      "oversized": false,
+      "border_color": "black",
+      "set": "fdn",
+      "set_name": "Foundations",
+      "collector_number": "247",
+      "lang": "en",
+      "finishes": [
+        "nonfoil",
+        "foil"
+      ],
+      "scryfall_uri": "https://scryfall.com/card/fdn/247/tatyova-benthic-druid?utm_source=api",
+      "power": "3",
+      "toughness": "3"
+    },
+    {
+      "object": "card",
+      "id": "8fbd18ce-0ac3-4b52-9cd0-0af7e0244207",
+      "oracle_id": "7e00b0cd-d212-4604-ba07-da21f4fe00b0",
+      "name": "Sram, Senior Edificer",
+      "type_line": "Legendary Creature — Dwarf Advisor",
+      "oracle_text": "Whenever you cast an Aura, Equipment, or Vehicle spell, draw a card.",
+      "mana_cost": "{1}{W}",
+      "cmc": 2.0,
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "keywords": [],
+      "legalities": {
+        "standard": "not_legal",
+        "future": "not_legal",
+        "historic": "legal",
+        "timeless": "legal",
+        "gladiator": "legal",
+        "pioneer": "legal",
+        "modern": "legal",
+        "legacy": "legal",
+        "pauper": "not_legal",
+        "vintage": "legal",
+        "penny": "legal",
+        "commander": "legal",
+        "oathbreaker": "legal",
+        "standardbrawl": "not_legal",
+        "brawl": "legal",
+        "competitivebrawl": "legal",
+        "alchemy": "not_legal",
+        "paupercommander": "not_legal",
+        "duel": "legal",
+        "oldschool": "not_legal",
+        "premodern": "not_legal",
+        "predh": "not_legal",
+        "tlr": "legal"
+      },
+      "games": [
+        "paper",
+        "mtgo"
+      ],
+      "layout": "normal",
+      "oversized": false,
+      "border_color": "black",
+      "set": "soc",
+      "set_name": "Secrets of Strixhaven Commander",
+      "collector_number": "176",
+      "lang": "en",
+      "finishes": [
+        "nonfoil"
+      ],
+      "scryfall_uri": "https://scryfall.com/card/soc/176/sram-senior-edificer?utm_source=api",
+      "power": "2",
+      "toughness": "2"
+    },
+    {
+      "object": "card",
+      "id": "4a1f905f-1d55-4d02-9d24-e58070793d3f",
+      "oracle_id": "abbcb153-0763-44c6-964f-b4ff0eb64257",
+      "name": "Atraxa, Grand Unifier",
+      "type_line": "Legendary Creature — Phyrexian Angel",
+      "oracle_text": "Flying, vigilance, deathtouch, lifelink\nWhen Atraxa enters, reveal the top ten cards of your library. For each card type, you may put a card of that type from among the revealed cards into your hand. Put the rest on the bottom of your library in a random order. (Artifact, battle, creature, enchantment, instant, land, planeswalker, and sorcery are card types.)",
+      "mana_cost": "{3}{G}{W}{U}{B}",
+      "cmc": 7.0,
+      "colors": [
+        "B",
+        "G",
+        "U",
+        "W"
+      ],
+      "color_identity": [
+        "B",
+        "G",
+        "U",
+        "W"
+      ],
+      "keywords": [
+        "Deathtouch",
+        "Flying",
+        "Lifelink",
+        "Vigilance"
+      ],
+      "legalities": {
+        "standard": "not_legal",
+        "future": "not_legal",
+        "historic": "legal",
+        "timeless": "legal",
+        "gladiator": "legal",
+        "pioneer": "legal",
+        "modern": "legal",
+        "legacy": "legal",
+        "pauper": "not_legal",
+        "vintage": "legal",
+        "penny": "not_legal",
+        "commander": "legal",
+        "oathbreaker": "legal",
+        "standardbrawl": "not_legal",
+        "brawl": "legal",
+        "competitivebrawl": "legal",
+        "alchemy": "not_legal",
+        "paupercommander": "not_legal",
+        "duel": "legal",
+        "oldschool": "not_legal",
+        "premodern": "not_legal",
+        "predh": "not_legal",
+        "tlr": "not_legal"
+      },
+      "games": [
+        "paper",
+        "mtgo",
+        "arena"
+      ],
+      "layout": "normal",
+      "oversized": false,
+      "border_color": "black",
+      "set": "one",
+      "set_name": "Phyrexia: All Will Be One",
+      "collector_number": "196",
+      "lang": "en",
+      "finishes": [
+        "nonfoil",
+        "foil"
+      ],
+      "scryfall_uri": "https://scryfall.com/card/one/196/atraxa-grand-unifier?utm_source=api",
+      "power": "7",
+      "toughness": "7"
+    },
+    {
+      "object": "card",
+      "id": "abc9e41e-fd03-4b6f-8f44-17ba94fa44f5",
+      "oracle_id": "936ae5dc-9838-47f3-ba1f-66523a7f5b76",
+      "name": "Alela, Artful Provocateur",
+      "type_line": "Legendary Creature — Faerie Warlock",
+      "oracle_text": "Flying, deathtouch, lifelink\nOther creatures you control with flying get +1/+0.\nWhenever you cast an artifact or enchantment spell, create a 1/1 blue Faerie creature token with flying.",
+      "mana_cost": "{1}{W}{U}{B}",
+      "cmc": 4.0,
+      "colors": [
+        "B",
+        "U",
+        "W"
+      ],
+      "color_identity": [
+        "B",
+        "U",
+        "W"
+      ],
+      "keywords": [
+        "Deathtouch",
+        "Flying",
+        "Lifelink"
+      ],
+      "legalities": {
+        "standard": "not_legal",
+        "future": "not_legal",
+        "historic": "legal",
+        "timeless": "legal",
+        "gladiator": "legal",
+        "pioneer": "legal",
+        "modern": "legal",
+        "legacy": "legal",
+        "pauper": "not_legal",
+        "vintage": "legal",
+        "penny": "legal",
+        "commander": "legal",
+        "oathbreaker": "legal",
+        "standardbrawl": "not_legal",
+        "brawl": "legal",
+        "competitivebrawl": "legal",
+        "alchemy": "not_legal",
+        "paupercommander": "not_legal",
+        "duel": "legal",
+        "oldschool": "not_legal",
+        "premodern": "not_legal",
+        "predh": "not_legal",
+        "tlr": "not_legal"
+      },
+      "games": [
+        "paper"
+      ],
+      "layout": "normal",
+      "oversized": false,
+      "border_color": "black",
+      "set": "ncc",
+      "set_name": "New Capenna Commander",
+      "collector_number": "325",
+      "lang": "en",
+      "finishes": [
+        "nonfoil"
+      ],
+      "scryfall_uri": "https://scryfall.com/card/ncc/325/alela-artful-provocateur?utm_source=api",
+      "power": "2",
+      "toughness": "3"
+    },
+    {
+      "object": "card",
+      "id": "86c5c337-d25f-4c3e-9762-09ed0c2d36d7",
+      "oracle_id": "33666a98-812f-4892-9f8d-33e0cbecc340",
+      "name": "Niv-Mizzet, Parun",
+      "type_line": "Legendary Creature — Dragon Wizard",
+      "oracle_text": "This spell can't be countered.\nFlying\nWhenever you draw a card, Niv-Mizzet deals 1 damage to any target.\nWhenever a player casts an instant or sorcery spell, you draw a card.",
+      "mana_cost": "{U}{U}{U}{R}{R}{R}",
+      "cmc": 6.0,
+      "colors": [
+        "R",
+        "U"
+      ],
+      "color_identity": [
+        "R",
+        "U"
+      ],
+      "keywords": [
+        "Flying"
+      ],
+      "legalities": {
+        "standard": "not_legal",
+        "future": "not_legal",
+        "historic": "legal",
+        "timeless": "legal",
+        "gladiator": "legal",
+        "pioneer": "legal",
+        "modern": "legal",
+        "legacy": "legal",
+        "pauper": "not_legal",
+        "vintage": "legal",
+        "penny": "legal",
+        "commander": "legal",
+        "oathbreaker": "legal",
+        "standardbrawl": "not_legal",
+        "brawl": "legal",
+        "competitivebrawl": "legal",
+        "alchemy": "not_legal",
+        "paupercommander": "not_legal",
+        "duel": "legal",
+        "oldschool": "not_legal",
+        "premodern": "not_legal",
+        "predh": "not_legal",
+        "tlr": "not_legal"
+      },
+      "games": [
+        "paper",
+        "mtgo"
+      ],
+      "layout": "normal",
+      "oversized": false,
+      "border_color": "black",
+      "set": "otc",
+      "set_name": "Outlaws of Thunder Junction Commander",
+      "collector_number": "235",
+      "lang": "en",
+      "finishes": [
+        "nonfoil"
+      ],
+      "scryfall_uri": "https://scryfall.com/card/otc/235/niv-mizzet-parun?utm_source=api",
+      "power": "5",
+      "toughness": "5"
+    },
+    {
+      "object": "card",
+      "id": "f6bb1ffc-2251-4655-b8f9-4c8047dd5d5f",
+      "oracle_id": "c6bdaf76-6a03-4695-9c4b-f040e73435af",
+      "name": "Guttersnipe",
+      "type_line": "Creature — Goblin Shaman",
+      "oracle_text": "Whenever you cast an instant or sorcery spell, this creature deals 2 damage to each opponent.",
+      "mana_cost": "{2}{R}",
+      "cmc": 3.0,
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "keywords": [],
+      "legalities": {
+        "standard": "legal",
+        "future": "legal",
+        "historic": "legal",
+        "timeless": "legal",
+        "gladiator": "legal",
+        "pioneer": "legal",
+        "modern": "legal",
+        "legacy": "legal",
+        "pauper": "legal",
+        "vintage": "legal",
+        "penny": "not_legal",
+        "commander": "legal",
+        "oathbreaker": "legal",
+        "standardbrawl": "legal",
+        "brawl": "legal",
+        "competitivebrawl": "legal",
+        "alchemy": "legal",
+        "paupercommander": "legal",
+        "duel": "legal",
+        "oldschool": "not_legal",
+        "premodern": "not_legal",
+        "predh": "not_legal",
+        "tlr": "legal"
+      },
+      "games": [
+        "paper",
+        "arena",
+        "mtgo"
+      ],
+      "layout": "normal",
+      "oversized": false,
+      "border_color": "black",
+      "set": "hoc",
+      "set_name": "The Hobbit Eternal",
+      "collector_number": "196",
+      "lang": "en",
+      "finishes": [
+        "nonfoil"
+      ],
+      "scryfall_uri": "https://scryfall.com/card/hoc/196/guttersnipe?utm_source=api",
+      "power": "2",
+      "toughness": "2"
+    },
+    {
+      "object": "card",
+      "id": "8c321159-43e5-40fc-9f0c-4ecc4f6cfd20",
+      "oracle_id": "111889d4-bcca-4b1f-ad48-3077e2f5136f",
+      "name": "Fiery Inscription",
+      "type_line": "Enchantment",
+      "oracle_text": "When this enchantment enters, the Ring tempts you.\nWhenever you cast an instant or sorcery spell, this enchantment deals 2 damage to each opponent.",
+      "mana_cost": "{2}{R}",
+      "cmc": 3.0,
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "keywords": [],
+      "legalities": {
+        "standard": "not_legal",
+        "future": "not_legal",
+        "historic": "legal",
+        "timeless": "legal",
+        "gladiator": "legal",
+        "pioneer": "not_legal",
+        "modern": "legal",
+        "legacy": "legal",
+        "pauper": "not_legal",
+        "vintage": "legal",
+        "penny": "not_legal",
+        "commander": "legal",
+        "oathbreaker": "legal",
+        "standardbrawl": "not_legal",
+        "brawl": "legal",
+        "competitivebrawl": "legal",
+        "alchemy": "not_legal",
+        "paupercommander": "not_legal",
+        "duel": "legal",
+        "oldschool": "not_legal",
+        "premodern": "not_legal",
+        "predh": "not_legal",
+        "tlr": "legal"
+      },
+      "games": [
+        "paper",
+        "mtgo",
+        "arena"
+      ],
+      "layout": "normal",
+      "oversized": false,
+      "border_color": "black",
+      "set": "ltr",
+      "set_name": "The Lord of the Rings: Tales of Middle-earth",
+      "collector_number": "126",
+      "lang": "en",
+      "finishes": [
+        "nonfoil",
+        "foil"
+      ],
+      "scryfall_uri": "https://scryfall.com/card/ltr/126/fiery-inscription?utm_source=api"
+    },
+    {
+      "object": "card",
+      "id": "b5275d76-2947-4219-be21-614c7421614a",
+      "oracle_id": "310f141c-7f37-4729-aed6-dd9c09db448d",
+      "name": "Blood Artist",
+      "type_line": "Creature — Vampire",
+      "oracle_text": "Whenever this creature or another creature dies, target player loses 1 life and you gain 1 life.",
+      "mana_cost": "{1}{B}",
+      "cmc": 2.0,
+      "colors": [
+        "B"
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "keywords": [],
+      "legalities": {
+        "standard": "not_legal",
+        "future": "not_legal",
+        "historic": "legal",
+        "timeless": "legal",
+        "gladiator": "legal",
+        "pioneer": "not_legal",
+        "modern": "legal",
+        "legacy": "legal",
+        "pauper": "not_legal",
+        "vintage": "legal",
+        "penny": "not_legal",
+        "commander": "legal",
+        "oathbreaker": "legal",
+        "standardbrawl": "not_legal",
+        "brawl": "legal",
+        "competitivebrawl": "legal",
+        "alchemy": "not_legal",
+        "paupercommander": "not_legal",
+        "duel": "legal",
+        "oldschool": "not_legal",
+        "premodern": "not_legal",
+        "predh": "not_legal",
+        "tlr": "legal"
+      },
+      "games": [
+        "paper",
+        "mtgo"
+      ],
+      "layout": "normal",
+      "oversized": false,
+      "border_color": "black",
+      "set": "soc",
+      "set_name": "Secrets of Strixhaven Commander",
+      "collector_number": "209",
+      "lang": "en",
+      "finishes": [
+        "nonfoil"
+      ],
+      "scryfall_uri": "https://scryfall.com/card/soc/209/blood-artist?utm_source=api",
+      "power": "0",
+      "toughness": "1"
+    },
+    {
+      "object": "card",
+      "id": "e1da8b79-249b-439a-a0ad-c8784bd716df",
+      "oracle_id": "65986c1b-8e51-4604-b685-d82fa7d1263a",
+      "name": "Skullclamp",
+      "type_line": "Artifact — Equipment",
+      "oracle_text": "Equipped creature gets +1/-1.\nWhenever equipped creature dies, draw two cards.\nEquip {1}",
+      "mana_cost": "{1}",
+      "cmc": 1.0,
+      "colors": [],
+      "color_identity": [],
+      "keywords": [
+        "Equip"
+      ],
+      "legalities": {
+        "standard": "not_legal",
+        "future": "not_legal",
+        "historic": "not_legal",
+        "timeless": "not_legal",
+        "gladiator": "not_legal",
+        "pioneer": "not_legal",
+        "modern": "banned",
+        "legacy": "banned",
+        "pauper": "not_legal",
+        "vintage": "legal",
+        "penny": "not_legal",
+        "commander": "legal",
+        "oathbreaker": "legal",
+        "standardbrawl": "not_legal",
+        "brawl": "not_legal",
+        "competitivebrawl": "not_legal",
+        "alchemy": "not_legal",
+        "paupercommander": "not_legal",
+        "duel": "legal",
+        "oldschool": "not_legal",
+        "premodern": "not_legal",
+        "predh": "legal",
+        "tlr": "banned"
+      },
+      "games": [
+        "paper",
+        "mtgo"
+      ],
+      "layout": "normal",
+      "oversized": false,
+      "border_color": "black",
+      "set": "trc",
+      "set_name": "Star Trek Commander",
+      "collector_number": "498",
+      "lang": "en",
+      "finishes": [
+        "nonfoil",
+        "foil"
+      ],
+      "scryfall_uri": "https://scryfall.com/card/trc/498/skullclamp?utm_source=api"
+    },
+    {
+      "object": "card",
+      "id": "d0b7cecf-b51b-4d30-b7e9-cd7976271e07",
+      "oracle_id": "9242cd3e-1a71-4700-8182-9c1005616033",
+      "name": "Impact Tremors",
+      "type_line": "Enchantment",
+      "oracle_text": "Whenever a creature you control enters, this enchantment deals 1 damage to each opponent.",
+      "mana_cost": "{1}{R}",
+      "cmc": 2.0,
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "keywords": [],
+      "legalities": {
+        "standard": "legal",
+        "future": "legal",
+        "historic": "legal",
+        "timeless": "legal",
+        "gladiator": "legal",
+        "pioneer": "legal",
+        "modern": "legal",
+        "legacy": "legal",
+        "pauper": "legal",
+        "vintage": "legal",
+        "penny": "legal",
+        "commander": "legal",
+        "oathbreaker": "legal",
+        "standardbrawl": "legal",
+        "brawl": "legal",
+        "competitivebrawl": "legal",
+        "alchemy": "legal",
+        "paupercommander": "legal",
+        "duel": "legal",
+        "oldschool": "not_legal",
+        "premodern": "not_legal",
+        "predh": "not_legal",
+        "tlr": "legal"
+      },
+      "games": [
+        "paper",
+        "arena",
+        "mtgo"
+      ],
+      "layout": "normal",
+      "oversized": false,
+      "border_color": "black",
+      "set": "fdn",
+      "set_name": "Foundations",
+      "collector_number": "717",
+      "lang": "en",
+      "finishes": [
+        "foil"
+      ],
+      "scryfall_uri": "https://scryfall.com/card/fdn/717/impact-tremors?utm_source=api"
+    },
+    {
+      "object": "card",
+      "id": "276f5cee-a501-4658-bd4d-7a044bf1ccbc",
+      "oracle_id": "8c52bd39-0586-48ca-b263-17210cf9feb6",
+      "name": "Craterhoof Behemoth",
+      "type_line": "Creature — Beast",
+      "oracle_text": "Haste\nWhen this creature enters, creatures you control gain trample and get +X/+X until end of turn, where X is the number of creatures you control.",
+      "mana_cost": "{5}{G}{G}{G}",
+      "cmc": 8.0,
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "keywords": [
+        "Haste"
+      ],
+      "legalities": {
+        "standard": "legal",
+        "future": "legal",
+        "historic": "legal",
+        "timeless": "legal",
+        "gladiator": "legal",
+        "pioneer": "legal",
+        "modern": "legal",
+        "legacy": "legal",
+        "pauper": "not_legal",
+        "vintage": "legal",
+        "penny": "not_legal",
+        "commander": "legal",
+        "oathbreaker": "legal",
+        "standardbrawl": "legal",
+        "brawl": "legal",
+        "competitivebrawl": "legal",
+        "alchemy": "legal",
+        "paupercommander": "not_legal",
+        "duel": "legal",
+        "oldschool": "not_legal",
+        "premodern": "not_legal",
+        "predh": "not_legal",
+        "tlr": "not_legal"
+      },
+      "games": [
+        "paper",
+        "arena",
+        "mtgo"
+      ],
+      "layout": "normal",
+      "oversized": false,
+      "border_color": "black",
+      "set": "tdm",
+      "set_name": "Tarkir: Dragonstorm",
+      "collector_number": "138",
+      "lang": "en",
+      "finishes": [
+        "nonfoil",
+        "foil"
+      ],
+      "scryfall_uri": "https://scryfall.com/card/tdm/138/craterhoof-behemoth?utm_source=api",
+      "power": "5",
+      "toughness": "5"
+    },
+    {
+      "object": "card",
+      "id": "4f616706-ec97-4923-bb1e-11a69fbaa1f8",
+      "oracle_id": "cc187110-1148-4090-bbb8-e205694a39f5",
+      "name": "Counterspell",
+      "type_line": "Instant",
+      "oracle_text": "Counter target spell.",
+      "mana_cost": "{U}{U}",
+      "cmc": 2.0,
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "keywords": [],
+      "legalities": {
+        "standard": "not_legal",
+        "future": "not_legal",
+        "historic": "legal",
+        "timeless": "legal",
+        "gladiator": "legal",
+        "pioneer": "not_legal",
+        "modern": "legal",
+        "legacy": "legal",
+        "pauper": "legal",
+        "vintage": "legal",
+        "penny": "not_legal",
+        "commander": "legal",
+        "oathbreaker": "legal",
+        "standardbrawl": "not_legal",
+        "brawl": "legal",
+        "competitivebrawl": "legal",
+        "alchemy": "not_legal",
+        "paupercommander": "legal",
+        "duel": "legal",
+        "oldschool": "not_legal",
+        "premodern": "legal",
+        "predh": "legal",
+        "tlr": "legal"
+      },
+      "games": [
+        "paper",
+        "mtgo"
+      ],
+      "layout": "normal",
+      "oversized": false,
+      "border_color": "black",
+      "set": "dsc",
+      "set_name": "Duskmourn: House of Horror Commander",
+      "collector_number": "114",
+      "lang": "en",
+      "finishes": [
+        "nonfoil"
+      ],
+      "scryfall_uri": "https://scryfall.com/card/dsc/114/counterspell?utm_source=api"
+    },
+    {
+      "object": "card",
+      "id": "4645eebf-c9fc-4ee7-b646-61dc1205b4b0",
+      "oracle_id": "b1544f21-7e98-461b-aed5-e748b0168c52",
+      "name": "Swords to Plowshares",
+      "type_line": "Instant",
+      "oracle_text": "Exile target creature. Its controller gains life equal to its power.",
+      "mana_cost": "{W}",
+      "cmc": 1.0,
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "keywords": [],
+      "legalities": {
+        "standard": "not_legal",
+        "future": "not_legal",
+        "historic": "banned",
+        "timeless": "legal",
+        "gladiator": "legal",
+        "pioneer": "not_legal",
+        "modern": "not_legal",
+        "legacy": "legal",
+        "pauper": "not_legal",
+        "vintage": "legal",
+        "penny": "not_legal",
+        "commander": "legal",
+        "oathbreaker": "legal",
+        "standardbrawl": "not_legal",
+        "brawl": "legal",
+        "competitivebrawl": "legal",
+        "alchemy": "not_legal",
+        "paupercommander": "not_legal",
+        "duel": "legal",
+        "oldschool": "not_legal",
+        "premodern": "legal",
+        "predh": "legal",
+        "tlr": "legal"
+      },
+      "games": [
+        "paper",
+        "mtgo"
+      ],
+      "layout": "normal",
+      "oversized": false,
+      "border_color": "black",
+      "set": "trc",
+      "set_name": "Star Trek Commander",
+      "collector_number": "429",
+      "lang": "en",
+      "finishes": [
+        "nonfoil",
+        "foil"
+      ],
+      "scryfall_uri": "https://scryfall.com/card/trc/429/swords-to-plowshares?utm_source=api"
+    },
+    {
+      "object": "card",
+      "id": "a78f5d3f-74d6-4ec1-89c4-e24639d3f4ba",
+      "oracle_id": "8b755881-a72d-4e21-a369-d2924eb4585a",
+      "name": "Cultivate",
+      "type_line": "Sorcery",
+      "oracle_text": "Search your library for up to two basic land cards, reveal those cards, put one onto the battlefield tapped and the other into your hand, then shuffle.",
+      "mana_cost": "{2}{G}",
+      "cmc": 3.0,
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "keywords": [],
+      "legalities": {
+        "standard": "not_legal",
+        "future": "not_legal",
+        "historic": "legal",
+        "timeless": "legal",
+        "gladiator": "legal",
+        "pioneer": "legal",
+        "modern": "legal",
+        "legacy": "legal",
+        "pauper": "legal",
+        "vintage": "legal",
+        "penny": "legal",
+        "commander": "legal",
+        "oathbreaker": "legal",
+        "standardbrawl": "not_legal",
+        "brawl": "legal",
+        "competitivebrawl": "legal",
+        "alchemy": "not_legal",
+        "paupercommander": "legal",
+        "duel": "legal",
+        "oldschool": "not_legal",
+        "premodern": "not_legal",
+        "predh": "legal",
+        "tlr": "legal"
+      },
+      "games": [
+        "paper",
+        "mtgo"
+      ],
+      "layout": "normal",
+      "oversized": false,
+      "border_color": "black",
+      "set": "trc",
+      "set_name": "Star Trek Commander",
+      "collector_number": "460",
+      "lang": "en",
+      "finishes": [
+        "nonfoil",
+        "foil"
+      ],
+      "scryfall_uri": "https://scryfall.com/card/trc/460/cultivate?utm_source=api"
+    }
+  ]
+}
