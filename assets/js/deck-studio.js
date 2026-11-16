@@ -912,6 +912,7 @@
       const href = URL.createObjectURL(blob), anchor = view.node("a");
       anchor.href = href; anchor.download = `${deck.name.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "") || "manascout-deck"}.json`;
       document.body.append(anchor); anchor.click(); anchor.remove(); setTimeout(() => URL.revokeObjectURL(href), 1000);
+      window.ManaScoutAnalytics?.track("deck_export",{export_format:"json",deck_format:deck.format,method:"download"});
       message("JSON backup prepared. Keep the downloaded file somewhere safe; browser drafts do not sync across devices.");
     } catch (error) { message(`Backup could not be downloaded: ${error.message}`); }
   }
@@ -1000,6 +1001,7 @@
       imported.name = `${imported.name.slice(0, 69)} (restored)`;
       activateDraft({ deck: imported, token: null, dirty: true }, "Backup restored as a separate draft. Current legality is unverified until rechecked.");
       await saveNow(true); refreshDeckData();
+      window.ManaScoutAnalytics?.track("deck_import_complete",{import_format:"json",deck_format:imported.format});
     } catch (error) { message(error.message); }
     finally { $("backup-file").value = ""; }
   });

@@ -3052,6 +3052,7 @@
           `${card.name} Printings, Foils & Art | ManaScout`;
       }
 
+      if (opts.userSearch) window.ManaScoutAnalytics?.track("search_success", {surface:guideName?"guide":"home", exact_printing:Boolean(requestedId)});
       return card;
 
     } catch (error) {
@@ -3215,7 +3216,7 @@
           ui.input.value.trim();
 
         if (name) {
-          void loadCard(name);
+          void loadCard(name, { userSearch: true });
         }
       }
     );
@@ -3292,7 +3293,7 @@
 
           if (item) {
             void loadCard(
-              item.dataset.name
+              item.dataset.name, { userSearch: true }
             );
           }
         }

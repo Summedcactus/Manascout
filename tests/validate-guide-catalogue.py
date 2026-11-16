@@ -120,6 +120,10 @@ def audit():
     expected = set(urls + [ORIGIN + '/', ORIGIN + '/card/', ORIGIN + '/deck/', ORIGIN + '/contact/'])
     dates = check_sitemap((ROOT / 'sitemap.xml').read_text(), expected, datetime.now(timezone.utc).date())
     evidence = json.loads((ROOT / 'docs/card-guide-research-3b.json').read_text())['sitemap_lastmod']['entries']
+    # Preserve historical evidence; overlay only the five documented Phase 5 editorial changes.
+    for g in json.loads((ROOT / 'docs/us-search-baseline.json').read_text())['guides'].values():
+        item = g['sitemap']
+        evidence[item['url']] = {'lastmod': item['lastmod'], 'basis': item['basis']}
     assert set(evidence) == expected
     assert all(dates[url] == evidence[url]['lastmod'] and evidence[url]['basis'] for url in dates)
     records, outliers = [], []

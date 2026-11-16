@@ -1,3 +1,4 @@
+const phase5=JSON.parse(require('node:fs').readFileSync('docs/us-search-baseline.json','utf8')).guides;
 /* Reviewed catalogue fixtures, 4 November 2026. These test editorial integrity and
  * the real shared integration helpers, not live API availability or physical foils. */
 const {test}=require('node:test');
@@ -22,7 +23,7 @@ const expected={
 };
 const slugs=Object.keys(expected),app=read('assets/js/app.js');
 for(const slug of slugs){
- const html=read(`card/${slug}/index.html`),g=ledger.cards.find(x=>x.slug===slug),revision=revisions[slug]||g,[name,code,num,artist,count]=expected[slug],url=`https://manascout.co.uk/card/${slug}/`;
+ const html=read(`card/${slug}/index.html`),g=ledger.cards.find(x=>x.slug===slug),revision={...(revisions[slug]||g),...(phase5[slug]||{})},[name,code,num,artist,count]=expected[slug],url=`https://manascout.co.uk/card/${slug}/`;
  test(`${name}: researched original, precise card identity, metadata and linked Article graph`,()=>{
   assert.equal(g.name,name);assert.deepEqual(g.first.slice(1,3),[code,num]);assert.equal(g.first[5],artist);
   assert.ok(plain(html).includes(`${code} #${num}`));assert.ok(plain(html).includes(artist));
@@ -30,7 +31,7 @@ for(const slug of slugs){
   const meta=html.match(/<meta name="description" content="([^"]+)"/)[1];assert.ok(meta.length>100);assert.equal(plain(html.match(/<title>([^]*?)<\/title>/)[1]),revision.title);assert.match(g.title,/Printings|First Printing/);
   assert.ok(html.includes(`<link rel="canonical" href="${url}">`));assert.ok(html.includes(`<meta property="og:url" content="${url}">`));
   const ld=graph(html),page=ld.find(x=>x['@type']==='WebPage'),article=ld.find(x=>x['@type']==='Article'),crumb=ld.find(x=>x['@type']==='BreadcrumbList');
-  assert.equal(page.url,url);assert.equal(page.mainEntity['@id'],article['@id']);assert.equal(article.mainEntityOfPage['@id'],page['@id']);assert.equal(article.about.name,name);assert.equal(article.description,revision.description);assert.equal(article.dateModified,revisions[slug]?.reviewed||'2026-11-04');assert.ok(article.citation.length>=count);assert.ok(article.citation.every(x=>/^https:\/\//.test(x)));assert.equal(crumb.itemListElement.at(-1).item,url);
+  assert.equal(page.url,url);assert.equal(page.mainEntity['@id'],article['@id']);assert.equal(article.mainEntityOfPage['@id'],page['@id']);assert.equal(article.about.name,name);assert.equal(article.description,revision.description);assert.equal(article.dateModified,phase5[slug]?.reviewed||revisions[slug]?.reviewed||'2026-11-04');assert.ok(article.citation.length>=count);assert.ok(article.citation.every(x=>/^https:\/\//.test(x)));assert.equal(crumb.itemListElement.at(-1).item,url);
   assert.doesNotMatch(JSON.stringify(ld),/"(?:Offer|Product|AggregateRating|price|ratingValue)"/);
  });
  test(`${name}: independently scoped shortlist, artists and finish records agree with research ledger`,()=>{
