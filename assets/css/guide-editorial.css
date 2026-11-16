@@ -86,3 +86,9 @@
   .printing-guide [data-guide-static] { grid-template-columns: minmax(0,1fr); }
   .printing-guide .guide-static-art { max-width: 170px; }
 }
+
+/* Promote one existing explorer destination on the query-aligned cohort. */
+.printing-guide .guide-jump-links .guide-primary-cta {padding:8px 12px;border:1px solid var(--accent-bright,#b8586b);border-radius:7px;background:var(--panel);color:var(--text);text-decoration:none}
+.printing-guide .guide-primary-cta:focus-visible {outline:2px solid var(--accent-bright,#d7768b);outline-offset:3px}
+.printing-guide .guide-intent-answer p {max-width:72ch;line-height:1.65;margin:12px 0}
+.printing-guide .guide-update-note {font-size:13px;color:var(--muted);margin:24px 0;line-height:1.6}

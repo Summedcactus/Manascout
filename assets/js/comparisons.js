@@ -114,8 +114,8 @@
     try{saved=read(root.localStorage);storedRevision=root.localStorage.getItem(KEY);}catch{storageOkay=false;say('Saved library unavailable or damaged. Current comparisons and exports still work; existing storage is left untouched.');}
     const esc=s=>String(s??'Unknown').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
     function persist(next) {
-      if(!storageOkay) {saved=next;say('Library kept in memory only. Export JSON: browser storage is unavailable or damaged.');return;}
-      try{if(root.localStorage.getItem(KEY)!==storedRevision)fail('Library changed in another tab.');write(root.localStorage,next);storedRevision=root.localStorage.getItem(KEY);saved=next;say('Saved in this browser. Export a backup for portability.');}catch{saved=next;say('Storage write failed or library changed in another tab. Existing disk data is retained. Work remains in memory; export JSON before reloading.');}
+      if(!storageOkay) {saved=next;say('Library kept in memory only. Export JSON: browser storage is unavailable or damaged.');return 'memory';}
+      try{if(root.localStorage.getItem(KEY)!==storedRevision)fail('Library changed in another tab.');write(root.localStorage,next);storedRevision=root.localStorage.getItem(KEY);saved=next;say('Saved in this browser. Export a backup for portability.');return 'browser';}catch{saved=next;say('Storage write failed or library changed in another tab. Existing disk data is retained. Work remains in memory; export JSON before reloading.');return 'memory';}
     }
     function renderLibrary() {
       $('.cmp-saved').innerHTML=saved.map((s,i)=>`<div><label>Saved comparison name <input data-saved-name="${i}" maxlength="100" value="${esc(s.name)}"></label><button data-open="${i}">Open</button><button data-rename="${i}">Rename</button><button data-delete="${i}">Delete</button></div>`).join('') || '<p>No saved comparisons.</p>';
@@ -139,7 +139,7 @@
     document.addEventListener('click',e=>{
       const b=e.target.closest('[data-compare-id]');if(!b)return;
       if(busy){say('Please wait for exact record checks to finish.');return;}
-      try{const c=bridge.card(b.dataset.compareId);items=add(items,c,bridge.finish(c));draw();say(`Added ${c.name}, ${c.set}, ${c.lang}, ${bridge.finish(c)}. ${items.length} selected.`);}catch(err){say(err.message);}
+      try{const c=bridge.card(b.dataset.compareId);items=add(items,c,bridge.finish(c));draw();if(items.length===1){const guide=root.ManaScoutAnalytics?.guide();if(guide&&guide!=='none')root.ManaScoutAnalytics.track('guide_compare_start',{guide,selection_count:items.length});}say(`Added ${c.name}, ${c.set}, ${c.lang}, ${bridge.finish(c)}. ${items.length} selected.`);}catch(err){say(err.message);}
     });
     function download(raw,ext,type) {const u=URL.createObjectURL(new Blob([raw],{type}));const a=document.createElement('a');a.href=u;a.download='manascout-comparison.'+ext;a.click();setTimeout(()=>URL.revokeObjectURL(u),1000);}
     async function open(s) {
@@ -155,10 +155,10 @@
       try {
         if(b.dataset.remove){const buttons=[...host.querySelectorAll('[data-remove]')],i=buttons.indexOf(b);items=items.filter(x=>key(x)!==b.dataset.remove);draw();(host.querySelectorAll('[data-remove]')[Math.min(i,items.length-1)]||$('.cmp-library summary')).focus();say('Version removed.');}
         if(b.dataset.cmp==='clear'){items=[];draw();$('.cmp-library summary').focus();say('Comparison cleared. Decks are unchanged.');}
-        if(b.dataset.cmp==='save'){const s=decode(encode($('.cmp-name').value,items));persist([...saved,s]);renderLibrary();}
+        if(b.dataset.cmp==='save'){const s=decode(encode($('.cmp-name').value,items));const storage=persist([...saved,s]);renderLibrary();root.ManaScoutAnalytics?.track('comparison_save',{selection_count:items.length,storage});}
         if(b.dataset.cmp==='json')download(encode($('.cmp-name').value,items),'json','application/json');
         if(b.dataset.cmp==='csv')download(csv(items),'csv','text/csv;charset=utf-8');
-        if(b.dataset.cmp==='links'||b.dataset.cmp==='share'){const t=$('.cmp-links');t.hidden=false;const shared=new URL('/',location.origin);shared.hash='compare='+shareState(items);t.value=b.dataset.cmp==='share'?shared.href:items.map(link).join('\n');t.focus();t.select();try{await navigator.clipboard.writeText(t.value);say(b.dataset.cmp==='share'?'Whole comparison link copied. Opening it does not save it automatically.':'Exact links copied.');}catch{say('Select and copy the exact links below.');}}
+        if(b.dataset.cmp==='links'||b.dataset.cmp==='share'){const t=$('.cmp-links');t.hidden=false;const shared=new URL('/',location.origin);shared.hash='compare='+shareState(items);t.value=b.dataset.cmp==='share'?shared.href:items.map(link).join('\n');t.focus();t.select();let method='manual';try{await navigator.clipboard.writeText(t.value);method='clipboard';say(b.dataset.cmp==='share'?'Whole comparison link copied. Opening it does not save it automatically.':'Exact links copied.');}catch{say('Select and copy the exact links below.');}if(b.dataset.cmp==='share')root.ManaScoutAnalytics?.track('comparison_share',{selection_count:items.length,method});}
         if(b.dataset.open!==undefined)await open(saved[Number(b.dataset.open)]);
         if(b.dataset.rename!==undefined){const i=Number(b.dataset.rename),next=[...saved];next[i]=validate({...next[i],name:host.querySelector(`[data-saved-name="${i}"]`).value});persist(next);renderLibrary();}
         if(b.dataset.delete!==undefined){const next=saved.filter((_,i)=>i!==Number(b.dataset.delete));persist(next);renderLibrary();$('.cmp-library summary').focus();}

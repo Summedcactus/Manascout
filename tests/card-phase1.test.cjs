@@ -13,7 +13,7 @@ test('every permanent guide exposes one compact navigation, static reference and
   assert.equal((s.match(/<img\b/g)||[]).length,1,g.name);
   assert.match(s,/class="printing-guide"/);assert.match(s,/guide-editorial.css/);
   const nav=s.match(/<nav class="guide-jump-links"[^]*?<\/nav>/)[0];
-  assert.match(nav,/Sources/);assert.match(nav,/Printing shortlist/);assert.match(nav,/Live explorer/);
+  assert.match(nav,/Sources/);assert.match(nav,/Printing shortlist/);if(['mr-spock-science-officer','sol-ring','arcane-signet','rhystic-study','deflecting-swat'].includes(g.name)) assert.match(nav,/<a class="guide-primary-cta" href="#[^"]+-printings-heading">Compare printings<\/a>/);else assert.match(nav,/Live explorer/);
   const history=s.search(/<section[^>]+aria-labelledby="[^"]*-history-heading"/);
   assert.ok(s.indexOf('<table class="printings-table"')<history,g.name);
   assert.match(s,/guide-skip/);assert.match(s,/guide-image-error/);assert.match(s,/data-static-status/);

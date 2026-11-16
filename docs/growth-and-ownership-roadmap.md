@@ -125,7 +125,7 @@ Phase 1 implementation is committed on DEVELOPMENT; publication remains manual. 
 - [x] T02 Audit generator payoff/enabler compatibility with representative commanders. Assess output strategy and draw/ramp/interaction; preserve honest bracket/price qualifications. Do not market role counts as proof of deck quality.
 - [ ] T03 Verify HTTP/HTTPS behavior and plan draft recovery before HTTPS enforcement. Hosting changes remain manual under repository rules.
 - [ ] T04 Obtain missing indexing/Google-selected-canonical and private AdSense evidence through available authorized access. Keep unknowns recorded; no paid Windsor upgrade is required merely to provide exports from native GSC.
-- [ ] T05 Establish a small privacy-appropriate event schema: successful search, compare selection, saved shortlist, deck import/export, merchant exit and completed support. Do not collect raw deck contents, emails or unrestricted search strings by default.
+- [ ] T05 **Partially implemented, Phase 5 (16 November 2026):** bounded core event schema and no-op workflow hooks are tested; approved collection and completed-support measurement remain pending. See [US search growth](us-search-growth.md). Establish a small privacy-appropriate event schema: successful search, compare selection, saved shortlist, deck import/export, merchant exit and completed support. Do not collect raw deck contents, emails or unrestricted search strings by default.
 - [ ] T06 Add an About/methodology explanation: real operator, what data comes from where, recommendation criteria, price limitations and correction route. Never invent personal experience or credentials.
 
 ### Whole-site usefulness and presentation
@@ -164,7 +164,7 @@ Additional evidence references:
 - [ ] G02 Test task completion with a small number of real collectors; record confusion and successful outcomes. Small usability samples are directional, not conversion forecasts.
 - [ ] G03 Create a useful demonstration/comparison with a deep link for relevant communities, creators or retailers. Respect community rules and disclose ownership. No unsolicited posting, fabricated recommendations or purchased links.
 - [ ] G04 Investigate the other ManaScout service and clarify brand/domain identity; do not assume infringement or rename without evidence.
-- [ ] G05 Review search in comparable page cohorts, device/country/position and page age. Review feature completion and returning use. Log each release hypothesis and outcome.
+- [ ] G05 **Partially implemented, Phase 5 (16 November 2026):** fixed five-page US cohort, supplied baseline, release hypotheses and 7/14/28-day review procedure documented in [US search growth](us-search-growth.md). Post-release outcomes and returning-use review remain pending. Review search in comparable page cohorts, device/country/position and page age. Review feature completion and returning use. Log each release hypothesis and outcome.
 - [ ] G06 Evaluate optional recurring support and sponsorship using net receipts and actual retention. A supporter is not the same as a card purchaser; a checkout visit is not revenue.
 - [ ] G07 Evaluate paid software convenience only after observed repeat demand, maintenance cost estimates and rights/hosting review.
 - [ ] G08 Add scheduled source/freshness checks and broken-link/browser smoke checks. Alert for material failures rather than rewriting every guide weekly.
