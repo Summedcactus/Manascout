@@ -102,21 +102,21 @@ def json_nodes(text):
 
 def audit():
     files = sorted((ROOT / 'card').glob('*/index.html'))
-    assert len(files) == 59, 'Permanent guide count changed'
+    assert len(files) == 63, 'Permanent guide count changed'
     slugs = [f.parent.name for f in files]
     app = (ROOT / 'assets/js/app.js').read_text()
     registered = re.findall(r'"([a-z0-9-]+)"', re.search(r'const GUIDE_SLUGS = new Set\(\[(.*?)\]\)', app, re.S)[1])
-    assert len(registered) == 59 and sorted(registered) == slugs
+    assert len(registered) == 63 and sorted(registered) == slugs
     directory = (ROOT / 'card/index.html').read_text()
     listing = next(n for n in json_nodes(directory) if n.get('@type') == 'ItemList')
-    assert listing['numberOfItems'] == 59 and len(listing['itemListElement']) == 59
+    assert listing['numberOfItems'] == 63 and len(listing['itemListElement']) == 63
     urls = [ORIGIN + '/card/' + s + '/' for s in slugs]
     assert sorted(i['url'] for i in listing['itemListElement']) == urls
-    assert [i['position'] for i in listing['itemListElement']] == list(range(1, 60))
+    assert [i['position'] for i in listing['itemListElement']] == list(range(1, 64))
     archive = [a['href'] for tag, a in Page(directory).tags if tag == 'a' and 'hub-guide' in a.get('class', '').split()]
-    assert len(archive) == len(set(archive)) == 59
+    assert len(archive) == len(set(archive)) == 63
     assert sorted(archive) == ['/card/' + s + '/' for s in slugs]
-    assert 'Showing all 59 ManaScout card guides' in directory and '<strong>59</strong> card guides' in directory
+    assert 'Showing all 63 ManaScout card guides' in directory and '<strong>63</strong> card guides' in directory
     expected = set(urls + [ORIGIN + '/', ORIGIN + '/card/', ORIGIN + '/deck/', ORIGIN + '/contact/'])
     dates = check_sitemap((ROOT / 'sitemap.xml').read_text(), expected, datetime.now(timezone.utc).date())
     evidence = json.loads((ROOT / 'docs/card-guide-research-3b.json').read_text())['sitemap_lastmod']['entries']
@@ -124,6 +124,7 @@ def audit():
     for g in json.loads((ROOT / 'docs/us-search-baseline.json').read_text())['guides'].values():
         item = g['sitemap']
         evidence[item['url']] = {'lastmod': item['lastmod'], 'basis': item['basis']}
+    evidence.update(json.loads((ROOT / 'docs/phase6-search-growth.json').read_text())['sitemap'])
     assert set(evidence) == expected
     assert all(dates[url] == evidence[url]['lastmod'] and evidence[url]['basis'] for url in dates)
     records, outliers = [], []
@@ -183,8 +184,8 @@ if __name__ == '__main__':
     if not result.wasSuccessful(): raise SystemExit(1)
     report = audit()
     if args.report: (ROOT / args.report).write_text(json.dumps(report, ensure_ascii=False, indent=2) + '\n')
-    print('PASS 59 guides: registry, directory, metadata, canonicals, unique explorer IDs, ARIA and local links/assets')
-    print('PASS 63 unique sitemap URLs: one loc/lastmod per entry, valid non-future dates and URL-specific history evidence')
+    print('PASS 63 guides: registry, directory, metadata, canonicals, unique explorer IDs, ARIA and local links/assets')
+    print('PASS 67 unique sitemap URLs: one loc/lastmod per entry, valid non-future dates and URL-specific history evidence')
     print('LASTMOD', report['sitemap_lastmod_counts'])
     print('REPORT structural outliers for separate final audit:', len(report['structural_outliers_for_final_audit']))
     for item in report['structural_outliers_for_final_audit']: print('OUTLIER', item['path'], '; '.join(item['reasons']))

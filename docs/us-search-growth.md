@@ -170,3 +170,16 @@ T05 is **partially complete**: bounded core events and no-op hooks implemented; 
 - `git diff --check` passed. No new canonical pages, regional URLs, providers or external/merchant destinations. A recorded pre-change external-destination inventory and full sitemap URL/date map guard these invariants.
 
 Browser reports and screenshots were generated outside the repository under `/workspace/work/phase5/`; they are execution artifacts, not added site assets. These checks do not establish future CTR, traffic, AdSense status or earnings.
+
+
+## Phase 6 — separate cohort, 17 November 2026
+
+Latest supplied page evidence runs through **16 November**, for the **1–16 November 2026** window. Country/search-type scope is unspecified for these page examples; they are not substituted for Phase 5’s US-only baseline. The five Phase 5 titles, descriptions and opening answers remain unchanged, with only permitted dependency/context linking and objective date-consistency corrections.
+
+Phase 6 audits/optimises 15 other existing guides, adds four deliberately researched printing guides and refreshes COTW with verified nonfoil Cynette J25 #35. The hub contains 63 guides and the sitemap 67 canonical URLs. No mass content, thin query pages, provider or merchant integration is added.
+
+The [complete Phase 6 audit](phase6-search-growth.md) records every supplied figure, opportunity triage, exact before/after titles, selection reasons, intentionally unchanged pages, new-guide/COTW rationale, date/link changes and remaining hypotheses. [The machine-readable ledger](phase6-search-growth.json) preserves old/new descriptions/openings and verified printing snapshots.
+
+CTR improvement remains **unproven** until actual release, recrawl and comparable post-release measurement. Use distinct Phase 5, Phase 6 existing-page and new-page cohorts; record deployment and consistent filters before scheduling review dates.
+
+Phase 6 release validation: **1,159 automated JavaScript cases and 749 native browser checks passed**, plus structural/catalogue validation of 63 guides, 67 sitemap URLs and 70 production HTML pages. Complete commands, fixture boundaries and limitations are in the Phase 6 audit. These are implementation results, not post-release search results.

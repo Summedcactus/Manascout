@@ -35,8 +35,9 @@ class ArtworkStructure(HTMLParser):
 
 
 structure = ArtworkStructure(html)
-assert structure.image_urls['card-week-image'] == 'https://api.scryfall.com/cards/mh3/383?format=image&version=normal'
-assert {'weekly-foil-sheen', 'weekly-foil-glimmer', 'weekly-edge-light'} <= structure.layers
+assert '8810b817-7349-468b-bcca-ba0843bbc852' in structure.image_urls['card-week-image']
+assert 'weekly-edge-light' in structure.layers
+assert not {'weekly-foil-sheen', 'weekly-foil-glimmer'} & structure.layers
 
 
 def validate_css(text):
@@ -65,9 +66,9 @@ validate_css(home)
 validate_css(css)
 keyframes = re.findall(r'@keyframes\s+([\w-]+)', home)
 assert len(keyframes) == len(set(keyframes)), 'Duplicate homepage keyframes'
-assert 'data-weekly-set="mh3"' in html and 'data-weekly-number="383"' in html
-assert 'https://scryfall.com/card/mh3/383/ulamog-the-defiler' in html
-assert 'Vincent Proce' in html and 'BORDERLESS CONCEPT · TRADITIONAL FOIL' in html
+assert 'data-weekly-set="j25"' in html and 'data-weekly-number="35"' in html
+assert 'https://scryfall.com/card/j25/35/cynette-jelly-drover' in html
+assert 'Daisuke Tatsuma' in html and 'NONFOIL · UNCOMMON' in html
 assert 'perspective(1100px)' in home and 'rotateX(var(--weekly-rx))' in home and 'rotateY(var(--weekly-ry))' in home
 eldrazi = home.split('/* Week 007', 1)[1]
 assert 'saturate(' not in eldrazi and 'brightness(' not in eldrazi
@@ -75,7 +76,7 @@ assert all(float(radius) <= 8 for radius in re.findall(r'blur\(([0-9.]+)px\)', e
 for block in re.findall(r'@keyframes ms(?:Weekly|Void)[^\{]*\{(.*?)(?=\n(?:@|/|\.)|$)', eldrazi, re.S):
     assert 'filter:' not in block, 'Decorative filters must remain static'
 assert 'morgul-window' not in html and 'card-week-light-map' not in html
-assert 'class="weekly-foil-sheen"' in html and 'class="weekly-edge-light"' in html
+assert 'class="weekly-foil-sheen"' not in html and 'class="weekly-edge-light"' in html
 assert 'touch-action: pan-y pinch-zoom' in eldrazi
 assert 'animation-play-state: paused' in home and 'animation-play-state: paused' in css
 assert 'data-weekly-effects-paused="true"' not in html

@@ -1990,3 +1990,25 @@
   .weekly-theme-eldrazi .weekly-foil-glimmer { opacity: .3; background-position: 50% 50%; }
   .weekly-theme-eldrazi .weekly-card-halo::after { display: none; }
 }
+
+/* Week 008: Cynette. Reuse the physical-card geometry; light stays around the
+   nonfoil card, never on its artwork. Existing Eldrazi surface remains archived. */
+.weekly-theme-ocean {background:radial-gradient(ellipse at 22% 42%,#063c54 0%,#062233 40%,#030d1c 78%);border-color:#6ae8ff30;--weekly-card-radius:15px;--weekly-edge:.6}
+.weekly-theme-ocean::before {background:linear-gradient(165deg,#75efff0c,transparent 48%,#0005)}
+.weekly-theme-ocean::after {background:radial-gradient(ellipse at 20% 25%,#63f9ff15,transparent 60%);opacity:.5}
+.weekly-theme-ocean .weekly-card-column {background:radial-gradient(ellipse at 50% 42%,#12637c55,#031426 72%);border-color:#70eaff18}
+.weekly-theme-ocean .weekly-scene::before {background:radial-gradient(ellipse at 20% 45%,#46e5ff1f,transparent 38%),radial-gradient(ellipse at 80% 70%,#5c7eff13,transparent 42%);animation:msOceanDepth 18s ease-in-out infinite alternate}
+.weekly-theme-ocean .weekly-scene::after {content:"";position:absolute;inset:0;pointer-events:none;background:radial-gradient(circle at 12% 80%,#87ecff88 0 1px,transparent 2px),radial-gradient(circle at 48% 50%,#6cdbff66 0 1px,transparent 2px),radial-gradient(circle at 83% 76%,#bbf7ff66 0 1px,transparent 2px),radial-gradient(circle at 68% 24%,#8adfff55 0 1px,transparent 2px);background-size:190px 230px;opacity:.45;animation:msOceanBubbles 22s linear infinite}
+.weekly-theme-ocean .weekly-card-halo {background:radial-gradient(ellipse,#4ee5ff28,transparent 67%);box-shadow:none;filter:none}
+.weekly-theme-ocean .weekly-card-halo::before,.weekly-theme-ocean .weekly-card-halo::after {background:radial-gradient(ellipse at 50% 30%,#80f8ff25,transparent 65%);border-color:#91faff20;box-shadow:none}
+.weekly-theme-ocean .weekly-card-shell,.weekly-theme-ocean .weekly-card-shell:hover {box-shadow:0 1px 0 #a9d7e77a,1px 2px 0 #335562,2px 3px 0 #102a38,3px 4px 0 #02070c,0 10px 15px #0009,var(--weekly-shadow-x) calc(28px + var(--weekly-shadow-y)) 32px #000c,var(--weekly-shadow-x) 48px 62px #0009}
+.weekly-theme-ocean .weekly-edge-light {background:none;box-shadow:inset 0 1px 0 #c9faff55,inset 1px 0 0 #c9faff33;opacity:.55;border-color:#a0eaff40}
+.weekly-theme-ocean .weekly-story h3 {color:#e4fbff;text-shadow:none}
+.weekly-theme-ocean .weekly-kicker,.weekly-theme-ocean .weekly-printing-detail {color:#8cdeec}
+.weekly-theme-ocean .weekly-fact {border-color:#74e8ff22;background:#05223580}
+.weekly-theme-ocean .weekly-link,.weekly-theme-ocean .weekly-source a {color:#9be7f2}
+.weekly-theme-ocean .weekly-foil-sheen,.weekly-theme-ocean .weekly-foil-glimmer {display:none!important}
+.weekly-theme-ocean[data-weekly-effects-paused="true"] .weekly-scene::after {animation-play-state:paused}
+@keyframes msOceanDepth {from {opacity:.45;transform:translate3d(-1%,0,0)} to {opacity:.7;transform:translate3d(1%,1%,0)}}
+@keyframes msOceanBubbles {from {background-position:0 0} to {background-position:12px -230px}}
+@media (prefers-reduced-motion:reduce) {.weekly-theme-ocean .weekly-scene::after,.weekly-theme-ocean .weekly-scene::before {animation:none!important;transform:none!important}}

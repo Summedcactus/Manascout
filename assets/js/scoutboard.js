@@ -10,7 +10,7 @@
  * - Search paginated Scryfall printings for featured art
  * - Preserve exact printing IDs in featured links
  * - Resolve exact printings for archived Cards of the Week
- * - Verify Ulamog MH3 #383 concept traditional foil (not #383z)
+ * - Verify Cynette J25 #35 nonfoil; retain archived exact Ulamog validation
  * - Preserve Discover a Card
  * - Preserve pointer-based card atmosphere
  * - No roulette, tabs or floating dock
@@ -1088,7 +1088,9 @@
         );
       }
 
-      if (!/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(card.id || "") || set !== "mh3" || number !== "383" || card.name !== "Ulamog, the Defiler" || card.artist !== "Vincent Proce" || !card.finishes?.includes("foil") || !card.promo_types?.includes("concept") || card.promo_types?.includes("serialized")) {
+      const isCynette = set === "j25" && number === "35";
+      const validCynette = isCynette && card.id === "8810b817-7349-468b-bcca-ba0843bbc852" && card.name === "Cynette, Jelly Drover" && card.artist === "Daisuke Tatsuma" && card.lang === "en" && card.finishes?.length === 1 && card.finishes[0] === "nonfoil";
+      if (isCynette ? !validCynette : (!/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(card.id || "") || set !== "mh3" || number !== "383" || card.name !== "Ulamog, the Defiler" || card.artist !== "Vincent Proce" || !card.finishes?.includes("foil") || !card.promo_types?.includes("concept") || card.promo_types?.includes("serialized"))) {
         throw new Error("Featured artwork/treatment mismatch; retaining the exact static fallback.");
       }
       if (card.id) weekly.dataset.weeklyPrintingId = card.id;
@@ -1106,6 +1108,7 @@
         weekly.dataset.weeklyArtReady = String(!!(weeklyImage.complete && weeklyImage.naturalWidth));
 
         weeklyImage.alt =
+          isCynette ? `Cynette, Jelly Drover — ${card.set_name}, nonfoil #35, Daisuke Tatsuma` :
           `Ulamog, the Defiler — ${card.set_name}, ` +
           `borderless concept traditional foil #${number}, Vincent Proce`;
       }
@@ -1520,6 +1523,7 @@
     let homeVisible = !initialQuery?.trim();
     let touchPointer = null;
     const exactEldrazi = () => weekly.dataset.weeklySet === "mh3" && weekly.dataset.weeklyNumber === "383" && weekly.dataset.weeklyCard === "Ulamog, the Defiler";
+    const exactCynette = () => weekly.dataset.weeklySet === "j25" && weekly.dataset.weeklyNumber === "35" && weekly.dataset.weeklyCard === "Cynette, Jelly Drover";
     const syncEffects = () => {
       weekly.dataset.weeklyEffectsPaused = String(!visible || !homeVisible || document.hidden || reducedMotion.matches);
     };
@@ -1531,7 +1535,7 @@
       const restX = style?.getPropertyValue("--weekly-idle-xa").trim() || "2.8deg";
       const restY = style?.getPropertyValue("--weekly-idle-ya").trim() || "-5.5deg";
       const values = { "--weekly-x": "50%", "--weekly-y": "42%", "--weekly-rx": restX, "--weekly-ry": restY };
-      if (exactEldrazi()) Object.assign(values, {
+      if (exactEldrazi() || exactCynette()) Object.assign(values, {
         "--weekly-reflection": ".70", "--weekly-light-x": "-2%", "--weekly-light-y": "1%",
         "--weekly-light-angle": "-6deg", "--weekly-shadow-x": "0px", "--weekly-shadow-y": "0px", "--weekly-edge": ".78"
       });
@@ -1627,7 +1631,7 @@
       weekly.style.setProperty("--weekly-y", `${y}%`);
       weekly.style.setProperty("--weekly-rx", `${Number(((50 - y) * (touch ? .12 : .22)).toFixed(2))}deg`);
       weekly.style.setProperty("--weekly-ry", `${Number(((x - 50) * (touch ? .14 : .28)).toFixed(2))}deg`);
-      if (exactEldrazi()) {
+      if (exactEldrazi() || exactCynette()) {
         const incidence = Math.min(1, Math.hypot(x - 50, y - 50) / Math.hypot(50, 50));
         weekly.style.setProperty("--weekly-reflection", (.76 + .24 * incidence).toFixed(3));
         weekly.style.setProperty("--weekly-light-x", `${((x - 50) * .24).toFixed(2)}%`);
