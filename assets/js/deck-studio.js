@@ -32,6 +32,12 @@
   let loading = false;
   let discoveryJob = null;
   let generationJob = null;
+  const entryParams=new URLSearchParams(window.location.search);
+  const commanderIntent=entryParams.get("intent")==="commander";
+  const rawEntrySource=entryParams.get("source");
+  const entrySource=rawEntrySource===null?"direct":["nav","guide","cotw","home","direct","import","unknown"].includes(rawEntrySource)?rawEntrySource:"unknown";
+  window.ManaScoutAnalytics?.track("deck_studio_open",{source:entrySource});
+
   let refreshing = false;
   let assigningLeader = false;
   let lastDiscoveredOracle = "";
@@ -248,7 +254,7 @@
     const selectedDeck = model.select(deck, card, currentFinish);
     if (selectedDeck !== deck) { printingSelector?.cancel(); appearanceControls?.cancel("Appearance preview cancelled because the selected card changed."); deck = selectedDeck; dirty = true; scheduleSave(); if (entryMetadataChanged) renderDeck(); }
     renderPreviewActions();
-    if (deck.format === "commander" && !rules.background(card)) checkCommander(card);
+    if ((deck.format === "commander" || commanderIntent) && !rules.background(card)) checkCommander(card,{forSeed:commanderIntent});
   }
 
   function showError(error) {
@@ -593,7 +599,28 @@
     return validation;
   }
   function commanderCards() { return deck.entries.filter(e => e.zone === "commander").map(e => deck.cards[e.printingId]); }
+  function renderCommanderStart() {
+    const cue=$("preview-start-context"),button=$("preview-new-commander");
+    const seeded=commanderIntent&&current?.id===selection?.id;
+    cue.hidden=!seeded;button.hidden=!seeded||commanderCards().some(c=>c.id===current?.id);
+    if(!seeded)return;
+    cue.textContent=`Build around ${current.name}. This exact printing is a preview. Start a new Commander draft deliberately; your existing draft is saved or protected before switching.`;
+    button.disabled=assigningLeader||!client.isVerified(current)||client.proof(current)!==true||!formats.supportedLegality(current,formats.get("commander"))||!current.games?.includes("paper")||!current.availableFinishes.includes(currentFinish)||rules.colorChoice(current)||rules.background(current);
+  }
+  $("preview-new-commander").addEventListener("click",async()=>{
+    const button=$("preview-new-commander");if(!current||button.hidden||button.disabled)return;
+    const card=current,finish=currentFinish,original=deck;button.disabled=true;
+    try{
+      if(!(await canLeaveDraft()))return;
+      if(deck.id!==original.id||deck.revision!==original.revision||current?.id!==card.id||currentFinish!==finish)return;
+      if(!client.isVerified(card)||client.proof(card)!==true||!formats.supportedLegality(card,formats.get("commander"))||!card.games?.includes("paper")||!card.availableFinishes.includes(finish)||rules.colorChoice(card)||rules.background(card))throw Error("Recheck this printing and Commander eligibility before starting.");
+      const next=model.select(model.add(model.createDeck({format:"commander",name:(card.name+" Commander").slice(0,80)}),card,{finish,zone:"commander"}),card,finish);
+      activateDraft({deck:next,token:null,dirty:true},"New Commander draft started. Existing saved decks are retained.");
+      closePreview();activatePanel("deck");
+    }catch(error){message(error.message);}finally{renderCommanderStart();}
+  });
   function renderCommanderAction() {
+    renderCommanderStart();
     const profile = formats.get(deck.format), button = $("preview-commander");
     button.hidden = !profile.leaders;
     $("signature-controls").hidden = !profile.signature;
@@ -652,8 +679,8 @@
       $("preview-signature").disabled = !fresh || !commanderCards().length || !/\bInstant\b|\bSorcery\b/.test(type) || !formats.supportedLegality(current, profile) || !current.games?.includes(profile.platform) || !current.availableFinishes.includes(currentFinish);
     }
   }
-  async function checkCommander(card, { refresh = false } = {}) {
-    if (formats.get(deck.format).eligibility !== "commander" || !client.isVerified(card) || rules.background(card) || (!refresh && client.proof(card) !== null)) return;
+  async function checkCommander(card, { refresh = false, forSeed = false } = {}) {
+    if ((!forSeed && formats.get(deck.format).eligibility !== "commander") || !client.isVerified(card) || rules.background(card) || (!refresh && client.proof(card) !== null)) return;
     let task = eligibilityJobs.get(card.oracleId);
     if (!task) { eligibilityErrors.delete(card.oracleId); task = client.commanderEligibility(card, { refresh }); eligibilityJobs.set(card.oracleId, task); }
     renderCommanderAction();
@@ -777,9 +804,18 @@
     primary.dataset.identity=key; primary.dataset.deck=deck.id;
     $("generation-identity-note").textContent = assigned?.commanders.length ? `Commander analysis: ${suggested.map(x=>x.label).join(" · ")}. Targets are checked before the deck is applied.` : "Choose supporting styles after a compatible commander is found. Auto uses that commander's strongest inferred identity.";
   }
+  function generationProperties(snapshot){
+    const requested=$("generation-strategy").value;
+    const known=["auto","artifacts","tokens","aristocrats","sacrifice","spellslinger","graveyard","lands","landfall","voltron","counters","lifegain","blink","enchantments","vehicles","treasure","clues","food","poison","discard","aggro","control","ramp","combo","value"];
+    return {deck_format:snapshot.format,primary_style:known.includes(requested)?requested:requested.startsWith("tribal:")?"tribal":"other",commander_seeded:snapshot.entries.some(e=>e.zone==="commander")};
+  }
+  function finishGeneration(job,result){
+    if(!job||job.analyticsFinished)return;job.analyticsFinished=true;
+    window.ManaScoutAnalytics?.track("deck_generation_complete",{...job.analytics,result});
+  }
   function cancelGeneration(note = "Generation cancelled. Your deck is unchanged.") {
     if (!generationJob) return;
-    generationJob.controller.abort(); generationJob = null;
+    finishGeneration(generationJob,"cancelled");generationJob.controller.abort(); generationJob = null;
     $("generation-status").textContent = note;
     syncGeneration();
   }
@@ -793,8 +829,9 @@
     if (!generator?.context(deck) || $("generate-deck").disabled || $("generation-controls").hidden || generationJob || loading) return;
     cancelDiscovery("Discovery cancelled while generating a deck.");
     const snapshot = deck;
-    const job = { controller: new AbortController(), snapshot };
+    const job = { controller: new AbortController(), snapshot, analytics:generationProperties(snapshot), analyticsFinished:false };
     generationJob = job; syncGeneration();
+    window.ManaScoutAnalytics?.track("deck_generation_start",{...job.analytics,bracket_selected:Number($("generation-bracket").value)});
     const active = () => generationJob === job && !job.controller.signal.aborted && deck === snapshot;
     try {
       const replaces = generator.needsConfirmation(snapshot);
@@ -824,12 +861,14 @@
       renderCard(current, currentFinish);
       $("generation-status").textContent = result.note;
       closePreview(); activatePanel("deck");
+      finishGeneration(job,"success");
     } catch (error) {
+      finishGeneration(job,error.name==="AbortError"?"cancelled":"failure");
       if (generationJob === job && error.name !== "AbortError") {
         const note = `Generation unavailable${error.stage ? " at " + error.stage : ""}: ${error.message} Existing deck and selection preserved. Retry Generate Deck or Recheck current card data.`;
         $("generation-status").textContent = note; message(note);
       }
-    } finally { if (generationJob === job) generationJob = null; syncGeneration(); }
+    } finally { if(!job.analyticsFinished)finishGeneration(job,"cancelled");if (generationJob === job) generationJob = null; syncGeneration(); }
   });
   window.addEventListener("pagehide", () => { printingSelector?.cancel(); appearanceControls?.cancel(); cancelGeneration(); });
   async function refreshDeckData() {

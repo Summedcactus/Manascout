@@ -93,7 +93,7 @@
       </h1>
 
       <p class="hero-copy">
-        Last updated: 16 November 2026
+        Last updated: 17 November 2026
       </p>
 
 
@@ -196,7 +196,7 @@
           set first-party analytics cookies.
         </p>
 
-        <p>The site includes a limited product-event interface. By default it does not send or store event data, and no analytics provider is connected. It accepts only a fixed set of actions and bounded categories; raw searches, decklists, imported file contents and personal identifiers are excluded. Any future collection service will require a separate implementation and appropriate policy updates.</p>
+        <p>ManaScout has a prepared integration for Plausible Analytics, currently disabled in the site configuration. It does not currently send pageviews or product events to Plausible. If enabled, the integration is designed to measure aggregate visits, broad traffic sources, countries and devices, and bounded actions such as searches, printing comparisons and Deck Studio use to improve usability. Raw search strings, deck contents, imported files, printing identifiers and URL query or shared-comparison state are excluded from those analytics requests. ManaScout does not add account profiles or persistent visitor identifiers through this event layer. Enabling collection requires an appropriate configuration and privacy-notice update; the provider receives ordinary network request information under its own privacy model.</p>
 
         <p style="margin-top:10px;">
           If analytics, advertising or other technologies that
@@ -316,6 +316,8 @@
 
   </footer>
 
+<script src="/assets/js/analytics-config.js?v=phase61"></script>
+<script src="/assets/js/analytics.js?v=phase61&amp;product=61"></script>
 </body>
 
 </html>

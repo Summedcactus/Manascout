@@ -14,11 +14,12 @@
   <meta property="og:url" content="https://manascout.co.uk/deck/">
   <meta property="og:site_name" content="ManaScout">
   <meta name="twitter:card" content="summary">
-  <link rel="stylesheet" href="/assets/css/deck-studio.css?v=phase3">
+  <link rel="stylesheet" href="/assets/css/deck-studio.css?v=phase3&amp;product=61">
   <script type="application/ld+json">
   {"@context":"https://schema.org","@type":"WebPage","name":"ManaScout Deck Studio","url":"https://manascout.co.uk/deck/","description":"ManaScout's artwork-first deck workspace with exact-printing card search and manual deck editing.","isPartOf":{"@type":"WebSite","name":"ManaScout","url":"https://manascout.co.uk/"}}
   </script>
-  <script src="/assets/js/analytics.js?v=phase5&amp;release=6" defer></script>
+  <script src="/assets/js/analytics-config.js?v=phase61"></script>
+<script src="/assets/js/analytics.js?v=phase5&amp;release=6&amp;product=61" defer></script>
   <script src="/assets/js/deck-formats.js?v=5d1" defer></script>
   <script src="/assets/js/deck-data.js?v=stage5" defer></script>
   <script src="/assets/js/deck-model.js?v=phase3" defer></script>
@@ -36,7 +37,7 @@
   <script src="/assets/js/deck-appearance-controls.js?v=stage5" defer></script>
   <script src="/assets/js/deck-interoperability.js?v=3" defer></script>
   <script src="/assets/js/deck-interoperability-controls.js?v=3&amp;growth=5" defer></script>
-  <script src="/assets/js/deck-studio.js?v=phase3&amp;growth=5" defer></script>
+  <script src="/assets/js/deck-studio.js?v=phase3&amp;growth=5&amp;product=61" defer></script>
 </head>
 <body class="deck-studio" data-active-panel="deck">
   <a class="ds-skip" href="#deck-heading">Skip to deck workspace</a>
@@ -45,7 +46,7 @@
     <nav aria-label="Primary navigation">
       <a href="/">Search</a>
       <a href="/card/">Card Guides</a>
-      <a href="/deck/" aria-current="page">Deck Studio</a>
+      <a href="/deck/?source=nav" aria-current="page">Deck Studio</a>
     </nav>
   </header>
 
@@ -176,6 +177,8 @@
     <div class="ds-drawer-handle" aria-hidden="true"></div>
     <div class="ds-drawer-top"><span class="ds-eyebrow">SELECTED PRINTING</span><button class="ds-icon" id="close-preview" type="button" aria-label="Close card preview" autofocus>×</button></div>
     <div class="ds-drawer-scroll">
+      <p class="ds-note" id="preview-start-context" hidden></p>
+      <button class="ds-button ds-primary" id="preview-new-commander" type="button" hidden disabled>Start a new Commander deck</button>
       <p class="ds-note" id="preview-context">Selected printing. Choose Add to deck to include it.</p>
       <div class="ds-card-art"><img id="preview-image" width="280" height="392" alt="" hidden><p class="ds-note" id="image-status" role="status" hidden></p><button class="ds-face-button" id="flip-preview" type="button" hidden>View other face</button></div>
       <h2 id="preview-name">Card preview</h2><p class="ds-card-type" id="preview-type"></p>
