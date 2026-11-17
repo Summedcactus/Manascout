@@ -41,7 +41,7 @@ test('sitemap preserves existing entries and contains both new canonical URLs ex
  const urls=[...read('sitemap.xml').matchAll(/<loc>([^<]+)<\/loc>/g)].map(x=>x[1]);assert.equal(new Set(urls).size,urls.length);for(const g of guides)assert.equal(urls.filter(x=>x===`https://manascout.co.uk/card/${g.slug}/`).length,1);for(const x of ['https://manascout.co.uk/','https://manascout.co.uk/card/','https://manascout.co.uk/deck/'])assert.ok(urls.includes(x));for(const slug of catalogue())assert.ok(urls.includes(`https://manascout.co.uk/card/${slug}/`));
 });
 test('both guides have contextual reciprocal, crossover, directory and optional Deck Studio links',()=>{
- for(const g of guides){const html=read(`card/${g.slug}/index.html`),other=guides.find(x=>x!==g);for(const path of [`/card/${other.slug}/`,'/card/the-one-ring/','/card/smaug-wicked-worm/','/card/','/deck/'])assert.ok(html.includes(`href="${path}"`));}
+ for(const g of guides){const html=read(`card/${g.slug}/index.html`),other=guides.find(x=>x!==g);for(const path of [`/card/${other.slug}/`,'/card/the-one-ring/','/card/smaug-wicked-worm/','/card/','/deck/'])assert.ok(html.includes(`href="${path==='/deck/'?'/deck/?source=guide':path}"`));}
  assert.notEqual(graph(read(`card/${guides[0].slug}/index.html`))['@graph'][0].description,graph(read(`card/${guides[1].slug}/index.html`))['@graph'][0].description);
 });
 test('new responsive CSS is narrowly scoped and keeps long names and wide tables within the page',()=>{

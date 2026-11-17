@@ -823,11 +823,12 @@
 
   function deckLink(card) {
     if (!card?.id) return "";
-    const path = slug(card.name);
+    const path = slug(card.name?.split(" // ")[0]);
     const query = new URLSearchParams({
       card: card.name || "",
       printing: card.id,
-      finish: selectedFinish(card)
+      finish: selectedFinish(card),
+      source: window.location?.pathname?.startsWith("/card/") ? "guide" : "home"
     });
     if (GUIDE_SLUGS.has(path)) query.set("guide", `/card/${path}/`);
     return `
@@ -3842,5 +3843,15 @@
       }
     );
   }
+
+})();
+
+/* Guide-to-studio action; native navigation remains untouched. */
+(()=>{
+  document.addEventListener("click", event => {
+    if(!event.target.closest?.("[data-build-deck]"))return;
+    const guide=window.ManaScoutAnalytics?.guide();
+    if(guide&&guide!=="none")window.ManaScoutAnalytics.track("guide_deck_start",{guide,commander_seeded:false});
+  });
 
 })();

@@ -1,43 +1,52 @@
-/* Version 1 bounded product events. Default is a no-op: no provider, network,
- * storage, identifiers, timestamps, event queue or automatic merchant hooks. */
+/* Bounded aggregate product events. Disabled unless explicit public configuration
+ * enables a provider on the canonical production host. No queues, storage or IDs. */
 ((root)=>{
   'use strict';
   const GUIDES=Object.freeze(["ancient-tomb", "arcane-signet", "birds-of-paradise", "black-lotus", "bloodline-recollector", "brainstorm", "captain-james-t-kirk", "captain-jean-luc-picard", "cavern-of-souls", "chrome-mox", "command-tower", "counterspell", "cyclonic-rift", "dark-ritual", "deflecting-swat", "demonic-consultation", "demonic-tutor", "dockside-extortionist", "doubling-season", "edgar-markov", "enlightened-tutor", "esper-sentinel", "fierce-guardianship", "force-of-will", "gaeas-cradle", "grim-monolith", "jace-the-mind-sculptor", "jeskas-will", "jeweled-lotus", "lightning-bolt", "lightning-greaves", "living-death", "lotus-petal", "mana-crypt", "mana-drain", "mana-vault", "mox-diamond", "mox-opal", "mr-spock-science-officer", "mystic-remora", "mystic-sanctuary", "mystical-tutor", "necropotence", "orcish-bowmasters", "path-to-exile", "rhystic-study", "senseis-divining-top", "sheoldred-the-apocalypse", "skullclamp", "smaug-the-magnificent", "smaug-wicked-worm", "smothering-tithe", "sol-ring", "swan-song", "swords-to-plowshares", "teferis-protection", "the-great-henge", "the-one-ring", "the-theorist-jace-beleren", "thoughtseize", "urzas-saga", "vampiric-tutor", "worldly-tutor"]);
   const FORMATS=Object.freeze(["commander", "standard", "pioneer", "modern", "legacy", "vintage", "pauper", "oathbreaker", "standard_arena", "pioneer_arena", "alchemy", "historic", "timeless", "standardbrawl", "brawl", "gladiator"]);
-
+  const STYLES=Object.freeze(["auto", "tribal", "other", "artifacts", "tokens", "aristocrats", "sacrifice", "spellslinger", "graveyard", "lands", "landfall", "voltron", "counters", "lifegain", "blink", "enchantments", "vehicles", "treasure", "clues", "food", "poison", "discard", "aggro", "control", "ramp", "combo", "value"]);
+  const SOURCES=Object.freeze(['nav','guide','cotw','home','direct','import','unknown']);
   const FINISHES=['nonfoil','foil','etched','unknown'];
-  const count=n=>Number.isSafeInteger(n)&&n>=1&&n<=4;
   const oneOf=values=>v=>typeof v==='string'&&values.includes(v);
-  const guide=oneOf(['none',...GUIDES]);
+  const bool=v=>typeof v==='boolean';
+  const integer=(min,max)=>v=>Number.isSafeInteger(v)&&v>=min&&v<=max;
+  const guide=oneOf(['none',...GUIDES]),count=integer(1,4),week=integer(1,5200);
   const schemas=Object.freeze({
-    search_success:{surface:oneOf(['home','guide']),exact_printing:v=>typeof v==='boolean'},
+    search_success:{surface:oneOf(['home','guide']),exact_printing:bool},
     guide_compare_start:{guide,selection_count:count},
     comparison_save:{selection_count:count,storage:oneOf(['browser','memory'])},
     comparison_share:{selection_count:count,method:oneOf(['clipboard','manual'])},
     deck_import_complete:{import_format:oneOf(['text','csv','json']),deck_format:oneOf(FORMATS)},
     deck_export:{export_format:oneOf(['txt','csv','json']),deck_format:oneOf(FORMATS),method:oneOf(['download','clipboard','manual'])},
-    merchant_exit:{merchant:()=>false,guide,exact_printing:v=>typeof v==='boolean',finish:oneOf(FINISHES)}
+    cotw_inspect:{week,guide_available:bool,exact_printing:bool},
+    cotw_deck_start:{week,exact_printing:bool,commander_seeded:bool},
+    deck_studio_open:{source:oneOf(SOURCES)},
+    guide_deck_start:{guide:oneOf(GUIDES),commander_seeded:bool},
+    deck_generation_start:{deck_format:oneOf(FORMATS),primary_style:oneOf(STYLES),commander_seeded:bool,bracket_selected:integer(1,5)},
+    deck_generation_complete:{deck_format:oneOf(FORMATS),primary_style:oneOf(STYLES),commander_seeded:bool,result:oneOf(['success','failure','cancelled'])},
+    merchant_exit:{merchant:()=>false,guide,exact_printing:bool,finish:oneOf(FINISHES)}
   });
   for(const schema of Object.values(schemas))Object.freeze(schema);
+  const MAPPING=Object.freeze({search_success:'Search Success',guide_compare_start:'Compare Started',comparison_save:'Comparison Save',comparison_share:'Comparison Share',deck_import_complete:'Deck Import Complete',deck_export:'Deck Export',cotw_inspect:'COTW Inspect',cotw_deck_start:'COTW Deck Start',deck_studio_open:'Deck Studio Open',guide_deck_start:'Guide Deck Start',deck_generation_start:'Deck Generation Start',deck_generation_complete:'Deck Generation Complete',merchant_exit:'Merchant Exit'});
+  function validate(event,properties,approved=new Set()){
+    try{
+      if(typeof event!=='string'||!Object.hasOwn(schemas,event)||!properties||typeof properties!=='object'||Array.isArray(properties))return null;
+      const proto=Object.getPrototypeOf(properties);if(proto!==null&&proto!==Object.prototype)return null;
+      const schema=schemas[event],keys=Reflect.ownKeys(properties);
+      if(keys.length!==Object.keys(schema).length||keys.some(k=>!Object.hasOwn(schema,k)))return null;
+      const safe={};for(const k of Object.keys(schema)){
+        const desc=Object.getOwnPropertyDescriptor(properties,k);if(!desc||!Object.hasOwn(desc,'value'))return null;
+        const value=desc.value;if(k==='merchant'&&event==='merchant_exit'?!approved.has(value):!schema[k](value))return null;
+        safe[k]=value;
+      }
+      return Object.freeze({version:1,event,properties:Object.freeze(safe)});
+    }catch{return null;}
+  }
   function createTracker({adapter=null,merchants=[]}={}){
-    // No approved production merchants. Future adapter/allowlist changes require review.
+    // Production never supplies approved merchants in this release.
     const approved=new Set(Array.isArray(merchants)?merchants.filter(v=>typeof v==='string'&&/^[a-z][a-z0-9_\-]{0,31}$/.test(v)):[]);
-    function validate(event,properties){
-      try{
-        if(!Object.hasOwn(schemas,event)||!properties||typeof properties!=='object'||Array.isArray(properties))return null;
-        const proto=Object.getPrototypeOf(properties);if(proto!==null&&proto!==Object.prototype)return null;
-        const schema=schemas[event],keys=Reflect.ownKeys(properties);
-        if(keys.length!==Object.keys(schema).length||keys.some(k=>!Object.hasOwn(schema,k)))return null;
-        const safe={};for(const k of Object.keys(schema)){
-          const desc=Object.getOwnPropertyDescriptor(properties,k);if(!desc||!Object.hasOwn(desc,'value'))return null;
-          const value=desc.value;if(k==='merchant'&&event==='merchant_exit'?!approved.has(value):!schema[k](value))return null;
-          safe[k]=value;
-        }
-        return Object.freeze({version:1,event,properties:Object.freeze(safe)});
-      }catch{return null;}
-    }
     function track(event,properties){
-      const payload=validate(event,properties);if(!payload||typeof adapter!=='function')return false;
+      const payload=validate(event,properties,approved);if(!payload||typeof adapter!=='function')return false;
       try{const result=adapter(payload);if(result&&typeof result.then==='function')Promise.resolve(result).catch(()=>{});return true;}catch{return false;}
     }
     function guideSlug(){try{const match=root.location?.pathname?.match(/^\/card\/([a-z0-9-]+)\/$/);return match&&GUIDES.includes(match[1])?match[1]:'none';}catch{return 'none';}}
@@ -51,6 +60,41 @@
     }
     return Object.freeze({track,guide:guideSlug,trackMerchantExit});
   }
-  if(typeof module==='object'&&module.exports)module.exports=Object.freeze({createTracker,GUIDES,FORMATS,schemas});
-  else root.ManaScoutAnalytics=createTracker();
+  function canonicalPath(path){
+    if(typeof path!=='string')return null;
+    if(['/', '/card/', '/deck/', '/contact/', '/privacy/', '/terms/'].includes(path))return path;
+    const m=path.match(/^\/card\/([a-z0-9-]+)\/$/);return m&&GUIDES.includes(m[1])?path:null;
+  }
+  function createPlausibleAdapter(config={},environment=root){
+    try{
+      const location=environment.location;
+      if(config.enabled!==true||config.provider!=='plausible'||config.domain!=='manascout.co.uk'||location?.protocol!=='https:'||!['manascout.co.uk','www.manascout.co.uk'].includes(location.hostname)||typeof environment.fetch!=='function')return null;
+      if(!canonicalPath(location.pathname)||environment.navigator?.globalPrivacyControl===true||environment.navigator?.doNotTrack==='1')return null;
+      // Construct page identity from the explicit route allowlist. Never read href,
+      // search/hash, local storage, cookies or arbitrary DOM state into a request.
+      const url='https://manascout.co.uk'+canonicalPath(location.pathname);
+      function send(name,props){
+        const body={name,domain:config.domain,url};if(props)body.props=props;
+        // External source origin only: no referrer path, credentials, query or hash.
+        try{const r=new URL(environment.document?.referrer||'');if(['http:','https:'].includes(r.protocol)&&/^[a-z0-9.-]+\.[a-z]{2,}$/i.test(r.hostname)&&!['manascout.co.uk','www.manascout.co.uk'].includes(r.hostname))body.referrer=r.origin+'/';}catch{}
+        try{const result=environment.fetch('https://plausible.io/api/event',{method:'POST',headers:{'Content-Type':'text/plain'},credentials:'omit',referrerPolicy:'no-referrer',keepalive:true,body:JSON.stringify(body)});Promise.resolve(result).catch(()=>{});return true;}catch{return false;}
+      }
+      const adapter=payload=>{try{const safe=payload?.version===1&&validate(payload.event,payload.properties);if(!safe||safe.event==='merchant_exit')return false;return send(MAPPING[safe.event],safe.properties);}catch{return false;}};
+      adapter.pageview=()=>send('pageview');return Object.freeze(adapter);
+    }catch{return null;}
+  }
+  function createDebugAdapter(config={},environment=root){
+    try {
+    if(config.enabled!==true||config.provider!=='debug'||config.debug!==true||!['localhost','127.0.0.1','[::1]'].includes(environment.location?.hostname))return null;
+    return payload=>{try{const safe=payload?.version===1&&validate(payload.event,payload.properties);if(!safe)return false;environment.console?.info('[ManaScout event]',safe.event,safe.properties);return true;}catch{return false;}};
+    }catch{return null;}
+  }
+  if(typeof module==='object'&&module.exports)module.exports=Object.freeze({createTracker,createPlausibleAdapter,createDebugAdapter,canonicalPath,GUIDES,FORMATS,STYLES,SOURCES,schemas,MAPPING});
+  else {
+    const config=root.ManaScoutAnalyticsConfig||{};
+    const adapter=createPlausibleAdapter(config)||createDebugAdapter(config);
+    root.ManaScoutAnalytics=createTracker({adapter});
+    // One canonical pageview per document load, no automatic SPA/history observers.
+    if(adapter?.pageview)adapter.pageview();
+  }
 })(typeof window==='undefined'?globalThis:window);
