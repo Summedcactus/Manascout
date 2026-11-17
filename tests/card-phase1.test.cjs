@@ -5,7 +5,7 @@ const guides=fs.readdirSync('card',{withFileTypes:true}).filter(e=>e.isDirectory
 const references=JSON.parse(fs.readFileSync('docs/phase1-reference-verification.json','utf8'));
 const registry=new Set([...app.match(/const GUIDE_SLUGS = new Set\(\[([^]*?)\]\)/)[1].matchAll(/"([a-z0-9-]+)"/g)].map(m=>m[1]));
 test('every permanent guide exposes one compact navigation, static reference and early comparison',()=>{
- assert.equal(guides.length,59);
+ assert.equal(guides.length,63);
  for(const g of guides){
   const s=fs.readFileSync(`card/${g.name}/index.html`,'utf8');
   assert.equal((s.match(/class="guide-jump-links"/g)||[]).length,1,g.name);
@@ -13,7 +13,7 @@ test('every permanent guide exposes one compact navigation, static reference and
   assert.equal((s.match(/<img\b/g)||[]).length,1,g.name);
   assert.match(s,/class="printing-guide"/);assert.match(s,/guide-editorial.css/);
   const nav=s.match(/<nav class="guide-jump-links"[^]*?<\/nav>/)[0];
-  assert.match(nav,/Sources/);assert.match(nav,/Printing shortlist/);if(['mr-spock-science-officer','sol-ring','arcane-signet','rhystic-study','deflecting-swat'].includes(g.name)) assert.match(nav,/<a class="guide-primary-cta" href="#[^"]+-printings-heading">Compare printings<\/a>/);else assert.match(nav,/Live explorer/);
+  assert.match(nav,/Sources/);assert.match(nav,/Printing shortlist/);if([...Object.keys(JSON.parse(fs.readFileSync('docs/phase6-search-growth.json','utf8')).upgrades),...Object.keys(JSON.parse(fs.readFileSync('docs/phase6-search-growth.json','utf8')).new_guides),'mr-spock-science-officer','sol-ring','arcane-signet','rhystic-study','deflecting-swat'].includes(g.name)) assert.match(nav,/<a class="guide-primary-cta" href="#[^"]+-printings-heading">Compare printings<\/a>/);else assert.match(nav,/Live explorer/);
   const history=s.search(/<section[^>]+aria-labelledby="[^"]*-history-heading"/);
   assert.ok(s.indexOf('<table class="printings-table"')<history,g.name);
   assert.match(s,/guide-skip/);assert.match(s,/guide-image-error/);assert.match(s,/data-static-status/);

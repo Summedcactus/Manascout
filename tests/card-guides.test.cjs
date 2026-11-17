@@ -1,4 +1,5 @@
-const phase5=JSON.parse(require('node:fs').readFileSync('docs/us-search-baseline.json','utf8')).guides;
+const phase6=JSON.parse(require('node:fs').readFileSync('docs/phase6-search-growth.json','utf8'));
+const phase5={...JSON.parse(require('node:fs').readFileSync('docs/us-search-baseline.json','utf8')).guides,...phase6.upgrades,...phase6.metadata_only};
 /* Editorial facts cross-checked against the cited catalogues on 4 November 2026.
  * HTTP/render fixtures below are synthetic; they do not claim a live Scryfall audit. */
 const {test}=require('node:test');const assert=require('node:assert/strict');
@@ -33,7 +34,7 @@ for(const g of guides){
  });
 }
 test('directory metadata, visible counts, ItemList, registry and actual permanent guide count stay consistent',()=>{
- const actual=catalogue();assert.equal(actual.length,59);assert.equal(registry.size,actual.length);assert.deepEqual([...registry].sort(),actual.sort());const list=graph(directory)['@graph'].find(x=>x['@type']==='ItemList');assert.equal(list.numberOfItems,actual.length);assert.equal(list.itemListElement.length,actual.length);assert.deepEqual(list.itemListElement.map(x=>x.position),Array.from({length:actual.length},(_,i)=>i+1));assert.equal(new Set(list.itemListElement.map(x=>x.url)).size,59);assert.equal((directory.match(/class="hub-guide"/g)||[]).length,59);assert.match(directory,/Showing all 59 ManaScout card guides/);assert.match(directory,/<strong>59<\/strong> card guides/);assert.doesNotMatch(directory,/\b38 (?:Magic|ManaScout|card|guides)/);assert.match(read('deck/index.html'),/Explore 59 card guides/);
+ const actual=catalogue();assert.equal(actual.length,63);assert.equal(registry.size,actual.length);assert.deepEqual([...registry].sort(),actual.sort());const list=graph(directory)['@graph'].find(x=>x['@type']==='ItemList');assert.equal(list.numberOfItems,actual.length);assert.equal(list.itemListElement.length,actual.length);assert.deepEqual(list.itemListElement.map(x=>x.position),Array.from({length:actual.length},(_,i)=>i+1));assert.equal(new Set(list.itemListElement.map(x=>x.url)).size,63);assert.equal((directory.match(/class="hub-guide"/g)||[]).length,63);assert.match(directory,/Showing all 63 ManaScout card guides/);assert.match(directory,/<strong>63<\/strong> card guides/);assert.doesNotMatch(directory,/\b38 (?:Magic|ManaScout|card|guides)/);assert.match(read('deck/index.html'),/Explore 63 card guides/);
  const group=directory.slice(directory.indexOf('id="showcase-releases"'),directory.indexOf('id="hub-empty"'));for(const g of guides){assert.ok(group.includes(`/card/${g.slug}/`));assert.ok(list.itemListElement.some(x=>x.url.endsWith(`/card/${g.slug}/`)&&x.name===g.name));}
 });
 test('sitemap preserves existing entries and contains both new canonical URLs exactly once',()=>{

@@ -20,6 +20,10 @@
     document.body?.dataset?.cardName?.trim() || "";
 
   const GUIDE_SLUGS = new Set([
+    "captain-james-t-kirk",
+    "smaug-the-magnificent",
+    "bloodline-recollector",
+    "sheoldred-the-apocalypse",
     "ancient-tomb",
     "arcane-signet",
     "birds-of-paradise",
@@ -796,7 +800,7 @@
 
   function guideLink(card) {
     const path =
-      slug(card?.name);
+      slug(card?.name?.split(" // ")[0]);
 
     if (
       !GUIDE_SLUGS.has(path) ||
@@ -872,9 +876,10 @@
     }
     if (image) image.alt = `${card.name} — ${String(card.set || "").toUpperCase()} #${card.collector_number}, ${finishLabel(selectedFinish(card))}`;
     if (label) label.textContent = `Selected printing · ${String(card.set || "").toUpperCase()} #${card.collector_number} · ${card.artist || "Artist not listed"} · ${LANGS[card.lang] || card.lang || "Language not listed"} · ${finishLabel(selectedFinish(card))}. Catalogue image; physical finishes vary.`;
-    if (link) {
-      if (sourceUrl) link.href = sourceUrl;
-      else link.removeAttribute("href");
+    for (const sourceLink of [link, figure.querySelector(".guide-reference-source")]) {
+      if (!sourceLink) continue;
+      if (sourceUrl) sourceLink.href = sourceUrl;
+      else sourceLink.removeAttribute("href");
     }
   }
 

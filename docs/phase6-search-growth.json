@@ -1,0 +1,2437 @@
+{
+  "reviewed": "2026-11-17",
+  "baseline_commit": "081c4bb28dc1a64c083c89560bc611c594892d1a",
+  "source": "Owner-provided GSC 1–16 November 2026; aggregate country scope not specified, not a new GSC fetch",
+  "protected": [
+    "mr-spock-science-officer",
+    "sol-ring",
+    "arcane-signet",
+    "rhystic-study",
+    "deflecting-swat"
+  ],
+  "new_guides": {
+    "captain-james-t-kirk": {
+      "slug": "captain-james-t-kirk",
+      "first": [
+        "trk",
+        "142"
+      ],
+      "title": "Captain James T. Kirk MTG — Signed Card, Printings & Art | ManaScout",
+      "desc": "Identify Captain James T. Kirk TRK #142 and compare showcase art, surge foil and the hand-signed #1701 headliner. Separate artist, autograph and finish.",
+      "official": [
+        "collecting-star-trek"
+      ],
+      "related": [
+        "mr-spock-science-officer",
+        "captain-jean-luc-picard",
+        "sheoldred-the-apocalypse"
+      ],
+      "name": "Captain James T. Kirk",
+      "lookup_name": "Captain James T. Kirk",
+      "description": "Identify Captain James T. Kirk TRK #142 and compare showcase art, surge foil and the hand-signed #1701 headliner. Separate artist, autograph and finish.",
+      "opening": "<strong>Captain James T. Kirk was first printed in Star Trek on 13 November 2026.</strong> The original <strong>TRK #142</strong> is a mythic rare illustrated by <strong>Jason Pastrana</strong>, available in nonfoil and traditional foil. Compare regular and showcase art before treating the signed #1701 headliner as a separate collector choice.",
+      "reviewed": "2026-11-17",
+      "first_id": "40a0466d-20bb-4ed5-858d-947fb9144580",
+      "records": [
+        {
+          "id": "40a0466d-20bb-4ed5-858d-947fb9144580",
+          "oracle_id": "19edde54-153f-46b8-8a8d-a20fdef0667f",
+          "name": "Captain James T. Kirk",
+          "set": "trk",
+          "set_name": "Star Trek",
+          "collector_number": "142",
+          "released_at": "2026-11-13",
+          "artist": "Jason Pastrana",
+          "finishes": [
+            "nonfoil",
+            "foil"
+          ],
+          "promo_types": [
+            "universesbeyond"
+          ],
+          "frame_effects": [
+            "legendary"
+          ],
+          "rarity": "mythic",
+          "lang": "en",
+          "layout": "normal",
+          "type_line": "Legendary Creature — Human Officer",
+          "mana_cost": "{2}{R}",
+          "oracle_text": "Whenever Captain Kirk enters or attacks, choose one. If you have no cards in hand, choose one or more instead.\n• Discard a card, then draw a card.\n• Create a 1/1 red Officer creature token.\n• Creatures you control get +1/+0 until end of turn.",
+          "image_uris": {
+            "small": "https://cards.scryfall.io/small/front/4/0/40a0466d-20bb-4ed5-858d-947fb9144580.jpg?1784036779",
+            "normal": "https://cards.scryfall.io/normal/front/4/0/40a0466d-20bb-4ed5-858d-947fb9144580.jpg?1784036779",
+            "large": "https://cards.scryfall.io/large/front/4/0/40a0466d-20bb-4ed5-858d-947fb9144580.jpg?1784036779",
+            "png": "https://cards.scryfall.io/png/front/4/0/40a0466d-20bb-4ed5-858d-947fb9144580.png?1784036779",
+            "art_crop": "https://cards.scryfall.io/art_crop/front/4/0/40a0466d-20bb-4ed5-858d-947fb9144580.jpg?1784036779",
+            "border_crop": "https://cards.scryfall.io/border_crop/front/4/0/40a0466d-20bb-4ed5-858d-947fb9144580.jpg?1784036779",
+            "thumb": "https://cards.scryfall.io/thumb/front/4/0/40a0466d-20bb-4ed5-858d-947fb9144580.webp?1784036779",
+            "grid": "https://cards.scryfall.io/grid/front/4/0/40a0466d-20bb-4ed5-858d-947fb9144580.webp?1784036779",
+            "display": "https://cards.scryfall.io/display/front/4/0/40a0466d-20bb-4ed5-858d-947fb9144580.webp?1784036779",
+            "art": "https://cards.scryfall.io/art/front/4/0/40a0466d-20bb-4ed5-858d-947fb9144580.webp?1784036779",
+            "crop": "https://cards.scryfall.io/crop/front/4/0/40a0466d-20bb-4ed5-858d-947fb9144580.webp?1784036779",
+            "jpeg": "https://cards.scryfall.io/normal/front/4/0/40a0466d-20bb-4ed5-858d-947fb9144580.jpg?1784036779"
+          },
+          "games": [
+            "paper",
+            "mtgo",
+            "arena"
+          ],
+          "legalities": {
+            "standard": "legal",
+            "future": "legal",
+            "historic": "legal",
+            "timeless": "legal",
+            "gladiator": "legal",
+            "pioneer": "legal",
+            "modern": "legal",
+            "legacy": "legal",
+            "pauper": "not_legal",
+            "vintage": "legal",
+            "penny": "not_legal",
+            "commander": "legal",
+            "oathbreaker": "legal",
+            "standardbrawl": "legal",
+            "brawl": "legal",
+            "competitivebrawl": "legal",
+            "alchemy": "not_legal",
+            "paupercommander": "not_legal",
+            "duel": "legal",
+            "oldschool": "not_legal",
+            "premodern": "not_legal",
+            "predh": "not_legal",
+            "tlr": "legal"
+          },
+          "power": "2",
+          "toughness": "2",
+          "source": "https://scryfall.com/card/trk/142/captain-james-t-kirk",
+          "art": "Regular frame; original illustration",
+          "finish": "Nonfoil, traditional foil"
+        },
+        {
+          "id": "367aa1e6-ce6c-41a0-ba7c-af00487a4302",
+          "oracle_id": "19edde54-153f-46b8-8a8d-a20fdef0667f",
+          "name": "Captain James T. Kirk",
+          "set": "trk",
+          "set_name": "Star Trek",
+          "collector_number": "418",
+          "released_at": "2026-11-13",
+          "artist": "Josh Newton",
+          "finishes": [
+            "nonfoil",
+            "foil"
+          ],
+          "promo_types": [
+            "universesbeyond"
+          ],
+          "frame_effects": [
+            "legendary",
+            "showcase"
+          ],
+          "rarity": "mythic",
+          "lang": "en",
+          "layout": "normal",
+          "type_line": "Legendary Creature — Human Officer",
+          "mana_cost": "{2}{R}",
+          "oracle_text": "Whenever Captain Kirk enters or attacks, choose one. If you have no cards in hand, choose one or more instead.\n• Discard a card, then draw a card.\n• Create a 1/1 red Officer creature token.\n• Creatures you control get +1/+0 until end of turn.",
+          "image_uris": {
+            "small": "https://cards.scryfall.io/small/front/3/6/367aa1e6-ce6c-41a0-ba7c-af00487a4302.jpg?1784078244",
+            "normal": "https://cards.scryfall.io/normal/front/3/6/367aa1e6-ce6c-41a0-ba7c-af00487a4302.jpg?1784078244",
+            "large": "https://cards.scryfall.io/large/front/3/6/367aa1e6-ce6c-41a0-ba7c-af00487a4302.jpg?1784078244",
+            "png": "https://cards.scryfall.io/png/front/3/6/367aa1e6-ce6c-41a0-ba7c-af00487a4302.png?1784078244",
+            "art_crop": "https://cards.scryfall.io/art_crop/front/3/6/367aa1e6-ce6c-41a0-ba7c-af00487a4302.jpg?1784078244",
+            "border_crop": "https://cards.scryfall.io/border_crop/front/3/6/367aa1e6-ce6c-41a0-ba7c-af00487a4302.jpg?1784078244",
+            "thumb": "https://cards.scryfall.io/thumb/front/3/6/367aa1e6-ce6c-41a0-ba7c-af00487a4302.webp?1784078244",
+            "grid": "https://cards.scryfall.io/grid/front/3/6/367aa1e6-ce6c-41a0-ba7c-af00487a4302.webp?1784078244",
+            "display": "https://cards.scryfall.io/display/front/3/6/367aa1e6-ce6c-41a0-ba7c-af00487a4302.webp?1784078244",
+            "art": "https://cards.scryfall.io/art/front/3/6/367aa1e6-ce6c-41a0-ba7c-af00487a4302.webp?1784078244",
+            "crop": "https://cards.scryfall.io/crop/front/3/6/367aa1e6-ce6c-41a0-ba7c-af00487a4302.webp?1784078244",
+            "jpeg": "https://cards.scryfall.io/normal/front/3/6/367aa1e6-ce6c-41a0-ba7c-af00487a4302.jpg?1784078244"
+          },
+          "games": [
+            "paper",
+            "mtgo",
+            "arena"
+          ],
+          "legalities": {
+            "standard": "legal",
+            "future": "legal",
+            "historic": "legal",
+            "timeless": "legal",
+            "gladiator": "legal",
+            "pioneer": "legal",
+            "modern": "legal",
+            "legacy": "legal",
+            "pauper": "not_legal",
+            "vintage": "legal",
+            "penny": "not_legal",
+            "commander": "legal",
+            "oathbreaker": "legal",
+            "standardbrawl": "legal",
+            "brawl": "legal",
+            "competitivebrawl": "legal",
+            "alchemy": "not_legal",
+            "paupercommander": "not_legal",
+            "duel": "legal",
+            "oldschool": "not_legal",
+            "premodern": "not_legal",
+            "predh": "not_legal",
+            "tlr": "legal"
+          },
+          "power": "2",
+          "toughness": "2",
+          "source": "https://scryfall.com/card/trk/418/captain-james-t-kirk",
+          "art": "Showcase Classic Enterprise artwork",
+          "finish": "Nonfoil, traditional foil"
+        },
+        {
+          "id": "a7f991c5-0a55-4d34-8dee-d3f206167be1",
+          "oracle_id": "19edde54-153f-46b8-8a8d-a20fdef0667f",
+          "name": "Captain James T. Kirk",
+          "set": "trk",
+          "set_name": "Star Trek",
+          "collector_number": "542",
+          "released_at": "2026-11-13",
+          "artist": "Josh Newton",
+          "finishes": [
+            "foil"
+          ],
+          "promo_types": [
+            "surgefoil",
+            "universesbeyond"
+          ],
+          "frame_effects": [
+            "legendary",
+            "showcase"
+          ],
+          "rarity": "mythic",
+          "lang": "en",
+          "layout": "normal",
+          "type_line": "Legendary Creature — Human Officer",
+          "mana_cost": "{2}{R}",
+          "oracle_text": "Whenever Captain Kirk enters or attacks, choose one. If you have no cards in hand, choose one or more instead.\n• Discard a card, then draw a card.\n• Create a 1/1 red Officer creature token.\n• Creatures you control get +1/+0 until end of turn.",
+          "image_uris": {
+            "small": "https://cards.scryfall.io/small/front/a/7/a7f991c5-0a55-4d34-8dee-d3f206167be1.jpg?1784037000",
+            "normal": "https://cards.scryfall.io/normal/front/a/7/a7f991c5-0a55-4d34-8dee-d3f206167be1.jpg?1784037000",
+            "large": "https://cards.scryfall.io/large/front/a/7/a7f991c5-0a55-4d34-8dee-d3f206167be1.jpg?1784037000",
+            "png": "https://cards.scryfall.io/png/front/a/7/a7f991c5-0a55-4d34-8dee-d3f206167be1.png?1784037000",
+            "art_crop": "https://cards.scryfall.io/art_crop/front/a/7/a7f991c5-0a55-4d34-8dee-d3f206167be1.jpg?1784037000",
+            "border_crop": "https://cards.scryfall.io/border_crop/front/a/7/a7f991c5-0a55-4d34-8dee-d3f206167be1.jpg?1784037000",
+            "thumb": "https://cards.scryfall.io/thumb/front/a/7/a7f991c5-0a55-4d34-8dee-d3f206167be1.webp?1784037000",
+            "grid": "https://cards.scryfall.io/grid/front/a/7/a7f991c5-0a55-4d34-8dee-d3f206167be1.webp?1784037000",
+            "display": "https://cards.scryfall.io/display/front/a/7/a7f991c5-0a55-4d34-8dee-d3f206167be1.webp?1784037000",
+            "art": "https://cards.scryfall.io/art/front/a/7/a7f991c5-0a55-4d34-8dee-d3f206167be1.webp?1784037000",
+            "crop": "https://cards.scryfall.io/crop/front/a/7/a7f991c5-0a55-4d34-8dee-d3f206167be1.webp?1784037000",
+            "jpeg": "https://cards.scryfall.io/normal/front/a/7/a7f991c5-0a55-4d34-8dee-d3f206167be1.jpg?1784037000"
+          },
+          "games": [
+            "paper",
+            "mtgo",
+            "arena"
+          ],
+          "legalities": {
+            "standard": "legal",
+            "future": "legal",
+            "historic": "legal",
+            "timeless": "legal",
+            "gladiator": "legal",
+            "pioneer": "legal",
+            "modern": "legal",
+            "legacy": "legal",
+            "pauper": "not_legal",
+            "vintage": "legal",
+            "penny": "not_legal",
+            "commander": "legal",
+            "oathbreaker": "legal",
+            "standardbrawl": "legal",
+            "brawl": "legal",
+            "competitivebrawl": "legal",
+            "alchemy": "not_legal",
+            "paupercommander": "not_legal",
+            "duel": "legal",
+            "oldschool": "not_legal",
+            "premodern": "not_legal",
+            "predh": "not_legal",
+            "tlr": "legal"
+          },
+          "power": "2",
+          "toughness": "2",
+          "source": "https://scryfall.com/card/trk/542/captain-james-t-kirk",
+          "art": "Classic Enterprise; same Josh Newton art as #418",
+          "finish": "Surge foil only"
+        },
+        {
+          "id": "b1cfb3f1-f1ad-47aa-a7f0-ff3ebd2ffa5e",
+          "oracle_id": "19edde54-153f-46b8-8a8d-a20fdef0667f",
+          "name": "Captain James T. Kirk",
+          "set": "trk",
+          "set_name": "Star Trek",
+          "collector_number": "1701",
+          "released_at": "2026-11-13",
+          "artist": "Chris Rallis",
+          "finishes": [
+            "foil"
+          ],
+          "promo_types": [
+            "headliner",
+            "universesbeyond"
+          ],
+          "frame_effects": [
+            "legendary"
+          ],
+          "rarity": "mythic",
+          "lang": "en",
+          "layout": "normal",
+          "type_line": "Legendary Creature — Human Officer",
+          "mana_cost": "{2}{R}",
+          "oracle_text": "Whenever Captain Kirk enters or attacks, choose one. If you have no cards in hand, choose one or more instead.\n• Discard a card, then draw a card.\n• Create a 1/1 red Officer creature token.\n• Creatures you control get +1/+0 until end of turn.",
+          "image_uris": {
+            "small": "https://cards.scryfall.io/small/front/b/1/b1cfb3f1-f1ad-47aa-a7f0-ff3ebd2ffa5e.jpg?1787590942",
+            "normal": "https://cards.scryfall.io/normal/front/b/1/b1cfb3f1-f1ad-47aa-a7f0-ff3ebd2ffa5e.jpg?1787590942",
+            "large": "https://cards.scryfall.io/large/front/b/1/b1cfb3f1-f1ad-47aa-a7f0-ff3ebd2ffa5e.jpg?1787590942",
+            "png": "https://cards.scryfall.io/png/front/b/1/b1cfb3f1-f1ad-47aa-a7f0-ff3ebd2ffa5e.png?1787590942",
+            "art_crop": "https://cards.scryfall.io/art_crop/front/b/1/b1cfb3f1-f1ad-47aa-a7f0-ff3ebd2ffa5e.jpg?1787590942",
+            "border_crop": "https://cards.scryfall.io/border_crop/front/b/1/b1cfb3f1-f1ad-47aa-a7f0-ff3ebd2ffa5e.jpg?1787590942",
+            "thumb": "https://cards.scryfall.io/thumb/front/b/1/b1cfb3f1-f1ad-47aa-a7f0-ff3ebd2ffa5e.webp?1787590942",
+            "grid": "https://cards.scryfall.io/grid/front/b/1/b1cfb3f1-f1ad-47aa-a7f0-ff3ebd2ffa5e.webp?1787590942",
+            "display": "https://cards.scryfall.io/display/front/b/1/b1cfb3f1-f1ad-47aa-a7f0-ff3ebd2ffa5e.webp?1787590942",
+            "art": "https://cards.scryfall.io/art/front/b/1/b1cfb3f1-f1ad-47aa-a7f0-ff3ebd2ffa5e.webp?1787590942",
+            "crop": "https://cards.scryfall.io/crop/front/b/1/b1cfb3f1-f1ad-47aa-a7f0-ff3ebd2ffa5e.webp?1787590942",
+            "jpeg": "https://cards.scryfall.io/normal/front/b/1/b1cfb3f1-f1ad-47aa-a7f0-ff3ebd2ffa5e.jpg?1787590942"
+          },
+          "games": [
+            "paper",
+            "mtgo",
+            "arena"
+          ],
+          "legalities": {
+            "standard": "legal",
+            "future": "legal",
+            "historic": "legal",
+            "timeless": "legal",
+            "gladiator": "legal",
+            "pioneer": "legal",
+            "modern": "legal",
+            "legacy": "legal",
+            "pauper": "not_legal",
+            "vintage": "legal",
+            "penny": "not_legal",
+            "commander": "legal",
+            "oathbreaker": "legal",
+            "standardbrawl": "legal",
+            "brawl": "legal",
+            "competitivebrawl": "legal",
+            "alchemy": "not_legal",
+            "paupercommander": "not_legal",
+            "duel": "legal",
+            "oldschool": "not_legal",
+            "premodern": "not_legal",
+            "predh": "not_legal",
+            "tlr": "legal"
+          },
+          "power": "2",
+          "toughness": "2",
+          "source": "https://scryfall.com/card/trk/1701/captain-james-t-kirk",
+          "art": "Headliner portrait; hand-signed by William Shatner",
+          "finish": "Foil only; signed headliner"
+        }
+      ]
+    },
+    "smaug-the-magnificent": {
+      "slug": "smaug-the-magnificent",
+      "first": [
+        "hob",
+        "110"
+      ],
+      "title": "Smaug the Magnificent MTG — Gleaming Gold & Printings | ManaScout",
+      "desc": "Compare Smaug the Magnificent HOB #110, Dragon hoard art and gleaming gold #249. Identify the approximately 500-copy headliner separately from ordinary foils.",
+      "official": [
+        "collecting-the-hobbit"
+      ],
+      "related": [
+        "smaug-wicked-worm",
+        "the-one-ring"
+      ],
+      "name": "Smaug the Magnificent",
+      "lookup_name": "Smaug the Magnificent",
+      "description": "Compare Smaug the Magnificent HOB #110, Dragon hoard art and gleaming gold #249. Identify the approximately 500-copy headliner separately from ordinary foils.",
+      "opening": "<strong>Smaug the Magnificent was first printed in The Hobbit on 14 August 2026.</strong> The original <strong>HOB #110</strong> is a mythic rare illustrated by <strong>Francisco Miyara</strong>, available in nonfoil and traditional foil. The approximately 500-copy gleaming gold #249 is a separate headliner treatment, not the total number of Smaug cards.",
+      "reviewed": "2026-11-17",
+      "first_id": "6a5d8fad-2ffd-4645-8c49-907999b6cecf",
+      "records": [
+        {
+          "id": "6a5d8fad-2ffd-4645-8c49-907999b6cecf",
+          "oracle_id": "c53b7602-5e36-4900-896c-844bf6eac22e",
+          "name": "Smaug the Magnificent",
+          "set": "hob",
+          "set_name": "The Hobbit",
+          "collector_number": "110",
+          "released_at": "2026-08-14",
+          "artist": "Francisco Miyara",
+          "finishes": [
+            "nonfoil",
+            "foil"
+          ],
+          "promo_types": [
+            "universesbeyond"
+          ],
+          "frame_effects": [
+            "legendary"
+          ],
+          "rarity": "mythic",
+          "lang": "en",
+          "layout": "normal",
+          "type_line": "Legendary Creature — Dragon",
+          "mana_cost": "{2}{R}{R}",
+          "oracle_text": "Flying, haste\nWhenever Smaug attacks, he deals damage equal to the number of Treasures you control to any target.\nAt the beginning of your upkeep, create a Treasure token.",
+          "image_uris": {
+            "small": "https://cards.scryfall.io/small/front/6/a/6a5d8fad-2ffd-4645-8c49-907999b6cecf.jpg?1783902784",
+            "normal": "https://cards.scryfall.io/normal/front/6/a/6a5d8fad-2ffd-4645-8c49-907999b6cecf.jpg?1783902784",
+            "large": "https://cards.scryfall.io/large/front/6/a/6a5d8fad-2ffd-4645-8c49-907999b6cecf.jpg?1783902784",
+            "png": "https://cards.scryfall.io/png/front/6/a/6a5d8fad-2ffd-4645-8c49-907999b6cecf.png?1783902784",
+            "art_crop": "https://cards.scryfall.io/art_crop/front/6/a/6a5d8fad-2ffd-4645-8c49-907999b6cecf.jpg?1783902784",
+            "border_crop": "https://cards.scryfall.io/border_crop/front/6/a/6a5d8fad-2ffd-4645-8c49-907999b6cecf.jpg?1783902784",
+            "thumb": "https://cards.scryfall.io/thumb/front/6/a/6a5d8fad-2ffd-4645-8c49-907999b6cecf.webp?1783902784",
+            "grid": "https://cards.scryfall.io/grid/front/6/a/6a5d8fad-2ffd-4645-8c49-907999b6cecf.webp?1783902784",
+            "display": "https://cards.scryfall.io/display/front/6/a/6a5d8fad-2ffd-4645-8c49-907999b6cecf.webp?1783902784",
+            "art": "https://cards.scryfall.io/art/front/6/a/6a5d8fad-2ffd-4645-8c49-907999b6cecf.webp?1783902784",
+            "crop": "https://cards.scryfall.io/crop/front/6/a/6a5d8fad-2ffd-4645-8c49-907999b6cecf.webp?1783902784",
+            "jpeg": "https://cards.scryfall.io/normal/front/6/a/6a5d8fad-2ffd-4645-8c49-907999b6cecf.jpg?1783902784"
+          },
+          "games": [
+            "paper",
+            "mtgo",
+            "arena"
+          ],
+          "legalities": {
+            "standard": "legal",
+            "future": "legal",
+            "historic": "legal",
+            "timeless": "legal",
+            "gladiator": "legal",
+            "pioneer": "legal",
+            "modern": "legal",
+            "legacy": "legal",
+            "pauper": "not_legal",
+            "vintage": "legal",
+            "penny": "not_legal",
+            "commander": "legal",
+            "oathbreaker": "legal",
+            "standardbrawl": "legal",
+            "brawl": "legal",
+            "competitivebrawl": "legal",
+            "alchemy": "not_legal",
+            "paupercommander": "not_legal",
+            "duel": "legal",
+            "oldschool": "not_legal",
+            "premodern": "not_legal",
+            "predh": "not_legal",
+            "tlr": "not_legal"
+          },
+          "power": "4",
+          "toughness": "3",
+          "source": "https://scryfall.com/card/hob/110/smaug-the-magnificent",
+          "art": "Regular frame; original illustration",
+          "finish": "Nonfoil, traditional foil"
+        },
+        {
+          "id": "4edcf8eb-d0b0-4aec-bec0-64c56982cdce",
+          "oracle_id": "c53b7602-5e36-4900-896c-844bf6eac22e",
+          "name": "Smaug the Magnificent",
+          "set": "hob",
+          "set_name": "The Hobbit",
+          "collector_number": "229",
+          "released_at": "2026-08-14",
+          "artist": "John Tedrick",
+          "finishes": [
+            "nonfoil",
+            "foil"
+          ],
+          "promo_types": [
+            "universesbeyond"
+          ],
+          "frame_effects": [
+            "legendary",
+            "showcase"
+          ],
+          "rarity": "mythic",
+          "lang": "en",
+          "layout": "normal",
+          "type_line": "Legendary Creature — Dragon",
+          "mana_cost": "{2}{R}{R}",
+          "oracle_text": "Flying, haste\nWhenever Smaug attacks, he deals damage equal to the number of Treasures you control to any target.\nAt the beginning of your upkeep, create a Treasure token.",
+          "image_uris": {
+            "small": "https://cards.scryfall.io/small/front/4/e/4edcf8eb-d0b0-4aec-bec0-64c56982cdce.jpg?1783902781",
+            "normal": "https://cards.scryfall.io/normal/front/4/e/4edcf8eb-d0b0-4aec-bec0-64c56982cdce.jpg?1783902781",
+            "large": "https://cards.scryfall.io/large/front/4/e/4edcf8eb-d0b0-4aec-bec0-64c56982cdce.jpg?1783902781",
+            "png": "https://cards.scryfall.io/png/front/4/e/4edcf8eb-d0b0-4aec-bec0-64c56982cdce.png?1783902781",
+            "art_crop": "https://cards.scryfall.io/art_crop/front/4/e/4edcf8eb-d0b0-4aec-bec0-64c56982cdce.jpg?1783902781",
+            "border_crop": "https://cards.scryfall.io/border_crop/front/4/e/4edcf8eb-d0b0-4aec-bec0-64c56982cdce.jpg?1783902781",
+            "thumb": "https://cards.scryfall.io/thumb/front/4/e/4edcf8eb-d0b0-4aec-bec0-64c56982cdce.webp?1783902781",
+            "grid": "https://cards.scryfall.io/grid/front/4/e/4edcf8eb-d0b0-4aec-bec0-64c56982cdce.webp?1783902781",
+            "display": "https://cards.scryfall.io/display/front/4/e/4edcf8eb-d0b0-4aec-bec0-64c56982cdce.webp?1783902781",
+            "art": "https://cards.scryfall.io/art/front/4/e/4edcf8eb-d0b0-4aec-bec0-64c56982cdce.webp?1783902781",
+            "crop": "https://cards.scryfall.io/crop/front/4/e/4edcf8eb-d0b0-4aec-bec0-64c56982cdce.webp?1783902781",
+            "jpeg": "https://cards.scryfall.io/normal/front/4/e/4edcf8eb-d0b0-4aec-bec0-64c56982cdce.jpg?1783902781"
+          },
+          "games": [
+            "paper",
+            "mtgo"
+          ],
+          "legalities": {
+            "standard": "legal",
+            "future": "legal",
+            "historic": "legal",
+            "timeless": "legal",
+            "gladiator": "legal",
+            "pioneer": "legal",
+            "modern": "legal",
+            "legacy": "legal",
+            "pauper": "not_legal",
+            "vintage": "legal",
+            "penny": "not_legal",
+            "commander": "legal",
+            "oathbreaker": "legal",
+            "standardbrawl": "legal",
+            "brawl": "legal",
+            "competitivebrawl": "legal",
+            "alchemy": "not_legal",
+            "paupercommander": "not_legal",
+            "duel": "legal",
+            "oldschool": "not_legal",
+            "premodern": "not_legal",
+            "predh": "not_legal",
+            "tlr": "not_legal"
+          },
+          "power": "4",
+          "toughness": "3",
+          "source": "https://scryfall.com/card/hob/229/smaug-the-magnificent",
+          "art": "Dragon hoard showcase artwork",
+          "finish": "Nonfoil, traditional foil"
+        },
+        {
+          "id": "43c56e15-ba46-4a27-b9b0-55cde9f8c933",
+          "oracle_id": "c53b7602-5e36-4900-896c-844bf6eac22e",
+          "name": "Smaug the Magnificent",
+          "set": "hob",
+          "set_name": "The Hobbit",
+          "collector_number": "249",
+          "released_at": "2026-08-14",
+          "artist": "Ted Nasmith",
+          "finishes": [
+            "foil"
+          ],
+          "promo_types": [
+            "poster",
+            "headliner",
+            "gleaminggold",
+            "universesbeyond"
+          ],
+          "frame_effects": [
+            "legendary"
+          ],
+          "rarity": "mythic",
+          "lang": "en",
+          "layout": "normal",
+          "type_line": "Legendary Creature — Dragon",
+          "mana_cost": "{2}{R}{R}",
+          "oracle_text": "Flying, haste\nWhenever Smaug attacks, he deals damage equal to the number of Treasures you control to any target.\nAt the beginning of your upkeep, create a Treasure token.",
+          "image_uris": {
+            "small": "https://cards.scryfall.io/small/front/4/3/43c56e15-ba46-4a27-b9b0-55cde9f8c933.jpg?1789800205",
+            "normal": "https://cards.scryfall.io/normal/front/4/3/43c56e15-ba46-4a27-b9b0-55cde9f8c933.jpg?1789800205",
+            "large": "https://cards.scryfall.io/large/front/4/3/43c56e15-ba46-4a27-b9b0-55cde9f8c933.jpg?1789800205",
+            "png": "https://cards.scryfall.io/png/front/4/3/43c56e15-ba46-4a27-b9b0-55cde9f8c933.png?1789800205",
+            "art_crop": "https://cards.scryfall.io/art_crop/front/4/3/43c56e15-ba46-4a27-b9b0-55cde9f8c933.jpg?1789800205",
+            "border_crop": "https://cards.scryfall.io/border_crop/front/4/3/43c56e15-ba46-4a27-b9b0-55cde9f8c933.jpg?1789800205",
+            "thumb": "https://cards.scryfall.io/thumb/front/4/3/43c56e15-ba46-4a27-b9b0-55cde9f8c933.webp?1789800205",
+            "grid": "https://cards.scryfall.io/grid/front/4/3/43c56e15-ba46-4a27-b9b0-55cde9f8c933.webp?1789800205",
+            "display": "https://cards.scryfall.io/display/front/4/3/43c56e15-ba46-4a27-b9b0-55cde9f8c933.webp?1789800205",
+            "art": "https://cards.scryfall.io/art/front/4/3/43c56e15-ba46-4a27-b9b0-55cde9f8c933.webp?1789800205",
+            "crop": "https://cards.scryfall.io/crop/front/4/3/43c56e15-ba46-4a27-b9b0-55cde9f8c933.webp?1789800205",
+            "jpeg": "https://cards.scryfall.io/normal/front/4/3/43c56e15-ba46-4a27-b9b0-55cde9f8c933.jpg?1789800205"
+          },
+          "games": [
+            "paper"
+          ],
+          "legalities": {
+            "standard": "legal",
+            "future": "legal",
+            "historic": "legal",
+            "timeless": "legal",
+            "gladiator": "legal",
+            "pioneer": "legal",
+            "modern": "legal",
+            "legacy": "legal",
+            "pauper": "not_legal",
+            "vintage": "legal",
+            "penny": "not_legal",
+            "commander": "legal",
+            "oathbreaker": "legal",
+            "standardbrawl": "legal",
+            "brawl": "legal",
+            "competitivebrawl": "legal",
+            "alchemy": "not_legal",
+            "paupercommander": "not_legal",
+            "duel": "legal",
+            "oldschool": "not_legal",
+            "premodern": "not_legal",
+            "predh": "not_legal",
+            "tlr": "not_legal"
+          },
+          "power": "4",
+          "toughness": "3",
+          "source": "https://scryfall.com/card/hob/249/smaug-the-magnificent",
+          "art": "Ted Nasmith gleaming gold headliner",
+          "finish": "Gleaming gold foil only"
+        },
+        {
+          "id": "b6529666-0ec8-45a8-8740-3bffc19d2265",
+          "oracle_id": "c53b7602-5e36-4900-896c-844bf6eac22e",
+          "name": "Smaug the Magnificent",
+          "set": "hob",
+          "set_name": "The Hobbit",
+          "collector_number": "265",
+          "released_at": "2026-08-14",
+          "artist": "John Tedrick",
+          "finishes": [
+            "foil"
+          ],
+          "promo_types": [
+            "surgefoil",
+            "universesbeyond"
+          ],
+          "frame_effects": [
+            "legendary",
+            "showcase"
+          ],
+          "rarity": "mythic",
+          "lang": "en",
+          "layout": "normal",
+          "type_line": "Legendary Creature — Dragon",
+          "mana_cost": "{2}{R}{R}",
+          "oracle_text": "Flying, haste\nWhenever Smaug attacks, he deals damage equal to the number of Treasures you control to any target.\nAt the beginning of your upkeep, create a Treasure token.",
+          "image_uris": {
+            "small": "https://cards.scryfall.io/small/front/b/6/b6529666-0ec8-45a8-8740-3bffc19d2265.jpg?1783902779",
+            "normal": "https://cards.scryfall.io/normal/front/b/6/b6529666-0ec8-45a8-8740-3bffc19d2265.jpg?1783902779",
+            "large": "https://cards.scryfall.io/large/front/b/6/b6529666-0ec8-45a8-8740-3bffc19d2265.jpg?1783902779",
+            "png": "https://cards.scryfall.io/png/front/b/6/b6529666-0ec8-45a8-8740-3bffc19d2265.png?1783902779",
+            "art_crop": "https://cards.scryfall.io/art_crop/front/b/6/b6529666-0ec8-45a8-8740-3bffc19d2265.jpg?1783902779",
+            "border_crop": "https://cards.scryfall.io/border_crop/front/b/6/b6529666-0ec8-45a8-8740-3bffc19d2265.jpg?1783902779",
+            "thumb": "https://cards.scryfall.io/thumb/front/b/6/b6529666-0ec8-45a8-8740-3bffc19d2265.webp?1783902779",
+            "grid": "https://cards.scryfall.io/grid/front/b/6/b6529666-0ec8-45a8-8740-3bffc19d2265.webp?1783902779",
+            "display": "https://cards.scryfall.io/display/front/b/6/b6529666-0ec8-45a8-8740-3bffc19d2265.webp?1783902779",
+            "art": "https://cards.scryfall.io/art/front/b/6/b6529666-0ec8-45a8-8740-3bffc19d2265.webp?1783902779",
+            "crop": "https://cards.scryfall.io/crop/front/b/6/b6529666-0ec8-45a8-8740-3bffc19d2265.webp?1783902779",
+            "jpeg": "https://cards.scryfall.io/normal/front/b/6/b6529666-0ec8-45a8-8740-3bffc19d2265.jpg?1783902779"
+          },
+          "games": [
+            "paper"
+          ],
+          "legalities": {
+            "standard": "legal",
+            "future": "legal",
+            "historic": "legal",
+            "timeless": "legal",
+            "gladiator": "legal",
+            "pioneer": "legal",
+            "modern": "legal",
+            "legacy": "legal",
+            "pauper": "not_legal",
+            "vintage": "legal",
+            "penny": "not_legal",
+            "commander": "legal",
+            "oathbreaker": "legal",
+            "standardbrawl": "legal",
+            "brawl": "legal",
+            "competitivebrawl": "legal",
+            "alchemy": "not_legal",
+            "paupercommander": "not_legal",
+            "duel": "legal",
+            "oldschool": "not_legal",
+            "premodern": "not_legal",
+            "predh": "not_legal",
+            "tlr": "not_legal"
+          },
+          "power": "4",
+          "toughness": "3",
+          "source": "https://scryfall.com/card/hob/265/smaug-the-magnificent",
+          "art": "Dragon hoard; same John Tedrick art as #229",
+          "finish": "Surge foil only"
+        }
+      ]
+    },
+    "bloodline-recollector": {
+      "slug": "bloodline-recollector",
+      "first": [
+        "fra",
+        "49"
+      ],
+      "title": "Bloodline Recollector MTG — Serialized 500 & Printings | ManaScout",
+      "desc": "Identify Bloodline Recollector FRA #49 and compare extended art, promos and Mark Poole’s #402 headliner. Only the serialized treatment is limited to 500 copies.",
+      "official": [
+        "collecting-reality-fracture"
+      ],
+      "related": [
+        "the-theorist-jace-beleren",
+        "rhystic-study"
+      ],
+      "name": "Bloodline Recollector",
+      "lookup_name": "Bloodline Recollector // Ancestral Craving",
+      "description": "Identify Bloodline Recollector FRA #49 and compare extended art, promos and Mark Poole’s #402 headliner. Only the serialized treatment is limited to 500 copies.",
+      "opening": "<strong>Bloodline Recollector was first printed in Reality Fracture on 2 October 2026.</strong> The original <strong>FRA #49</strong> is a mythic rare illustrated by <strong>Cynthia Sheppard</strong>, available in nonfoil and traditional foil. The 500-copy limit belongs to serialized #402, not normal Bloodline Recollector cards.",
+      "reviewed": "2026-11-17",
+      "first_id": "4fcc913e-f736-460a-b24b-022fa2e861b9",
+      "records": [
+        {
+          "id": "4fcc913e-f736-460a-b24b-022fa2e861b9",
+          "oracle_id": "c8e9a7e1-28ae-40e3-8715-1bb0aa2057c7",
+          "name": "Bloodline Recollector // Ancestral Craving",
+          "set": "fra",
+          "set_name": "Reality Fracture",
+          "collector_number": "49",
+          "released_at": "2026-10-02",
+          "artist": "Cynthia Sheppard",
+          "finishes": [
+            "nonfoil",
+            "foil"
+          ],
+          "rarity": "mythic",
+          "lang": "en",
+          "layout": "prepare",
+          "type_line": "Creature — Vampire Warlock // Instant",
+          "mana_cost": "{1}{B} // {B}",
+          "card_faces": [
+            {
+              "object": "card_face",
+              "name": "Bloodline Recollector",
+              "mana_cost": "{1}{B}",
+              "type_line": "Creature — Vampire Warlock",
+              "oracle_text": "At the beginning of each end step, if three or more creatures died this turn, this creature becomes prepared. (While it's prepared, you may cast a copy of its spell. Doing so unprepares it.)",
+              "power": "2",
+              "toughness": "2",
+              "artist": "Cynthia Sheppard",
+              "artist_id": "9dfbdd58-65e6-40cf-951a-80e141061939",
+              "illustration_id": "8588ee7b-b874-485e-af97-3a1b4229b2c1"
+            },
+            {
+              "object": "card_face",
+              "name": "Ancestral Craving",
+              "mana_cost": "{B}",
+              "type_line": "Instant",
+              "oracle_text": "Target player draws three cards and loses 3 life.",
+              "artist": "Cynthia Sheppard",
+              "artist_id": "9dfbdd58-65e6-40cf-951a-80e141061939"
+            }
+          ],
+          "image_uris": {
+            "small": "https://cards.scryfall.io/small/front/4/f/4fcc913e-f736-460a-b24b-022fa2e861b9.jpg?1788329264",
+            "normal": "https://cards.scryfall.io/normal/front/4/f/4fcc913e-f736-460a-b24b-022fa2e861b9.jpg?1788329264",
+            "large": "https://cards.scryfall.io/large/front/4/f/4fcc913e-f736-460a-b24b-022fa2e861b9.jpg?1788329264",
+            "png": "https://cards.scryfall.io/png/front/4/f/4fcc913e-f736-460a-b24b-022fa2e861b9.png?1788329264",
+            "art_crop": "https://cards.scryfall.io/art_crop/front/4/f/4fcc913e-f736-460a-b24b-022fa2e861b9.jpg?1788329264",
+            "border_crop": "https://cards.scryfall.io/border_crop/front/4/f/4fcc913e-f736-460a-b24b-022fa2e861b9.jpg?1788329264",
+            "thumb": "https://cards.scryfall.io/thumb/front/4/f/4fcc913e-f736-460a-b24b-022fa2e861b9.webp?1788329264",
+            "grid": "https://cards.scryfall.io/grid/front/4/f/4fcc913e-f736-460a-b24b-022fa2e861b9.webp?1788329264",
+            "display": "https://cards.scryfall.io/display/front/4/f/4fcc913e-f736-460a-b24b-022fa2e861b9.webp?1788329264",
+            "art": "https://cards.scryfall.io/art/front/4/f/4fcc913e-f736-460a-b24b-022fa2e861b9.webp?1788329264",
+            "crop": "https://cards.scryfall.io/crop/front/4/f/4fcc913e-f736-460a-b24b-022fa2e861b9.webp?1788329264",
+            "jpeg": "https://cards.scryfall.io/normal/front/4/f/4fcc913e-f736-460a-b24b-022fa2e861b9.jpg?1788329264"
+          },
+          "games": [
+            "paper",
+            "mtgo",
+            "arena"
+          ],
+          "legalities": {
+            "standard": "legal",
+            "future": "legal",
+            "historic": "legal",
+            "timeless": "legal",
+            "gladiator": "legal",
+            "pioneer": "legal",
+            "modern": "legal",
+            "legacy": "legal",
+            "pauper": "not_legal",
+            "vintage": "legal",
+            "penny": "not_legal",
+            "commander": "legal",
+            "oathbreaker": "legal",
+            "standardbrawl": "legal",
+            "brawl": "legal",
+            "competitivebrawl": "legal",
+            "alchemy": "legal",
+            "paupercommander": "not_legal",
+            "duel": "legal",
+            "oldschool": "not_legal",
+            "premodern": "not_legal",
+            "predh": "not_legal",
+            "tlr": "legal"
+          },
+          "power": "2",
+          "toughness": "2",
+          "source": "https://scryfall.com/card/fra/49/bloodline-recollector-ancestral-craving",
+          "art": "Regular prepare card; original art",
+          "finish": "Nonfoil, traditional foil"
+        },
+        {
+          "id": "9a5db4d2-035f-4f48-8752-75487267c222",
+          "oracle_id": "c8e9a7e1-28ae-40e3-8715-1bb0aa2057c7",
+          "name": "Bloodline Recollector // Ancestral Craving",
+          "set": "fra",
+          "set_name": "Reality Fracture",
+          "collector_number": "402",
+          "released_at": "2026-10-02",
+          "artist": "Mark Poole",
+          "finishes": [
+            "foil"
+          ],
+          "promo_types": [
+            "serialized",
+            "headliner",
+            "doublerainbow",
+            "boosterfun"
+          ],
+          "rarity": "mythic",
+          "lang": "en",
+          "layout": "prepare",
+          "type_line": "Creature — Vampire Warlock // Instant",
+          "mana_cost": "{1}{B} // {B}",
+          "card_faces": [
+            {
+              "object": "card_face",
+              "name": "Bloodline Recollector",
+              "mana_cost": "{1}{B}",
+              "type_line": "Creature — Vampire Warlock",
+              "oracle_text": "At the beginning of each end step, if three or more creatures died this turn, this creature becomes prepared. (While it's prepared, you may cast a copy of its spell. Doing so unprepares it.)",
+              "power": "2",
+              "toughness": "2",
+              "artist": "Mark Poole",
+              "artist_id": "bfdeaf09-f915-4058-8e8b-bcac3bc43c33",
+              "illustration_id": "86b5db97-fa3a-4be8-82ad-cca45a52e9cc"
+            },
+            {
+              "object": "card_face",
+              "name": "Ancestral Craving",
+              "mana_cost": "{B}",
+              "type_line": "Instant",
+              "oracle_text": "Target player draws three cards and loses 3 life.",
+              "artist": "Mark Poole",
+              "artist_id": "bfdeaf09-f915-4058-8e8b-bcac3bc43c33"
+            }
+          ],
+          "image_uris": {
+            "small": "https://cards.scryfall.io/small/front/9/a/9a5db4d2-035f-4f48-8752-75487267c222.jpg?1790747205",
+            "normal": "https://cards.scryfall.io/normal/front/9/a/9a5db4d2-035f-4f48-8752-75487267c222.jpg?1790747205",
+            "large": "https://cards.scryfall.io/large/front/9/a/9a5db4d2-035f-4f48-8752-75487267c222.jpg?1790747205",
+            "png": "https://cards.scryfall.io/png/front/9/a/9a5db4d2-035f-4f48-8752-75487267c222.png?1790747205",
+            "art_crop": "https://cards.scryfall.io/art_crop/front/9/a/9a5db4d2-035f-4f48-8752-75487267c222.jpg?1790747205",
+            "border_crop": "https://cards.scryfall.io/border_crop/front/9/a/9a5db4d2-035f-4f48-8752-75487267c222.jpg?1790747205",
+            "thumb": "https://cards.scryfall.io/thumb/front/9/a/9a5db4d2-035f-4f48-8752-75487267c222.webp?1790747205",
+            "grid": "https://cards.scryfall.io/grid/front/9/a/9a5db4d2-035f-4f48-8752-75487267c222.webp?1790747205",
+            "display": "https://cards.scryfall.io/display/front/9/a/9a5db4d2-035f-4f48-8752-75487267c222.webp?1790747205",
+            "art": "https://cards.scryfall.io/art/front/9/a/9a5db4d2-035f-4f48-8752-75487267c222.webp?1790747205",
+            "crop": "https://cards.scryfall.io/crop/front/9/a/9a5db4d2-035f-4f48-8752-75487267c222.webp?1790747205",
+            "jpeg": "https://cards.scryfall.io/normal/front/9/a/9a5db4d2-035f-4f48-8752-75487267c222.jpg?1790747205"
+          },
+          "games": [
+            "paper"
+          ],
+          "legalities": {
+            "standard": "legal",
+            "future": "legal",
+            "historic": "legal",
+            "timeless": "legal",
+            "gladiator": "legal",
+            "pioneer": "legal",
+            "modern": "legal",
+            "legacy": "legal",
+            "pauper": "not_legal",
+            "vintage": "legal",
+            "penny": "not_legal",
+            "commander": "legal",
+            "oathbreaker": "legal",
+            "standardbrawl": "legal",
+            "brawl": "legal",
+            "competitivebrawl": "legal",
+            "alchemy": "legal",
+            "paupercommander": "not_legal",
+            "duel": "legal",
+            "oldschool": "not_legal",
+            "premodern": "not_legal",
+            "predh": "not_legal",
+            "tlr": "legal"
+          },
+          "power": "2",
+          "toughness": "2",
+          "source": "https://scryfall.com/card/fra/402/bloodline-recollector-ancestral-craving",
+          "art": "Throwback full-art headliner; serialized out of 500",
+          "finish": "Double rainbow foil only"
+        },
+        {
+          "id": "9fb84b18-0775-44eb-83af-5dcb69518360",
+          "oracle_id": "c8e9a7e1-28ae-40e3-8715-1bb0aa2057c7",
+          "name": "Bloodline Recollector // Ancestral Craving",
+          "set": "fra",
+          "set_name": "Reality Fracture",
+          "collector_number": "427",
+          "released_at": "2026-10-02",
+          "artist": "Cynthia Sheppard",
+          "finishes": [
+            "nonfoil",
+            "foil"
+          ],
+          "frame_effects": [
+            "extendedart"
+          ],
+          "rarity": "mythic",
+          "lang": "en",
+          "layout": "prepare",
+          "type_line": "Creature — Vampire Warlock // Instant",
+          "mana_cost": "{1}{B} // {B}",
+          "card_faces": [
+            {
+              "object": "card_face",
+              "name": "Bloodline Recollector",
+              "mana_cost": "{1}{B}",
+              "type_line": "Creature — Vampire Warlock",
+              "oracle_text": "At the beginning of each end step, if three or more creatures died this turn, this creature becomes prepared. (While it's prepared, you may cast a copy of its spell. Doing so unprepares it.)",
+              "power": "2",
+              "toughness": "2",
+              "artist": "Cynthia Sheppard",
+              "artist_id": "9dfbdd58-65e6-40cf-951a-80e141061939",
+              "illustration_id": "8588ee7b-b874-485e-af97-3a1b4229b2c1"
+            },
+            {
+              "object": "card_face",
+              "name": "Ancestral Craving",
+              "mana_cost": "{B}",
+              "type_line": "Instant",
+              "oracle_text": "Target player draws three cards and loses 3 life.",
+              "artist": "Cynthia Sheppard",
+              "artist_id": "9dfbdd58-65e6-40cf-951a-80e141061939"
+            }
+          ],
+          "image_uris": {
+            "small": "https://cards.scryfall.io/small/front/9/f/9fb84b18-0775-44eb-83af-5dcb69518360.jpg?1790137337",
+            "normal": "https://cards.scryfall.io/normal/front/9/f/9fb84b18-0775-44eb-83af-5dcb69518360.jpg?1790137337",
+            "large": "https://cards.scryfall.io/large/front/9/f/9fb84b18-0775-44eb-83af-5dcb69518360.jpg?1790137337",
+            "png": "https://cards.scryfall.io/png/front/9/f/9fb84b18-0775-44eb-83af-5dcb69518360.png?1790137337",
+            "art_crop": "https://cards.scryfall.io/art_crop/front/9/f/9fb84b18-0775-44eb-83af-5dcb69518360.jpg?1790137337",
+            "border_crop": "https://cards.scryfall.io/border_crop/front/9/f/9fb84b18-0775-44eb-83af-5dcb69518360.jpg?1790137337",
+            "thumb": "https://cards.scryfall.io/thumb/front/9/f/9fb84b18-0775-44eb-83af-5dcb69518360.webp?1790137337",
+            "grid": "https://cards.scryfall.io/grid/front/9/f/9fb84b18-0775-44eb-83af-5dcb69518360.webp?1790137337",
+            "display": "https://cards.scryfall.io/display/front/9/f/9fb84b18-0775-44eb-83af-5dcb69518360.webp?1790137337",
+            "art": "https://cards.scryfall.io/art/front/9/f/9fb84b18-0775-44eb-83af-5dcb69518360.webp?1790137337",
+            "crop": "https://cards.scryfall.io/crop/front/9/f/9fb84b18-0775-44eb-83af-5dcb69518360.webp?1790137337",
+            "jpeg": "https://cards.scryfall.io/normal/front/9/f/9fb84b18-0775-44eb-83af-5dcb69518360.jpg?1790137337"
+          },
+          "games": [
+            "paper",
+            "mtgo"
+          ],
+          "legalities": {
+            "standard": "legal",
+            "future": "legal",
+            "historic": "legal",
+            "timeless": "legal",
+            "gladiator": "legal",
+            "pioneer": "legal",
+            "modern": "legal",
+            "legacy": "legal",
+            "pauper": "not_legal",
+            "vintage": "legal",
+            "penny": "not_legal",
+            "commander": "legal",
+            "oathbreaker": "legal",
+            "standardbrawl": "legal",
+            "brawl": "legal",
+            "competitivebrawl": "legal",
+            "alchemy": "legal",
+            "paupercommander": "not_legal",
+            "duel": "legal",
+            "oldschool": "not_legal",
+            "premodern": "not_legal",
+            "predh": "not_legal",
+            "tlr": "legal"
+          },
+          "power": "2",
+          "toughness": "2",
+          "source": "https://scryfall.com/card/fra/427/bloodline-recollector-ancestral-craving",
+          "art": "Extended art; Cynthia Sheppard illustration",
+          "finish": "Nonfoil, traditional foil"
+        },
+        {
+          "id": "545db49d-ee24-496b-8c00-443af20b1066",
+          "oracle_id": "c8e9a7e1-28ae-40e3-8715-1bb0aa2057c7",
+          "name": "Bloodline Recollector // Ancestral Craving",
+          "set": "pfra",
+          "set_name": "Reality Fracture Promos",
+          "collector_number": "49p",
+          "released_at": "2026-10-02",
+          "artist": "Cynthia Sheppard",
+          "finishes": [
+            "nonfoil",
+            "foil"
+          ],
+          "promo_types": [
+            "promopack",
+            "stamped"
+          ],
+          "rarity": "mythic",
+          "lang": "en",
+          "layout": "prepare",
+          "type_line": "Creature — Vampire Warlock // Instant",
+          "mana_cost": "{1}{B} // {B}",
+          "card_faces": [
+            {
+              "object": "card_face",
+              "name": "Bloodline Recollector",
+              "mana_cost": "{1}{B}",
+              "type_line": "Creature — Vampire Warlock",
+              "oracle_text": "At the beginning of each end step, if three or more creatures died this turn, this creature becomes prepared. (While it's prepared, you may cast a copy of its spell. Doing so unprepares it.)",
+              "power": "2",
+              "toughness": "2",
+              "artist": "Cynthia Sheppard",
+              "artist_id": "9dfbdd58-65e6-40cf-951a-80e141061939",
+              "illustration_id": "8588ee7b-b874-485e-af97-3a1b4229b2c1"
+            },
+            {
+              "object": "card_face",
+              "name": "Ancestral Craving",
+              "mana_cost": "{B}",
+              "type_line": "Instant",
+              "oracle_text": "Target player draws three cards and loses 3 life.",
+              "artist": "Cynthia Sheppard",
+              "artist_id": "9dfbdd58-65e6-40cf-951a-80e141061939"
+            }
+          ],
+          "image_uris": {
+            "small": "https://cards.scryfall.io/small/front/5/4/545db49d-ee24-496b-8c00-443af20b1066.jpg?1793112991",
+            "normal": "https://cards.scryfall.io/normal/front/5/4/545db49d-ee24-496b-8c00-443af20b1066.jpg?1793112991",
+            "large": "https://cards.scryfall.io/large/front/5/4/545db49d-ee24-496b-8c00-443af20b1066.jpg?1793112991",
+            "png": "https://cards.scryfall.io/png/front/5/4/545db49d-ee24-496b-8c00-443af20b1066.png?1793112991",
+            "art_crop": "https://cards.scryfall.io/art_crop/front/5/4/545db49d-ee24-496b-8c00-443af20b1066.jpg?1793112991",
+            "border_crop": "https://cards.scryfall.io/border_crop/front/5/4/545db49d-ee24-496b-8c00-443af20b1066.jpg?1793112991",
+            "thumb": "https://cards.scryfall.io/thumb/front/5/4/545db49d-ee24-496b-8c00-443af20b1066.webp?1793112991",
+            "grid": "https://cards.scryfall.io/grid/front/5/4/545db49d-ee24-496b-8c00-443af20b1066.webp?1793112991",
+            "display": "https://cards.scryfall.io/display/front/5/4/545db49d-ee24-496b-8c00-443af20b1066.webp?1793112991",
+            "art": "https://cards.scryfall.io/art/front/5/4/545db49d-ee24-496b-8c00-443af20b1066.webp?1793112991",
+            "crop": "https://cards.scryfall.io/crop/front/5/4/545db49d-ee24-496b-8c00-443af20b1066.webp?1793112991",
+            "jpeg": "https://cards.scryfall.io/normal/front/5/4/545db49d-ee24-496b-8c00-443af20b1066.jpg?1793112991"
+          },
+          "games": [
+            "paper"
+          ],
+          "legalities": {
+            "standard": "legal",
+            "future": "legal",
+            "historic": "legal",
+            "timeless": "legal",
+            "gladiator": "legal",
+            "pioneer": "legal",
+            "modern": "legal",
+            "legacy": "legal",
+            "pauper": "not_legal",
+            "vintage": "legal",
+            "penny": "not_legal",
+            "commander": "legal",
+            "oathbreaker": "legal",
+            "standardbrawl": "legal",
+            "brawl": "legal",
+            "competitivebrawl": "legal",
+            "alchemy": "legal",
+            "paupercommander": "not_legal",
+            "duel": "legal",
+            "oldschool": "not_legal",
+            "premodern": "not_legal",
+            "predh": "not_legal",
+            "tlr": "legal"
+          },
+          "power": "2",
+          "toughness": "2",
+          "source": "https://scryfall.com/card/pfra/49p/bloodline-recollector-ancestral-craving",
+          "art": "Promo-pack stamped record",
+          "finish": "Nonfoil, traditional foil"
+        }
+      ]
+    },
+    "sheoldred-the-apocalypse": {
+      "slug": "sheoldred-the-apocalypse",
+      "first": [
+        "dmu",
+        "107"
+      ],
+      "title": "Sheoldred, the Apocalypse MTG — Printings, Foils & Art | ManaScout",
+      "desc": "Compare Sheoldred’s original DMU #107, showcase and textured foils, concept art and SDS #11 Stardates reprint. Identify exact artists, numbers and finishes.",
+      "official": [
+        "collecting-star-trek",
+        "collecting-phyrexia-all-will-be-one"
+      ],
+      "related": [
+        "captain-james-t-kirk",
+        "mr-spock-science-officer",
+        "demonic-tutor"
+      ],
+      "name": "Sheoldred, the Apocalypse",
+      "lookup_name": "Sheoldred, the Apocalypse",
+      "description": "Compare Sheoldred’s original DMU #107, showcase and textured foils, concept art and SDS #11 Stardates reprint. Identify exact artists, numbers and finishes.",
+      "opening": "<strong>Sheoldred, the Apocalypse was first printed in Dominaria United on 9 September 2022.</strong> The original <strong>DMU #107</strong> is a mythic rare illustrated by <strong>Chris Rahn</strong>, available in nonfoil and traditional foil. Compare DMU showcase and textured records separately from the later SDS #11 Stardates reprint.",
+      "reviewed": "2026-11-17",
+      "first_id": "d67be074-cdd4-41d9-ac89-0a0456c4e4b2",
+      "records": [
+        {
+          "id": "d67be074-cdd4-41d9-ac89-0a0456c4e4b2",
+          "oracle_id": "34f34409-326d-4994-a0ea-1a69aa278f03",
+          "name": "Sheoldred, the Apocalypse",
+          "set": "dmu",
+          "set_name": "Dominaria United",
+          "collector_number": "107",
+          "released_at": "2022-09-09",
+          "artist": "Chris Rahn",
+          "finishes": [
+            "nonfoil",
+            "foil"
+          ],
+          "frame_effects": [
+            "legendary"
+          ],
+          "rarity": "mythic",
+          "lang": "en",
+          "layout": "normal",
+          "type_line": "Legendary Creature — Phyrexian Praetor",
+          "mana_cost": "{2}{B}{B}",
+          "oracle_text": "Deathtouch\nWhenever you draw a card, you gain 2 life.\nWhenever an opponent draws a card, they lose 2 life.",
+          "image_uris": {
+            "small": "https://cards.scryfall.io/small/front/d/6/d67be074-cdd4-41d9-ac89-0a0456c4e4b2.jpg?1783921327",
+            "normal": "https://cards.scryfall.io/normal/front/d/6/d67be074-cdd4-41d9-ac89-0a0456c4e4b2.jpg?1783921327",
+            "large": "https://cards.scryfall.io/large/front/d/6/d67be074-cdd4-41d9-ac89-0a0456c4e4b2.jpg?1783921327",
+            "png": "https://cards.scryfall.io/png/front/d/6/d67be074-cdd4-41d9-ac89-0a0456c4e4b2.png?1783921327",
+            "art_crop": "https://cards.scryfall.io/art_crop/front/d/6/d67be074-cdd4-41d9-ac89-0a0456c4e4b2.jpg?1783921327",
+            "border_crop": "https://cards.scryfall.io/border_crop/front/d/6/d67be074-cdd4-41d9-ac89-0a0456c4e4b2.jpg?1783921327",
+            "thumb": "https://cards.scryfall.io/thumb/front/d/6/d67be074-cdd4-41d9-ac89-0a0456c4e4b2.webp?1783921327",
+            "grid": "https://cards.scryfall.io/grid/front/d/6/d67be074-cdd4-41d9-ac89-0a0456c4e4b2.webp?1783921327",
+            "display": "https://cards.scryfall.io/display/front/d/6/d67be074-cdd4-41d9-ac89-0a0456c4e4b2.webp?1783921327",
+            "art": "https://cards.scryfall.io/art/front/d/6/d67be074-cdd4-41d9-ac89-0a0456c4e4b2.webp?1783921327",
+            "crop": "https://cards.scryfall.io/crop/front/d/6/d67be074-cdd4-41d9-ac89-0a0456c4e4b2.webp?1783921327",
+            "jpeg": "https://cards.scryfall.io/normal/front/d/6/d67be074-cdd4-41d9-ac89-0a0456c4e4b2.jpg?1783921327"
+          },
+          "games": [
+            "paper",
+            "arena",
+            "mtgo"
+          ],
+          "legalities": {
+            "standard": "not_legal",
+            "future": "not_legal",
+            "historic": "legal",
+            "timeless": "legal",
+            "gladiator": "legal",
+            "pioneer": "legal",
+            "modern": "legal",
+            "legacy": "legal",
+            "pauper": "not_legal",
+            "vintage": "legal",
+            "penny": "not_legal",
+            "commander": "legal",
+            "oathbreaker": "legal",
+            "standardbrawl": "not_legal",
+            "brawl": "legal",
+            "competitivebrawl": "legal",
+            "alchemy": "not_legal",
+            "paupercommander": "not_legal",
+            "duel": "legal",
+            "oldschool": "not_legal",
+            "premodern": "not_legal",
+            "predh": "not_legal",
+            "tlr": "not_legal"
+          },
+          "power": "4",
+          "toughness": "5",
+          "source": "https://scryfall.com/card/dmu/107/sheoldred-the-apocalypse",
+          "art": "Original regular frame",
+          "finish": "Nonfoil, traditional foil"
+        },
+        {
+          "id": "fc5be7df-16e0-494c-b960-19fd64d57b35",
+          "oracle_id": "34f34409-326d-4994-a0ea-1a69aa278f03",
+          "name": "Sheoldred, the Apocalypse",
+          "set": "dmu",
+          "set_name": "Dominaria United",
+          "collector_number": "290",
+          "released_at": "2022-09-09",
+          "artist": "Joe Esposito",
+          "finishes": [
+            "nonfoil",
+            "foil"
+          ],
+          "promo_types": [
+            "boosterfun"
+          ],
+          "frame_effects": [
+            "showcase",
+            "legendary",
+            "inverted"
+          ],
+          "rarity": "mythic",
+          "lang": "en",
+          "layout": "normal",
+          "type_line": "Legendary Creature — Phyrexian Praetor",
+          "mana_cost": "{2}{B}{B}",
+          "oracle_text": "Deathtouch\nWhenever you draw a card, you gain 2 life.\nWhenever an opponent draws a card, they lose 2 life.",
+          "image_uris": {
+            "small": "https://cards.scryfall.io/small/front/f/c/fc5be7df-16e0-494c-b960-19fd64d57b35.jpg?1783921241",
+            "normal": "https://cards.scryfall.io/normal/front/f/c/fc5be7df-16e0-494c-b960-19fd64d57b35.jpg?1783921241",
+            "large": "https://cards.scryfall.io/large/front/f/c/fc5be7df-16e0-494c-b960-19fd64d57b35.jpg?1783921241",
+            "png": "https://cards.scryfall.io/png/front/f/c/fc5be7df-16e0-494c-b960-19fd64d57b35.png?1783921241",
+            "art_crop": "https://cards.scryfall.io/art_crop/front/f/c/fc5be7df-16e0-494c-b960-19fd64d57b35.jpg?1783921241",
+            "border_crop": "https://cards.scryfall.io/border_crop/front/f/c/fc5be7df-16e0-494c-b960-19fd64d57b35.jpg?1783921241",
+            "thumb": "https://cards.scryfall.io/thumb/front/f/c/fc5be7df-16e0-494c-b960-19fd64d57b35.webp?1783921241",
+            "grid": "https://cards.scryfall.io/grid/front/f/c/fc5be7df-16e0-494c-b960-19fd64d57b35.webp?1783921241",
+            "display": "https://cards.scryfall.io/display/front/f/c/fc5be7df-16e0-494c-b960-19fd64d57b35.webp?1783921241",
+            "art": "https://cards.scryfall.io/art/front/f/c/fc5be7df-16e0-494c-b960-19fd64d57b35.webp?1783921241",
+            "crop": "https://cards.scryfall.io/crop/front/f/c/fc5be7df-16e0-494c-b960-19fd64d57b35.webp?1783921241",
+            "jpeg": "https://cards.scryfall.io/normal/front/f/c/fc5be7df-16e0-494c-b960-19fd64d57b35.jpg?1783921241"
+          },
+          "games": [
+            "paper",
+            "arena",
+            "mtgo"
+          ],
+          "legalities": {
+            "standard": "not_legal",
+            "future": "not_legal",
+            "historic": "legal",
+            "timeless": "legal",
+            "gladiator": "legal",
+            "pioneer": "legal",
+            "modern": "legal",
+            "legacy": "legal",
+            "pauper": "not_legal",
+            "vintage": "legal",
+            "penny": "not_legal",
+            "commander": "legal",
+            "oathbreaker": "legal",
+            "standardbrawl": "not_legal",
+            "brawl": "legal",
+            "competitivebrawl": "legal",
+            "alchemy": "not_legal",
+            "paupercommander": "not_legal",
+            "duel": "legal",
+            "oldschool": "not_legal",
+            "premodern": "not_legal",
+            "predh": "not_legal",
+            "tlr": "not_legal"
+          },
+          "power": "4",
+          "toughness": "5",
+          "source": "https://scryfall.com/card/dmu/290/sheoldred-the-apocalypse",
+          "art": "English stained-glass showcase",
+          "finish": "Nonfoil, traditional foil"
+        },
+        {
+          "id": "a9494e5f-bfd2-45b0-b324-fd1407d9b644",
+          "oracle_id": "34f34409-326d-4994-a0ea-1a69aa278f03",
+          "name": "Sheoldred, the Apocalypse",
+          "set": "dmu",
+          "set_name": "Dominaria United",
+          "collector_number": "331",
+          "released_at": "2022-09-09",
+          "artist": "Joe Esposito",
+          "finishes": [
+            "foil"
+          ],
+          "promo_types": [
+            "textured",
+            "boosterfun"
+          ],
+          "frame_effects": [
+            "showcase",
+            "legendary",
+            "inverted"
+          ],
+          "rarity": "mythic",
+          "lang": "en",
+          "layout": "normal",
+          "type_line": "Legendary Creature — Phyrexian Praetor",
+          "mana_cost": "{2}{B}{B}",
+          "oracle_text": "Deathtouch\nWhenever you draw a card, you gain 2 life.\nWhenever an opponent draws a card, they lose 2 life.",
+          "image_uris": {
+            "small": "https://cards.scryfall.io/small/front/a/9/a9494e5f-bfd2-45b0-b324-fd1407d9b644.jpg?1783921221",
+            "normal": "https://cards.scryfall.io/normal/front/a/9/a9494e5f-bfd2-45b0-b324-fd1407d9b644.jpg?1783921221",
+            "large": "https://cards.scryfall.io/large/front/a/9/a9494e5f-bfd2-45b0-b324-fd1407d9b644.jpg?1783921221",
+            "png": "https://cards.scryfall.io/png/front/a/9/a9494e5f-bfd2-45b0-b324-fd1407d9b644.png?1783921221",
+            "art_crop": "https://cards.scryfall.io/art_crop/front/a/9/a9494e5f-bfd2-45b0-b324-fd1407d9b644.jpg?1783921221",
+            "border_crop": "https://cards.scryfall.io/border_crop/front/a/9/a9494e5f-bfd2-45b0-b324-fd1407d9b644.jpg?1783921221",
+            "thumb": "https://cards.scryfall.io/thumb/front/a/9/a9494e5f-bfd2-45b0-b324-fd1407d9b644.webp?1783921221",
+            "grid": "https://cards.scryfall.io/grid/front/a/9/a9494e5f-bfd2-45b0-b324-fd1407d9b644.webp?1783921221",
+            "display": "https://cards.scryfall.io/display/front/a/9/a9494e5f-bfd2-45b0-b324-fd1407d9b644.webp?1783921221",
+            "art": "https://cards.scryfall.io/art/front/a/9/a9494e5f-bfd2-45b0-b324-fd1407d9b644.webp?1783921221",
+            "crop": "https://cards.scryfall.io/crop/front/a/9/a9494e5f-bfd2-45b0-b324-fd1407d9b644.webp?1783921221",
+            "jpeg": "https://cards.scryfall.io/normal/front/a/9/a9494e5f-bfd2-45b0-b324-fd1407d9b644.jpg?1783921221"
+          },
+          "games": [
+            "paper",
+            "arena",
+            "mtgo"
+          ],
+          "legalities": {
+            "standard": "not_legal",
+            "future": "not_legal",
+            "historic": "legal",
+            "timeless": "legal",
+            "gladiator": "legal",
+            "pioneer": "legal",
+            "modern": "legal",
+            "legacy": "legal",
+            "pauper": "not_legal",
+            "vintage": "legal",
+            "penny": "not_legal",
+            "commander": "legal",
+            "oathbreaker": "legal",
+            "standardbrawl": "not_legal",
+            "brawl": "legal",
+            "competitivebrawl": "legal",
+            "alchemy": "not_legal",
+            "paupercommander": "not_legal",
+            "duel": "legal",
+            "oldschool": "not_legal",
+            "premodern": "not_legal",
+            "predh": "not_legal",
+            "tlr": "not_legal"
+          },
+          "power": "4",
+          "toughness": "5",
+          "source": "https://scryfall.com/card/dmu/331/sheoldred-the-apocalypse",
+          "art": "Textured stained-glass showcase; same Joe Esposito illustration",
+          "finish": "Textured foil only"
+        },
+        {
+          "id": "95ebbb6d-04f8-42ec-a1b7-6ca67994b8d3",
+          "oracle_id": "34f34409-326d-4994-a0ea-1a69aa278f03",
+          "name": "Sheoldred, the Apocalypse",
+          "set": "dmu",
+          "set_name": "Dominaria United",
+          "collector_number": "369",
+          "released_at": "2022-09-09",
+          "artist": "Chris Rahn",
+          "finishes": [
+            "nonfoil",
+            "foil"
+          ],
+          "promo_types": [
+            "boosterfun"
+          ],
+          "frame_effects": [
+            "showcase",
+            "legendary"
+          ],
+          "rarity": "mythic",
+          "lang": "ph",
+          "layout": "normal",
+          "type_line": "Legendary Creature — Phyrexian Praetor",
+          "mana_cost": "{2}{B}{B}",
+          "oracle_text": "Deathtouch\nWhenever you draw a card, you gain 2 life.\nWhenever an opponent draws a card, they lose 2 life.",
+          "image_uris": {
+            "small": "https://cards.scryfall.io/small/front/9/5/95ebbb6d-04f8-42ec-a1b7-6ca67994b8d3.jpg?1783921206",
+            "normal": "https://cards.scryfall.io/normal/front/9/5/95ebbb6d-04f8-42ec-a1b7-6ca67994b8d3.jpg?1783921206",
+            "large": "https://cards.scryfall.io/large/front/9/5/95ebbb6d-04f8-42ec-a1b7-6ca67994b8d3.jpg?1783921206",
+            "png": "https://cards.scryfall.io/png/front/9/5/95ebbb6d-04f8-42ec-a1b7-6ca67994b8d3.png?1783921206",
+            "art_crop": "https://cards.scryfall.io/art_crop/front/9/5/95ebbb6d-04f8-42ec-a1b7-6ca67994b8d3.jpg?1783921206",
+            "border_crop": "https://cards.scryfall.io/border_crop/front/9/5/95ebbb6d-04f8-42ec-a1b7-6ca67994b8d3.jpg?1783921206",
+            "thumb": "https://cards.scryfall.io/thumb/front/9/5/95ebbb6d-04f8-42ec-a1b7-6ca67994b8d3.webp?1783921206",
+            "grid": "https://cards.scryfall.io/grid/front/9/5/95ebbb6d-04f8-42ec-a1b7-6ca67994b8d3.webp?1783921206",
+            "display": "https://cards.scryfall.io/display/front/9/5/95ebbb6d-04f8-42ec-a1b7-6ca67994b8d3.webp?1783921206",
+            "art": "https://cards.scryfall.io/art/front/9/5/95ebbb6d-04f8-42ec-a1b7-6ca67994b8d3.webp?1783921206",
+            "crop": "https://cards.scryfall.io/crop/front/9/5/95ebbb6d-04f8-42ec-a1b7-6ca67994b8d3.webp?1783921206",
+            "jpeg": "https://cards.scryfall.io/normal/front/9/5/95ebbb6d-04f8-42ec-a1b7-6ca67994b8d3.jpg?1783921206"
+          },
+          "games": [
+            "paper",
+            "arena",
+            "mtgo"
+          ],
+          "legalities": {
+            "standard": "not_legal",
+            "future": "not_legal",
+            "historic": "legal",
+            "timeless": "legal",
+            "gladiator": "legal",
+            "pioneer": "legal",
+            "modern": "legal",
+            "legacy": "legal",
+            "pauper": "not_legal",
+            "vintage": "legal",
+            "penny": "not_legal",
+            "commander": "legal",
+            "oathbreaker": "legal",
+            "standardbrawl": "not_legal",
+            "brawl": "legal",
+            "competitivebrawl": "legal",
+            "alchemy": "not_legal",
+            "paupercommander": "not_legal",
+            "duel": "legal",
+            "oldschool": "not_legal",
+            "premodern": "not_legal",
+            "predh": "not_legal",
+            "tlr": "not_legal"
+          },
+          "power": "4",
+          "toughness": "5",
+          "source": "https://scryfall.com/card/dmu/369/sheoldred-the-apocalypse",
+          "art": "Phyrexian-language original art; Chris Rahn",
+          "finish": "Nonfoil, traditional foil"
+        },
+        {
+          "id": "11a1cfc1-0bfc-40e8-b57f-f267bf9b6542",
+          "oracle_id": "34f34409-326d-4994-a0ea-1a69aa278f03",
+          "name": "Sheoldred, the Apocalypse",
+          "set": "pdmu",
+          "set_name": "Dominaria United Promos",
+          "collector_number": "107p",
+          "released_at": "2022-09-09",
+          "artist": "Chris Rahn",
+          "finishes": [
+            "nonfoil",
+            "foil"
+          ],
+          "promo_types": [
+            "promopack",
+            "stamped"
+          ],
+          "frame_effects": [
+            "legendary"
+          ],
+          "rarity": "mythic",
+          "lang": "en",
+          "layout": "normal",
+          "type_line": "Legendary Creature — Phyrexian Praetor",
+          "mana_cost": "{2}{B}{B}",
+          "oracle_text": "Deathtouch\nWhenever you draw a card, you gain 2 life.\nWhenever an opponent draws a card, they lose 2 life.",
+          "image_uris": {
+            "small": "https://cards.scryfall.io/small/front/1/1/11a1cfc1-0bfc-40e8-b57f-f267bf9b6542.jpg?1783921090",
+            "normal": "https://cards.scryfall.io/normal/front/1/1/11a1cfc1-0bfc-40e8-b57f-f267bf9b6542.jpg?1783921090",
+            "large": "https://cards.scryfall.io/large/front/1/1/11a1cfc1-0bfc-40e8-b57f-f267bf9b6542.jpg?1783921090",
+            "png": "https://cards.scryfall.io/png/front/1/1/11a1cfc1-0bfc-40e8-b57f-f267bf9b6542.png?1783921090",
+            "art_crop": "https://cards.scryfall.io/art_crop/front/1/1/11a1cfc1-0bfc-40e8-b57f-f267bf9b6542.jpg?1783921090",
+            "border_crop": "https://cards.scryfall.io/border_crop/front/1/1/11a1cfc1-0bfc-40e8-b57f-f267bf9b6542.jpg?1783921090",
+            "thumb": "https://cards.scryfall.io/thumb/front/1/1/11a1cfc1-0bfc-40e8-b57f-f267bf9b6542.webp?1783921090",
+            "grid": "https://cards.scryfall.io/grid/front/1/1/11a1cfc1-0bfc-40e8-b57f-f267bf9b6542.webp?1783921090",
+            "display": "https://cards.scryfall.io/display/front/1/1/11a1cfc1-0bfc-40e8-b57f-f267bf9b6542.webp?1783921090",
+            "art": "https://cards.scryfall.io/art/front/1/1/11a1cfc1-0bfc-40e8-b57f-f267bf9b6542.webp?1783921090",
+            "crop": "https://cards.scryfall.io/crop/front/1/1/11a1cfc1-0bfc-40e8-b57f-f267bf9b6542.webp?1783921090",
+            "jpeg": "https://cards.scryfall.io/normal/front/1/1/11a1cfc1-0bfc-40e8-b57f-f267bf9b6542.jpg?1783921090"
+          },
+          "games": [
+            "paper"
+          ],
+          "legalities": {
+            "standard": "not_legal",
+            "future": "not_legal",
+            "historic": "legal",
+            "timeless": "legal",
+            "gladiator": "legal",
+            "pioneer": "legal",
+            "modern": "legal",
+            "legacy": "legal",
+            "pauper": "not_legal",
+            "vintage": "legal",
+            "penny": "not_legal",
+            "commander": "legal",
+            "oathbreaker": "legal",
+            "standardbrawl": "not_legal",
+            "brawl": "legal",
+            "competitivebrawl": "legal",
+            "alchemy": "not_legal",
+            "paupercommander": "not_legal",
+            "duel": "legal",
+            "oldschool": "not_legal",
+            "premodern": "not_legal",
+            "predh": "not_legal",
+            "tlr": "not_legal"
+          },
+          "power": "4",
+          "toughness": "5",
+          "source": "https://scryfall.com/card/pdmu/107p/sheoldred-the-apocalypse",
+          "art": "Promo-pack stamped original",
+          "finish": "Nonfoil, traditional foil"
+        },
+        {
+          "id": "f389b4ae-c109-4989-b7a6-92f07ed88183",
+          "oracle_id": "34f34409-326d-4994-a0ea-1a69aa278f03",
+          "name": "Sheoldred, the Apocalypse",
+          "set": "pdmu",
+          "set_name": "Dominaria United Promos",
+          "collector_number": "107s",
+          "released_at": "2022-09-09",
+          "artist": "Chris Rahn",
+          "finishes": [
+            "foil"
+          ],
+          "promo_types": [
+            "prerelease",
+            "datestamped"
+          ],
+          "frame_effects": [
+            "legendary"
+          ],
+          "rarity": "mythic",
+          "lang": "en",
+          "layout": "normal",
+          "type_line": "Legendary Creature — Phyrexian Praetor",
+          "mana_cost": "{2}{B}{B}",
+          "oracle_text": "Deathtouch\nWhenever you draw a card, you gain 2 life.\nWhenever an opponent draws a card, they lose 2 life.",
+          "image_uris": {
+            "small": "https://cards.scryfall.io/small/front/f/3/f389b4ae-c109-4989-b7a6-92f07ed88183.jpg?1783921088",
+            "normal": "https://cards.scryfall.io/normal/front/f/3/f389b4ae-c109-4989-b7a6-92f07ed88183.jpg?1783921088",
+            "large": "https://cards.scryfall.io/large/front/f/3/f389b4ae-c109-4989-b7a6-92f07ed88183.jpg?1783921088",
+            "png": "https://cards.scryfall.io/png/front/f/3/f389b4ae-c109-4989-b7a6-92f07ed88183.png?1783921088",
+            "art_crop": "https://cards.scryfall.io/art_crop/front/f/3/f389b4ae-c109-4989-b7a6-92f07ed88183.jpg?1783921088",
+            "border_crop": "https://cards.scryfall.io/border_crop/front/f/3/f389b4ae-c109-4989-b7a6-92f07ed88183.jpg?1783921088",
+            "thumb": "https://cards.scryfall.io/thumb/front/f/3/f389b4ae-c109-4989-b7a6-92f07ed88183.webp?1783921088",
+            "grid": "https://cards.scryfall.io/grid/front/f/3/f389b4ae-c109-4989-b7a6-92f07ed88183.webp?1783921088",
+            "display": "https://cards.scryfall.io/display/front/f/3/f389b4ae-c109-4989-b7a6-92f07ed88183.webp?1783921088",
+            "art": "https://cards.scryfall.io/art/front/f/3/f389b4ae-c109-4989-b7a6-92f07ed88183.webp?1783921088",
+            "crop": "https://cards.scryfall.io/crop/front/f/3/f389b4ae-c109-4989-b7a6-92f07ed88183.webp?1783921088",
+            "jpeg": "https://cards.scryfall.io/normal/front/f/3/f389b4ae-c109-4989-b7a6-92f07ed88183.jpg?1783921088"
+          },
+          "games": [
+            "paper"
+          ],
+          "legalities": {
+            "standard": "not_legal",
+            "future": "not_legal",
+            "historic": "legal",
+            "timeless": "legal",
+            "gladiator": "legal",
+            "pioneer": "legal",
+            "modern": "legal",
+            "legacy": "legal",
+            "pauper": "not_legal",
+            "vintage": "legal",
+            "penny": "not_legal",
+            "commander": "legal",
+            "oathbreaker": "legal",
+            "standardbrawl": "not_legal",
+            "brawl": "legal",
+            "competitivebrawl": "legal",
+            "alchemy": "not_legal",
+            "paupercommander": "not_legal",
+            "duel": "legal",
+            "oldschool": "not_legal",
+            "premodern": "not_legal",
+            "predh": "not_legal",
+            "tlr": "not_legal"
+          },
+          "power": "4",
+          "toughness": "5",
+          "source": "https://scryfall.com/card/pdmu/107s/sheoldred-the-apocalypse",
+          "art": "Datestamped prerelease original",
+          "finish": "Traditional foil only"
+        },
+        {
+          "id": "8df6603a-38c1-4d18-8b84-6211e9a7cc09",
+          "oracle_id": "34f34409-326d-4994-a0ea-1a69aa278f03",
+          "name": "Sheoldred, the Apocalypse",
+          "set": "dmu",
+          "set_name": "Dominaria United",
+          "collector_number": "435",
+          "released_at": "2023-02-03",
+          "artist": "Richard Whitters",
+          "finishes": [
+            "nonfoil",
+            "foil"
+          ],
+          "promo_types": [
+            "concept",
+            "boosterfun",
+            "setextension"
+          ],
+          "frame_effects": [
+            "legendary",
+            "inverted"
+          ],
+          "rarity": "mythic",
+          "lang": "en",
+          "layout": "normal",
+          "type_line": "Legendary Creature — Phyrexian Praetor",
+          "mana_cost": "{2}{B}{B}",
+          "oracle_text": "Deathtouch\nWhenever you draw a card, you gain 2 life.\nWhenever an opponent draws a card, they lose 2 life.",
+          "image_uris": {
+            "small": "https://cards.scryfall.io/small/front/8/d/8df6603a-38c1-4d18-8b84-6211e9a7cc09.jpg?1783918186",
+            "normal": "https://cards.scryfall.io/normal/front/8/d/8df6603a-38c1-4d18-8b84-6211e9a7cc09.jpg?1783918186",
+            "large": "https://cards.scryfall.io/large/front/8/d/8df6603a-38c1-4d18-8b84-6211e9a7cc09.jpg?1783918186",
+            "png": "https://cards.scryfall.io/png/front/8/d/8df6603a-38c1-4d18-8b84-6211e9a7cc09.png?1783918186",
+            "art_crop": "https://cards.scryfall.io/art_crop/front/8/d/8df6603a-38c1-4d18-8b84-6211e9a7cc09.jpg?1783918186",
+            "border_crop": "https://cards.scryfall.io/border_crop/front/8/d/8df6603a-38c1-4d18-8b84-6211e9a7cc09.jpg?1783918186",
+            "thumb": "https://cards.scryfall.io/thumb/front/8/d/8df6603a-38c1-4d18-8b84-6211e9a7cc09.webp?1783918186",
+            "grid": "https://cards.scryfall.io/grid/front/8/d/8df6603a-38c1-4d18-8b84-6211e9a7cc09.webp?1783918186",
+            "display": "https://cards.scryfall.io/display/front/8/d/8df6603a-38c1-4d18-8b84-6211e9a7cc09.webp?1783918186",
+            "art": "https://cards.scryfall.io/art/front/8/d/8df6603a-38c1-4d18-8b84-6211e9a7cc09.webp?1783918186",
+            "crop": "https://cards.scryfall.io/crop/front/8/d/8df6603a-38c1-4d18-8b84-6211e9a7cc09.webp?1783918186",
+            "jpeg": "https://cards.scryfall.io/normal/front/8/d/8df6603a-38c1-4d18-8b84-6211e9a7cc09.jpg?1783918186"
+          },
+          "games": [
+            "paper",
+            "mtgo",
+            "arena"
+          ],
+          "legalities": {
+            "standard": "not_legal",
+            "future": "not_legal",
+            "historic": "legal",
+            "timeless": "legal",
+            "gladiator": "legal",
+            "pioneer": "legal",
+            "modern": "legal",
+            "legacy": "legal",
+            "pauper": "not_legal",
+            "vintage": "legal",
+            "penny": "not_legal",
+            "commander": "legal",
+            "oathbreaker": "legal",
+            "standardbrawl": "not_legal",
+            "brawl": "legal",
+            "competitivebrawl": "legal",
+            "alchemy": "not_legal",
+            "paupercommander": "not_legal",
+            "duel": "legal",
+            "oldschool": "not_legal",
+            "premodern": "not_legal",
+            "predh": "not_legal",
+            "tlr": "not_legal"
+          },
+          "power": "4",
+          "toughness": "5",
+          "source": "https://scryfall.com/card/dmu/435/sheoldred-the-apocalypse",
+          "art": "Borderless concept art; later set-extension record",
+          "finish": "Nonfoil, traditional foil"
+        },
+        {
+          "id": "5ee7c1b3-36c3-4f81-a45d-f34331db5b18",
+          "oracle_id": "34f34409-326d-4994-a0ea-1a69aa278f03",
+          "name": "Sheoldred, the Apocalypse",
+          "set": "dmu",
+          "set_name": "Dominaria United",
+          "collector_number": "436",
+          "released_at": "2023-02-03",
+          "artist": "Richard Whitters",
+          "finishes": [
+            "foil"
+          ],
+          "promo_types": [
+            "boosterfun",
+            "setextension",
+            "stepandcompleat",
+            "concept"
+          ],
+          "frame_effects": [
+            "legendary",
+            "inverted"
+          ],
+          "rarity": "mythic",
+          "lang": "en",
+          "layout": "normal",
+          "type_line": "Legendary Creature — Phyrexian Praetor",
+          "mana_cost": "{2}{B}{B}",
+          "oracle_text": "Deathtouch\nWhenever you draw a card, you gain 2 life.\nWhenever an opponent draws a card, they lose 2 life.",
+          "image_uris": {
+            "small": "https://cards.scryfall.io/small/front/5/e/5ee7c1b3-36c3-4f81-a45d-f34331db5b18.jpg?1783918186",
+            "normal": "https://cards.scryfall.io/normal/front/5/e/5ee7c1b3-36c3-4f81-a45d-f34331db5b18.jpg?1783918186",
+            "large": "https://cards.scryfall.io/large/front/5/e/5ee7c1b3-36c3-4f81-a45d-f34331db5b18.jpg?1783918186",
+            "png": "https://cards.scryfall.io/png/front/5/e/5ee7c1b3-36c3-4f81-a45d-f34331db5b18.png?1783918186",
+            "art_crop": "https://cards.scryfall.io/art_crop/front/5/e/5ee7c1b3-36c3-4f81-a45d-f34331db5b18.jpg?1783918186",
+            "border_crop": "https://cards.scryfall.io/border_crop/front/5/e/5ee7c1b3-36c3-4f81-a45d-f34331db5b18.jpg?1783918186",
+            "thumb": "https://cards.scryfall.io/thumb/front/5/e/5ee7c1b3-36c3-4f81-a45d-f34331db5b18.webp?1783918186",
+            "grid": "https://cards.scryfall.io/grid/front/5/e/5ee7c1b3-36c3-4f81-a45d-f34331db5b18.webp?1783918186",
+            "display": "https://cards.scryfall.io/display/front/5/e/5ee7c1b3-36c3-4f81-a45d-f34331db5b18.webp?1783918186",
+            "art": "https://cards.scryfall.io/art/front/5/e/5ee7c1b3-36c3-4f81-a45d-f34331db5b18.webp?1783918186",
+            "crop": "https://cards.scryfall.io/crop/front/5/e/5ee7c1b3-36c3-4f81-a45d-f34331db5b18.webp?1783918186",
+            "jpeg": "https://cards.scryfall.io/normal/front/5/e/5ee7c1b3-36c3-4f81-a45d-f34331db5b18.jpg?1783918186"
+          },
+          "games": [
+            "paper"
+          ],
+          "legalities": {
+            "standard": "not_legal",
+            "future": "not_legal",
+            "historic": "legal",
+            "timeless": "legal",
+            "gladiator": "legal",
+            "pioneer": "legal",
+            "modern": "legal",
+            "legacy": "legal",
+            "pauper": "not_legal",
+            "vintage": "legal",
+            "penny": "not_legal",
+            "commander": "legal",
+            "oathbreaker": "legal",
+            "standardbrawl": "not_legal",
+            "brawl": "legal",
+            "competitivebrawl": "legal",
+            "alchemy": "not_legal",
+            "paupercommander": "not_legal",
+            "duel": "legal",
+            "oldschool": "not_legal",
+            "premodern": "not_legal",
+            "predh": "not_legal",
+            "tlr": "not_legal"
+          },
+          "power": "4",
+          "toughness": "5",
+          "source": "https://scryfall.com/card/dmu/436/sheoldred-the-apocalypse",
+          "art": "Concept art; same Richard Whitters illustration",
+          "finish": "Step-and-compleat foil only"
+        },
+        {
+          "id": "c68629ff-72b3-40a2-b578-cddb6ddb4ccf",
+          "oracle_id": "34f34409-326d-4994-a0ea-1a69aa278f03",
+          "name": "Sheoldred, the Apocalypse",
+          "set": "sds",
+          "set_name": "Stardates",
+          "collector_number": "11",
+          "released_at": "2026-11-13",
+          "artist": "Nicky Barkla",
+          "finishes": [
+            "nonfoil",
+            "foil"
+          ],
+          "promo_types": [
+            "universesbeyond"
+          ],
+          "frame_effects": [
+            "inverted",
+            "legendary"
+          ],
+          "rarity": "mythic",
+          "lang": "en",
+          "layout": "normal",
+          "type_line": "Legendary Creature — Phyrexian Praetor",
+          "mana_cost": "{2}{B}{B}",
+          "oracle_text": "Deathtouch\nWhenever you draw a card, you gain 2 life.\nWhenever an opponent draws a card, they lose 2 life.",
+          "image_uris": {
+            "small": "https://cards.scryfall.io/small/front/c/6/c68629ff-72b3-40a2-b578-cddb6ddb4ccf.jpg?1793238904",
+            "normal": "https://cards.scryfall.io/normal/front/c/6/c68629ff-72b3-40a2-b578-cddb6ddb4ccf.jpg?1793238904",
+            "large": "https://cards.scryfall.io/large/front/c/6/c68629ff-72b3-40a2-b578-cddb6ddb4ccf.jpg?1793238904",
+            "png": "https://cards.scryfall.io/png/front/c/6/c68629ff-72b3-40a2-b578-cddb6ddb4ccf.png?1793238904",
+            "art_crop": "https://cards.scryfall.io/art_crop/front/c/6/c68629ff-72b3-40a2-b578-cddb6ddb4ccf.jpg?1793238904",
+            "border_crop": "https://cards.scryfall.io/border_crop/front/c/6/c68629ff-72b3-40a2-b578-cddb6ddb4ccf.jpg?1793238904",
+            "thumb": "https://cards.scryfall.io/thumb/front/c/6/c68629ff-72b3-40a2-b578-cddb6ddb4ccf.webp?1793238904",
+            "grid": "https://cards.scryfall.io/grid/front/c/6/c68629ff-72b3-40a2-b578-cddb6ddb4ccf.webp?1793238904",
+            "display": "https://cards.scryfall.io/display/front/c/6/c68629ff-72b3-40a2-b578-cddb6ddb4ccf.webp?1793238904",
+            "art": "https://cards.scryfall.io/art/front/c/6/c68629ff-72b3-40a2-b578-cddb6ddb4ccf.webp?1793238904",
+            "crop": "https://cards.scryfall.io/crop/front/c/6/c68629ff-72b3-40a2-b578-cddb6ddb4ccf.webp?1793238904",
+            "jpeg": "https://cards.scryfall.io/normal/front/c/6/c68629ff-72b3-40a2-b578-cddb6ddb4ccf.jpg?1793238904"
+          },
+          "games": [
+            "paper",
+            "mtgo"
+          ],
+          "legalities": {
+            "standard": "not_legal",
+            "future": "not_legal",
+            "historic": "legal",
+            "timeless": "legal",
+            "gladiator": "legal",
+            "pioneer": "legal",
+            "modern": "legal",
+            "legacy": "legal",
+            "pauper": "not_legal",
+            "vintage": "legal",
+            "penny": "not_legal",
+            "commander": "legal",
+            "oathbreaker": "legal",
+            "standardbrawl": "not_legal",
+            "brawl": "legal",
+            "competitivebrawl": "legal",
+            "alchemy": "not_legal",
+            "paupercommander": "not_legal",
+            "duel": "legal",
+            "oldschool": "not_legal",
+            "premodern": "not_legal",
+            "predh": "not_legal",
+            "tlr": "not_legal"
+          },
+          "power": "4",
+          "toughness": "5",
+          "source": "https://scryfall.com/card/sds/11/sheoldred-the-apocalypse",
+          "art": "Borderless Stardates crossover; same gameplay identity",
+          "finish": "Nonfoil, traditional foil"
+        }
+      ]
+    }
+  },
+  "upgrades": {
+    "jeweled-lotus": {
+      "name": "Jeweled Lotus",
+      "title": "Jeweled Lotus MTG — Original, Textured & Etched Foils | ManaScout",
+      "description": "Identify Jeweled Lotus CMR #319 and compare extended art, etched and textured Commander Masters editions. Check printing, artist and finish separately.",
+      "opening": "<strong>Jeweled Lotus first appeared in Commander Legends (CMR), 20 November 2020.</strong> The original is <strong>CMR #319</strong>, at <strong>mythic</strong>, illustrated by <strong>Alayna Danner</strong>. Available original finishes: <strong>Nonfoil, traditional foil</strong>. Compare the original with the later etched and textured records below; those are different physical finishes, not interchangeable foil labels.",
+      "reviewed": "2026-11-17",
+      "previous": {
+        "title": "Jeweled Lotus Printings, First Edition & Foil Guide | ManaScout",
+        "description": "Compare Jeweled Lotus’s Commander Legends debut, extended art and Commander Masters etched and textured versions, with its current Commander ban explained.",
+        "opening": "<strong>Jeweled Lotus first appeared in Commander Legends (CMR), 20 November 2020.</strong> The original is <strong>CMR #319</strong>, at <strong>mythic</strong>, illustrated by <strong>Alayna Danner</strong>. Available original finishes: <strong>Nonfoil, traditional foil</strong>."
+      },
+      "evidence": {
+        "impressions": 22,
+        "clicks": 0,
+        "position_approx": 6.14,
+        "ctr_percent": 0.0
+      },
+      "reason": "Page-one zero-click original/foil proposition",
+      "sitemap": {
+        "url": "https://manascout.co.uk/card/jeweled-lotus/",
+        "lastmod": "2026-11-17"
+      }
+    },
+    "esper-sentinel": {
+      "name": "Esper Sentinel",
+      "title": "Esper Sentinel MTG — Sketch, Retro & Foil Printings | ManaScout",
+      "description": "Identify Esper Sentinel MH2 #12, compare sketch #328 with retro and Secret Lair art, and choose an exact edition by collector number and finish.",
+      "opening": "<strong>Esper Sentinel first appeared in Modern Horizons 2 on 18 June 2021.</strong> The standard rare is MH2 #12, illustrated by Eric Deschamps. The same release included sketch showcase #328; both have nonfoil and traditional foil options. Compare the standard and sketch artwork before choosing between later retro and Secret Lair versions.",
+      "reviewed": "2026-11-17",
+      "previous": {
+        "title": "Esper Sentinel Printings: Sketch, Retro & Foils | ManaScout",
+        "description": "Compare Esper Sentinel MH2 #12 and sketch #328, the H2R retro reprint and Ricardo Cavolo Secret Lair art, with collector numbers and verified finishes.",
+        "opening": "<strong>Esper Sentinel first appeared in Modern Horizons 2 on 18 June 2021.</strong> The standard rare is MH2 #12, illustrated by Eric Deschamps. The same release included sketch showcase #328; both have nonfoil and traditional foil options."
+      },
+      "evidence": {
+        "impressions": 19,
+        "clicks": 0,
+        "position_approx": 6.74,
+        "ctr_percent": 0.0
+      },
+      "reason": "Page-one zero-click sketch/art identity",
+      "sitemap": {
+        "url": "https://manascout.co.uk/card/esper-sentinel/",
+        "lastmod": "2026-11-17"
+      }
+    },
+    "cyclonic-rift": {
+      "name": "Cyclonic Rift",
+      "title": "Cyclonic Rift MTG — First Printing, Art & Foils | ManaScout",
+      "description": "Find Cyclonic Rift’s original RTR #35, then compare later artwork, retro frames, etched foils and serialized editions using exact collector records.",
+      "opening": "<strong>Cyclonic Rift first appeared in Return to Ravnica on 5 October 2012.</strong> RTR #35 is a rare illustrated by Chris Rahn, with nonfoil and traditional foil versions. Compare that original with later retro, etched and serialized records; identify the treatment before choosing a finish.",
+      "reviewed": "2026-11-17",
+      "previous": {
+        "title": "Cyclonic Rift Printings: First Release, Art & Foils | ManaScout",
+        "description": "Compare Cyclonic Rift from Return to Ravnica #35 to retro, anime, etched, serialized and 2026 Mystical Archive versions, with artists and collector numbers.",
+        "opening": "<strong>Cyclonic Rift first appeared in Return to Ravnica on 5 October 2012.</strong> RTR #35 is a rare illustrated by Chris Rahn, with nonfoil and traditional foil versions."
+      },
+      "evidence": {
+        "impressions": 18,
+        "clicks": 0,
+        "position_approx": 7.06,
+        "ctr_percent": 0.0
+      },
+      "reason": "Observed foil intent, page-one zero clicks",
+      "sitemap": {
+        "url": "https://manascout.co.uk/card/cyclonic-rift/",
+        "lastmod": "2026-11-17"
+      }
+    },
+    "lightning-bolt": {
+      "name": "Lightning Bolt",
+      "title": "Lightning Bolt MTG — Alpha Original & Artwork Versions | ManaScout",
+      "description": "Identify Lightning Bolt’s Alpha #161 original and compare later art, reprints and Mystical Archive finishes. Separate original editions from later versions.",
+      "opening": "<strong>Lightning Bolt first appeared in Limited Edition Alpha (LEA), 5 August 1993.</strong> The original record is <strong>LEA #161</strong>, at <strong>common</strong>, illustrated by <strong>Christopher Rush</strong>. Original finish availability: <strong>nonfoil only</strong>. Compare the Alpha original with later artwork and reprints; the same spell can have a different artist, frame and finish.",
+      "reviewed": "2026-11-17",
+      "previous": {
+        "title": "Lightning Bolt Printings, Reprints & First Printing | ManaScout",
+        "description": "Compare Lightning Bolt’s Alpha #161 original, major artwork eras, Mountain, Go Secret Lair cards and Mystical Archive finishes without losing the history.",
+        "opening": "<strong>Lightning Bolt first appeared in Limited Edition Alpha (LEA), 5 August 1993.</strong> The original record is <strong>LEA #161</strong>, at <strong>common</strong>, illustrated by <strong>Christopher Rush</strong>. Original finish availability: <strong>nonfoil only</strong>."
+      },
+      "evidence": {
+        "impressions": 15,
+        "clicks": 0,
+        "position_approx": 6.4,
+        "ctr_percent": 0.0
+      },
+      "reason": "Page-one zero-click original/art scope",
+      "sitemap": {
+        "url": "https://manascout.co.uk/card/lightning-bolt/",
+        "lastmod": "2026-11-17"
+      }
+    },
+    "gaeas-cradle": {
+      "name": "Gaea's Cradle",
+      "title": "Gaea’s Cradle MTG — Original Printing & Judge Foil | ManaScout",
+      "description": "Identify Gaea’s Cradle USG #321 and distinguish the original from its Judge foil. Compare artist, set and collector number without conflating editions.",
+      "opening": "<strong>Gaea&#x27;s Cradle first appeared in Urza’s Saga (USG), 12 October 1998.</strong> The original record is <strong>USG #321</strong>, at <strong>rare</strong>, illustrated by <strong>Mark Zug</strong>. Original finish availability: <strong>nonfoil only</strong>. Compare the original nonfoil with the separately identified Judge foil; a foil listing is not an original Urza’s Saga finish.",
+      "reviewed": "2026-11-17",
+      "previous": {
+        "title": "Gaea’s Cradle First Printing, Judge Foil & Versions | ManaScout",
+        "description": "Identify Gaea’s Cradle USG #321, the Mark Zug Judge foil and gold-bordered editions. Compare real paper printings, artwork and collector context.",
+        "opening": "<strong>Gaea&#x27;s Cradle first appeared in Urza’s Saga (USG), 12 October 1998.</strong> The original record is <strong>USG #321</strong>, at <strong>rare</strong>, illustrated by <strong>Mark Zug</strong>. Original finish availability: <strong>nonfoil only</strong>."
+      },
+      "evidence": {
+        "impressions": 13,
+        "clicks": 0,
+        "position_approx": 7.62,
+        "ctr_percent": 0.0
+      },
+      "reason": "Page-one zero-click original versus Judge foil",
+      "sitemap": {
+        "url": "https://manascout.co.uk/card/gaeas-cradle/",
+        "lastmod": "2026-11-17"
+      }
+    },
+    "mystic-remora": {
+      "name": "Mystic Remora",
+      "title": "Mystic Remora MTG — Original Art, Retro & Foil Versions | ManaScout",
+      "description": "Identify Mystic Remora’s Ice Age #87 original and compare Secret Lair, retro-frame and later foil artwork. Inspect exact sets, artists and finishes.",
+      "opening": "<strong>Mystic Remora debuted in Ice Age on 3 June 1995.</strong> The original is ICE #87, a common illustrated by Ken Meyer, Jr., available only in nonfoil. It is the historical starting point; a retro-frame Dominaria Remastered copy is a later printing with different art. Compare the original image with later retro-frame and foil records; a retro frame alone does not identify an Ice Age original.",
+      "reviewed": "2026-11-17",
+      "previous": {
+        "title": "Mystic Remora Printings: Ice Age, Foils & Art | ManaScout",
+        "description": "Compare Mystic Remora from Ice Age #87 to Secret Lair, Dominaria Remastered and Avatar, with verified artwork, collector numbers and foil options.",
+        "opening": "<strong>Mystic Remora debuted in Ice Age on 3 June 1995.</strong> The original is ICE #87, a common illustrated by Ken Meyer, Jr., available only in nonfoil. It is the historical starting point; a retro-frame Dominaria Remastered copy is a later printing with different art."
+      },
+      "evidence": {
+        "impressions": 10,
+        "clicks": 0,
+        "position_approx": 6.1,
+        "ctr_percent": 0.0
+      },
+      "reason": "Page-one zero-click original/art difference",
+      "sitemap": {
+        "url": "https://manascout.co.uk/card/mystic-remora/",
+        "lastmod": "2026-11-17"
+      }
+    },
+    "fierce-guardianship": {
+      "name": "Fierce Guardianship",
+      "title": "Fierce Guardianship MTG — Original & Foil Printings | ManaScout",
+      "description": "Identify Fierce Guardianship’s Commander 2020 original and compare later artwork and foil editions. Check set, collector number and available finish.",
+      "opening": "<strong>Fierce Guardianship debuted in Commander 2020 in 2020.</strong> C20 #35 is a rare illustrated by Randy Vargas and is nonfoil only. It was included in the Timeless Wisdom deck. Compare the Commander original with later artwork and finish records below; do not infer a foil from a missing price field.",
+      "reviewed": "2026-11-17",
+      "previous": {
+        "title": "Fierce Guardianship Printings: Originals, Art & Foils | ManaScout",
+        "description": "Compare Fierce Guardianship from Commander 2020 to etched, borderless, Pixel Perfect and Avatar editions, with verified artists, numbers and foil availability.",
+        "opening": "<strong>Fierce Guardianship debuted in Commander 2020 in 2020.</strong> C20 #35 is a rare illustrated by Randy Vargas and is nonfoil only. It was included in the Timeless Wisdom deck."
+      },
+      "evidence": {
+        "impressions": 10,
+        "clicks": 0,
+        "position_approx": 3.2,
+        "ctr_percent": 0.0
+      },
+      "reason": "Strong position, small zero-click sample; limited changes justified",
+      "sitemap": {
+        "url": "https://manascout.co.uk/card/fierce-guardianship/",
+        "lastmod": "2026-11-17"
+      }
+    },
+    "demonic-tutor": {
+      "name": "Demonic Tutor",
+      "title": "Demonic Tutor MTG — Alpha Original & Alternate Art | ManaScout",
+      "description": "Identify Demonic Tutor’s Alpha #104 original and compare later artwork, borderless and etched editions. Match the set before relying on a collector number.",
+      "opening": "<strong>Demonic Tutor debuted in Limited Edition Alpha in August 1993.</strong> The original uncommon is LEA #104, illustrated by Douglas Shuler, and is nonfoil only. Beta and several later early editions use catalogue number 105 instead; the set code is essential when identifying an original. Compare the Alpha original with later alternate art and etched records; the set code matters as much as the number.",
+      "reviewed": "2026-11-17",
+      "previous": {
+        "title": "Demonic Tutor Printings, Alpha Original & Foil Artwork | ManaScout",
+        "description": "Trace Demonic Tutor from Alpha uncommon to Ultimate Box Topper, Mystical Archive and Commander Masters. Compare artwork, etched and borderless editions.",
+        "opening": "<strong>Demonic Tutor debuted in Limited Edition Alpha in August 1993.</strong> The original uncommon is LEA #104, illustrated by Douglas Shuler, and is nonfoil only. Beta and several later early editions use catalogue number 105 instead; the set code is essential when identifying an original."
+      },
+      "evidence": {
+        "impressions": 28,
+        "clicks": 0,
+        "position_approx": 8.71,
+        "ctr_percent": 0.0
+      },
+      "reason": "Observed original-art demand, near-page-one zero clicks",
+      "sitemap": {
+        "url": "https://manascout.co.uk/card/demonic-tutor/",
+        "lastmod": "2026-11-17"
+      }
+    },
+    "mana-crypt": {
+      "name": "Mana Crypt",
+      "title": "Mana Crypt MTG — First Printing, Art & Neon Foils | ManaScout",
+      "description": "Identify Mana Crypt’s book-promo first printing and compare later artwork, Invention and neon foil records. Keep edition, suffix and current legality distinct.",
+      "opening": "<strong>Mana Crypt first appeared in HarperPrism Book Promos (PHPR), 1995 (catalogue date: 1 May).</strong> The original record is <strong>PHPR #5</strong>, at <strong>rare</strong>, illustrated by <strong>Mark Tedin</strong>. Original finish availability: <strong>nonfoil only</strong>. Compare the original book promo with later artwork and neon treatment records; suffixes and finish categories distinguish physical versions.",
+      "reviewed": "2026-11-17",
+      "previous": {
+        "title": "Mana Crypt First Printing, Reprints & Commander Ban | ManaScout",
+        "description": "Trace Mana Crypt from HarperPrism #5 through Judge, Masters and Invention printings. Identify each neon-ink variant and its dated Commander ban status.",
+        "opening": "<strong>Mana Crypt first appeared in HarperPrism Book Promos (PHPR), 1995 (catalogue date: 1 May).</strong> The original record is <strong>PHPR #5</strong>, at <strong>rare</strong>, illustrated by <strong>Mark Tedin</strong>. Original finish availability: <strong>nonfoil only</strong>."
+      },
+      "evidence": {
+        "impressions": 34,
+        "clicks": 0,
+        "position_approx": 10.35,
+        "ctr_percent": 0.0
+      },
+      "reason": "Observed first-printing queries, near-page-one zero clicks",
+      "sitemap": {
+        "url": "https://manascout.co.uk/card/mana-crypt/",
+        "lastmod": "2026-11-17"
+      }
+    },
+    "force-of-will": {
+      "name": "Force of Will",
+      "title": "Force of Will MTG — Alliances Original & Foil Art | ManaScout",
+      "description": "Identify Force of Will’s Alliances original and compare later artwork and foil printings. Match artists, set codes and collector numbers before selecting.",
+      "opening": "<strong>Force of Will debuted in Alliances in June 1996.</strong> ALL #28 is an uncommon illustrated by Terese Nielsen, available only in nonfoil. The number is a catalogue identifier: the original card predates printed modern collector-number lines. Compare the Alliances original with the later artwork and foil records below; choose the edition before choosing a reflective surface.",
+      "reviewed": "2026-11-17",
+      "previous": {
+        "title": "Force of Will Printings: Alliances, Artwork & Foils | ManaScout",
+        "description": "Compare Force of Will's Alliances original with Judge, Invocation, retro, borderless and Mystical Archive editions, including artists, numbers and finishes.",
+        "opening": "<strong>Force of Will debuted in Alliances in June 1996.</strong> ALL #28 is an uncommon illustrated by Terese Nielsen, available only in nonfoil. The number is a catalogue identifier: the original card predates printed modern collector-number lines."
+      },
+      "evidence": {
+        "impressions": 33,
+        "clicks": 0,
+        "position_approx": 11.33,
+        "ctr_percent": 0.0
+      },
+      "reason": "Near-page-one zero clicks with meaningful impressions",
+      "sitemap": {
+        "url": "https://manascout.co.uk/card/force-of-will/",
+        "lastmod": "2026-11-17"
+      }
+    },
+    "path-to-exile": {
+      "name": "Path to Exile",
+      "title": "Path to Exile MTG — Original Printing & Artwork | ManaScout",
+      "description": "Find Path to Exile’s Conflux original and compare later artwork, promos and foil versions. Identify exact editions by set, collector number and artist.",
+      "opening": "<strong>Path to Exile first appeared in Conflux (CON), 6 February 2009.</strong> The original record is <strong>CON #15</strong>, at <strong>uncommon</strong>, illustrated by <strong>Todd Lockwood</strong>. Original finish availability: <strong>nonfoil, traditional foil</strong>. Compare the original with later artwork, promo and finish records; a shared card name is not a shared collector identity.",
+      "reviewed": "2026-11-17",
+      "previous": {
+        "title": "Path to Exile Printings, Secret Lair & First Printing | ManaScout",
+        "description": "Compare Path to Exile’s Conflux #15 debut with early promos, Masters art, Arcane and Fblthp Secret Lairs and the experimental Zeta Set printing.",
+        "opening": "<strong>Path to Exile first appeared in Conflux (CON), 6 February 2009.</strong> The original record is <strong>CON #15</strong>, at <strong>uncommon</strong>, illustrated by <strong>Todd Lockwood</strong>. Original finish availability: <strong>nonfoil, traditional foil</strong>."
+      },
+      "evidence": {
+        "impressions": 31,
+        "clicks": 0,
+        "position_approx": 10.84,
+        "ctr_percent": 0.0
+      },
+      "reason": "Near-page-one zero-click identification proposition",
+      "sitemap": {
+        "url": "https://manascout.co.uk/card/path-to-exile/",
+        "lastmod": "2026-11-17"
+      }
+    },
+    "mox-opal": {
+      "name": "Mox Opal",
+      "title": "Mox Opal MTG — Original, Judge Foil & Invention | ManaScout",
+      "description": "Identify Mox Opal SOM #179 and compare Masters artwork, Judge foil and Kaladesh Invention editions. Inspect each set, collector number and available finish.",
+      "opening": "<strong>Mox Opal first appeared in Scars of Mirrodin (SOM), 1 October 2010.</strong> The original is <strong>SOM #179</strong>, at <strong>mythic</strong>, illustrated by <strong>Volkan Baga</strong>. Available original finishes: <strong>Nonfoil, traditional foil</strong>. Compare the Scars original with the Judge foil and Invention records below; these are separate collector editions, not just a finish toggle.",
+      "reviewed": "2026-11-17",
+      "previous": {
+        "title": "Mox Opal Printings, First Edition & Foil Guide | ManaScout",
+        "description": "Trace Mox Opal from Scars of Mirrodin #179 through Masters reprints, Judge foil and Kaladesh Invention. Compare artists, frames and real finishes.",
+        "opening": "<strong>Mox Opal first appeared in Scars of Mirrodin (SOM), 1 October 2010.</strong> The original is <strong>SOM #179</strong>, at <strong>mythic</strong>, illustrated by <strong>Volkan Baga</strong>. Available original finishes: <strong>Nonfoil, traditional foil</strong>."
+      },
+      "evidence": {
+        "impressions": 29,
+        "clicks": 0,
+        "position_approx": 12.14,
+        "ctr_percent": 0.0
+      },
+      "reason": "Near-page-one zero-click original versus premium editions",
+      "sitemap": {
+        "url": "https://manascout.co.uk/card/mox-opal/",
+        "lastmod": "2026-11-17"
+      }
+    },
+    "doubling-season": {
+      "name": "Doubling Season",
+      "title": "Doubling Season MTG — Original Art & Foil Printings | ManaScout",
+      "description": "Identify Doubling Season’s Ravnica original and compare later artwork, reprints and foil treatments. Use exact edition, artist and collector-number records.",
+      "opening": "<strong>Doubling Season first appeared in Ravnica: City of Guilds (RAV), 7 October 2005.</strong> The original record is <strong>RAV #158</strong>, at <strong>rare</strong>, illustrated by <strong>Wayne Reynolds</strong>. Original finish availability: <strong>nonfoil, traditional foil</strong>. Compare the original with later artwork and foil treatment records; a reprint can change the painting as well as the frame.",
+      "reviewed": "2026-11-17",
+      "previous": {
+        "title": "Doubling Season Printings, Japan Showcase & Foil Versions | ManaScout",
+        "description": "Compare Doubling Season’s Ravnica original, major artwork eras, Masters etched foil, Enchanting Tales confetti, Foundations fracture foil and TMNT edition.",
+        "opening": "<strong>Doubling Season first appeared in Ravnica: City of Guilds (RAV), 7 October 2005.</strong> The original record is <strong>RAV #158</strong>, at <strong>rare</strong>, illustrated by <strong>Wayne Reynolds</strong>. Original finish availability: <strong>nonfoil, traditional foil</strong>."
+      },
+      "evidence": {
+        "impressions": 25,
+        "clicks": 0,
+        "position_approx": 10.88,
+        "ctr_percent": 0.0
+      },
+      "reason": "Near-page-one zero-click artwork/reprint proposition",
+      "sitemap": {
+        "url": "https://manascout.co.uk/card/doubling-season/",
+        "lastmod": "2026-11-17"
+      }
+    },
+    "the-one-ring": {
+      "name": "The One Ring",
+      "title": "The One Ring MTG — Versions, Foils & Unique 001/001 | ManaScout",
+      "description": "Identify The One Ring’s standard, scene and scroll versions; distinguish surge foil, serialized Sol Ring cards and the unique 001/001 One Ring headliner.",
+      "opening": "<strong>The One Ring debuted in The Lord of the Rings: Tales of Middle-earth, released on 23 June 2023.</strong> The original standard printing is LTR #246, a mythic rare illustrated by Veli Nystrom, available in nonfoil and traditional foil. Compare the original with scene, scroll and special-finish records below; the unique 001/001 headliner is not every foil One Ring.",
+      "reviewed": "2026-11-17",
+      "previous": {
+        "title": "The One Ring Printings, Artwork & Foil Versions | ManaScout",
+        "description": "Compare The One Ring’s original, extended art, scene, scroll and poster versions. Separate surge foil, serialized editions and the unique 001/001 card.",
+        "opening": "<strong>The One Ring debuted in The Lord of the Rings: Tales of Middle-earth, released on 23 June 2023.</strong> The original standard printing is LTR #246, a mythic rare illustrated by Veli Nystrom, available in nonfoil and traditional foil."
+      },
+      "evidence": {
+        "impressions": 124,
+        "clicks": 2,
+        "position_approx": 8.36,
+        "ctr_percent": 1.61
+      },
+      "reason": "High impressions, low CTR, observed versions/foil/full-art intent",
+      "sitemap": {
+        "url": "https://manascout.co.uk/card/the-one-ring/",
+        "lastmod": "2026-11-17"
+      }
+    },
+    "black-lotus": {
+      "name": "Black Lotus",
+      "title": "Black Lotus MTG — Original Art, Editions & Reprints | ManaScout",
+      "description": "Identify Black Lotus’s Alpha original and compare Beta, Unlimited and Collector’s Edition records. Separate original art, later reproductions and play eligibility.",
+      "opening": "<strong>Black Lotus first appeared in Limited Edition Alpha (LEA), 5 August 1993.</strong> The original record is <strong>LEA #232</strong>, at <strong>rare</strong>, illustrated by <strong>Christopher Rush</strong>. Original finish availability: <strong>nonfoil only</strong>. Compare Alpha with later editions and non-tournament reproductions; this guide identifies printings, not authenticity or market value.",
+      "reviewed": "2026-11-17",
+      "previous": {
+        "title": "Black Lotus Collector’s Edition, Printings & Versions | ManaScout",
+        "description": "Distinguish Alpha, Beta and Unlimited Black Lotus from Collectors’ Editions and 30th Anniversary cards: dates, borders, Christopher Rush art and legality.",
+        "opening": "<strong>Black Lotus first appeared in Limited Edition Alpha (LEA), 5 August 1993.</strong> The original record is <strong>LEA #232</strong>, at <strong>rare</strong>, illustrated by <strong>Christopher Rush</strong>. Original finish availability: <strong>nonfoil only</strong>."
+      },
+      "evidence": {
+        "impressions": 85,
+        "clicks": 1,
+        "position_approx": 25.0,
+        "ctr_percent": 1.18
+      },
+      "reason": "Separate long-tail edition/original-art cohort, not generic ranking target",
+      "sitemap": {
+        "url": "https://manascout.co.uk/card/black-lotus/",
+        "lastmod": "2026-11-17"
+      }
+    }
+  },
+  "sitemap": {
+    "https://manascout.co.uk/": {
+      "lastmod": "2026-11-17",
+      "basis": "Phase 6 content/snippet or contextual related-guide update"
+    },
+    "https://manascout.co.uk/card/": {
+      "lastmod": "2026-11-17",
+      "basis": "Phase 6 content/snippet or contextual related-guide update"
+    },
+    "https://manascout.co.uk/card/jeweled-lotus/": {
+      "lastmod": "2026-11-17",
+      "basis": "Phase 6 content/snippet or contextual related-guide update"
+    },
+    "https://manascout.co.uk/card/esper-sentinel/": {
+      "lastmod": "2026-11-17",
+      "basis": "Phase 6 content/snippet or contextual related-guide update"
+    },
+    "https://manascout.co.uk/card/cyclonic-rift/": {
+      "lastmod": "2026-11-17",
+      "basis": "Phase 6 content/snippet or contextual related-guide update"
+    },
+    "https://manascout.co.uk/card/lightning-bolt/": {
+      "lastmod": "2026-11-17",
+      "basis": "Phase 6 content/snippet or contextual related-guide update"
+    },
+    "https://manascout.co.uk/card/gaeas-cradle/": {
+      "lastmod": "2026-11-17",
+      "basis": "Phase 6 content/snippet or contextual related-guide update"
+    },
+    "https://manascout.co.uk/card/mystic-remora/": {
+      "lastmod": "2026-11-17",
+      "basis": "Phase 6 content/snippet or contextual related-guide update"
+    },
+    "https://manascout.co.uk/card/fierce-guardianship/": {
+      "lastmod": "2026-11-17",
+      "basis": "Phase 6 content/snippet or contextual related-guide update"
+    },
+    "https://manascout.co.uk/card/demonic-tutor/": {
+      "lastmod": "2026-11-17",
+      "basis": "Phase 6 content/snippet or contextual related-guide update"
+    },
+    "https://manascout.co.uk/card/mana-crypt/": {
+      "lastmod": "2026-11-17",
+      "basis": "Phase 6 content/snippet or contextual related-guide update"
+    },
+    "https://manascout.co.uk/card/force-of-will/": {
+      "lastmod": "2026-11-17",
+      "basis": "Phase 6 content/snippet or contextual related-guide update"
+    },
+    "https://manascout.co.uk/card/path-to-exile/": {
+      "lastmod": "2026-11-17",
+      "basis": "Phase 6 content/snippet or contextual related-guide update"
+    },
+    "https://manascout.co.uk/card/mox-opal/": {
+      "lastmod": "2026-11-17",
+      "basis": "Phase 6 content/snippet or contextual related-guide update"
+    },
+    "https://manascout.co.uk/card/doubling-season/": {
+      "lastmod": "2026-11-17",
+      "basis": "Phase 6 content/snippet or contextual related-guide update"
+    },
+    "https://manascout.co.uk/card/the-one-ring/": {
+      "lastmod": "2026-11-17",
+      "basis": "Phase 6 content/snippet or contextual related-guide update"
+    },
+    "https://manascout.co.uk/card/black-lotus/": {
+      "lastmod": "2026-11-17",
+      "basis": "Phase 6 content/snippet or contextual related-guide update"
+    },
+    "https://manascout.co.uk/card/captain-jean-luc-picard/": {
+      "lastmod": "2026-11-17",
+      "basis": "Phase 6 content/snippet or contextual related-guide update"
+    },
+    "https://manascout.co.uk/card/smaug-wicked-worm/": {
+      "lastmod": "2026-11-17",
+      "basis": "Phase 6 content/snippet or contextual related-guide update"
+    },
+    "https://manascout.co.uk/card/the-theorist-jace-beleren/": {
+      "lastmod": "2026-11-17",
+      "basis": "Phase 6 content/snippet or contextual related-guide update"
+    },
+    "https://manascout.co.uk/card/captain-james-t-kirk/": {
+      "lastmod": "2026-11-17",
+      "basis": "New researched permanent guide"
+    },
+    "https://manascout.co.uk/card/smaug-the-magnificent/": {
+      "lastmod": "2026-11-17",
+      "basis": "New researched permanent guide"
+    },
+    "https://manascout.co.uk/card/bloodline-recollector/": {
+      "lastmod": "2026-11-17",
+      "basis": "New researched permanent guide"
+    },
+    "https://manascout.co.uk/card/sheoldred-the-apocalypse/": {
+      "lastmod": "2026-11-17",
+      "basis": "New researched permanent guide"
+    }
+  },
+  "preserved": {
+    "ads.txt": "ed384bf780cb795bcc65ab682591d80f9851139ec1dac0718037f8825fd5bdec",
+    "assets/js/deck-studio.js": "62eb46f7c7322106422054d9966a1066a1adbb2b594bdafb1a5a6189cc5e17c3",
+    "assets/js/deck-data.js": "00b0551fef9d8979ed06710dad47c32d3d140f036807b1a4a0298c8431550a64",
+    "assets/js/deck-generator.js": "28ce3a7dbf1238a173dc71cc6b11b3ed32810431d93e6d6da466c0bcbf3bb18d"
+  },
+  "cotw": {
+    "id": "8810b817-7349-468b-bcca-ba0843bbc852",
+    "name": "Cynette, Jelly Drover",
+    "set": "j25",
+    "collector_number": "35",
+    "artist": "Daisuke Tatsuma",
+    "finishes": [
+      "nonfoil"
+    ],
+    "released_at": "2024-11-15",
+    "oracle_text": "When Cynette enters or dies, create a 1/1 blue Jellyfish creature token with flying.\nCreatures you control with flying get +1/+1.",
+    "english_physical_record_count": 1
+  },
+  "metadata_only": {
+    "captain-jean-luc-picard": {
+      "title": "Captain Jean-Luc Picard MTG Printings & Foils | ManaScout",
+      "description": "Compare Captain Jean-Luc Picard’s first TRK #7 printing, LCARS art, surge foil #497 and signed headliner #1701D, with artists and collector numbers.",
+      "reviewed": "2026-11-17",
+      "sitemap": {
+        "url": "https://manascout.co.uk/card/captain-jean-luc-picard/",
+        "lastmod": "2026-11-17"
+      }
+    },
+    "smaug-wicked-worm": {
+      "title": "Smaug, Wicked Worm Printings, Book Cover Art & Surge Foil | ManaScout",
+      "description": "Compare Smaug, Wicked Worm HOB #164, Tyler Jacobson’s book-cover #245 and surge foil #281. Identify the exact card without confusing other Smaug designs.",
+      "reviewed": "2026-11-17",
+      "sitemap": {
+        "url": "https://manascout.co.uk/card/smaug-wicked-worm/",
+        "lastmod": "2026-11-17"
+      }
+    },
+    "the-theorist-jace-beleren": {
+      "title": "The Theorist, Jace Beleren Printings, Showcase & Foils | ManaScout",
+      "description": "Identify The Theorist FRA #43, braintwister #363, Japan Showcase and fracture foil, plus the later Secret Lair Bundle promo and its distinct artwork.",
+      "reviewed": "2026-11-17",
+      "sitemap": {
+        "url": "https://manascout.co.uk/card/the-theorist-jace-beleren/",
+        "lastmod": "2026-11-17"
+      }
+    }
+  },
+  "external_destination_updates": {
+    "index.html": [
+      "https://api.scryfall.com",
+      "https://cards.scryfall.io",
+      "https://magic.wizards.com/en/products/foundations/card-image-gallery",
+      "https://manascout.co.uk/",
+      "https://scryfall.com/",
+      "https://scryfall.com/card/j25/35/cynette-jelly-drover"
+    ],
+    "card/captain-james-t-kirk/index.html": [
+      "https://magic.wizards.com/en/news/feature/collecting-star-trek",
+      "https://manascout.co.uk/card/captain-james-t-kirk/",
+      "https://scryfall.com/",
+      "https://scryfall.com/card/trk/142/captain-james-t-kirk",
+      "https://scryfall.com/card/trk/1701/captain-james-t-kirk",
+      "https://scryfall.com/card/trk/418/captain-james-t-kirk",
+      "https://scryfall.com/card/trk/542/captain-james-t-kirk"
+    ],
+    "card/smaug-the-magnificent/index.html": [
+      "https://magic.wizards.com/en/news/feature/collecting-the-hobbit",
+      "https://manascout.co.uk/card/smaug-the-magnificent/",
+      "https://scryfall.com/",
+      "https://scryfall.com/card/hob/110/smaug-the-magnificent",
+      "https://scryfall.com/card/hob/229/smaug-the-magnificent",
+      "https://scryfall.com/card/hob/249/smaug-the-magnificent",
+      "https://scryfall.com/card/hob/265/smaug-the-magnificent"
+    ],
+    "card/bloodline-recollector/index.html": [
+      "https://magic.wizards.com/en/news/feature/collecting-reality-fracture",
+      "https://manascout.co.uk/card/bloodline-recollector/",
+      "https://scryfall.com/",
+      "https://scryfall.com/card/fra/402/bloodline-recollector-ancestral-craving",
+      "https://scryfall.com/card/fra/427/bloodline-recollector-ancestral-craving",
+      "https://scryfall.com/card/fra/49/bloodline-recollector-ancestral-craving",
+      "https://scryfall.com/card/pfra/49p/bloodline-recollector-ancestral-craving"
+    ],
+    "card/sheoldred-the-apocalypse/index.html": [
+      "https://magic.wizards.com/en/news/feature/collecting-phyrexia-all-will-be-one",
+      "https://magic.wizards.com/en/news/feature/collecting-star-trek",
+      "https://manascout.co.uk/card/sheoldred-the-apocalypse/",
+      "https://scryfall.com/",
+      "https://scryfall.com/card/dmu/107/sheoldred-the-apocalypse",
+      "https://scryfall.com/card/dmu/290/sheoldred-the-apocalypse",
+      "https://scryfall.com/card/dmu/331/sheoldred-the-apocalypse",
+      "https://scryfall.com/card/dmu/369/sheoldred-the-apocalypse",
+      "https://scryfall.com/card/dmu/435/sheoldred-the-apocalypse",
+      "https://scryfall.com/card/dmu/436/sheoldred-the-apocalypse",
+      "https://scryfall.com/card/pdmu/107p/sheoldred-the-apocalypse",
+      "https://scryfall.com/card/pdmu/107s/sheoldred-the-apocalypse",
+      "https://scryfall.com/card/sds/11/sheoldred-the-apocalypse"
+    ]
+  },
+  "analytics_implementation_sha256": "1b45ed1f9b8d69fea2cd59c2eef1cced8f78e8c36302d25422fa34e264b1a08e",
+  "observations": [
+    {
+      "slug": "mr-spock-science-officer",
+      "impressions": 237,
+      "clicks": 1,
+      "position_approx": 5.79
+    },
+    {
+      "slug": "sol-ring",
+      "impressions": 132,
+      "clicks": 0,
+      "position_approx": 6.27
+    },
+    {
+      "slug": "the-one-ring",
+      "impressions": 124,
+      "clicks": 2,
+      "position_approx": 8.36
+    },
+    {
+      "slug": "rhystic-study",
+      "impressions": 86,
+      "clicks": 3,
+      "position_approx": 5.69
+    },
+    {
+      "slug": "arcane-signet",
+      "impressions": 60,
+      "clicks": 1,
+      "position_approx": 7.6
+    },
+    {
+      "slug": "black-lotus",
+      "impressions": 85,
+      "clicks": 1,
+      "position_approx": 25
+    },
+    {
+      "slug": "deflecting-swat",
+      "impressions": 42,
+      "clicks": 0,
+      "position_approx": 5.4
+    },
+    {
+      "slug": "force-of-will",
+      "impressions": 33,
+      "clicks": 0,
+      "position_approx": 11.33
+    },
+    {
+      "slug": "path-to-exile",
+      "impressions": 31,
+      "clicks": 0,
+      "position_approx": 10.84
+    },
+    {
+      "slug": "mox-opal",
+      "impressions": 29,
+      "clicks": 0,
+      "position_approx": 12.14
+    },
+    {
+      "slug": "demonic-tutor",
+      "impressions": 28,
+      "clicks": 0,
+      "position_approx": 8.71
+    },
+    {
+      "slug": "mana-crypt",
+      "impressions": 34,
+      "clicks": 0,
+      "position_approx": 10.35
+    },
+    {
+      "slug": "doubling-season",
+      "impressions": 25,
+      "clicks": 0,
+      "position_approx": 10.88
+    },
+    {
+      "slug": "jeweled-lotus",
+      "impressions": 22,
+      "clicks": 0,
+      "position_approx": 6.14
+    },
+    {
+      "slug": "esper-sentinel",
+      "impressions": 19,
+      "clicks": 0,
+      "position_approx": 6.74
+    },
+    {
+      "slug": "smothering-tithe",
+      "impressions": 19,
+      "clicks": 0,
+      "position_approx": 15.05
+    },
+    {
+      "slug": "cyclonic-rift",
+      "impressions": 18,
+      "clicks": 0,
+      "position_approx": 7.06
+    },
+    {
+      "slug": "lightning-bolt",
+      "impressions": 15,
+      "clicks": 0,
+      "position_approx": 6.4
+    },
+    {
+      "slug": "gaeas-cradle",
+      "impressions": 13,
+      "clicks": 0,
+      "position_approx": 7.62
+    },
+    {
+      "slug": "mystic-remora",
+      "impressions": 10,
+      "clicks": 0,
+      "position_approx": 6.1
+    },
+    {
+      "slug": "fierce-guardianship",
+      "impressions": 10,
+      "clicks": 0,
+      "position_approx": 3.2
+    }
+  ]
+}

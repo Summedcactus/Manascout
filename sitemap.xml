@@ -4,12 +4,12 @@
 
   <url>
     <loc>https://manascout.co.uk/</loc>
-    <lastmod>2026-11-09</lastmod>
+    <lastmod>2026-11-17</lastmod>
   </url>
 
   <url>
     <loc>https://manascout.co.uk/card/</loc>
-    <lastmod>2026-11-10</lastmod>
+    <lastmod>2026-11-17</lastmod>
   </url>
 
   <url>
@@ -29,7 +29,7 @@
 
   <url>
     <loc>https://manascout.co.uk/card/black-lotus/</loc>
-    <lastmod>2026-11-04</lastmod>
+    <lastmod>2026-11-17</lastmod>
   </url>
 
   <url>
@@ -39,7 +39,7 @@
 
   <url>
     <loc>https://manascout.co.uk/card/cyclonic-rift/</loc>
-    <lastmod>2026-11-01</lastmod>
+    <lastmod>2026-11-17</lastmod>
   </url>
 
   <url>
@@ -54,7 +54,7 @@
 
   <url>
     <loc>https://manascout.co.uk/card/demonic-tutor/</loc>
-    <lastmod>2026-11-07</lastmod>
+    <lastmod>2026-11-17</lastmod>
   </url>
 
   <url>
@@ -64,17 +64,17 @@
 
   <url>
     <loc>https://manascout.co.uk/card/doubling-season/</loc>
-    <lastmod>2026-11-04</lastmod>
+    <lastmod>2026-11-17</lastmod>
   </url>
 
   <url>
     <loc>https://manascout.co.uk/card/esper-sentinel/</loc>
-    <lastmod>2026-11-01</lastmod>
+    <lastmod>2026-11-17</lastmod>
   </url>
 
   <url>
     <loc>https://manascout.co.uk/card/force-of-will/</loc>
-    <lastmod>2026-11-02</lastmod>
+    <lastmod>2026-11-17</lastmod>
   </url>
 
   <url>
@@ -89,7 +89,7 @@
 
   <url>
     <loc>https://manascout.co.uk/card/lightning-bolt/</loc>
-    <lastmod>2026-11-04</lastmod>
+    <lastmod>2026-11-17</lastmod>
   </url>
 
   <url>
@@ -99,7 +99,7 @@
 
   <url>
     <loc>https://manascout.co.uk/card/mana-crypt/</loc>
-    <lastmod>2026-11-04</lastmod>
+    <lastmod>2026-11-17</lastmod>
   </url>
 
   <url>
@@ -114,7 +114,7 @@
 
   <url>
     <loc>https://manascout.co.uk/card/mystic-remora/</loc>
-    <lastmod>2026-11-02</lastmod>
+    <lastmod>2026-11-17</lastmod>
   </url>
 
   <url>
@@ -124,7 +124,7 @@
 
   <url>
     <loc>https://manascout.co.uk/card/path-to-exile/</loc>
-    <lastmod>2026-11-04</lastmod>
+    <lastmod>2026-11-17</lastmod>
   </url>
 
   <url>
@@ -134,7 +134,7 @@
 
   <url>
     <loc>https://manascout.co.uk/card/smaug-wicked-worm/</loc>
-    <lastmod>2026-11-04</lastmod>
+    <lastmod>2026-11-17</lastmod>
   </url>
 
   <url>
@@ -159,12 +159,12 @@
 
   <url>
     <loc>https://manascout.co.uk/card/the-one-ring/</loc>
-    <lastmod>2026-11-10</lastmod>
+    <lastmod>2026-11-17</lastmod>
   </url>
 
   <url>
     <loc>https://manascout.co.uk/card/the-theorist-jace-beleren/</loc>
-    <lastmod>2026-11-04</lastmod>
+    <lastmod>2026-11-17</lastmod>
   </url>
 
   <url>
@@ -179,7 +179,7 @@
 
   <url>
     <loc>https://manascout.co.uk/card/fierce-guardianship/</loc>
-    <lastmod>2026-11-02</lastmod>
+    <lastmod>2026-11-17</lastmod>
   </url>
 
   <url>
@@ -208,7 +208,7 @@
   </url>
   <url>
     <loc>https://manascout.co.uk/card/captain-jean-luc-picard/</loc>
-    <lastmod>2026-11-04</lastmod>
+    <lastmod>2026-11-17</lastmod>
   </url>
 
   <url>
@@ -223,7 +223,7 @@
 
   <url>
     <loc>https://manascout.co.uk/card/gaeas-cradle/</loc>
-    <lastmod>2026-11-04</lastmod>
+    <lastmod>2026-11-17</lastmod>
   </url>
 
   <url>
@@ -238,11 +238,11 @@
 
   <url>
     <loc>https://manascout.co.uk/card/mox-opal/</loc>
-    <lastmod>2026-11-07</lastmod>
+    <lastmod>2026-11-17</lastmod>
   </url>
   <url>
     <loc>https://manascout.co.uk/card/jeweled-lotus/</loc>
-    <lastmod>2026-11-07</lastmod>
+    <lastmod>2026-11-17</lastmod>
   </url>
   <url>
     <loc>https://manascout.co.uk/card/lotus-petal/</loc>
@@ -300,4 +300,8 @@
     <loc>https://manascout.co.uk/card/dark-ritual/</loc>
     <lastmod>2026-11-10</lastmod>
   </url>
+  <url><loc>https://manascout.co.uk/card/captain-james-t-kirk/</loc><lastmod>2026-11-17</lastmod></url>
+  <url><loc>https://manascout.co.uk/card/smaug-the-magnificent/</loc><lastmod>2026-11-17</lastmod></url>
+  <url><loc>https://manascout.co.uk/card/bloodline-recollector/</loc><lastmod>2026-11-17</lastmod></url>
+  <url><loc>https://manascout.co.uk/card/sheoldred-the-apocalypse/</loc><lastmod>2026-11-17</lastmod></url>
 </urlset>

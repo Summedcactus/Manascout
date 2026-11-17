@@ -39,7 +39,7 @@ with sync_playwright() as p:
   page.locator('#guide-card-search').press('Escape');check('Escape closes search and returns focus',page.locator('#guide-search-panel').is_hidden() and page.locator('#guide-search-toggle').evaluate('(e)=>e===document.activeElement'))
   page.locator('#guide-search-toggle').click();page.locator('#guide-card-search').fill('Lightning Bolt');page.locator('#guide-card-search').press('Enter');page.wait_for_url('**/card/lightning-bolt/**');loaded()
   check('guide search uses authoritative known route',urlsplit(page.url).path=='/card/lightning-bolt/')
-  go('/?q=Sheoldred%2C+the+Apocalypse');loaded();page.wait_for_function('document.querySelector("#printings-status").textContent.includes("matching records")')
+  go('/?q=Opt');loaded();page.wait_for_function('document.querySelector("#printings-status").textContent.includes("matching records")')
   check('card without guide remains usable',urlsplit(page.url).path=='/' and page.locator('#card-details .manascout-guide-link a[href^="/card/"]').count()==0)
   advanced=page.locator('.ms-archive-options');check('advanced filters initially collapsed',not advanced.evaluate('(e)=>e.open'))
   advanced.locator('summary').press('Enter');check('advanced filters keyboard accessible',advanced.evaluate('(e)=>e.open') and page.locator('#ms-print-lang').is_visible())
