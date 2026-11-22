@@ -370,3 +370,79 @@ test("Phase 7 Chromium journeys", { timeout: 90000 }, async t => {
     assert.deepEqual(errors, []);
   });
 });
+
+test("Phase 8 Deck Studio Chromium journeys", { timeout: 90000 }, async t => {
+  const { run, ready, send, navigate, errors } = await setup(t);
+  const deckUrl = "https://manascout.co.uk/deck/";
+  const title = "Deck Studio — Build Your MTG Deck | ManaScout";
+  const indexMetadata = `[
+    document.querySelector('link[rel="canonical"]').href,
+    document.querySelector('meta[name="robots"]').content,
+    document.title
+  ]`;
+
+  for (const width of [320, 390, 768, 1280]) {
+    await t.test(`${width}px tool-first layout, import, generation and exact handoffs`, async () => {
+      await send("Emulation.setDeviceMetricsOverride", { width, height: 850, deviceScaleFactor: 1, mobile: width < 500 });
+      await navigate("/contact/");
+      await run("localStorage.clear()");
+      await navigate("/deck/");
+      assert.deepEqual(await run(indexMetadata), [deckUrl, "index,follow", title]);
+      const layout = await run(`(() => {
+        const workspace = document.querySelector(".ds-workspace");
+        const about = document.querySelector(".ds-about");
+        return {
+          heading: document.querySelector("h1").textContent,
+          controlsTop: document.querySelector("#deck-name").getBoundingClientRect().top,
+          workspaceBottom: workspace.getBoundingClientRect().bottom,
+          aboutTop: about.getBoundingClientRect().top,
+          pageWidth: document.documentElement.clientWidth,
+          contentWidth: document.documentElement.scrollWidth,
+          viewportHeight: innerHeight
+        };
+      })()`);
+      assert.equal(layout.heading, "Deck Studio");
+      assert.ok(layout.controlsTop < 245, JSON.stringify(layout));
+      assert.ok(layout.aboutTop >= layout.viewportHeight && layout.aboutTop >= layout.workspaceBottom, JSON.stringify(layout));
+      assert.equal(layout.contentWidth, layout.pageWidth, JSON.stringify(layout));
+      await run('document.querySelector(".ds-about h2").scrollIntoView()');
+      assert.ok(await run('scrollY > 0'));
+      await run('scrollTo(0, 0); document.querySelector("#deck-import").click()');
+      await ready('document.querySelector("#portable-import").closest("dialog").open');
+      await run(`document.querySelector("#portable-text").value = "1 Sol Ring (CMM) 410 [foil] [lang:ja]";
+        document.querySelector("#portable-preview").click()`);
+      await ready('!document.querySelector("#portable-accept").disabled');
+      await run('document.querySelector("#portable-close").click()');
+      assert.equal(await run('document.querySelector("#portable-import").closest("dialog").open'), false);
+
+      await navigate(`/deck/?card=Sol+Ring&printing=${japanese.id}&finish=foil&guide=%2Fcard%2Fsol-ring%2F&source=home`);
+      await ready(`document.querySelector("#preview-id").textContent === "${japanese.id}"`);
+      assert.deepEqual(await run(indexMetadata), [deckUrl, "noindex,follow", title]);
+      assert.equal(await run('document.querySelector("#preview-language").textContent'), "JA");
+      assert.equal(await run('document.querySelector("#preview-finish").textContent'), "Foil");
+      assert.match(await run('document.querySelector("#preview-printing").textContent'), /CMM #410/);
+      assert.ok(await run('fixtureEvents.some(item => item.event === "deck_studio_open" && item.props.source === "home")'));
+
+      await navigate(`/deck/?printing=${cynette.id}&finish=nonfoil&set=j25&number=35&source=cotw`);
+      await ready(`document.querySelector("#preview-id").textContent === "${cynette.id}"`);
+      assert.deepEqual(await run(indexMetadata), [deckUrl, "noindex,follow", title]);
+      assert.match(await run('document.querySelector("#preview-printing").textContent'), /J25 #35/);
+      assert.equal(await run('document.querySelector("#preview-finish").textContent'), "Nonfoil");
+      await ready('!document.querySelector("#preview-commander").hidden && !document.querySelector("#preview-commander").disabled');
+      await run('document.querySelector("#preview-commander").click()');
+      await ready('!document.querySelector("#generation-controls").hidden && !document.querySelector("#generate-deck").disabled');
+      await run('document.querySelector("#generate-deck").click(); document.querySelector("#cancel-generation").click()');
+      await ready('document.querySelector("#generation-status").textContent.includes("cancel")');
+      assert.deepEqual(errors, []);
+    });
+  }
+
+  await t.test("Contact and non-card state crawl directives", async () => {
+    await navigate("/contact/");
+    assert.equal(await run(`document.querySelector('meta[name="robots"]').content`), "noindex,follow");
+    assert.equal(await run(`document.querySelector('link[rel="canonical"]').href`), "https://manascout.co.uk/contact/");
+    await navigate("/deck/?format=commander");
+    assert.deepEqual(await run(indexMetadata), [deckUrl, "noindex,follow", title]);
+    assert.deepEqual(errors, []);
+  });
+});

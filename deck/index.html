@@ -5,18 +5,22 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#101114">
   <title>Deck Studio — Build Your MTG Deck | ManaScout</title>
-  <meta name="description" content="Build Commander, Standard and other Constructed decks with ManaScout. Search cards, keep exact printings, check construction, view stats and save local drafts with JSON backups.">
+  <meta name="description" content="Build Commander, Standard and other Magic decks with ManaScout. Keep exact printings, check deck construction, and import, export or save your deck locally.">
   <meta name="robots" content="index,follow">
   <link rel="canonical" href="https://manascout.co.uk/deck/">
+  <script>
+    // Mark incoming state before the workspace can clean the address bar.
+    if (location.search) document.querySelector('meta[name="robots"]').content = "noindex,follow";
+  </script>
   <meta property="og:type" content="website">
   <meta property="og:title" content="Deck Studio | ManaScout">
-  <meta property="og:description" content="Find the spark for your next deck. Build around exact printings in ManaScout's artwork-first workspace.">
+  <meta property="og:description" content="Build Commander, Standard and other Magic decks with ManaScout. Keep exact printings, check deck construction, and import, export or save your deck locally.">
   <meta property="og:url" content="https://manascout.co.uk/deck/">
   <meta property="og:site_name" content="ManaScout">
   <meta name="twitter:card" content="summary">
-  <link rel="stylesheet" href="/assets/css/deck-studio.css?v=phase3&amp;product=61">
+  <link rel="stylesheet" href="/assets/css/deck-studio.css?v=phase8">
   <script type="application/ld+json">
-  {"@context":"https://schema.org","@type":"WebPage","name":"ManaScout Deck Studio","url":"https://manascout.co.uk/deck/","description":"ManaScout's artwork-first deck workspace with exact-printing card search and manual deck editing.","isPartOf":{"@type":"WebSite","name":"ManaScout","url":"https://manascout.co.uk/"}}
+  {"@context":"https://schema.org","@type":"WebPage","name":"ManaScout Deck Studio","url":"https://manascout.co.uk/deck/","description":"Build Commander, Standard and other Magic decks with ManaScout. Keep exact printings, check deck construction, and import, export or save your deck locally.","isPartOf":{"@type":"WebSite","name":"ManaScout","url":"https://manascout.co.uk/"}}
   </script>
   <script src="/assets/js/analytics-config.js?v=phase61"></script>
 <script src="/assets/js/analytics.js?v=phase5&amp;release=6&amp;product=61" defer></script>
@@ -41,18 +45,19 @@
 </head>
 <body class="deck-studio" data-active-panel="deck">
   <a class="ds-skip" href="#deck-heading">Skip to deck workspace</a>
+  <div class="ds-app">
   <header class="ds-header">
     <a class="ds-brand" href="/" aria-label="ManaScout home">Mana<span>Scout</span><span class="ds-brand-mark" aria-hidden="true">◇</span></a>
     <nav aria-label="Primary navigation">
       <a href="/">Search</a>
       <a href="/card/">Card Guides</a>
-      <a href="/deck/?source=nav" aria-current="page">Deck Studio</a>
+      <a href="/deck/" aria-current="page">Deck Studio</a>
     </nav>
   </header>
 
   <div class="ds-intro">
-    <div><p class="ds-eyebrow">THE NEXT CHAPTER OF YOUR COLLECTION</p><h1>Deck Studio<span aria-hidden="true">.</span></h1></div>
-    <p class="ds-preview-label"><span aria-hidden="true">◇</span> Your cards. Your deck.</p>
+    <h1>Deck Studio</h1>
+    <p>Build Magic decks, choose exact printings, check construction and export your list.</p>
   </div>
 
   <nav class="ds-mobile-nav" aria-label="Workspace sections" hidden>
@@ -169,6 +174,29 @@
       </div>
     </section>
   </main>
+  </div>
+
+  <section class="ds-about" aria-labelledby="ds-about-heading">
+    <h2 id="ds-about-heading">Build and manage an MTG deck</h2>
+    <div class="ds-about-grid">
+      <div>
+        <h3>Choose exact printings</h3>
+        <p>Search for cards or bring a printing from ManaScout Search. The preview shows the set, collector number, language, artwork and available finishes. When you choose a printing and finish for an entry, Deck Studio keeps that choice with your list.</p>
+      </div>
+      <div>
+        <h3>Supported deck formats</h3>
+        <p>Paper profiles cover Commander, Standard, Pioneer, Modern, Legacy, Vintage, Pauper and Oathbreaker. Arena profiles cover Traditional Standard, Pioneer, Alchemy, Historic and Timeless, plus Standard Brawl, Brawl and Gladiator.</p>
+      </div>
+      <div>
+        <h3>Import, export and save</h3>
+        <p>Preview a text decklist or a supported CSV before opening it as a draft. Export as text, CSV or JSON. Drafts stay in this browser, and you can download and restore a JSON backup.</p>
+      </div>
+      <div>
+        <h3>Check deck construction</h3>
+        <p>Review card counts, colour identity, the mana curve and deck health. Construction warnings help you spot issues such as deck size, copy limits and card legality for the selected profile.</p>
+      </div>
+    </div>
+  </section>
 
   <footer class="ds-footer"><span>ManaScout <span aria-hidden="true">◇</span> Deck Studio</span><span>Card data and images: Scryfall · Magic: The Gathering © Wizards of the Coast</span><a href="/privacy/">Privacy</a><a href="/contact/">Contact</a></footer>
   <noscript><p class="ds-noscript">Enable JavaScript to build a deck and preview selected printings. <a href="/">Return to ManaScout Search</a>.</p></noscript>
