@@ -225,7 +225,7 @@
       >
 
         <label class="sr-only" for="search-input">
-          Search Magic: The Gathering card names
+          Search Magic: The Gathering cards and printings
         </label>
 
         <div class="search-box">
@@ -234,7 +234,9 @@
             id="search-input"
             name="q"
             type="search"
-            placeholder="Search a Magic card..."
+            placeholder="Search card, set or collector number…"
+            maxlength="160"
+            role="combobox"
             spellcheck="false"
             aria-autocomplete="list"
             aria-controls="autocomplete-list"
@@ -254,6 +256,21 @@
 
         </div>
 
+        <details class="ms-search-filters">
+          <summary>Advanced search</summary>
+          <div class="ms-controls">
+            <label>Set <input name="set" maxlength="100" placeholder="Name or code"></label>
+            <label>Collector number <input name="collector_number" maxlength="17"></label>
+            <label>Rarity <select name="rarity"><option value="">Any</option><option>common</option><option>uncommon</option><option>rare</option><option>mythic</option></select></label>
+            <label>Colour <select name="colour"><option value="">Any</option><option value="w">White</option><option value="u">Blue</option><option value="b">Black</option><option value="r">Red</option><option value="g">Green</option><option value="c">Colourless</option><option value="m">Multicolour</option></select></label>
+            <label>Type or subtype <input name="type" maxlength="100"></label>
+            <label>Artist <input name="artist" maxlength="100"></label>
+            <label>Finish <select name="finish"><option value="">Any</option><option>nonfoil</option><option>foil</option><option>etched</option></select></label>
+            <label>Language <input name="language" maxlength="30" placeholder="e.g. Japanese"></label>
+            <button type="submit">Apply filters</button>
+            <button type="button" id="ms-clear-search-filters">Clear filters</button>
+          </div>
+        </details>
       </form>
 
 
@@ -317,6 +334,9 @@
     </section>
 
 
+    <p id="ms-search-status" class="status" role="status"></p>
+    <section id="ms-search-results" aria-label="Search results" hidden></section>
+
     <!-- SEARCH RESULTS -->
     <!-- app.js controls this section -->
 
@@ -333,6 +353,37 @@
 
     </section>
 
+
+    <!-- LIVE PRINTINGS -->
+    <!-- app.js populates these containers -->
+
+    <section
+      class="printings-section"
+      aria-labelledby="printings-heading"
+    >
+
+      <div class="section-heading">
+
+        <div>
+
+          <h2 id="printings-heading">
+            Printings
+          </h2>
+
+        </div>
+
+        <p
+          id="printings-status"
+          class="status"
+          role="status"
+          aria-live="polite"
+        ></p>
+
+      </div>
+
+      <div id="printings-container"></div>
+
+    </section>
 
     <!-- HOMEPAGE DISCOVERY -->
     <!-- All homepage sections now appear without roulette or tabs -->
@@ -970,41 +1021,6 @@
     </section>
 
 
-    <!-- LIVE PRINTINGS -->
-    <!-- app.js populates these containers -->
-
-    <section
-      class="printings-section"
-      aria-labelledby="printings-heading"
-    >
-
-      <div class="section-heading">
-
-        <div>
-
-          <p class="eyebrow">
-            CARD PRINTINGS
-          </p>
-
-          <h2 id="printings-heading">
-            Every available version
-          </h2>
-
-        </div>
-
-        <p
-          id="printings-status"
-          class="status"
-          role="status"
-          aria-live="polite"
-        ></p>
-
-      </div>
-
-      <div id="printings-container"></div>
-
-    </section>
-
   </main>
 
 
@@ -1063,9 +1079,10 @@
 
   <link rel="stylesheet" href="/assets/css/comparisons.css?v=2">
   <script src="/assets/js/analytics-config.js?v=phase61"></script>
-<script src="/assets/js/analytics.js?v=phase5&amp;release=6&amp;product=61"></script>
+<script src="/assets/js/analytics.js?v=phase7&amp;release=6&amp;product=61"></script>
   <script defer src="/assets/js/comparisons.js?v=3&amp;growth=5"></script>
-  <script src="/assets/js/app.js?v=seo-ctr1&amp;phase=1&amp;comparison=2&amp;growth=5&amp;release=6&amp;product=61"></script>
+  <script src="/assets/js/search-intent.js?v=7"></script>
+  <script src="/assets/js/app.js?v=seo-ctr1&amp;phase7=1&amp;phase=1&amp;comparison=2&amp;growth=5&amp;release=6&amp;product=61"></script>
   <script src="/assets/js/scoutboard.js?v=eldrazi-present3&amp;release=6&amp;product=61"></script>
 
 </body>

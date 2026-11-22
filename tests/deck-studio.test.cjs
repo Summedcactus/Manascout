@@ -100,7 +100,9 @@ function rendererContext(card, pathname) {
   const render = source.slice(source.indexOf('  function renderCard('), source.indexOf('  /* ========================================\n     CURRENCY AND PRICE DATA'));
   const registry = new Set([...source.match(/const GUIDE_SLUGS = new Set\(\[([\s\S]*?)\]\)/)[1].matchAll(/"([a-z0-9-]+)"/g)].map(m => m[1]));
   const blank = () => '';
-  const c = { card, URLSearchParams, GUIDE_SLUGS: registry, window: { location: { pathname } }, ui: { details: { innerHTML: '' } },
+  const information = { innerHTML: "" };
+  const c = { card, URLSearchParams, GUIDE_SLUGS: registry, window: { location: { pathname } },
+    $: () => information, information, ui: { details: { innerHTML: "" }, printings: { closest: () => ({}) } },
     currentCard: null, currentPick: false, updateGuideReference: blank, slug: x => x.toLowerCase().replace(/['’]/g, '').replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, ''),
     esc: x => String(x ?? '').replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;'),
     selectedFinish: c => c.testFinish, previewImage: blank, finishSelector: blank, activatePreview: blank, stat: blank, pretty: blank, finishText: blank, finishLabel: blank,
@@ -117,7 +119,7 @@ test('shared renderer provides exact handoff on home, search and guide contexts'
     assert.equal(url.pathname, '/deck/'); assert.equal(url.searchParams.get('printing'), id);
     assert.equal(url.searchParams.get('card'), 'Rhystic Study'); assert.equal(url.searchParams.get('finish'), 'etched');
     assert.equal(url.searchParams.get('guide'), '/card/rhystic-study/');
-    assert.match(html, /data-copy-printing/); assert.match(html, /data-discovery="wild"/);
+    assert.match(c.information.innerHTML, /data-copy-printing/); assert.match(c.information.innerHTML, /data-discovery="wild"/);
     c.card = record({ id: id2, name: 'A&B // Fixture', testFinish: 'nonfoil' }); vm.runInContext('renderCard(card);', c);
     const updated = new URL(c.ui.details.innerHTML.match(/data-build-deck href="([^"]+)"/)[1].replace(/&amp;/g, '&'), 'https://manascout.co.uk');
     assert.equal(updated.searchParams.get('printing'), id2); assert.equal(updated.searchParams.get('card'), 'A&B // Fixture');
