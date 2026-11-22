@@ -133,6 +133,15 @@
   let currentCard = null;
   let currentPick = false;
   let archive = null;
+  let searchController = null;
+  let resultController = null;
+  let setIndex = null;
+  let lastCatalogueRequest = 0;
+  let catalogueCooldown = 0;
+  const searchPages = new Map();
+  const searchStatus = $("ms-search-status");
+  const searchResults = $("ms-search-results");
+  const intentEngine = window.ManaScoutSearchIntent;
 
 
   /* ========================================
@@ -306,6 +315,14 @@
         ? "replaceState"
         : "pushState"
     ]({}, "", url);
+    updateSearchRobots();
+  }
+
+  function updateSearchRobots() {
+    if (!intentEngine || window.location.pathname !== "/") return;
+    const utility = ["q", "printing", "finish", "set", "collector_number", "rarity", "colour", "type", "artist", "language"]
+      .some(key => params().has(key));
+    document.querySelector('meta[name="robots"]')?.setAttribute("content", utility ? "noindex,follow" : "index,follow,max-image-preview:large");
   }
 
   function startUrl(
@@ -346,6 +363,7 @@
         ? "replaceState"
         : "pushState"
     ]({}, "", url);
+    updateSearchRobots();
   }
 
 
@@ -354,6 +372,16 @@
      ======================================== */
 
   async function readJson(url, signal, timeout = 12000) {
+    if (url.startsWith(API + "/")) {
+      if (Date.now() < catalogueCooldown) throw Object.assign(new Error("Scryfall rate limit"), { status: 429 });
+      while (!signal?.aborted && Date.now() - lastCatalogueRequest < 105) {
+        await delay(Math.max(1, 105 - (Date.now() - lastCatalogueRequest)));
+      }
+      if (!signal?.aborted && Date.now() < catalogueCooldown) {
+        throw Object.assign(new Error("Scryfall rate limit"), { status: 429 });
+      }
+      if (!signal?.aborted) lastCatalogueRequest = Date.now();
+    }
     const request = new AbortController();
     let timer, interrupt;
     const boundary = new Promise((_, reject) => { interrupt = reject; });
@@ -367,6 +395,11 @@
     try {
       const work = (async () => {
         const response = await fetch(url, { signal: request.signal, headers: { Accept: "application/json" } });
+        if (response.status === 429 && url.startsWith(API + "/")) {
+          const retry = response.headers?.get("Retry-After");
+          const seconds = Number(retry) || (Date.parse(retry) - Date.now()) / 1000 || 10;
+          catalogueCooldown = Date.now() + Math.max(1, Math.min(60, seconds)) * 1000;
+        }
         if (!response.ok) throw Object.assign(new Error(`HTTP ${response.status}`), { status: response.status });
         return response.json();
       })();
@@ -404,6 +437,10 @@
 
   function cancelActive() {
     controller?.abort();
+    searchController?.abort();
+    resultController?.abort();
+    if (searchStatus) searchStatus.textContent = "";
+    if (searchResults) searchResults.hidden = true;
     suggestController?.abort();
     clearTimeout(suggestTimer);
 
@@ -438,6 +475,7 @@
     cancelActive();
 
     currentCard = null;
+    $("ms-card-information")?.remove();
     currentPick = false;
 
     if (ui.input) {
@@ -907,7 +945,7 @@
     );
 
     ui.details.innerHTML = `
-      <article class="card-display">
+      <article class="card-display ms-compact-card">
 
         <div class="card-image-wrap">
           ${previewImage(card)}
@@ -915,37 +953,35 @@
 
         <div class="card-text-details">
 
-          <p class="eyebrow">
-            ${isPick
-              ? "◇ MANASCOUT PICK · FEATURED PRINTING"
-              : "CARD & PRINTING"}
-          </p>
+          <h2 tabindex="-1">${esc(card.name || "Unknown card")}</h2>
+          <p class="card-subtitle">${esc([
+            card.set?.toUpperCase(), card.collector_number && "#" + card.collector_number,
+            pretty(card.rarity), card.artist, LANGS[card.lang] || card.lang
+          ].filter(Boolean).join(" · "))}</p>
+          ${finishSelector(card)}
+          <div class="ms-selected-actions">
+            <button type="button" data-compare-id="${esc(card.id)}">Compare this version</button><a href="#ms-comparison-current" data-compare-jump hidden>View comparison</a>
+            ${deckLink(card)}
+          </div>
+        </div>
+      </article>
+    `;
 
-          <h2>
-            ${esc(card.name || "Unknown card")}
-          </h2>
-
-          <p class="card-subtitle">
-            ${esc(card.type_line)}
-            ${card.mana_cost
-              ? `
-                <span class="mana-cost">
-                  · ${esc(card.mana_cost)}
-                </span>
-              `
-              : ""}
-          </p>
-
-          ${isPick
-            ? `
-              <div class="ms-selection-banner">
-                ◇ ManaScout Pick — selected for its artwork
-                or distinctive collector treatment.
-                Select any other version below.
-              </div>
-            `
-            : ""}
-
+    const explorer = ui.printings?.closest?.("section");
+    const selection = ui.details.closest?.("section");
+    explorer?.classList?.add("ms-live-explorer");
+    if (explorer && selection && explorer !== selection && selection.nextElementSibling !== explorer) {
+      selection.after(explorer);
+    }
+    let information = explorer && $("ms-card-information");
+    if (!information && explorer) {
+      information = document.createElement("div");
+      information.id = "ms-card-information";
+      explorer.after(information);
+    }
+    if (information) information.innerHTML = `
+      <details><summary>Card details</summary>
+          <p>${esc(card.type_line)} ${esc(card.mana_cost)}</p>
           <div class="detail-grid">
             ${stat("Set", card.set_name)}
             ${stat("Set code", String(card.set || "").toUpperCase())}
@@ -955,7 +991,6 @@
             ${stat("Artist", card.artist)}
             ${stat("Language", LANGS[card.lang] || String(card.lang || "").toUpperCase())}
             ${stat("Available finishes", finishText(card))}
-            ${finishSelector(card)}
             ${stat("Treatments", treatmentText(card))}
           </div>
 
@@ -982,12 +1017,17 @@
               : ""}
           </div>
 
+      </details>
+      <details><summary>Rules &amp; legality</summary>
           <p class="ms-help">
             <strong>Legal in:</strong>
             ${esc(legalFormats(card))}
           </p>
 
           ${oracleHtml(card)}
+      </details>
+      <details><summary>Collector information</summary>
+          ${isPick ? '<p class="ms-note">ManaScout Pick · selected for its artwork or distinctive collector treatment.</p>' : ""}
 
           ${artwork.length > 1
             ? `
@@ -1009,8 +1049,6 @@
             `
             : ""}
 
-          <button type="button" data-compare-id="${esc(card.id)}">Compare this version</button><a href="#ms-comparison-current" data-compare-jump hidden>View comparison</a>
-          ${deckLink(card)}
           ${guideLink(card)}
 
           ${marketplace(card)}
@@ -1048,9 +1086,7 @@
             vary by edition.
           </p>
 
-        </div>
-
-      </article>
+      </details>
     `;
 
     activatePreview(card);
@@ -1250,7 +1286,8 @@
   async function fetchPrintings(
     card,
     token,
-    signal
+    signal,
+    previous
   ) {
     let first =
       printingSearchUrl(
@@ -1306,18 +1343,17 @@
       };
     }
 
-    const result = [];
-    const ids = new Set();
-    const visited = new Set();
-
-    let next = first;
+    const result = previous ? [...previous.cards] : [];
+    const ids = new Set(result.map(item => item.id));
+    const visited = new Set(previous?.visited);
+    let next = previous ? previous.next : first;
     let pages = 0;
     let complete = true;
     let notice = "";
 
     while (
       next &&
-      pages < 70
+      pages < 1
     ) {
       if (visited.has(next)) { complete = false; notice = "The printing archive repeated a page; results are incomplete."; next = ""; break; }
       visited.add(next);
@@ -1342,10 +1378,7 @@
         notice =
           "Some printings could not be loaded; the results below may be incomplete.";
 
-        if (!result.length) {
-          throw error;
-        }
-
+        if (!pages) throw error;
         break;
       }
 
@@ -1381,28 +1414,17 @@
           ? printingSearchUrl(data.next_page)
           : "";
       if (data.has_more && !next) { complete = false; notice = "The printing archive omitted a valid next page; results are incomplete."; }
+      if (next && visited.has(next)) {
+        complete = false;
+        notice = "The printing archive repeated a page; results are incomplete.";
+        next = "";
+      }
 
       pages++;
 
-      if (
-        ui.status &&
-        token === generation
-      ) {
-        ui.status.textContent =
-          `Loading printings… ${result.length} found`;
-      }
-
-      if (next) {
-        await delay(110);
-      }
     }
 
-    if (next) {
-      complete = false;
-
-      notice =
-        "This card has an unusually large printing history. Only the first 70 Scryfall pages are shown.";
-    }
+    if (next) complete = false;
 
     if (
       !ids.has(card.id)
@@ -1441,7 +1463,9 @@
     return {
       cards: visible,
       complete,
-      notice
+      notice,
+      next,
+      visited
     };
   }
 
@@ -1891,7 +1915,8 @@
   function row(
     card,
     selected,
-    rates
+    rates,
+    variants = []
   ) {
     const chosen =
       card.id === selected?.id;
@@ -1912,7 +1937,7 @@
               type="button"
               data-print-id="${esc(card.id)}"
               title="Select this exact printing"
-              aria-label="Select ${esc(card.set_name)} number ${esc(card.collector_number)}"
+              aria-label="Select ${esc(card.set_name)} number ${esc(card.collector_number)}, ${esc(LANGS[card.lang] || card.lang)}"
             >
               ${img(card, "small")
                 ? `
@@ -1927,7 +1952,19 @@
                 : "—"}
             </button>
 
-            ${chosen && shimmer(card) &&
+            <div class="ms-mobile-finishes">
+            <span class="ms-note">${esc(finishText(card))}</span>
+            <details><summary>Printing details and prices</summary>
+              <span class="ms-note">${esc([card.released_at, treatmentText(card)].filter(Boolean).join(" · "))}</span>
+              ${["nonfoil", "foil", "etched"].map(finish => `<div>${esc(finishLabel(finish))} ${priceHtml(card, finish, rates)}</div>`).join("")}
+            </details>
+          </div>
+          ${variants.length ? `<details class="ms-print-variants"><summary>${variants.length} other language ${variants.length === 1 ? "version" : "versions"}</summary>
+            <ul>${variants.map(variant => `<li><button type="button" data-print-id="${esc(variant.id)}">
+              ${esc(LANGS[variant.lang] || variant.lang)} · ${esc(finishText(variant))}
+            </button></li>`).join("")}</ul></details>` : ""}
+
+          ${chosen && shimmer(card) &&
               img(card, "small")
                 ? `
                   <span
@@ -1957,7 +1994,7 @@
           <br>
 
           <span class="muted">
-            ${esc(String(card.set || "").toUpperCase())}
+            ${esc(String(card.set || "").toUpperCase())} · #${esc(card.collector_number)} · ${esc(pretty(card.rarity))}
           </span>
 
           <button type="button" data-compare-id="${esc(card.id)}">Compare version</button><a href="#ms-comparison-current" data-compare-jump hidden>View comparison</a>
@@ -2042,10 +2079,36 @@
      PRINTING ARCHIVE AND FILTERS
      ======================================== */
 
+  function groupPrintings(cards, selected) {
+    const groups = [];
+    const keyed = new Map();
+    for (const card of cards) {
+      const art = card.illustration_id || card.card_faces?.map(face => face.illustration_id || "").join(",");
+      const key = card.oracle_id && art && art.replace(/,/g, "") && JSON.stringify([
+        card.oracle_id, card.set, card.collector_number, art, card.layout, card.frame,
+        card.border_color, card.full_art, card.textless, card.promo, card.oversized, card.variation, card.security_stamp,
+        [...(card.frame_effects || [])].sort(), [...(card.promo_types || [])].sort()
+      ]);
+      const sameEdition = key ? keyed.get(key) : undefined;
+      const group = sameEdition?.find(entries => !entries.some(entry => entry.lang === card.lang));
+      if (group) group.push(card);
+      else {
+        const entries = [card];
+        groups.push(entries);
+        if (key) keyed.set(key, [...(sameEdition || []), entries]);
+      }
+    }
+    return groups.map(entries => {
+      const primary = entries.find(card => card.id === selected?.id) || entries.find(card => card.lang === "en") || entries[0];
+      return { primary, variants: entries.filter(card => card !== primary) };
+    });
+  }
+
   function renderArchive(
     result,
     rates,
-    token
+    token,
+    previous
   ) {
     if (
       !ui.printings ||
@@ -2060,13 +2123,13 @@
 
     const s =
       snapshot(
-        cards,
+        cards.filter(card => card.lang === "en" && paper(card)),
         rates
       );
 
     const sets = [
       ...new Map(
-        cards.map(
+        cards.filter(paper).map(
           c => [
             c.set,
             c.set_name
@@ -2082,7 +2145,7 @@
 
     const langs = [
       ...new Set(
-        cards
+        cards.filter(paper)
           .map(c => c.lang)
           .filter(Boolean)
       )
@@ -2102,13 +2165,25 @@
       token,
       selected: currentCard,
       snapshot: "all",
-      pageSize: 50,
-      limit: 50
+      pageSize: 24,
+      limit: 24
     };
 
     archive = state;
 
     ui.printings.innerHTML = `
+      <label class="ms-language-toggle"><input id="ms-show-languages" type="checkbox" aria-controls="ms-language-filter ms-print-body"> Show other languages</label>
+        <label id="ms-language-filter" hidden>
+          Language
+          <select id="ms-print-lang" disabled>
+            ${selectOptions(
+              langs,
+              "All languages"
+            )}
+          </select>
+        </label>
+
+      <p id="ms-language-selection" class="ms-note" role="status" hidden></p>
       ${result.notice
         ? `
           <p
@@ -2122,7 +2197,6 @@
 
       <details class="ms-archive-options">
       <summary>Filter and sort catalogue records</summary>
-      ${snapshotMarkup(cards, rates, s)}
 
       <div class="ms-controls printing-controls">
 
@@ -2138,37 +2212,10 @@
 
         <label>
           Set
-          <select id="ms-print-set">
-            ${selectOptions(
-              sets,
-              "All sets"
-            )}
-          </select>
-        </label>
-
-        <label>
-          Language
-          <select id="ms-print-lang">
-            ${selectOptions(
-              langs,
-              "All languages"
-            )}
-          </select>
-        </label>
-
-        <label>
-          Game
-          <select id="ms-print-game">
-            <option value="paper">
-              Paper printings
-            </option>
-            <option value="all">
-              All platforms
-            </option>
-            <option value="digital">
-              Digital only
-            </option>
-          </select>
+          <input id="ms-print-set" type="search" list="ms-print-set-options" placeholder="Name or code" autocomplete="off">
+          <datalist id="ms-print-set-options">
+            ${sets.map(([code, name]) => `<option value="${esc(code.toUpperCase())}" label="${esc(name)}"></option>`).join("")}
+          </datalist>
         </label>
 
         <label>
@@ -2256,14 +2303,14 @@
           type="button"
           id="ms-reset-filters"
         >
-          Reset
+          Clear filters
         </button>
 
       </div>
 
       </details>
 
-      <div class="table-wrap" role="region" aria-label="Printing catalogue records" tabindex="0">
+      <div class="table-wrap ms-live-printings" role="region" aria-label="Printing catalogue records" tabindex="0">
 
         <table class="printings-table">
 
@@ -2292,19 +2339,25 @@
         id="ms-print-pages"
       ></div>
 
-      <p class="ms-help">
+      ${result.next || result.retry ? `<button type="button" id="ms-load-printings">${result.retry ? "Retry loading printings" : "Load more catalogue printings"}</button>` : ""}
+      <p id="ms-archive-request" class="ms-note" role="status"></p>
+      <details class="ms-printing-notes ms-snapshot-options">
+        <summary>English printing highlights</summary>
+        ${snapshotMarkup(cards.filter(card => card.lang === "en" && paper(card)), rates, s)}
+      </details>
+      <details class="ms-printing-notes"><summary>About printing records and prices</summary><p class="ms-help">
         Each row is a catalogue record for a set, collector number and language;
         another language does not necessarily mean different artwork.
         One record can offer several physical finishes. Price columns are
         source references, not shop offers. The foil shimmer is illustrative.
-      </p>
+      </p></details>
     `;
 
     const c = {
       find: $("ms-print-search"),
       set: $("ms-print-set"),
       lang: $("ms-print-lang"),
-      game: $("ms-print-game"),
+      multilingual: $("ms-show-languages"),
       finish: $("printing-finish-filter"),
       treatment: $("ms-print-treatment"),
       sort: $("printing-sort"),
@@ -2312,17 +2365,15 @@
       pages: $("ms-print-pages")
     };
 
-    if (
-      !cards.some(paper)
-    ) {
-      c.game.value = "all";
-    }
-
-    if (
-      currentCard &&
-      !paper(currentCard)
-    ) {
-      c.game.value = "all";
+    if (previous) {
+      for (const field of ["find", "set", "lang", "finish", "treatment", "sort"]) {
+        c[field].value = previous.values[field];
+      }
+      c.multilingual.checked = previous.multilingual;
+      state.limit = previous.limit;
+      state.snapshot = previous.snapshot;
+      ui.printings.querySelector(".ms-archive-options").open = previous.open;
+      ui.printings.querySelector(".ms-snapshot-options").open = previous.highlightsOpen;
     }
 
     function matchesTreatment(
@@ -2352,8 +2403,8 @@
     }
 
     function filtered() {
-      const q =
-        norm(c.find.value);
+      const q = norm(c.find.value);
+      const set = norm(c.set.value);
 
       let list =
         state.snapshot === "all"
@@ -2394,25 +2445,17 @@
             .toLowerCase();
 
           return (
+            paper(card) &&
             (!q || haystack.includes(q)) &&
 
             (
-              c.set.value === "all" ||
-              card.set === c.set.value
+              !set || norm(card.set) === set || norm(card.set_name).includes(set)
             ) &&
 
             (
-              c.lang.value === "all" ||
-              card.lang === c.lang.value
-            ) &&
-
-            (
-              c.game.value === "all" ||
-              (
-                c.game.value === "paper"
-                  ? paper(card)
-                  : !paper(card)
-              )
+              c.multilingual.checked
+                ? c.lang.value === "all" || card.lang === c.lang.value
+                : card.lang === "en" && paper(card)
             ) &&
 
             (
@@ -2536,22 +2579,20 @@
       }
 
       const list = filtered();
+      const groups = groupPrintings(list, state.selected);
+      const start = state.limit - state.pageSize;
+      const page = groups.slice(start, state.limit);
+      const languageFilter = $("ms-language-filter");
+      languageFilter.hidden = !c.multilingual.checked;
+      c.lang.disabled = !c.multilingual.checked;
+      const languageSelection = $("ms-language-selection");
+      languageSelection.hidden = c.multilingual.checked || state.selected?.lang === "en" || !state.selected;
+      languageSelection.textContent = languageSelection.hidden ? "" :
+        `Browsing English printings. Your ${LANGS[state.selected.lang] || state.selected.lang} printing is still selected.`;
 
-      const page =
-        list.slice(
-          0,
-          state.limit
-        );
-
-      c.body.innerHTML =
-        page.map(
-          item =>
-            row(
-              item,
-              state.selected,
-              rates
-            )
-        ).join("") ||
+      c.body.innerHTML = page.map(({ primary, variants }) =>
+        row(primary, state.selected, rates, variants)
+      ).join("") ||
         `
           <tr>
             <td
@@ -2563,45 +2604,17 @@
           </tr>
         `;
 
-      ui.status.textContent =
-        `${list.length} matching records · ` +
-        `${new Set(list.map(card => `${card.set}/${card.collector_number}`)).size} set/number pairs · ` +
-        `${cards.length} Scryfall records loaded · ` +
-        `${rates ? "GBP estimates" : "source currencies"}` +
-        `${result.complete ? "" : " · partial data"}`;
+      const languages = new Set(list.map(card => card.lang)).size;
+      ui.status.textContent = c.multilingual.checked
+        ? `${list.length} printings · ${languages} ${languages === 1 ? "language" : "languages"}`
+        : `${list.length} English ${list.length === 1 ? "printing" : "printings"}`;
+      if (!result.complete) ui.status.textContent += " · from loaded records";
 
       observeCardEffects(c.body);
 
-      c.pages.innerHTML = `
-        <span>
-          Showing ${page.length} of ${list.length}
-        </span>
-      `;
-
-      if (
-        list.length > state.limit
-      ) {
-        const more =
-          document.createElement("button");
-
-        more.type = "button";
-
-        more.textContent =
-          `Show next ${Math.min(
-            state.pageSize,
-            list.length - state.limit
-          )}`;
-
-        more.addEventListener(
-          "click",
-          () => {
-            state.limit += state.pageSize;
-            update();
-          }
-        );
-
-        c.pages.appendChild(more);
-      }
+      c.pages.innerHTML = groups.length ? `<span>Showing ${start + 1}–${start + page.length} of ${groups.length} editions</span>
+        <button type="button" data-print-page="previous"${start === 0 ? " disabled" : ""}>Previous</button>
+        <button type="button" data-print-page="next"${groups.length <= state.limit ? " disabled" : ""}>Next</button>` : "";
 
       ui.printings
         .querySelectorAll(
@@ -2625,6 +2638,16 @@
           }
         );
     }
+
+    c.pages.addEventListener("click", event => {
+      const button = event.target.closest("[data-print-page]");
+      if (!button || button.disabled) return;
+      const direction = button.dataset.printPage === "next" ? 1 : -1;
+      state.limit += direction * state.pageSize;
+      update();
+      c.pages.querySelector(`[data-print-page="${button.dataset.printPage}"]:not(:disabled)`)?.focus();
+      if (!c.pages.contains(document.activeElement)) c.pages.querySelector("button:not(:disabled)")?.focus();
+    });
 
     function selectCard(
       card,
@@ -2653,11 +2676,10 @@
       );
 
       replaceUrl(card);
+      trackExact(card, guideName ? "guide" : "search");
       update();
 
-      if (scroll) {
-        scrollTo(ui.details);
-      }
+      if (scroll) focusSelectedCard();
     }
 
     c.body.addEventListener(
@@ -2703,12 +2725,6 @@
           state.limit =
             state.pageSize;
 
-          c.find.value = "";
-          c.set.value = "all";
-          c.lang.value = "all";
-          c.finish.value = "all";
-          c.treatment.value = "all";
-
           const chosen = [
             "cheapest",
             "most-expensive",
@@ -2720,30 +2736,11 @@
             ? s[state.snapshot]?.card
             : null;
 
-          if (chosen) {
-            if (
-              state.snapshot.includes(
-                "foil"
-              )
-            ) {
-              chooseFinish(
-                chosen,
-                "foil"
-              );
-            }
-
-            if (!paper(chosen)) {
-              c.game.value = "all";
-            }
-
-            selectCard(
-              chosen,
-              "",
-              false
-            );
+          if (chosen && filtered().some(card => card.id === chosen.id)) {
+            selectCard(chosen, state.snapshot.includes("foil") ? "foil" : "", false);
+          } else {
+            update();
           }
-
-          update();
 
           scrollTo(
             ui.printings.querySelector(
@@ -2758,20 +2755,16 @@
         c.find,
         c.set,
         c.lang,
-        c.game,
+        c.multilingual,
         c.finish,
         c.treatment,
         c.sort
       ]
     ) {
       element.addEventListener(
-        element === c.find
-          ? "input"
-          : "change",
+        element.type === "search" ? "input" : "change",
         () => {
-          state.limit =
-            state.pageSize;
-
+          state.limit = state.pageSize;
           update();
         }
       );
@@ -2784,16 +2777,11 @@
           state.snapshot = "all";
 
           c.find.value = "";
-          c.set.value = "all";
+          c.set.value = "";
           c.lang.value = "all";
           c.finish.value = "all";
           c.treatment.value = "all";
           c.sort.value = "newest";
-
-          c.game.value =
-            cards.some(paper)
-              ? "paper"
-              : "all";
 
           state.limit =
             state.pageSize;
@@ -2802,6 +2790,30 @@
         }
       );
 
+    const loadMore = $("ms-load-printings");
+    loadMore?.addEventListener("click", async () => {
+      const status = $("ms-archive-request");
+      loadMore.disabled = true;
+      status.textContent = "Loading more printings…";
+      try {
+        const next = await fetchPrintings(currentCard, token, controller.signal, result.retry ? undefined : result);
+        if (token !== generation) return;
+        renderArchive(next, rates, token, {
+          values: Object.fromEntries(["find", "set", "lang", "finish", "treatment", "sort"].map(field => [field, c[field].value])),
+          multilingual: c.multilingual.checked,
+          limit: state.limit,
+          snapshot: state.snapshot,
+          open: ui.printings.querySelector(".ms-archive-options").open,
+          highlightsOpen: ui.printings.querySelector(".ms-snapshot-options").open
+        });
+        ($("ms-load-printings") || ui.printings.querySelector(".ms-live-printings"))?.focus({ preventScroll: true });
+      } catch (error) {
+        if (token !== generation) return;
+        status.textContent = searchError(error);
+        loadMore.disabled = false;
+      }
+    });
+    state.update = update;
     update();
   }
 
@@ -2812,6 +2824,11 @@
      A requested printing ID takes precedence
      over a ManaScout Pick.
      ======================================== */
+
+  function focusSelectedCard() {
+    ui.details?.querySelector(".ms-compact-card h2")?.focus({ preventScroll: true });
+    scrollTo(ui.details);
+  }
 
   async function loadCard(
     name,
@@ -2864,7 +2881,7 @@
     }
 
     if (ui.input) {
-      ui.input.value = query;
+      ui.input.value = opts.input || query;
     }
 
     clearSuggestions();
@@ -2888,6 +2905,7 @@
     }
 
     ui.printings?.replaceChildren();
+    ui.details?.ownerDocument?.getElementById("ms-card-information")?.remove();
 
     if (ui.status) {
       ui.status.textContent =
@@ -2895,10 +2913,10 @@
     }
 
     try {
-      let card = null;
-      let exact = false;
+      let card = opts.record || null;
+      let exact = Boolean(card);
 
-      if (requestedId) {
+      if (requestedId && !card) {
         try {
           const candidate =
             await cardId(
@@ -2910,7 +2928,7 @@
             sameName(
               candidate?.name,
               query
-            )
+            ) && norm(candidate.id) === norm(requestedId)
           ) {
             card = candidate;
             exact = true;
@@ -2925,7 +2943,7 @@
       }
 
       if (!card) {
-        card =
+        card = opts.nameRecord ||
           await namedCard(
             query,
             signal
@@ -2953,7 +2971,9 @@
         card,
         false
       );
+      if (exact && (opts.userSearch || opts.selectionOnly)) trackExact(card, "search");
 
+      const rateRequest = Promise.race([exchangeRates(), delay(750).then(() => null)]).catch(() => null);
       let result;
 
       try {
@@ -2979,6 +2999,7 @@
         result = {
           cards: [card],
           complete: false,
+          retry: true,
           notice:
             "Scryfall's printing archive is unavailable. Showing the selected printing only."
         };
@@ -2990,22 +3011,7 @@
         return null;
       }
 
-      let rates = null;
-
-      try {
-        rates =
-          await Promise.race([
-            exchangeRates(),
-            delay(4500)
-              .then(() => null)
-          ]);
-
-      } catch (error) {
-        console.warn(
-          "GBP conversions unavailable",
-          error
-        );
-      }
+      const rates = await rateRequest;
 
       if (
         token !== generation
@@ -3028,7 +3034,7 @@
       ) {
         const best =
           pickPrinting(
-            result.cards,
+            result.cards.filter(item => item.lang === "en" && paper(item)),
             rates
           );
 
@@ -3058,7 +3064,8 @@
           `${card.name} Printings, Foils & Art | ManaScout`;
       }
 
-      if (opts.userSearch) window.ManaScoutAnalytics?.track("search_success", {surface:guideName?"guide":"home", exact_printing:Boolean(requestedId)});
+      if (opts.userSearch) trackSearch(opts.searchType || (exact ? "exact_printing" : "name"), exact, 1);
+      if (opts.userSearch || opts.selectionOnly || opts.focusSelection) focusSelectedCard();
       return card;
 
     } catch (error) {
@@ -3075,7 +3082,7 @@
       );
 
       errorState(
-        error.exactPrinting ? error.message : error.status === 404
+        error.exactPrinting ? error.message : error.status === 429 ? searchError(error) : error.status === 404
           ? `No card matched “${query}”. Check the spelling and try again.`
           : "Scryfall could not be reached. Please try again."
       );
@@ -3088,6 +3095,285 @@
   /* ========================================
      AUTOCOMPLETE
      ======================================== */
+
+  const searchFilters = () => Object.fromEntries(
+    [...new FormData(ui.form)].filter(([name, value]) => name !== "q" && String(value).trim())
+  );
+
+  async function catalogueSets(signal) {
+    if (setIndex) return setIndex;
+    const data = await readJson(`${API}/sets`, signal);
+    if (!Array.isArray(data?.data) || !data.data.length) throw new Error("Set catalogue unavailable.");
+    setIndex = intentEngine.makeSetIndex(data.data);
+    return setIndex;
+  }
+
+  function trackSearch(category, exact, count) {
+    window.ManaScoutAnalytics?.track("search_success", {
+      surface: guideName ? "guide" : "home",
+      exact_printing: exact,
+      search_type: category,
+      result_band: count === 1 ? "one" : count <= 10 ? "few" : "many"
+    });
+  }
+
+  function trackExact(card, source) {
+    const finish = selectedFinish(card);
+    window.ManaScoutAnalytics?.track("exact_printing_select", {
+      source,
+      language_group: card.lang === "en" ? "english" : "other",
+      finish: ["nonfoil", "foil", "etched"].includes(finish) ? finish : "unknown"
+    });
+  }
+
+  const validSearchCard = card => Boolean(card?.id && card.name && card.set && card.collector_number && card.lang);
+
+  async function cataloguePage(url, signal) {
+    const cached = searchPages.get(url);
+    if (cached && cached.expires > Date.now()) return cached.data;
+    const data = await readJson(url, signal);
+    if (!Array.isArray(data?.data) || !data.data.length || !data.data.every(validSearchCard)) {
+      throw new Error("Incomplete catalogue response.");
+    }
+    const next = data.has_more ? printingSearchUrl(data.next_page) : "";
+    if (data.has_more && (!next || next === url)) throw new Error("Incomplete catalogue pagination.");
+    const page = { cards: data.data, total: data.total_cards || data.data.length, next };
+    searchPages.set(url, { data: page, expires: Date.now() + 5 * 60 * 1000 });
+    if (searchPages.size > 12) searchPages.delete(searchPages.keys().next().value);
+    return page;
+  }
+
+  function selectSearchCard(card, intent, query, { userSearch = false, selectionOnly = false } = {}) {
+    return loadCard(card.name, {
+      record: card,
+      printingId: card.id,
+      finish: intent.criteria.finish,
+      input: query,
+      searchType: intent.category,
+      userSearch,
+      selectionOnly,
+      replace: !userSearch && !selectionOnly
+    });
+  }
+
+  function renderSearchResults(page, intent, query, signal) {
+    let records = page.cards;
+    let next = page.next;
+    let start = 0;
+    const pageSize = 16;
+    const visited = new Set();
+    const heading = document.createElement("h2");
+    heading.textContent = intent.printing ? "Printing matches" : "Card matches";
+    const list = document.createElement("ul");
+    const previous = document.createElement("button");
+    previous.type = "button";
+    previous.textContent = "Previous results";
+    const more = document.createElement("button");
+    more.type = "button";
+    more.textContent = "Next results";
+    const navigation = document.createElement("div");
+    navigation.className = "ms-pagination";
+    navigation.append(previous, more);
+    searchResults.replaceChildren(heading);
+    if (intent.category === "collector_number") {
+      const hint = document.createElement("p");
+      hint.textContent = `Collector #${intent.criteria.collector_number} can appear in multiple sets. Add a set code such as J25 35, or choose a match below.`;
+      searchResults.append(hint);
+    }
+    searchResults.append(list, navigation);
+    searchResults.hidden = false;
+
+    function drawPage() {
+      const group = records.slice(start, start + pageSize);
+      list.replaceChildren();
+      for (const card of group) {
+        const item = document.createElement("li");
+        item.innerHTML = `<button type="button">
+          ${img(card, "small") ? `<img src="${esc(img(card, "small"))}" alt="" width="72" height="100" loading="lazy">` : ""}
+          <span><strong>${esc(card.name)}</strong>
+          ${intent.printing ? `<span>${esc(card.set.toUpperCase())} #${esc(card.collector_number)} · ${esc(card.set_name)}</span>
+          <span>${esc([pretty(card.rarity), card.artist, LANGS[card.lang] || card.lang, finishText(card)].filter(Boolean).join(" · "))}</span>` :
+          `<span>${esc(card.type_line)}</span>`}
+          </span></button>`;
+        item.firstElementChild.addEventListener("click", () => {
+          if (intent.printing) {
+            void selectSearchCard(card, intent, query, { selectionOnly: true });
+          } else {
+            void loadCard(card.name, { focusSelection: true });
+          }
+        });
+        list.append(item);
+      }
+      previous.disabled = start === 0;
+      more.disabled = start + group.length >= records.length && !next;
+      navigation.hidden = previous.disabled && more.disabled;
+      const shown = group.length === 1 ? String(start + 1) : `${start + 1}–${start + group.length}`;
+      searchStatus.textContent = `Showing ${shown} of ${page.total} ${intent.printing ? "printings" : "cards"}.`;
+    }
+
+    previous.addEventListener("click", () => {
+      start -= pageSize;
+      drawPage();
+      if (previous.disabled) more.focus({ preventScroll: true });
+    });
+    more.addEventListener("click", async () => {
+      more.disabled = true;
+      previous.disabled = true;
+      try {
+        if (start + pageSize * 2 > records.length && next) {
+          searchStatus.textContent = "Loading more results…";
+          if (visited.has(next)) throw new Error("Repeated catalogue page.");
+          const additional = await cataloguePage(next, signal);
+          if (signal.aborted) return;
+          visited.add(next);
+          const ids = new Set(records.map(card => card.id));
+          records = records.concat(additional.cards.filter(card => !ids.has(card.id)));
+          next = additional.next;
+        }
+        if (start + pageSize < records.length) start += pageSize;
+        drawPage();
+        (more.disabled ? previous : more).focus({ preventScroll: true });
+      } catch (error) {
+        if (!signal.aborted) {
+          previous.disabled = start === 0;
+          more.disabled = false;
+          searchStatus.textContent = searchError(error);
+        }
+      }
+    });
+    drawPage();
+  }
+
+  function searchError(error) {
+    if (error.status === 429) return "Scryfall is rate limiting requests. Wait a moment and retry.";
+    if (error.status === 404) return "No paper cards or printings matched. Check the spelling or clear a filter.";
+    return "Catalogue search could not complete. Please retry.";
+  }
+
+  const locators = new Map();
+  async function exactLocator(set, number, language, signal) {
+    const endpoint = `${API}/cards/${set}/${encodeURIComponent(number)}/${language}`;
+    if (locators.has(endpoint)) return locators.get(endpoint);
+    const card = await readJson(endpoint, signal);
+    if (!validSearchCard(card) || !paper(card) || card.set !== set ||
+        norm(card.collector_number) !== norm(number) || card.lang !== language) {
+      throw new Error("The catalogue returned a different printing.");
+    }
+    locators.set(endpoint, card);
+    if (locators.size > 32) locators.delete(locators.keys().next().value);
+    return card;
+  }
+
+  async function submitSearch(query, filters = searchFilters(), fromHistory = false) {
+    if (!intentEngine || !searchResults) return loadCard(query, { userSearch: !fromHistory });
+    query = String(query).trim().slice(0, 160);
+    searchController?.abort();
+    suggestController?.abort();
+    clearTimeout(suggestTimer);
+    clearSuggestions();
+    searchController = new AbortController();
+    const { signal } = searchController;
+    searchStatus.textContent = "Searching the catalogue…";
+    try {
+      if (filters.language) {
+        const language = Object.entries(LANGS).find(([code, label]) => [code, label.toLowerCase()].includes(filters.language.trim().toLowerCase()));
+        if (!language) {
+          searchStatus.textContent = "Enter a catalogue language, such as Japanese.";
+          return;
+        }
+        filters = { ...filters, language: language[0] };
+      }
+      let intent = intentEngine.interpret(query, {}, setIndex || undefined, LANGS);
+      const constrained = Object.keys(filters).length || intent.category !== "name" || /(?:^|\s)#?\d[\p{L}\d★†-]*$/u.test(query);
+      const exactNameFirst = !constrained || !Object.keys(filters).length && !intent.printing && Boolean(intent.cardName) && !intent.criteria.type;
+      if (exactNameFirst && intent.cardName) {
+        try {
+          const card = await readJson(`${API}/cards/named?exact=${encodeURIComponent(query)}`, signal);
+          if (!validSearchCard(card)) throw new Error("Incomplete card response.");
+          if (!signal.aborted) return loadCard(card.name, { nameRecord: card, input: query, userSearch: !fromHistory });
+          return;
+        } catch (error) {
+          if (error.status !== 404) throw error;
+        }
+      }
+      // Discovery with no potential set suffix can skip the set catalogue.
+      const needsSets = filters.set || intent.cardName || intent.criteria.collector_number && /\s/.test(query) || !constrained;
+      const sets = needsSets ? await catalogueSets(signal) : setIndex;
+      if (signal.aborted) return;
+      try {
+        intent = intentEngine.interpret(query, filters, sets || undefined, LANGS);
+      } catch (error) {
+        searchStatus.textContent = error.message;
+        return;
+      }
+      if (intent.category === "name") {
+        if (!intent.cardName) return;
+        if (/^[a-z0-9]{2,8}\s+\d[\p{L}\d★†-]*$/iu.test(intent.cardName)) {
+          searchStatus.textContent = "Set code not found. Check the code, or search for the collector number with #.";
+          return;
+        }
+        const card = await readJson(`${API}/cards/named?fuzzy=${encodeURIComponent(intent.cardName)}`, signal);
+        if (!validSearchCard(card)) throw new Error("Incomplete card response.");
+        if (!signal.aborted) return loadCard(card.name, { nameRecord: card, input: query, userSearch: !fromHistory });
+        return;
+      }
+
+      const { set, collector_number, language } = intent.criteria;
+      let multilingualFallback = false;
+      if (intent.lookup && !intent.cardName && Object.keys(intent.criteria).every(key => ["set", "collector_number", "language"].includes(key))) {
+        try {
+          const card = await exactLocator(set, collector_number, language || "en", signal);
+          if (!signal.aborted) return selectSearchCard(card, intent, query, { userSearch: !fromHistory });
+          return;
+        } catch (error) {
+          if (error.status !== 404 || language) throw error;
+          multilingualFallback = true;
+        }
+      }
+
+      const search = new URLSearchParams({
+        q: multilingualFallback ? intent.query.replace(" lang:en", "") : intent.query,
+        unique: intent.printing ? "prints" : "cards",
+        include_multilingual: String(Boolean(language) || multilingualFallback), include_variations: String(intent.printing)
+      });
+      let page;
+      try {
+        page = await cataloguePage(`${API}/cards/search?${search}`, signal);
+      } catch (error) {
+        if (error.status !== 404 || !intent.lookup || language || multilingualFallback) throw error;
+        search.set("q", intent.query.replace(" lang:en", ""));
+        search.set("include_multilingual", "true");
+        page = await cataloguePage(`${API}/cards/search?${search}`, signal);
+      }
+      if (signal.aborted) return;
+      if (intent.lookup && page.cards.some(card => !paper(card) || card.set !== set ||
+          norm(card.collector_number) !== norm(collector_number) || language && card.lang !== language ||
+          intent.criteria.finish && !has(card, intent.criteria.finish))) throw new Error("Mismatched printing results.");
+      if (intent.lookup && page.total === 1 && page.cards.length === 1) {
+        return selectSearchCard(page.cards[0], intent, query, { userSearch: !fromHistory });
+      }
+      controller?.abort();
+      currentCard = null;
+      ui.details?.replaceChildren();
+      ui.printings?.replaceChildren();
+      $("ms-card-information")?.remove();
+      archive = null;
+      generation++;
+      announce("loading");
+      if (!fromHistory) {
+        const url = new URL("/", window.location.href);
+        history.pushState({ search: { query, filters } }, "", url);
+        trackSearch(intent.category, false, page.total);
+      }
+      document.title = "MTG Card Search | ManaScout";
+      updateSearchRobots();
+      resultController?.abort();
+      resultController = new AbortController();
+      renderSearchResults(page, intent, query, resultController.signal);
+    } catch (error) {
+      if (!signal.aborted) searchStatus.textContent = searchError(error);
+    }
+  }
 
   function suggestions() {
     return [
@@ -3145,23 +3431,23 @@
       new AbortController();
 
     try {
-      const response =
-        await readJson(
-          `${API}/cards/autocomplete?q=${encodeURIComponent(query)}`,
-          suggestController.signal
-        );
-
-      if (
-        norm(ui.input?.value) !==
-          norm(query) ||
-        !ui.suggestions
-      ) {
-        return;
+      const { signal } = suggestController;
+      let names = [];
+      let sets = setIndex;
+      const locator = query.match(/^([a-z0-9]{2,8})\s+#?(\d[\p{L}\d★†-]{0,15})$/iu);
+      if (intentEngine && (locator || /^[A-Z0-9]{2,5}$/.test(query))) sets = await catalogueSets(signal);
+      const set = sets?.get(norm(locator?.[1] || query));
+      if (set && locator) {
+        const card = await exactLocator(set.code, locator[2], "en", signal);
+        names = [{ query, label: `${set.code.toUpperCase()} #${card.collector_number} — ${card.name}` }];
+      } else if (set) {
+        names = [{ query: set.code, label: `${set.code.toUpperCase()} — ${set.name}` }];
+      } else if (!locator && !/^#|^collector\s|artist:/i.test(query)) {
+        const response = await readJson(`${API}/cards/autocomplete?q=${encodeURIComponent(query)}`, signal);
+        names = (Array.isArray(response?.data) ? response.data : []).filter(name => typeof name === "string").slice(0, 8)
+          .map(name => ({ query: name, label: name }));
       }
-
-      const names =
-        (response.data || [])
-          .slice(0, 8);
+      if (signal.aborted || norm(ui.input?.value) !== norm(query) || !ui.suggestions) return;
 
       if (!names.length) {
         clearSuggestions();
@@ -3172,16 +3458,17 @@
 
       ui.suggestions.innerHTML =
         names.map(
-          (name, i) => `
+          (item, i) => `
             <button
               type="button"
               class="autocomplete-item"
               id="ms-autocomplete-${i}"
               role="option"
               aria-selected="false"
-              data-name="${esc(name)}"
+              tabindex="-1"
+              data-name="${esc(item.query)}"
             >
-              ${esc(name)}
+              ${esc(item.label)}
             </button>
           `
         ).join("");
@@ -3221,11 +3508,23 @@
           ]?.dataset.name ||
           ui.input.value.trim();
 
-        if (name) {
-          void loadCard(name, { userSearch: true });
+        if (name || Object.keys(searchFilters()).length) {
+          void submitSearch(name);
         }
       }
     );
+
+    $("ms-clear-search-filters")?.addEventListener("click", () => {
+      for (const control of ui.form.elements) {
+        if (control.name && control.name !== "q") control.value = "";
+      }
+      if (ui.input.value.trim()) void submitSearch(ui.input.value.trim(), {});
+      else {
+        history.replaceState({}, "", "/");
+        updateSearchRobots();
+        setHome();
+      }
+    });
 
     ui.input.addEventListener(
       "input",
@@ -3234,6 +3533,8 @@
           suggestTimer
         );
 
+        suggestController?.abort();
+        clearSuggestions();
         const query =
           ui.input.value.trim();
 
@@ -3280,9 +3581,12 @@
             activeSuggestion - 1
           );
 
-        } else if (
-          event.key === "Escape"
-        ) {
+        } else if (event.key === "Enter" && activeSuggestion >= 0 && items[activeSuggestion]) {
+          event.preventDefault();
+          ui.form.requestSubmit();
+        } else if (event.key === "Escape") {
+          clearTimeout(suggestTimer);
+          suggestController?.abort();
           clearSuggestions();
         }
       }
@@ -3298,9 +3602,7 @@
             );
 
           if (item) {
-            void loadCard(
-              item.dataset.name, { userSearch: true }
-            );
+            void submitSearch(item.dataset.name);
           }
         }
       );
@@ -3316,6 +3618,8 @@
             event.target
           )
         ) {
+          clearTimeout(suggestTimer);
+          suggestController?.abort();
           clearSuggestions();
         }
       }
@@ -3329,9 +3633,7 @@
 
   function showAction(message) {
     const status =
-      ui.details?.querySelector(
-        ".ms-actions-status"
-      );
+      $("ms-card-information")?.querySelector(".ms-actions-status");
 
     if (status) {
       status.textContent =
@@ -3344,11 +3646,7 @@
     const card = currentCard;
     renderCard(card, currentPick);
     replaceUrl(card);
-    if (archive) {
-      const target = ui.printings?.querySelector(".is-selected-printing");
-      if (target) target.outerHTML = row(card, card, archive.rates);
-      observeCardEffects(ui.printings);
-    }
+    archive?.update();
     ui.details?.querySelector("[data-ms-selected-finish]")?.focus({ preventScroll: true });
     showAction(`${finishLabel(finish)} selected for this exact printing.`);
   }
@@ -3379,7 +3677,7 @@
 
       if (
         copy &&
-        ui.details?.contains(copy) &&
+        $("ms-card-information")?.contains(copy) &&
         currentCard
       ) {
         try {
@@ -3410,7 +3708,7 @@
 
       if (
         !button ||
-        !ui.details?.contains(button) ||
+        !$("ms-card-information")?.contains(button) ||
         !currentCard
       ) {
         return;
@@ -3463,7 +3761,7 @@
       q += excluded;
 
       const buttons = [
-        ...ui.details.querySelectorAll(
+        ...$("ms-card-information").querySelectorAll(
           "[data-discovery]"
         )
       ];
@@ -3522,12 +3820,25 @@
 
   window.addEventListener(
     "popstate",
-    () => {
+    event => {
+      updateSearchRobots();
+      if (event.state?.search && ui.input) {
+        const { query, filters } = event.state.search;
+        ui.input.value = query;
+        for (const control of ui.form.elements) {
+          if (control.name && control.name !== "q") control.value = filters[control.name] || "";
+        }
+        void submitSearch(query, filters, true);
+        return;
+      }
       const query =
         params().get("q")?.trim() ||
         guideName;
 
-      if (query) {
+      if (query && intentEngine && !readPrinting() && !guideName) {
+        ui.input.value = query;
+        void submitSearch(query, {}, true);
+      } else if (query) {
         void loadCard(
           query,
           {
@@ -3612,6 +3923,43 @@
       .ms-archive-options > summary:focus-visible,
       .table-wrap[tabindex]:focus-visible { outline: 2px solid var(--accent-bright); outline-offset: 3px; }
 
+      .card-display.ms-compact-card { grid-template-columns: minmax(72px, 120px) minmax(0, 1fr); gap: 12px; padding: 14px; }
+      .ms-compact-card h2 { font-size: clamp(1.2rem, 3vw, 1.8rem); overflow-wrap: anywhere; }
+      .ms-compact-card .card-subtitle { margin: 0 0 6px; font-size: .875rem; line-height: 1.35; }
+      .ms-compact-card .detail { padding: 0; border: 0; background: transparent; margin-bottom: 6px; }
+      .card-details:has(.ms-compact-card) { margin-bottom: 16px; scroll-margin-top: 65px; }
+      .ms-live-explorer > .section-heading { gap: 8px; padding-bottom: 8px; margin-bottom: 8px; }
+      .ms-live-explorer > .section-heading h2 { line-height: 1.2; }
+      .ms-live-explorer { padding-bottom: 18px; }
+      .ms-compact-card .ms-selected-actions a { width: auto; padding: 7px 10px; }
+      .ms-selected-actions button { padding: 7px 10px; }
+      .ms-selected-actions [hidden] { display: none; }
+      .ms-selected-actions { display: flex; flex-wrap: wrap; gap: 6px 12px; align-items: center; }
+      .ms-selected-actions .manascout-guide-link { margin: 0; }
+      #ms-card-information details, .ms-printing-notes { margin-block: 12px; }
+      #ms-card-information summary, .ms-search-filters summary, .ms-archive-options summary { cursor: pointer; }
+      .ms-search-filters { text-align: left; margin-block: 8px; }
+      .ms-search-filters .ms-controls { margin-top: 8px; }
+      .ms-search-filters .ms-controls > * { min-width: 0; }
+      .ms-search-filters input { width: 100%; box-sizing: border-box; }
+      .ms-language-toggle { display: inline-flex; align-items: center; min-height: 44px; gap: 8px; cursor: pointer; margin-inline-end: 12px; }
+      #ms-language-filter:not([hidden]) { display: inline-flex; gap: 6px; align-items: center; }
+      .ms-print-variants ul, #ms-search-results ul { list-style: none; padding: 0; }
+      #ms-search-results ul { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 265px), 1fr)); gap: 8px; }
+      #ms-search-results li button { text-align: left; display: flex; gap: 10px; width: 100%; align-items: center; overflow-wrap: anywhere; }
+      #ms-search-results li img { flex: 0 0 auto; max-width: 72px; object-fit: contain; }
+      #ms-search-results li span { display: block; min-width: 0; }
+      #ms-search-status:empty, #ms-archive-request:empty, .ms-mobile-finishes { display: none; }
+      @media (max-width: 840px) {
+        .card-display.ms-compact-card { grid-template-columns: minmax(70px, 94px) minmax(0, 1fr); }
+        .ms-live-printings .printings-table { min-width: 0; table-layout: fixed; overflow-wrap: anywhere; }
+        .ms-live-printings .printings-table th:nth-child(n+3),
+        .ms-live-printings .printings-table td:nth-child(n+3) { display: none; }
+        .ms-live-printings .printings-table th:first-child { width: 85px; }
+        .ms-live-printings .printings-table td { padding: 8px; }
+        .ms-live-printings .printing-card-image { max-width: 100%; height: auto; }
+        .ms-live-printings .ms-mobile-finishes { display: block; }
+      }
       .ms-preview { position: relative; isolation: isolate; display: inline-block; width: 100%; max-width: 100%; border-radius: 11px; overflow: hidden; perspective: 1100px; }
       .ms-face-turner { position: relative; width: 100%; transform-style: preserve-3d; transform: rotateY(0deg); transition: transform .62s cubic-bezier(.3,.05,.25,1); }
       .ms-face-turner[data-ms-face="back"] { transform: rotateY(180deg); }
@@ -3829,11 +4177,15 @@
 
   installGuideImages();
   installStyles();
+  updateSearchRobots();
 
   const first =
     params().get("q")?.trim();
 
-  if (first) {
+  if (first && intentEngine && !readPrinting()) {
+    if (ui.input) ui.input.value = first;
+    void submitSearch(first, {}, true);
+  } else if (first) {
     void loadCard(
       first,
       {

@@ -12,7 +12,11 @@
   const integer=(min,max)=>v=>Number.isSafeInteger(v)&&v>=min&&v<=max;
   const guide=oneOf(['none',...GUIDES]),count=integer(1,4),week=integer(1,5200);
   const schemas=Object.freeze({
-    search_success:{surface:oneOf(['home','guide']),exact_printing:bool},
+    search_success:{surface:oneOf(['home','guide']),exact_printing:bool,
+      search_type:oneOf(['name','exact_printing','set','collector_number','rarity','artist','type','colour','combined']),
+      result_band:oneOf(['one','few','many'])},
+    exact_printing_select:{source:oneOf(['search','guide','comparison','cotw','unknown']),
+      language_group:oneOf(['english','other']),finish:oneOf(FINISHES)},
     guide_compare_start:{guide,selection_count:count},
     comparison_save:{selection_count:count,storage:oneOf(['browser','memory'])},
     comparison_share:{selection_count:count,method:oneOf(['clipboard','manual'])},
@@ -27,14 +31,16 @@
     merchant_exit:{merchant:()=>false,guide,exact_printing:bool,finish:oneOf(FINISHES)}
   });
   for(const schema of Object.values(schemas))Object.freeze(schema);
-  const MAPPING=Object.freeze({search_success:'Search Success',guide_compare_start:'Compare Started',comparison_save:'Comparison Save',comparison_share:'Comparison Share',deck_import_complete:'Deck Import Complete',deck_export:'Deck Export',cotw_inspect:'COTW Inspect',cotw_deck_start:'COTW Deck Start',deck_studio_open:'Deck Studio Open',guide_deck_start:'Guide Deck Start',deck_generation_start:'Deck Generation Start',deck_generation_complete:'Deck Generation Complete',merchant_exit:'Merchant Exit'});
+  const MAPPING=Object.freeze({search_success:'Search Success',exact_printing_select:'Exact Printing Select',guide_compare_start:'Compare Started',comparison_save:'Comparison Save',comparison_share:'Comparison Share',deck_import_complete:'Deck Import Complete',deck_export:'Deck Export',cotw_inspect:'COTW Inspect',cotw_deck_start:'COTW Deck Start',deck_studio_open:'Deck Studio Open',guide_deck_start:'Guide Deck Start',deck_generation_start:'Deck Generation Start',deck_generation_complete:'Deck Generation Complete',merchant_exit:'Merchant Exit'});
   function validate(event,properties,approved=new Set()){
     try{
       if(typeof event!=='string'||!Object.hasOwn(schemas,event)||!properties||typeof properties!=='object'||Array.isArray(properties))return null;
       const proto=Object.getPrototypeOf(properties);if(proto!==null&&proto!==Object.prototype)return null;
       const schema=schemas[event],keys=Reflect.ownKeys(properties);
-      if(keys.length!==Object.keys(schema).length||keys.some(k=>!Object.hasOwn(schema,k)))return null;
-      const safe={};for(const k of Object.keys(schema)){
+      const legacySearch=event==='search_success'&&!keys.includes('search_type')&&!keys.includes('result_band');
+      const required=legacySearch?['surface','exact_printing']:Object.keys(schema);
+      if(keys.length!==required.length||keys.some(k=>!required.includes(k)))return null;
+      const safe={};for(const k of required){
         const desc=Object.getOwnPropertyDescriptor(properties,k);if(!desc||!Object.hasOwn(desc,'value'))return null;
         const value=desc.value;if(k==='merchant'&&event==='merchant_exit'?!approved.has(value):!schema[k](value))return null;
         safe[k]=value;

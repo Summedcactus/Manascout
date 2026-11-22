@@ -54,13 +54,13 @@ test('copying a guide printing retains its finish while the permanent guide stay
   assert.equal(url.searchParams.get('finish'),finish==='invalid'?null:finish);
  }
 });
-for(const failure of ['request','identity','finish'])test(`exact-printing ${failure} failure cannot silently substitute another edition`,async()=>{
+for(const failure of ['request','identity','uuid','finish'])test(`exact-printing ${failure} failure cannot silently substitute another edition`,async()=>{
  let namedCalls=0,error='',kept='';
  const c={AbortController,generation:0,controller:null,ui:{},console:{error(){}},
   cancelActive(){},startUrl(name,id){kept=id;},clearSuggestions(){},announce(){},
-  sameName:(a,b)=>a===b,cardId:async()=>{
+  sameName:(a,b)=>a===b,norm:x=>x,cardId:async()=>{
    if(failure==='request')throw Error('Request failed');
-   return {name:failure==='identity'?'Another card':'Sol Ring',id:'exact-id'};
+   return {name:failure==='identity'?'Another card':'Sol Ring',id:failure==='uuid'?'another-id':'exact-id'};
   },namedCard:async()=>{namedCalls++;return {name:'Sol Ring',id:'substituted'};},
   chooseFinish:()=>false,errorState:message=>{error=message;}};
  vm.createContext(c);vm.runInContext(app.slice(app.indexOf('  async function loadCard('),app.indexOf('  /* ========================================\n     AUTOCOMPLETE')),c);
