@@ -117,7 +117,7 @@ def audit():
     assert len(archive) == len(set(archive)) == 63
     assert sorted(archive) == ['/card/' + s + '/' for s in slugs]
     assert 'Showing all 63 ManaScout card guides' in directory and '<strong>63</strong> card guides' in directory
-    expected = set(urls + [ORIGIN + '/', ORIGIN + '/card/', ORIGIN + '/deck/', ORIGIN + '/contact/'])
+    expected = set(urls + [ORIGIN + '/', ORIGIN + '/card/', ORIGIN + '/deck/'])
     dates = check_sitemap((ROOT / 'sitemap.xml').read_text(), expected, datetime.now(timezone.utc).date())
     evidence = json.loads((ROOT / 'docs/card-guide-research-3b.json').read_text())['sitemap_lastmod']['entries']
     # Preserve historical evidence; overlay only the five documented Phase 5 editorial changes.
@@ -125,6 +125,8 @@ def audit():
         item = g['sitemap']
         evidence[item['url']] = {'lastmod': item['lastmod'], 'basis': item['basis']}
     evidence.update(json.loads((ROOT / 'docs/phase6-search-growth.json').read_text())['sitemap'])
+    evidence.pop(ORIGIN + '/contact/')
+    evidence[ORIGIN + '/deck/'] = {'lastmod': '2026-11-22', 'basis': 'Deck Studio gained visible landing content.'}
     assert set(evidence) == expected
     assert all(dates[url] == evidence[url]['lastmod'] and evidence[url]['basis'] for url in dates)
     records, outliers = [], []
@@ -173,7 +175,7 @@ def audit():
         if '/assets/css/guide-editorial.css' not in [a.get('href', '').split('?')[0] for t, a in page.tags if t == 'link']: reasons.append('Does not load guide-editorial.css')
         if reasons: outliers.append({'path': relative, 'reasons': reasons})
         records.append({'path': relative, 'card_name': body[0]['data-card-name'], 'canonical': url, 'lastmod': dates[url], 'schema_types': types, 'local_links_assets_aria': 'pass', 'metadata': 'pass', 'unique_explorer_ids': 'pass'})
-    return {'reviewed': '2026-11-10', 'guide_count': 59, 'registry_count': 59, 'itemlist_count': 59, 'sitemap_unique_urls': 63, 'sitemap_lastmod_counts': {d: list(dates.values()).count(d) for d in sorted(set(dates.values()))}, 'pages': records, 'structural_outliers_for_final_audit': outliers, 'preservation': 'Four new guides and four focused guide upgrades; unrelated dates retained. Shared registry updated without altering Deck Studio.', 'limitations': ['Static validation does not prove visual/mobile rendering, physical foil appearance, live API responses, marketplace stock or indexing.']}
+    return {'reviewed': '2026-11-10', 'guide_count': len(files), 'registry_count': len(slugs), 'itemlist_count': len(archive), 'sitemap_unique_urls': len(dates), 'sitemap_lastmod_counts': {d: list(dates.values()).count(d) for d in sorted(set(dates.values()))}, 'pages': records, 'structural_outliers_for_final_audit': outliers, 'preservation': 'Four new guides and four focused guide upgrades; unrelated dates retained. Shared registry updated without altering Deck Studio.', 'limitations': ['Static validation does not prove visual/mobile rendering, physical foil appearance, live API responses, marketplace stock or indexing.']}
 
 
 if __name__ == '__main__':
@@ -185,7 +187,7 @@ if __name__ == '__main__':
     report = audit()
     if args.report: (ROOT / args.report).write_text(json.dumps(report, ensure_ascii=False, indent=2) + '\n')
     print('PASS 63 guides: registry, directory, metadata, canonicals, unique explorer IDs, ARIA and local links/assets')
-    print('PASS 67 unique sitemap URLs: one loc/lastmod per entry, valid non-future dates and URL-specific history evidence')
+    print('PASS 66 unique sitemap URLs: one loc/lastmod per entry, valid non-future dates and URL-specific history evidence')
     print('LASTMOD', report['sitemap_lastmod_counts'])
     print('REPORT structural outliers for separate final audit:', len(report['structural_outliers_for_final_audit']))
     for item in report['structural_outliers_for_final_audit']: print('OUTLIER', item['path'], '; '.join(item['reasons']))
