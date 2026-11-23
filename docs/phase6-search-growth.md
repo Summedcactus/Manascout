@@ -145,3 +145,14 @@ Executed results (17 November 2026): Runtime reports and screenshots live outsid
 Reproduction: serve the repository on `127.0.0.1:8765`; use the committed `tests/browser-phase1.py` through `browser-phase6.py`. This environment requires `--no-sandbox --ignore-https-errors` for the suites that expose those options; Phase 2 already has its documented test flags internally. Phase 6 accepts optional `--image-dir` for locally downloaded, unmodified catalogue JPGs and `--sources-only` for the additional source checks. These environment-specific browser/proxy flags do not change production transport or browser settings.
 
 Visual review included the actual, unmodified Cynette catalogue image at 390px and the new guide mobile layout. Other mocked variants may display a synthetic pixel; this proves layout and error handling, not physical artwork/finish rendering. Touch was exercised through Chromium's native emulated touch input, not a physical Android/iOS device. Image/rules/catalogue facts are dated checks; later catalogue changes may require a separately reviewed update. Recrawl, displayed snippets, CTR and commercial outcomes remain unmeasured.
+
+## Phase 10 controlled CTR experiment
+
+The experiment changes two guide propositions. The other 61 titles, descriptions and opening answers retain the prior baseline. Sharing-image cleanup uses each guide's verified representative edition.
+
+| Page | Search intent | Baseline through 21 November 2026 | What changed |
+|---|---|---|---|
+| Mr. Spock, Science Officer | `mr spock science officer mtg` | Page: about 243 impressions, position 5.84, CTR 0.41%. Query: about 133 impressions, position 5.53, zero clicks. | Versions and foils in the title, exact treatments in the description, and a guide module tied to the English paper records. |
+| Sol Ring | `when was sol ring first printed`, `sol ring first print`, `sol ring printings`, `all sol ring printings` | Observed positions about 5–10. An exact query-level click/impression export was unavailable for this phase. | Dedicated Alpha 1993 first-printing proposition, exact Alpha artwork, database identity and a direct route to the explorer. |
+
+Record the first date Search Console confirms that Google recrawled each changed page. Compare the following 28 complete days against the 28 complete days before release, keeping mobile, the target query groups and Web search consistent. Record clicks, impressions, CTR and average position together. The 61 guide pages with unchanged titles provide a reference for wider traffic changes. Compare at similar positions and report low-volume rows with their raw counts. An unexposed query row is missing data. The experiment begins once the pages are published and crawled.

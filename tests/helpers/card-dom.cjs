@@ -4,7 +4,9 @@ function dom(){
  const decode=s=>s.replace(/&quot;/g,'"').replace(/&#39;/g,"'").replace(/&lt;/g,'<').replace(/&gt;/g,'>').replace(/&amp;/g,'&');
  const dataKey=k=>k.slice(5).replace(/-([a-z])/g,(_,c)=>c.toUpperCase());
  class Element {
-  constructor(tag){this.tagName=tag;this.children=[];this.parentElement=null;this.attributes={};this.dataset={};this.listeners={};this.disabled=false;this.hidden=false;this.complete=false;this.naturalWidth=0;this._text='';this.style={setProperty:(k,v)=>this.style[k]=v};}
+  constructor(tag){this.tagName=tag;this.children=[];this.parentElement=null;this.attributes={};this.dataset={};this.listeners={};this.disabled=false;this.hidden=false;this.complete=false;this.naturalWidth=0;this._text='';this.style={setProperty:(k,v)=>this.style[k]=v,removeProperty:k=>delete this.style[k]};}
+  removeAttribute(k){delete this.attributes[k];if(k.startsWith('data-'))delete this.dataset[dataKey(k)];}
+  hasAttribute(k){return this.getAttribute(k)!==null;}
   get isConnected(){return this===document.body||!!this.parentElement?.isConnected;}
   get className(){return this.attributes.class||'';} set className(v){this.attributes.class=v;}
   get src(){return this.attributes.src||'';} set src(v){this.attributes.src=v;}

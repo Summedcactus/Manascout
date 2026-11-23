@@ -1,6 +1,7 @@
 /* Deck Studio controller: navigation and compact preview, backed by one deck model. */
 (() => {
   "use strict";
+  const presentation = window.ManaScoutPrinting;
   const formats = window.ManaScoutDeckFormats;
   const data = window.ManaScoutDeckData;
   const model = window.ManaScoutDeckModel;
@@ -213,7 +214,8 @@
   function showFace() {
     $("image-status").hidden = true;
     const image = current.images[face];
-    setImage($("preview-image"), image, image ? `${image.name} — ${current.setCode} #${current.collectorNumber}` : "");
+    setImage($("preview-image"), image, image ? `${image.name} — ${presentation.printing(current)}` : "");
+    presentation.enhance($("preview-image"), current, currentFinish);
     $("flip-preview").hidden = current.images.length < 2;
     $("flip-preview").textContent = face === 0 ? "View other face" : "View front face";
     if (!image) {
@@ -229,18 +231,29 @@
     current = card;
     currentFinish = finish;
     face = 0;
-    const printing = `${card.setName} · ${card.setCode} #${card.collectorNumber}`;
-    const finishName = finish === "nonfoil" ? "Nonfoil" : finish === "etched" ? "Etched foil" : finish === "foil" ? "Foil" : "Not supplied";
+    const printing = presentation.printing(card);
+    const finishName = finish ? presentation.finishLabel(finish, card) : "Not supplied";
     const values = {
       "selection-name": card.name, "selection-set": `${card.setCode} #${card.collectorNumber}`,
-      "inspiration-name": card.name, "inspiration-printing": [printing, card.language, finishName].filter(Boolean).join(" · "),
+      "inspiration-name": card.name, "inspiration-printing": [printing, presentation.language(card.language), finishName].filter(Boolean).join(" · "),
       "preview-name": card.name, "preview-type": card.type, "preview-mv": card.manaValue,
       "preview-printing": printing, "preview-artist": card.artist, "preview-finish": finishName,
-      "preview-finishes": card.finishes, "preview-language": card.language, "preview-released": card.released,
+      "preview-finishes": presentation.finishList(card), "preview-language": presentation.language(card.language),
+      "preview-treatment": presentation.treatments(card).join(" · ") || presentation.frame(card) || "Frame not supplied", "preview-released": card.released,
       "preview-id": card.id, "preview-oracle": card.oracle, "preview-brief": card.summary, "preview-note": card.availableFinishes.includes(finish) ? card.finishNotice : "The selected finish is not listed as available for this printing. Any saved entry is preserved; adding that finish is disabled."
     };
     for (const [id, value] of Object.entries(values)) $(id).textContent = value;
-    setImage($("inspiration-image"), card.images[0], `${card.name} — ${card.setCode} #${card.collectorNumber}`);
+    setImage($("inspiration-image"), card.images[0], `${card.name} — ${printing}`);
+    presentation.enhance($("inspiration-image"), card, finish);
+    const picker = $("preview-finish-select");
+    picker.replaceChildren(...card.availableFinishes.map(value => {
+      const option = view.node("option", "", presentation.finishLabel(value, card));
+      option.value = value;
+      return option;
+    }));
+    picker.value = finish;
+    $("preview-finish-control").hidden = card.availableFinishes.length < 2;
+    $("preview-finish").hidden = !$("preview-finish-control").hidden;
     setImage($("selection-thumb"), card.images[0], "");
     showFace();
     for (const [id, href] of [["preview-guide", card.guide], ["preview-source", card.sourceUrl]]) {
@@ -257,6 +270,13 @@
     renderPreviewActions();
     if ((deck.format === "commander" || commanderIntent) && !rules.background(card)) checkCommander(card,{forSeed:commanderIntent});
   }
+
+  $("preview-finish-select").addEventListener("change", event => {
+    const finish = event.target.value;
+    if (!current?.availableFinishes.includes(finish) || finish === currentFinish) return;
+    renderCard(current, finish);
+    window.ManaScoutAnalytics?.track("finish_switch", { surface: "deck" });
+  });
 
   function showError(error) {
     $("selection-error-message").textContent = error.message;

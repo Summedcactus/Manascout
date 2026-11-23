@@ -1,6 +1,7 @@
 /* Compact, progressively disclosed bulk-appearance UI. Holds one preview and one undo. */
 ((root)=>{
   "use strict";
+  const presentation = root.ManaScoutPrinting;
   function create({client,getDeck,onApply,onError,beforeStart,capture,restore}) {
     const api=root.ManaScoutDeckAppearance,view=root.ManaScoutDeckView,$=id=>document.getElementById(id),panel=$("deck-appearance");
     let job=null,plan=null,lastUndo=null;
@@ -30,7 +31,7 @@
       $("appearance-summary").textContent=`${result.changedCopies} copies will change · ${result.unchangedCopies} kept current. Command zone: ${changedCommanders} / ${commanders.length} entries will change. Construction: ${result.validation.label}.`;
       const reasons=new Map();for(const e of result.kept)reasons.set(e.reason,(reasons.get(e.reason)||0)+e.copies);
       $("appearance-kept").replaceChildren(...[...reasons].map(([reason,n])=>view.node("li","",`${n} copies: ${reason}`)));
-      $("appearance-examples").replaceChildren(...result.changes.slice(0,5).map(c=>{const entry=result.source.entries.find(e=>e.key===c.key),old=result.source.cards[entry.printingId];return view.node("li","",`${entry.quantity} × ${old.name}: ${old.setCode} #${old.collectorNumber} ${entry.finish} → ${c.card.setCode} #${c.card.collectorNumber} ${c.finish}`);}));
+      $("appearance-examples").replaceChildren(...result.changes.slice(0,5).map(c=>{const entry=result.source.entries.find(e=>e.key===c.key),old=result.source.cards[entry.printingId];return view.node("li","",`${entry.quantity} × ${old.name}: ${old.setCode} #${old.collectorNumber} ${presentation.finishLabel(entry.finish, old)} → ${c.card.setCode} #${c.card.collectorNumber} ${presentation.finishLabel(c.finish, c.card)}`);}));
     }
     for(const id of ["appearance-preset","appearance-include-manual","appearance-include-unknown"])$(id).addEventListener("change",()=>{cancel("Settings changed. Prepare a new appearance preview.");tip();});
     $("appearance-cancel").addEventListener("click",()=>{cancel("Cancelled. Existing deck printings are unchanged.");$("appearance-preview").focus({preventScroll:true});});

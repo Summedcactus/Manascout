@@ -12,9 +12,11 @@
     for (const k of ['id','oracle_id','name','set','set_name','collector_number','lang','artist','frame','released_at','illustration_id','scryfall_uri','border_color']) out[k] = text(c[k]);
     for (const k of ['finishes','frame_effects','promo_types']) out[k] = Array.isArray(c[k]) ? c[k].slice(0,30).map(x=>text(x)) : [];
     for (const k of ['full_art','textless','promo']) out[k] = c[k] === true;
+    if (Array.isArray(c.card_faces)) out.card_faces = c.card_faces.slice(0, 4).map(face => ({ illustration_id: text(face.illustration_id), oracle_text: text(face.oracle_text, 3000) }));
+    out.oracle_text = text(c.oracle_text, 6000);
     out.image_uris = {normal:text(c.image_uris?.normal || c.card_faces?.[0]?.image_uris?.normal,2000)};
     out.prices = {};
-    for(const k of ['eur','eur_foil','usd','usd_foil','usd_etched']) out.prices[k] = /^\d+(\.\d+)?$/.test(c.prices?.[k]) ? c.prices[k] : null;
+    for(const k of ['eur','eur_foil','usd','usd_foil','usd_etched','eur_etched']) out.prices[k] = /^\d+(\.\d+)?$/.test(c.prices?.[k]) ? c.prices[k] : null;
     return out;
   }
   function validate(source) {
@@ -103,13 +105,14 @@
   root.ManaScoutComparisons=Object.freeze(api);
   document.addEventListener('DOMContentLoaded',mount);
   function mount() {
+    const presentation = root.ManaScoutPrinting;
     const anchor=document.getElementById('card-details'), bridge=root.ManaScout?.comparison;
     if(!anchor || !bridge) return;
     let items=[],saved=[],preview=null,busy=false,storageOkay=true,storedRevision=null;
     const host=document.createElement('section');host.className='ms-comparisons';host.setAttribute('aria-label','Exact printing comparisons');
     const homeResults=document.getElementById('card-details-section');
     if(homeResults)homeResults.after(host);else anchor.after(host);
-    host.innerHTML=`<p role="status" aria-live="polite" class="cmp-status"></p><section class="cmp-current" id="ms-comparison-current" hidden><h2 tabindex="-1">Compare exact versions</h2><p class="cmp-summary"></p><div class="cmp-grid"></div><button type="button" data-cmp="clear">Clear comparison</button><details><summary>Save and export</summary><label>Comparison name <input class="cmp-name" maxlength="100" value="My comparison"></label><button type="button" data-cmp="save">Save in this browser</button><button type="button" data-cmp="json">Export JSON</button><button type="button" data-cmp="csv">Export CSV</button><button type="button" data-cmp="links">Copy exact links</button><button type="button" data-cmp="share">Copy comparison link</button><textarea class="cmp-links" aria-label="Exact links to copy" hidden readonly></textarea></details></section><details class="cmp-library"><summary>Saved comparisons and import</summary><p>Saved in this browser only. Export a backup to keep or move your work. Decks are separate.</p><div class="cmp-saved"></div><label>Import comparison JSON <input type="file" accept=".json,application/json" class="cmp-file"></label><div class="cmp-preview" hidden></div></details>`;
+    host.innerHTML=`<p role="status" aria-live="polite" class="cmp-status"></p><section class="cmp-current" id="ms-comparison-current" hidden><h2 tabindex="-1">Compare exact versions</h2><p class="cmp-summary"></p><div class="cmp-grid"></div><div class="cmp-differences"></div><button type="button" data-cmp="clear">Clear comparison</button><details><summary>Save and export</summary><label>Comparison name <input class="cmp-name" maxlength="100" value="My comparison"></label><button type="button" data-cmp="save">Save in this browser</button><button type="button" data-cmp="json">Export JSON</button><button type="button" data-cmp="csv">Export CSV</button><button type="button" data-cmp="links">Copy exact links</button><button type="button" data-cmp="share">Copy comparison link</button><textarea class="cmp-links" aria-label="Exact links to copy" hidden readonly></textarea></details></section><details class="cmp-library"><summary>Saved comparisons and import</summary><p>Saved in this browser only. Export a backup to keep or move your work. Decks are separate.</p><div class="cmp-saved"></div><label>Import comparison JSON <input type="file" accept=".json,application/json" class="cmp-file"></label><div class="cmp-preview" hidden></div></details>`;
     const $=s=>host.querySelector(s), say=m=>{$('.cmp-status').textContent=m;};
     try{saved=read(root.localStorage);storedRevision=root.localStorage.getItem(KEY);}catch{storageOkay=false;say('Saved library unavailable or damaged. Current comparisons and exports still work; existing storage is left untouched.');}
     const esc=s=>String(s??'Unknown').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -120,26 +123,82 @@
     function renderLibrary() {
       $('.cmp-saved').innerHTML=saved.map((s,i)=>`<div><label>Saved comparison name <input data-saved-name="${i}" maxlength="100" value="${esc(s.name)}"></label><button data-open="${i}">Open</button><button data-rename="${i}">Rename</button><button data-delete="${i}">Delete</button></div>`).join('') || '<p>No saved comparisons.</p>';
     }
+    function identity(card, finish) {
+      return `${presentation.printing(card)}, ${presentation.language(card.lang)}, ${presentation.finishLabel(finish, card)}`;
+    }
+
     function draw() {
-      $('.cmp-current').hidden=!items.length;
-      const art=items.map(x=>x.card.illustration_id).filter(Boolean);
-      $('.cmp-summary').textContent=`${items.length}/4 versions. ${items.length<2?'Add another printing or choose another available finish on the selected printing. ':''}${art.length===items.length ? (new Set(art).size>1?'Supplied illustration IDs differ.':'Same supplied illustration identity.') : 'Artwork differences unknown where illustration identity is missing.'} Different catalogue IDs alone do not prove different artwork. Compare finish, language and frame below. Prices are Scryfall references, not delivered shop quotes. Shimmer elsewhere is illustrative; these images are static.`;
-      $('.cmp-grid').innerHTML=items.map(x=>{
-        const c=x.card,p=bridge.present(c,x.finish),src=source(c.scryfall_uri);
-        let image='';try{const u=new URL(p.image);if(u.protocol==='https:'&&u.hostname==='cards.scryfall.io')image=u.href;}catch{}
-        return `<article><h3>${esc(c.name||'Unavailable card')} · ${esc(x.finish)}</h3>${image?`<img src="${esc(image)}" alt="${esc(c.name)} catalogue scan" loading="lazy" width="244" height="340">`:''}<p class="cmp-image-fallback" ${image?'hidden':''}>Artwork unavailable; exact identity remains below.</p><dl>${[['Set',`${c.set_name||'Unknown'} (${c.set||'?'}) #${c.collector_number||'?'}`],['Language',p.language],['Artist',c.artist||'Unknown'],['Frame / treatment',`${c.frame||'Unknown'} · ${p.treatment}`],['Selected finish',x.finish],['Available finishes',c.finishes.join(', ')||'Unknown'],['Release',c.released_at||'Unknown'],['Catalogue UUID',x.id],['Illustration UUID',c.illustration_id||'Unknown']].map(([k,v])=>`<dt>${esc(k)}</dt><dd>${esc(v)}</dd>`).join('')}</dl><p>${esc(x.status)}</p><p>${x.live?'Loaded reference':'Cached, unverified reference'}: ${p.priceHtml.replace('€','EUR €').replace('$','USD $')}${p.estimate!==null?` · GBP estimate £${Number(p.estimate).toFixed(2)}`:''}</p>${src?`<a href="${esc(src)}" target="_blank" rel="noopener noreferrer">Exact Scryfall source</a> · `:''}<a href="${esc(link(x))}">Inspect exact printing</a><p><button type="button" data-remove="${esc(key(x))}">Remove ${esc(c.set||x.id)} #${esc(c.collector_number||'?')} ${esc(c.lang||'?')} ${esc(x.finish)}</button></p></article>`;
+      $('.cmp-current').hidden = !items.length;
+      const grid = $('.cmp-grid');
+      grid.dataset.count = items.length;
+      $('.cmp-summary').textContent = items.length === 1
+        ? 'Add another printing or finish to see what differs.' : items[0]?.card.name || '';
+      grid.innerHTML = items.map(({card, id, finish, live, status, ...record}) => {
+        const src = source(card.scryfall_uri);
+        const title = card.collector_number ? presentation.printing(card) : 'Printing unavailable';
+        const prices = presentation.prices(card, finish);
+        const treatment = presentation.treatments(card);
+        const selected = presentation.finishLabel(finish, live ? card : undefined);
+        return `<article>
+          <div class="cmp-art">${presentation.markup({card, finish: live ? finish : "", src: bridge.image(card), alt: `${card.name || "Card"} — ${title}`, lazy: true})}</div>
+          <div class="cmp-card-copy">
+            <h3>${esc(title)}</h3>
+            ${treatment.length ? `<p class="cmp-treatment">${esc(treatment.join(" · "))}</p>` : ""}
+            <p class="cmp-finish">${esc(selected)}</p>
+            ${prices.length ? `<p class="cmp-price">${esc(prices.join(" · "))}<small>${live ? "Scryfall reference" : "Cached reference"}</small></p>` : '<p class="cmp-treatment">No reference price</p>'}
+            ${!live ? '<p class="cmp-treatment">Exact finish could not be verified this session.</p>' : ""}
+            <div class="cmp-actions">
+              ${card.name ? `<a href="${esc(link({card, id, finish}))}">Inspect</a>` : ""}
+              <button type="button" data-remove="${esc(key({id, finish}))}" aria-label="${esc(`Remove ${identity(card, finish)} from comparison`)}">Remove</button>
+            </div>
+            <details class="cmp-technical">
+              <summary>Technical details</summary>
+              <dl>
+                <dt>Catalogue UUID</dt><dd>${esc(id)}</dd>
+                <dt>Illustration UUID</dt><dd>${esc(presentation.artwork(card) || "Not supplied")}</dd>
+                <dt>Gameplay UUID</dt><dd>${esc(record.oracleId || "Not supplied")}</dd>
+              </dl>
+              <p>${esc(status)}</p>
+              ${src ? `<a href="${esc(src)}" target="_blank" rel="noopener noreferrer">Scryfall catalogue record</a>` : ""}
+            </details>
+          </div>
+        </article>`;
       }).join('');
-      host.querySelectorAll('.cmp-grid img').forEach(img=>img.addEventListener('error',()=>{img.hidden=true;img.nextElementSibling.hidden=false;}));
+      const rows = presentation.differences(items.every(item => item.live) ? items : []);
+      $('.cmp-differences').innerHTML = items.length < 2 ? '' : `<section aria-label="Differences">
+        <h3>Differences</h3>
+        ${rows.length ? `<dl>${rows.map(({label, values}) => `<div><dt>${esc(label)}</dt><dd><ul>${values.map((value, index) =>
+          `<li><span>${esc(presentation.setCode(items[index].card.set))} #${esc(items[index].card.collector_number)} · ${esc(presentation.finishLabel(items[index].finish, items[index].card))}</span><strong>${esc(value || "Not supplied")}</strong></li>`
+        ).join("")}</ul></dd></div>`).join("")}</dl>` : `<p>${items.every(item => item.live) ? "No differences in the catalogue attributes available for these selections." : "Differences appear once the exact records are verified."}</p>`}
+      </section>`;
       sync();
     }
     function sync() {
-      document.querySelectorAll('[data-compare-id]').forEach(b=>{const c=bridge.card(b.dataset.compareId);if(!c)return;const f=bridge.finish(c),selected=items.some(x=>key(x)===`${c.id}:${f}`);const label=`${selected?'Comparing':'Compare'} ${f}`;if(b.textContent!==label)b.textContent=label;if(b.nextElementSibling?.hasAttribute('data-compare-jump'))b.nextElementSibling.hidden=!selected;b.setAttribute('aria-pressed',String(selected));b.setAttribute('aria-label',`${selected?'Already comparing':'Compare'} ${c.name}, ${c.set_name}, number ${c.collector_number}, ${c.lang}, ${f}`);});
+      for (const button of document.querySelectorAll('[data-compare-id]')) {
+        const card = bridge.card(button.dataset.compareId);
+        if (!card) continue;
+        const finish = bridge.finish(card);
+        const selected = items.some(item => key(item) === `${card.id}:${finish}`);
+        const label = selected ? 'Comparing' : 'Compare';
+        if (button.textContent !== label) button.textContent = label;
+        if (button.nextElementSibling?.hasAttribute('data-compare-jump')) button.nextElementSibling.hidden = !selected;
+        button.setAttribute('aria-pressed', String(selected));
+        button.setAttribute('aria-label', `${label} ${card.name}, ${identity(card, finish)}`);
+      }
     }
     new MutationObserver(sync).observe(anchor.parentElement,{childList:true,subtree:true});
     document.addEventListener('click',e=>{
       const b=e.target.closest('[data-compare-id]');if(!b)return;
       if(busy){say('Please wait for exact record checks to finish.');return;}
-      try{const c=bridge.card(b.dataset.compareId);items=add(items,c,bridge.finish(c));draw();if(items.length===1){const guide=root.ManaScoutAnalytics?.guide();if(guide&&guide!=='none')root.ManaScoutAnalytics.track('guide_compare_start',{guide,selection_count:items.length});}say(`Added ${c.name}, ${c.set}, ${c.lang}, ${bridge.finish(c)}. ${items.length} selected.`);}catch(err){say(err.message);}
+      try {
+        const card = bridge.card(b.dataset.compareId), finish = bridge.finish(card);
+        items = add(items, card, finish);
+        draw();
+        if (items.length === 1) root.ManaScoutAnalytics?.track('guide_compare_start', {
+          guide: root.ManaScoutAnalytics.guide(), selection_count: items.length
+        });
+        say(`Added ${card.name}, ${identity(card, finish)}. ${items.length} selected.`);
+      } catch (err) { say(err.message); }
     });
     function download(raw,ext,type) {const u=URL.createObjectURL(new Blob([raw],{type}));const a=document.createElement('a');a.href=u;a.download='manascout-comparison.'+ext;a.click();setTimeout(()=>URL.revokeObjectURL(u),1000);}
     async function open(s) {
@@ -168,7 +227,7 @@
     });
     $('.cmp-file').addEventListener('change',async e=>{
       preview=null;$('.cmp-preview').hidden=true;
-      try{const file=e.target.files[0];if(!file)return;if(file.size>150000)fail('Comparison file is too large.');preview=decode(await file.text());const box=$('.cmp-preview');box.hidden=false;box.innerHTML=`<h3>Import preview: ${esc(preview.name)}</h3><p>${preview.items.map(x=>`${esc(x.card.name||x.id)} · ${esc(x.card.set)} #${esc(x.card.collector_number)} · ${esc(x.card.lang)} · ${esc(x.finish)}`).join('<br>')}</p><p>${preview.items.length} exact versions. Imported snapshots are unverified until checked. Import adds a new saved entry; existing saved work is retained. The current working comparison will be replaced.</p><button data-cmp="import">Import and open</button><button data-cmp="cancel">Cancel</button>`;box.querySelector('button').focus();}catch(err){say(err.message);}
+      try{const file=e.target.files[0];if(!file)return;if(file.size>150000)fail('Comparison file is too large.');preview=decode(await file.text());const box=$('.cmp-preview');box.hidden=false;box.innerHTML=`<h3>Import preview: ${esc(preview.name)}</h3><p>${preview.items.map(x=>`${esc(x.card.name || "Unavailable card")} · ${esc(identity(x.card, x.finish))}`).join('<br>')}</p><p>${preview.items.length} exact versions. Imported snapshots are unverified until checked. Import adds a new saved entry; existing saved work is retained. The current working comparison will be replaced.</p><button data-cmp="import">Import and open</button><button data-cmp="cancel">Cancel</button>`;box.querySelector('button').focus();}catch(err){say(err.message);}
     });
     renderLibrary();
     async function fromSharedLink(){

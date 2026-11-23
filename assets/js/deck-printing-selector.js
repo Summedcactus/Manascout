@@ -1,6 +1,7 @@
 /* Dedicated printing drawer. Catalogue browsing is transient UI; edits use DeckPrintings. */
 ((root) => {
   "use strict";
+  const presentation = root.ManaScoutPrinting;
   function create({client,getDeck,onApply,onError,capture,restore,fallbackFocus}) {
     const api=root.ManaScoutDeckPrintings,view=root.ManaScoutDeckView,$=id=>document.getElementById(id),dialog=$("printing-selector");
     let session=null;
@@ -26,16 +27,17 @@
       s.finish=card.availableFinishes.includes(finish)?finish:card.availableFinishes.includes("nonfoil")?"nonfoil":card.availableFinishes[0]||"";
       $("printing-selected-name").textContent=card.name;
       $("printing-selected-meta").textContent=`${card.setName} · ${card.setCode} #${card.collectorNumber}`;
-      $("printing-current-marker").textContent=`In deck: ${s.original.setCode} #${s.original.collectorNumber} · ${api.finishLabel(s.entry.finish)}. ${card.id===s.original.id&&s.finish===s.entry.finish?"Current selection.":"Preview only."}`;
-      const finishSelect=$("printing-finish");finishSelect.replaceChildren(...card.availableFinishes.map(value=>{const o=view.node("option","",api.finishLabel(value));o.value=value;return o;}));finishSelect.value=s.finish;
+      $("printing-current-marker").textContent=`In deck: ${s.original.setCode} #${s.original.collectorNumber} · ${api.finishLabel(s.entry.finish, s.original)}. ${card.id===s.original.id&&s.finish===s.entry.finish?"Current selection.":"Preview only."}`;
+      const finishSelect=$("printing-finish");finishSelect.replaceChildren(...card.availableFinishes.map(value=>{const o=view.node("option","",api.finishLabel(value, card));o.value=value;return o;}));finishSelect.value=s.finish;
       finishSelect.hidden=card.availableFinishes.length<2;$("printing-finish-label").hidden=finishSelect.hidden;
-      $("printing-single-finish").hidden=!finishSelect.hidden;$("printing-single-finish").textContent=api.finishLabel(s.finish);
+      $("printing-single-finish").hidden=!finishSelect.hidden;$("printing-single-finish").textContent=api.finishLabel(s.finish, card);
       $("printing-apply").disabled=!s.finish||s.loading||s.applying;
       paintFace(s);mark(s);
     }
     function paintFace(s) {
       const card=s.chosen,image=card.images[s.face],img=$("printing-selected-image");img.hidden=!image;
       if(image){img.src=image.url;img.alt=image.name||card.name;}else img.removeAttribute("src");
+      presentation.enhance(img, card, s.finish, { compact: true });
       $("printing-face").hidden=card.images.length<2;$("printing-face").textContent=`Face ${s.face+1} / ${card.images.length} · Next face`;
       $("printing-face").setAttribute("aria-label",`View next artwork face of ${card.name}`);
     }
@@ -49,11 +51,11 @@
       $("printing-results").replaceChildren(...visible.map(card=>{
         const b=view.node("button","ds-printing-option");b.type="button";b.dataset.printing=card.id;
         b.setAttribute("aria-label",`Preview ${card.name}, ${card.setName}, ${card.setCode} #${card.collectorNumber}`);
-        if(card.images[0]){const image=view.node("img");image.src=card.images[0].url;image.alt="";image.loading="lazy";image.width=160;image.height=224;b.append(image);}
+        if(card.images[0]){const image=view.node("img");image.src=card.images[0].url;image.alt="";image.loading="lazy";image.width=160;image.height=224;b.append(image);presentation.enhance(image,card,presentation.defaultFinish(card),{compact:true});}
         b.append(view.node("strong","",`${card.setCode} #${card.collectorNumber}`),view.node("span","",card.setName));
-        const treatment=api.treatments(card).map(([,label])=>label).join(" · ");
-        b.append(view.node("small","",[card.released!=="Not supplied"?card.released:"",treatment,card.language!=="Not supplied"?card.language:""].filter(Boolean).join(" · ")));
-        b.append(view.node("small","",card.availableFinishes.map(api.finishLabel).join(" · ")));
+        const treatment=presentation.treatments(card).join(" · ");
+        b.append(view.node("small","",[card.released!=="Not supplied"?card.released:"",treatment,presentation.language(card.language)].filter(Boolean).join(" · ")));
+        b.append(view.node("small","",presentation.finishList(card)));
         if(card.id===s.original.id)b.append(view.node("span","ds-printing-current","Current edition"));
         return b;
       }));mark(s);
@@ -66,7 +68,10 @@
       const b=event.target.closest("button[data-printing]"),s=session;if(!b||!s||s.applying)return;
       const card=s.cards.get(b.dataset.printing);if(card){choice(s,card);$("printing-apply-status").textContent="Preview only. Your deck changes when you choose Use this printing.";}
     });
-    $("printing-finish").addEventListener("change",()=>{if(session&&!session.applying)choice(session,session.chosen,$("printing-finish").value);});
+    $("printing-finish").addEventListener("change",()=>{if(session&&!session.applying){
+      choice(session,session.chosen,$("printing-finish").value);
+      root.ManaScoutAnalytics?.track("finish_switch", { surface: "deck" });
+    }});
     for(const [id,event] of [["printing-filter-finish","change"],["printing-filter-set","input"],["printing-filter-treatment","change"]])$(id).addEventListener(event,()=>{if(session){session.limit=24;render(session);}});
     async function load(s,reset=false) {
       if(!live(s)||s.applying)return;

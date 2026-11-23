@@ -8,6 +8,10 @@ function mount({ client, narrow = false, search = '', storage, analytics = null 
   const decode = s => s.replace(/&amp;/g, '&').replace(/&quot;/g, '"').replace(/&#39;/g, "'").replace(/&lt;/g, '<').replace(/&gt;/g, '>');
   class Element {
     constructor(tag) { this.tagName = tag.toUpperCase(); this.children = []; this.parentElement = null; this.attributes = {}; this.dataset = {}; this.listeners = {}; this._text = ''; this._value = undefined; this.hidden = false; this.disabled = false; this.open = false; this.scrollTop = 0; this.className = ''; this.files = []; this.style = {}; }
+    get ownerDocument() { return document; }
+    before(node) { this.parentElement?.insertBefore(node, this); }
+    toggleAttribute(key, force) { if (force) this.setAttribute(key, ""); else this.removeAttribute(key); }
+    insertAdjacentHTML() {} // Decorative surfaces are verified in Chromium.
     get id() { return this.attributes.id || ''; } set id(v) { this.attributes.id = v; }
     get textContent() { return this._text + this.children.map(c => c.textContent).join(''); }
     set textContent(v) { this.replaceChildren(); this._text = String(v); }
@@ -68,7 +72,7 @@ function mount({ client, narrow = false, search = '', storage, analytics = null 
   }
   const media = { matches: narrow, listeners: [], addEventListener(_name, fn) { this.listeners.push(fn); } };
   const listeners = {};
-  const window = { ManaScoutAnalytics:analytics, ManaScoutDeckFormats: require('../../assets/js/deck-formats.js'), location: { search }, matchMedia: () => media, ManaScoutDeckData: require('../../assets/js/deck-data.js'), ManaScoutDeckModel: require('../../assets/js/deck-model.js'), ManaScoutDeckClient: { createClient: () => client }, addEventListener(t, fn) { (listeners[t] ||= []).push(fn); }, localStorage: storage, confirm: () => false };
+  const window = { ManaScoutPrinting: require("../../assets/js/printing-presentation.js"), ManaScoutAnalytics:analytics, ManaScoutDeckFormats: require('../../assets/js/deck-formats.js'), location: { search }, matchMedia: () => media, ManaScoutDeckData: require('../../assets/js/deck-data.js'), ManaScoutDeckModel: require('../../assets/js/deck-model.js'), ManaScoutDeckClient: { createClient: () => client }, addEventListener(t, fn) { (listeners[t] ||= []).push(fn); }, localStorage: storage, confirm: () => false };
   for (const [file, global] of [['deck-identity.js','ManaScoutDeckIdentity'],['deck-health.js','ManaScoutDeckHealth'],['deck-printings.js','ManaScoutDeckPrintings'],['deck-appearance.js','ManaScoutDeckAppearance'],['deck-rules.js','ManaScoutDeckRules'],['deck-store.js','ManaScoutDeckStore'],['deck-generator.js','ManaScoutDeckGenerator']]) if (fs.existsSync(path.join(root,'assets/js',file))) window[global] = require('../../assets/js/' + file);
   const timers = new Set();
   const timerTasks = new Map();

@@ -10,7 +10,7 @@ test('every permanent guide exposes one compact navigation, static reference and
   const s=fs.readFileSync(`card/${g.name}/index.html`,'utf8');
   assert.equal((s.match(/class="guide-jump-links"/g)||[]).length,1,g.name);
   assert.equal((s.match(/data-guide-static/g)||[]).length,1,g.name);
-  assert.equal((s.match(/<img\b/g)||[]).length,1,g.name);
+  assert.equal((s.match(/<img\b/g)||[]).length,g.name==="mr-spock-science-officer"?5:1,g.name);
   assert.match(s,/class="printing-guide"/);assert.match(s,/guide-editorial.css/);
   const nav=s.match(/<nav class="guide-jump-links"[^]*?<\/nav>/)[0];
   assert.match(nav,/Sources/);assert.match(nav,/Printing shortlist/);if([...Object.keys(JSON.parse(fs.readFileSync('docs/phase6-search-growth.json','utf8')).upgrades),...Object.keys(JSON.parse(fs.readFileSync('docs/phase6-search-growth.json','utf8')).new_guides),'mr-spock-science-officer','sol-ring','arcane-signet','rhystic-study','deflecting-swat'].includes(g.name)) assert.match(nav,/<a class="guide-primary-cta" href="#[^"]+-printings-heading">Compare printings<\/a>/);else assert.match(nav,/Live explorer/);
@@ -31,7 +31,7 @@ test('new reference images retain the verified source identity and never use inf
  }
 });
 function links(finish='foil'){
- const c={GUIDE_SLUGS:registry,window:{location:{pathname:'/'}},URLSearchParams,
+ const c={presentation:{...require("../assets/js/printing-presentation.js"),enhance(){}},GUIDE_SLUGS:registry,window:{location:{pathname:'/'}},URLSearchParams,
   slug:s=>s.toLowerCase().replace(/['’]/g,'').replace(/[^a-z0-9]+/g,'-'),
   esc:s=>String(s).replace(/&/g,'&amp;'),selectedFinish:()=>finish};
  vm.createContext(c);vm.runInContext(app.slice(app.indexOf('  function guideLink('),app.indexOf('  function marketplace(')),c);return c;
@@ -48,7 +48,7 @@ test('guide links carry the selected exact printing and finish without inventing
 test('copying a guide printing retains its finish while the permanent guide stays clean',()=>{
  const page=fs.readFileSync('assets/js/card-page.js','utf8'),id='11111111-1111-4111-8111-111111111111';
  for(const finish of ['foil','etched','nonfoil','invalid']){
-  const c={URL,guideUrl:()=> 'https://manascout.co.uk/card/sol-ring/',parameters:()=>new URLSearchParams({finish})};vm.createContext(c);
+  const c={presentation:{...require("../assets/js/printing-presentation.js"),enhance(){}},URL,guideUrl:()=> 'https://manascout.co.uk/card/sol-ring/',parameters:()=>new URLSearchParams({finish})};vm.createContext(c);
   vm.runInContext(page.slice(page.indexOf('  function printingUrl('),page.indexOf('  function scrollToTarget(')),c);
   const url=new URL(c.printingUrl(id));assert.equal(url.searchParams.get('printing'),id);
   assert.equal(url.searchParams.get('finish'),finish==='invalid'?null:finish);
@@ -56,7 +56,7 @@ test('copying a guide printing retains its finish while the permanent guide stay
 });
 for(const failure of ['request','identity','uuid','finish'])test(`exact-printing ${failure} failure cannot silently substitute another edition`,async()=>{
  let namedCalls=0,error='',kept='';
- const c={AbortController,generation:0,controller:null,ui:{},console:{error(){}},
+ const c={presentation:{...require("../assets/js/printing-presentation.js"),enhance(){}},AbortController,generation:0,controller:null,ui:{},console:{error(){}},
   cancelActive(){},startUrl(name,id){kept=id;},clearSuggestions(){},announce(){},
   sameName:(a,b)=>a===b,norm:x=>x,cardId:async()=>{
    if(failure==='request')throw Error('Request failed');
@@ -71,7 +71,7 @@ test('guide overview follows the live selected identity, language and finish',()
  const {dom}=require('./helpers/card-dom.cjs'),d=dom();
  d.document.querySelector=s=>d.document.body.querySelector(s);
  d.document.body.innerHTML='<figure data-guide-reference><a data-guide-reference-link href="https://scryfall.com/card/pcy/45"><img src="https://cards.scryfall.io/original.jpg"></a><figcaption data-guide-reference-label>Original reference</figcaption><p class="guide-image-error">Unavailable</p></figure>';
- const c={document:d.document,guideName:'Sol Ring',sameName:(a,b)=>a===b,safe:s=>s||'',img:c=>c.image_uris.normal,selectedFinish:()=> 'foil',finishLabel:()=> 'Foil',LANGS:{de:'German'}};
+ const c={presentation:{...require("../assets/js/printing-presentation.js"),enhance(){}},document:d.document,guideName:'Sol Ring',sameName:(a,b)=>a===b,safe:s=>s||'',img:c=>c.image_uris.normal,selectedFinish:()=> 'foil',finishLabel:()=> 'Foil',LANGS:{de:'German'}};
  vm.createContext(c);vm.runInContext(app.slice(app.indexOf('  function updateGuideReference('),app.indexOf('  function renderCard(')),c);
  c.updateGuideReference({name:'Sol Ring',set:'cmd',collector_number:'269',artist:'Synthetic artist',lang:'de',image_uris:{normal:'https://cards.scryfall.io/selected.jpg'},scryfall_uri:'https://scryfall.com/card/cmd/269/de'});
  assert.match(d.document.body.textContent,/Selected printing · CMD #269 · Synthetic artist · German · Foil/);

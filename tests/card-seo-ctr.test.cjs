@@ -23,15 +23,15 @@ test('no ad units or advertising scripts were added to the eight guides',()=>{fo
 for(const slug of slugs){
  const html=read(`card/${slug}/index.html`),c={...(ledger.new_guides[slug]||ledger.upgrades[slug]),...(phase5[slug]||{})},url=host+'/card/'+slug+'/',ld=graph(html);
  test(`${c.name}: search-intent title, social snippets, canonical and linked graph agree`,()=>{
-  const title=plain(html.match(/<title>([^]*?)<\/title>/)[1]);assert.equal(title,c.title);assert.match(title,/Printings|First Printing|Versions|Original|Artwork|Foil/);assert.ok(title.length<85);const description=html.match(/name="description" content="([^"]+)"/)[1];assert.equal(plain(description),c.description);assert.ok(c.description.length>=110&&c.description.length<=180);
-  assert.equal((html.match(/rel="canonical"/g)||[]).length,1);assert.ok(html.includes(`rel="canonical" href="${url}"`));assert.ok(html.includes(`property="og:url" content="${url}"`));assert.ok(html.includes(`property="og:title" content="${c.title.replace(/&/g,'&amp;')}"`));assert.doesNotMatch(html,/noindex/i);
+  const title=plain(html.match(/<title>([^]*?)<\/title>/)[1]);assert.ok(title.includes(c.name));if(slug!=="sol-ring")assert.equal(title,c.title);const description=html.match(/name="description" content="([^"]+)"/)[1];assert.equal(plain(description),c.description);assert.ok(c.description.length>=110&&c.description.length<=180);
+  assert.equal((html.match(/rel="canonical"/g)||[]).length,1);assert.ok(html.includes(`rel="canonical" href="${url}"`));assert.ok(html.includes(`property="og:url" content="${url}"`));assert.ok(html.includes(`property="og:title" content="${title.replace(/&/g,'&amp;')}"`));assert.doesNotMatch(html,/noindex/i);
   const page=ld.find(n=>n['@type']==='WebPage'),article=ld.find(n=>n['@type']==='Article');assert.equal(page.url,url);assert.equal(article.description,c.description);assert.equal(article.dateModified,phase5[slug]?.reviewed||day);assert.equal(page.mainEntity['@id'],article['@id']);assert.equal(article.mainEntityOfPage['@id'],page['@id']);assert.equal(ld.find(n=>n['@type']==='BreadcrumbList').itemListElement.at(-1).item,url);assert.doesNotMatch(JSON.stringify(ld),/"(?:Offer|AggregateRating|price|ratingValue)"/);
  });
  test(`${c.name}: first-printing answer precedes deeper history and the live explorer`,()=>{
   const intro=html.match(/<h1\b[^>]*>[^]*?<\/h1>\s*<p[^>]*>([^]*?)<\/p>/)[1];assert.match(plain(intro),/first|original|debut/i);assert.match(plain(intro),/1993|1995|1996|2000|2007|2019|2023/);assert.match(plain(intro),/artwork|illustrat|art /i);assert.ok(plain(intro).split(/\s+/).length<120);assert.ok(html.indexOf('QUICK ANSWER')<html.indexOf('class="results"'));assert.ok(html.indexOf('QUICK ANSWER')<html.indexOf('id="printings-container"'));assert.equal((html.match(/<h1\b/g)||[]).length,1);
  });
  test(`${c.name}: one exact static image, useful alt, failure path and shared explorer remain`,()=>{
-  const imgs=[...html.matchAll(/<img\b[^>]*>/g)];assert.equal(imgs.length,1);assert.ok(imgs[0][0].includes(`src="${c.image}"`));assert.match(imgs[0][0],/alt="[^"—]+ — [A-Z0-9]+ #[^",]+, illustrated by [^"]+"/);assert.match(imgs[0][0],/width="488" height="680"/);assert.match(html,/guide-image-error/);assert.ok(html.includes(`property="og:image" content="${c.image}"`));assert.ok(html.includes(`name="twitter:image" content="${c.image}"`));
+  const imgs=[...html.matchAll(/<img\b[^>]*>/g)];assert.equal(imgs.length,1);const image=slug==="sol-ring"?require("./fixtures/phase10-printings.json")[5].image_uris.normal:c.image;assert.ok(imgs[0][0].includes(`src="${image}"`));assert.match(imgs[0][0],/alt="[^"—]+ — [A-Z0-9]+ #[^",]+, illustrated by [^"]+"/);assert.match(imgs[0][0],/width="488" height="680"/);assert.match(html,/guide-image-error/);assert.ok(html.includes(`property="og:image" content="${image}"`));assert.ok(html.includes(`name="twitter:image" content="${image}"`));
   for(const id of ['card-details','printings-status','printings-container'])assert.equal((html.match(new RegExp('id="'+id+'"','g'))||[]).length,1);assert.ok(html.indexOf('/assets/js/app.js?v=seo-ctr1')<html.indexOf('/assets/js/card-page.js'));assert.match(html,/(?:animation|shimmer) is illustrative/);assert.match(html,/<noscript\b/);assert.match(html,/scryfall.com\/card\//);assert.match(html,/Cardmarket/);
  });
  test(`${c.name}: exact catalogue sources and contextual internal destinations exist`,()=>{
@@ -73,4 +73,35 @@ test('new guide names resolve through the existing shared exact-name search and 
   const calls=[],c={API:'https://api.scryfall.com',encodeURIComponent,readJson:async u=>{calls.push(u);return{name:card.name};}};vm.createContext(c);vm.runInContext(app.slice(app.indexOf('  async function namedCard('),app.indexOf('  async function cardId(')),c);assert.equal((await c.namedCard(card.name)).name,card.name);assert.equal(new URL(calls[0]).searchParams.get('exact'),card.name);
   Object.assign(c,{GUIDE_SLUGS:registry,window:{location:{pathname:'/'}},URLSearchParams,slug:s=>s.toLowerCase().replace(/['’]/g,'').replace(/[^a-z0-9]+/g,'-'),esc:s=>s,selectedFinish:()=> 'foil'});vm.runInContext(app.slice(app.indexOf('  function guideLink('),app.indexOf('  function marketplace(')),c);const record={name:card.name,id:'11111111-1111-4111-8111-111111111111'};assert.ok(c.guideLink(record).includes('/card/'+slug+'/'));const url=new URL(c.deckLink(record).match(/href="([^"]+)"/)[1].replace(/&amp;/g,'&'),host);assert.equal(url.searchParams.get('printing'),record.id);assert.equal(url.searchParams.get('finish'),'foil');
  }
+});
+
+test('the two experiments give a card-specific answer within the first screen', () => {
+  const spock = read('card/mr-spock-science-officer/index.html');
+  const sol = read('card/sol-ring/index.html');
+  const title = html => plain(html.match(/<title>([^<]+)<\/title>/)[1]);
+  assert.equal(title(spock), 'Mr. Spock, Science Officer MTG — Versions & Foils');
+  assert.equal(title(sol), 'Sol Ring First Printing — Limited Edition Alpha (1993)');
+  for (const html of [spock, sol]) {
+    const name = plain(html.match(/<h1>([^<]+)<\/h1>/)[1]);
+    assert.ok(title(html).startsWith(name));
+    assert.ok(title(html).length <= 62);
+    assert.doesNotMatch(title(html), /Printings.*Versions.*Foils/i);
+    assert.ok(html.indexOf('data-intent-module') < html.indexOf('id="card-details"'));
+  }
+  assert.match(spock, /5 English paper printing records[\s\S]*TRK #74–#1702[\s\S]*Surge Foil[\s\S]*Signed headliner/);
+  assert.match(spock, /<meta name="description" content="[^"]+collector number[^"]+Surge Foil #535[^"]+signed headliner #1702/);
+  assert.match(sol, /First Printing[\s\S]*Limited Edition Alpha[\s\S]*1993 · Mark Tedin · Nonfoil[\s\S]*LEA #269 is the catalogue identity/);
+});
+
+test('the 63 guide sharing images are unique per metadata field and match exact featured artwork', () => {
+  for (const entry of fs.readdirSync('card', {withFileTypes:true}).filter(item => item.isDirectory())) {
+    const html = read(`card/${entry.name}/index.html`);
+    const src = html.match(/<img[^>]+src="([^"]+)"/)[1];
+    const alt = html.match(/<img[^>]+alt="([^"]+)"/)[1];
+    for (const [tag, value] of [['og:image', src], ['twitter:image', src], ['og:image:alt', alt], ['twitter:image:alt', alt], ['twitter:card', 'summary_large_image']]) {
+      const fields = [...html.matchAll(new RegExp(`<meta (?:property|name)="${tag}" content="([^"]+)"`, 'g'))];
+      assert.equal(fields.length, 1, entry.name + ' ' + tag);
+      assert.equal(plain(fields[0][1]), plain(value), entry.name + ' ' + tag);
+    }
+  }
 });

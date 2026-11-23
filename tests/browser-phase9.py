@@ -92,17 +92,17 @@ async def main():
                 touch = await context.new_cdp_session(page)
                 await touch.send("Input.dispatchTouchEvent", {"type": "touchStart", "touchPoints": [{"x": x, "y": y}]})
                 assert await feature.evaluate("""e => e.dataset.weeklyInteracting === 'true'
-                    && Math.abs(parseFloat(e.style.getPropertyValue('--weekly-rx'))) <= 6
-                    && Math.abs(parseFloat(e.style.getPropertyValue('--weekly-ry'))) <= 7
+                    && Math.abs(parseFloat(e.querySelector('.ms-physical').style.getPropertyValue('--rx'))) <= 6
+                    && Math.abs(parseFloat(e.querySelector('.ms-physical').style.getPropertyValue('--ry'))) <= 7
                     && Math.abs(parseFloat(e.style.getPropertyValue('--weekly-parallax-x'))) <= 1.8""")
                 await touch.send("Input.dispatchTouchEvent", {"type": "touchEnd", "touchPoints": []})
-                assert await feature.locator(".weekly-card-shell").evaluate("e => getComputedStyle(e).touchAction === 'pan-y pinch-zoom'")
+                assert await feature.locator(".ms-physical").evaluate("e => getComputedStyle(e).touchAction === 'pan-y pinch-zoom'")
             else:
                 await page.mouse.move(x, y)
                 assert await feature.evaluate("""e => e.dataset.weeklyInteracting === 'true'
-                    && Math.abs(parseFloat(e.style.getPropertyValue('--weekly-ry'))) <= 14
+                    && Math.abs(parseFloat(e.querySelector('.ms-physical').style.getPropertyValue('--ry'))) <= 14
                     && parseFloat(e.style.getPropertyValue('--weekly-shadow-x')) !== 0
-                    && parseFloat(e.style.getPropertyValue('--weekly-foil-x')) !== 0
+                    && parseFloat(e.querySelector('.ms-physical').style.getPropertyValue('--px')) !== 50
                     && Math.abs(parseFloat(e.style.getPropertyValue('--weekly-parallax-x'))) <= 5""")
                 await page.mouse.move(0, 0)
             await page.wait_for_function("document.querySelector('#card-of-the-week').dataset.weeklyInteracting === 'false'")
@@ -111,7 +111,7 @@ async def main():
                 "e => getComputedStyle(e).animationName === 'none' && getComputedStyle(e).transform !== 'none'"
             )
             assert not await feature.locator(".weekly-cosmic-filaments").is_visible()
-            assert await feature.locator(".weekly-foil-sheen").evaluate(
+            assert await feature.locator(".ms-physical-reflection").evaluate(
                 "e => getComputedStyle(e, '::before').animationName === 'none'"
             )
             await field.scroll_into_view_if_needed()
@@ -120,10 +120,10 @@ async def main():
             if width == 390:
                 await field.fill("Zoltan Boros")
                 await field.press("Enter")
-                await page.get_by_role("heading", name="Printing matches").wait_for()
+                await page.get_by_role("heading", name="Exact printings").wait_for()
                 assert any('a:"Zoltan Boros"' in q for _, q in requests)
-                artist_match = page.locator("#ms-search-results li button")
-                assert "Extended art" in await artist_match.inner_text()
+                artist_match = page.locator("#ms-search-results .ms-print-name")
+                assert "Extended art" in await page.locator("#ms-search-results table").inner_text()
                 await artist_match.click()
             else:
                 await field.fill("SPM 271")
@@ -144,7 +144,7 @@ async def main():
             await page.locator("#card-preview[open]").wait_for()
             printing_id = await page.locator("#preview-id").text_content()
             assert printing_id == CARD["id"], (printing_id, requests)
-            assert await page.locator("#preview-finish").inner_text() == "Foil"
+            assert await page.locator("#preview-finish-select option:checked").inner_text() == "Traditional Foil"
             assert await page.locator(".ds-deck-entry").count() == 0
             assert await page.locator('meta[name="robots"]').get_attribute("content") == "noindex,follow"
             assert await page.locator('link[rel="canonical"]').get_attribute("href") == "https://manascout.co.uk/deck/"
@@ -156,7 +156,7 @@ async def main():
             assert 0 <= studio["left"] < studio["right"] <= width + 1, (width, studio)
             assert abs(studio["width"] / studio["height"] - 488 / 680) < .015 and studio["fit"] == "contain", (width, studio)
             assert studio["width"] >= (315 if width >= 1024 else 230), (width, studio)
-            assert await page.locator("#inspiration-printing").inner_text() == "Marvel's Spider-Man · SPM #271 · EN · Foil"
+            assert await page.locator("#inspiration-printing").inner_text() == "Marvel's Spider-Man · SPM #271 · English · Traditional Foil"
             await page.locator("#inspiration button").scroll_into_view_if_needed()
             assert await page.locator("#inspiration button").is_visible()
             if width <= 820:

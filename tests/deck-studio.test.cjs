@@ -105,6 +105,7 @@ function rendererContext(card, pathname) {
     $: () => information, information, ui: { details: { innerHTML: "" }, printings: { closest: () => ({}) } },
     currentCard: null, currentPick: false, updateGuideReference: blank, slug: x => x.toLowerCase().replace(/['’]/g, '').replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, ''),
     esc: x => String(x ?? '').replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;'),
+    document: {body:{dataset:{}}}, presentation: require("../assets/js/printing-presentation.js"), guideDifferences: blank, selectedPrice: blank, showingExactResults: false,
     selectedFinish: c => c.testFinish, previewImage: blank, finishSelector: blank, activatePreview: blank, stat: blank, pretty: blank, finishText: blank, finishLabel: blank,
     treatmentText: blank, legalFormats: blank, oracleHtml: blank, guideLink: blank, marketplace: blank, announce: blank, LANGS: {}, safe: blank };
   vm.createContext(c); vm.runInContext(deckLink + render + '\nrenderCard(card);', c); return c;

@@ -134,3 +134,15 @@ Validation executed on 17 November 2026: Public provider collection/dashboard re
 The archived foil fixture now explicitly opts into neutral geometry; its historical motion, surface and clipping assertions remain. Previous assertions that the analytics implementation itself could never contain a provider were updated to the authorized Phase 6.1 contract: disabled-by-default operation and strict mocked transport. The original schema/privacy regressions continue, and the additional runtime tests cover configured requests, failures and sensitive-state exclusion. Contact retains its no-form assertions and permits exactly the two central analytics/config dependencies. No metadata/date assertions for the CTR experiments were relaxed.
 
 Browser reports/screenshots are outside the repository in `/workspace/work/phase61/`. Phase 6.1 tests serve local fixture files under a mocked canonical hostname and intercept every request; **no production Plausible traffic is generated**. New geometry/CTA screenshots were visually inspected at 390px. Touch uses Chromium's native emulated touch input, not physical Android/iOS hardware. The enabled transport, payloads and mapping are verified against mocks; actual account registration, provider dashboard receipt and real production visitor counts remain unverified and disabled. A stopped/stale local test server was restarted before successful legacy-browser runs; it was an execution environment issue, not a site deployment change.
+
+## Phase 10 product events
+
+| Internal event | Plausible name | Allowed properties |
+|---|---|---|
+| `printing_table_select` | Printing Table Select | `table`: search/archive, `surface`: home/guide |
+| `finish_switch` | Finish Switch | `surface`: home/guide/deck |
+| `printing_difference_expand` | Printing Difference Expand | `surface`: guide |
+
+Compare Started now also includes homepage comparisons, using the existing `guide: none` value. Printing Table Select records deliberate row selection. Finish Switch records an explicit change. Printing Difference Expand records opening the guide's catalogue-based difference summary. The existing Exact Printing Select event still carries only source, language group and a bounded finish category.
+
+Production stays disabled pending registration of `manascout.co.uk` in Plausible. Once the domain is registered, the public configuration shown above enables the prepared transport. No credential is required in the repository.

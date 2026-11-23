@@ -3,18 +3,20 @@
   "use strict";
   const dep = name => typeof module === "object" && module.exports ? require(`./deck-${name}.js`) : root[`ManaScoutDeck${name[0].toUpperCase()+name.slice(1)}`];
   const model=dep("model"), data=dep("data"), rules=dep("rules"), formats=dep("formats");
+  const presentation = typeof module === "object" && module.exports ? require("./printing-presentation.js") : root.ManaScoutPrinting;
   const abort = () => { throw Object.assign(Error("Printing change cancelled."),{name:"AbortError"}); };
-  const finishLabel = finish => ({nonfoil:"Nonfoil",foil:"Foil",etched:"Etched foil"})[finish] || "Unknown finish";
+  const finishLabel = presentation.finishLabel;
   function treatments(card) {
-    const tags=[];
-    if(card.borderColor==="borderless")tags.push(["borderless","Borderless"]);
-    if(card.frameEffects?.includes("showcase"))tags.push(["showcase","Showcase"]);
-    if(card.frameEffects?.includes("extendedart"))tags.push(["extendedart","Extended art"]);
-    if(["1993","1997"].includes(card.frame))tags.push(["retro","Classic / retro frame"]);
-    if(card.fullArt)tags.push(["fullart","Full art"]);
-    const premium={surgefoil:"Surge foil",galaxyfoil:"Galaxy foil",halofoil:"Halo foil",textured:"Textured foil",serialized:"Serialized",confettifoil:"Confetti foil"};
-    for(const token of card.promoTypes||[])if(premium[token])tags.push([token,premium[token]]);
-    return tags;
+    const tokens = [
+      card.borderColor === "borderless" && "borderless",
+      ["1993", "1997"].includes(card.frame) && "retro",
+      card.fullArt && "fullart",
+      ...(card.frameEffects || []), ...(card.promoTypes || [])
+    ];
+    return [...new Set(tokens)].flatMap(token => {
+      const label = presentation.treatmentLabel(token);
+      return label ? [[token, label]] : [];
+    });
   }
   function filter(cards,{finish="",set="",treatment=""}={}) {
     const query=set.trim().toLowerCase();
