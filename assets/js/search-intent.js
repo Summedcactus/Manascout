@@ -7,9 +7,9 @@
   const types = new Set(("artifact battle creature enchantment instant land planeswalker sorcery legendary snow basic kindred " +
     "dragon jellyfish vampire goblin elf wizard human merfolk zombie soldier angel demon beast knight " +
     "sliver dinosaur elemental spirit cat dog rat squirrel shapeshifter phyrexian faerie pirate rogue " +
-    "cleric warrior construct vehicle equipment aura saga room forest island mountain plains swamp").split(" "));
+    "cleric warrior construct vehicle equipment aura saga room spider hero forest island mountain plains swamp").split(" "));
   const plain = value => String(value || "").trim().replace(/\s+/g, " ");
-  const key = value => plain(value).toLowerCase();
+  const key = value => plain(value).toLowerCase().replace(/’/g, "'");
   const number = /^\d[\p{L}\d★†-]{0,15}$/u;
   const safeText = value => plain(value).replace(/[^\p{L}\p{M}\p{N}\s.,'’&-]/gu, " ").replace(/\s+/g, " ").trim().slice(0, 100);
   const quote = value => '"' + safeText(value) + '"';
@@ -35,13 +35,25 @@
       if (!criteria.artist) throw new Error("Enter an artist name.");
       query = query.slice(0, artist.index).trim();
     }
+    const treatment = query.match(/(?:^|\s)(extended[ -]art|full[ -]art|borderless|showcase|retro[ -]frame)(?=\s|$)/i);
+    if (treatment) {
+      criteria.treatment = key(treatment[1]).replace(/[- ]/g, "");
+      query = (query.slice(0, treatment.index) + query.slice(treatment.index + treatment[0].length)).trim();
+    }
+    const finish = query.match(/(?:^|\s)(traditional foil|etched foil|nonfoil|foil|etched)(?=\s|$)/i);
+    if (finish) {
+      const label = key(finish[1]);
+      criteria.finish = label === "etched foil" ? "etched" : label === "traditional foil" ? "foil" : label;
+      query = (query.slice(0, finish.index) + query.slice(finish.index + finish[0].length)).trim();
+    }
     const languageNames = new Map(Object.entries(languages).map(([code, label]) => [key(label), code]));
     for (const [label, code] of [...languageNames].sort((a, b) => b[0].length - a[0].length)) {
       const suffix = [label + " language", label].find(value => key(query).endsWith(" " + value) ||
         key(query) === value && !types.has(value));
-      if (suffix) {
+      const prefix = !types.has(label) && [label + " language", label].find(value => key(query).startsWith(value + " "));
+      if (suffix || prefix) {
         criteria.language = code;
-        query = query.slice(0, -suffix.length).trim();
+        query = (suffix ? query.slice(0, -suffix.length) : query.slice(prefix.length)).trim();
         break;
       }
     }
@@ -63,10 +75,8 @@
     let match = findSet(words);
     if (!match && hasNumber) {
       match = findSet(words.slice(0, -1));
-      if (match || words.length === 1 || plain(filters.set)) {
-        criteria.collector_number = trailing;
-        words.pop();
-      }
+      criteria.collector_number = trailing;
+      words.pop();
     }
     if (match) {
       criteria.set = match.set.code;
@@ -107,8 +117,8 @@
     const fields = Object.keys(criteria);
     const lookup = criteria.set && criteria.collector_number;
     const category = lookup ? "exact_printing" : fields.length > 1 || (cardName && fields.length) ? "combined" :
-      fields.length ? (["finish", "language", "commander"].includes(fields[0]) ? "combined" : fields[0]) : "name";
-    const printing = Boolean(criteria.set || criteria.collector_number || criteria.artist || criteria.finish || criteria.language);
+      fields.length ? (["finish", "language", "commander", "treatment"].includes(fields[0]) ? "combined" : fields[0]) : "name";
+    const printing = Boolean(criteria.set || criteria.collector_number || criteria.artist || criteria.finish || criteria.treatment || criteria.language);
     const clauses = ["game:paper"];
     clauses.push("lang:" + (criteria.language || "en"));
     if (cardName && safeText(cardName)) clauses.push(quote(cardName));
@@ -118,6 +128,7 @@
     if (criteria.colour) clauses.push("c" + (criteria.colour === "c" ? "=" : ":") + criteria.colour);
     if (criteria.type) clauses.push(...criteria.type.split(" ").map(word => "t:" + quote(word)));
     if (criteria.artist) clauses.push("a:" + quote(criteria.artist));
+    if (criteria.treatment) clauses.push(criteria.treatment === "retroframe" ? "frame:old" : "is:" + criteria.treatment);
     if (criteria.finish) clauses.push("finish:" + criteria.finish);
     if (criteria.commander) clauses.push("is:commander");
     return { cardName, criteria, category, printing, lookup, query: clauses.join(" ") };

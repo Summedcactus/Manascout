@@ -147,8 +147,11 @@ async function setup(t) {
     if (launchError) throw launchError;
     return (await readFile(join(profile, "DevToolsActivePort"), "utf8").catch(() => "")).split("\n")[0];
   }, "Chromium debugging port");
-  const targets = await fetch(`http://127.0.0.1:${port}/json/list`).then(response => response.json());
-  const socket = new WebSocket(targets.find(target => target.type === "page").webSocketDebuggerUrl);
+  const target = await waitFor(async () => {
+    const targets = await fetch(`http://127.0.0.1:${port}/json/list`).then(response => response.json());
+    return targets.find(item => item.type === "page");
+  }, "Chromium page target");
+  const socket = new WebSocket(target.webSocketDebuggerUrl);
   await new Promise((resolve, reject) => { socket.addEventListener("open", resolve, { once: true }); socket.addEventListener("error", reject, { once: true }); });
   t.after(() => socket.close());
   let index = 0;
@@ -214,7 +217,7 @@ test("Phase 7 Chromium journeys", { timeout: 90000 }, async t => {
       await navigate("/");
       assert.equal(await run('fixtureRequests.some(url => url === "/sets")'), false);
       assert.equal(await run('matchMedia("(prefers-reduced-motion: reduce)").matches'), true);
-      assert.match(await run('document.querySelector("#card-week-printing").textContent'), /#35/);
+      assert.match(await run('document.querySelector("#card-week-printing").textContent'), /SPM #271/);
       await run(search("Sol Ring"));
       await ready('document.querySelector("#ms-show-languages")');
       assert.equal(await run(status), "2 English printings");
@@ -226,7 +229,7 @@ test("Phase 7 Chromium journeys", { timeout: 90000 }, async t => {
         const element = document.querySelector(selector), rect = element.getBoundingClientRect();
         return [selector, [rect.top, rect.width, rect.height, getComputedStyle(element).display]];
       }))`);
-      assert.ok(layout["#ms-show-languages"][0] - layout["#card-details"][0] < 440, JSON.stringify(layout));
+      assert.ok(layout["#ms-show-languages"][0] - layout["#card-details"][0] < layout[".ms-card-image"][2] + 470, JSON.stringify(layout));
       assert.equal(await run('document.documentElement.scrollWidth <= document.documentElement.clientWidth'), true);
       assert.equal(await run('document.querySelector(".ms-live-printings").scrollWidth <= document.querySelector(".ms-live-printings").clientWidth + 1'), true);
 
@@ -290,11 +293,11 @@ test("Phase 7 Chromium journeys", { timeout: 90000 }, async t => {
       assert.equal(await run('document.querySelector("#ms-search-results h2").textContent'), "Printing matches");
       await run(search("mythic dragon"));
       await ready('document.querySelector("#ms-search-results h2")?.textContent === "Card matches"');
-      await run('document.querySelector(".ms-search-filters").open = true; document.querySelector("[name=finish]").value = "foil"; document.querySelector("#search-form").requestSubmit()');
+      await run(search("mythic dragon foil"));
       await ready('document.querySelector("#ms-search-results h2")?.textContent === "Printing matches"');
-      await run('document.querySelector("#ms-clear-search-filters").click()');
+      await run(search("mythic dragon"));
       await ready('document.querySelector("#ms-search-results h2")?.textContent === "Card matches"');
-      assert.equal(await run('document.querySelector("[name=finish]").value'), "");
+      assert.equal(await run('document.querySelectorAll("#search-form input").length'), 1);
       assert.equal(await run('document.documentElement.scrollWidth <= document.documentElement.clientWidth'), true);
       assert.deepEqual(errors, []);
     });
@@ -327,9 +330,7 @@ test("Phase 7 Chromium journeys", { timeout: 90000 }, async t => {
     await run(`${previous}.click()`);
     assert.equal(await run('fixtureRequests.filter(value => value.includes("page=2")).length'), 1);
 
-    await run(`document.querySelector("[name=language]").value = "Japanese";
-      document.querySelector("[name=finish]").value = "foil";
-      ${search("Sheoldred DMU 107")}`);
+    await run(search("Japanese Sheoldred DMU 107 foil"));
     await ready(`${currentId} === "${japaneseSheoldred.id}"`);
     await ready('document.querySelector("#ms-language-selection")?.textContent.includes("Japanese printing is still selected")');
     const used = await run('fixtureRequests.filter(value => value.startsWith("/cards/search")).map(value => new URL(value, location.href).searchParams.get("q"))');

@@ -1,6 +1,7 @@
 """Focused, dependency-free structural checks; never a visual/browser claim."""
 from pathlib import Path
 from html.parser import HTMLParser
+import json
 import re
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -30,14 +31,19 @@ class ArtworkStructure(HTMLParser):
         if tag not in {'area', 'base', 'br', 'col', 'embed', 'hr', 'img', 'input', 'link', 'meta', 'param', 'source', 'track', 'wbr'}:
             self.stack.append((tag, attrs))
 
+    def handle_startendtag(self, tag, attrs):
+        self.handle_starttag(tag, attrs)
+        self.handle_endtag(tag)
+
     def handle_endtag(self, tag):
         assert self.stack and self.stack.pop()[0] == tag
 
 
 structure = ArtworkStructure(html)
-assert '8810b817-7349-468b-bcca-ba0843bbc852' in structure.image_urls['card-week-image']
+card = json.loads((ROOT / 'tests/fixtures/cosmic-spider-man.json').read_text())
+assert card['image_uris']['normal'] == structure.image_urls['card-week-image']
 assert 'weekly-edge-light' in structure.layers
-assert not {'weekly-foil-sheen', 'weekly-foil-glimmer'} & structure.layers
+assert 'weekly-foil-sheen' in structure.layers
 
 
 def validate_css(text):
@@ -66,9 +72,9 @@ validate_css(home)
 validate_css(css)
 keyframes = re.findall(r'@keyframes\s+([\w-]+)', home)
 assert len(keyframes) == len(set(keyframes)), 'Duplicate homepage keyframes'
-assert 'data-weekly-set="j25"' in html and 'data-weekly-number="35"' in html
-assert 'https://scryfall.com/card/j25/35/cynette-jelly-drover' in html
-assert 'Daisuke Tatsuma' in html and 'NONFOIL · UNCOMMON' in html
+assert 'data-weekly-set="spm"' in html and 'data-weekly-number="271"' in html
+assert card['scryfall_uri'].split('?')[0] in html
+assert 'Zoltan Boros' in html and 'EXTENDED ART · TRADITIONAL FOIL · MYTHIC RARE' in html
 assert 'perspective(1100px)' in home and 'rotateX(var(--weekly-rx))' in home and 'rotateY(var(--weekly-ry))' in home
 eldrazi = home.split('/* Week 007', 1)[1]
 assert 'saturate(' not in eldrazi and 'brightness(' not in eldrazi
@@ -76,7 +82,7 @@ assert all(float(radius) <= 8 for radius in re.findall(r'blur\(([0-9.]+)px\)', e
 for block in re.findall(r'@keyframes ms(?:Weekly|Void)[^\{]*\{(.*?)(?=\n(?:@|/|\.)|$)', eldrazi, re.S):
     assert 'filter:' not in block, 'Decorative filters must remain static'
 assert 'morgul-window' not in html and 'card-week-light-map' not in html
-assert 'class="weekly-foil-sheen"' not in html and 'class="weekly-edge-light"' in html
+assert 'class="weekly-foil-sheen"' in html and 'class="weekly-edge-light"' in html
 assert 'touch-action: pan-y pinch-zoom' in eldrazi
 assert 'animation-play-state: paused' in home and 'animation-play-state: paused' in css
 assert 'data-weekly-effects-paused="true"' not in html

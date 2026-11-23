@@ -79,7 +79,7 @@
   >
 
   <link rel="stylesheet" href="/assets/css/style.css">
-  <link rel="stylesheet" href="/assets/css/home.css?v=eldrazi-surface4&amp;release=6&amp;product=61">
+  <link rel="stylesheet" href="/assets/css/home.css?v=eldrazi-surface4&amp;release=6&amp;product=61&amp;phase9=1">
 
   <!-- Structured data -->
   <script type="application/ld+json">
@@ -154,7 +154,7 @@
 
 </head>
 
-<body>
+<body class="ms-home">
 
   <!-- HEADER -->
 
@@ -234,7 +234,7 @@
             id="search-input"
             name="q"
             type="search"
-            placeholder="Search card, set or collector number…"
+            placeholder="Search card, printing, collector number, artist…"
             maxlength="160"
             role="combobox"
             spellcheck="false"
@@ -256,21 +256,6 @@
 
         </div>
 
-        <details class="ms-search-filters">
-          <summary>Advanced search</summary>
-          <div class="ms-controls">
-            <label>Set <input name="set" maxlength="100" placeholder="Name or code"></label>
-            <label>Collector number <input name="collector_number" maxlength="17"></label>
-            <label>Rarity <select name="rarity"><option value="">Any</option><option>common</option><option>uncommon</option><option>rare</option><option>mythic</option></select></label>
-            <label>Colour <select name="colour"><option value="">Any</option><option value="w">White</option><option value="u">Blue</option><option value="b">Black</option><option value="r">Red</option><option value="g">Green</option><option value="c">Colourless</option><option value="m">Multicolour</option></select></label>
-            <label>Type or subtype <input name="type" maxlength="100"></label>
-            <label>Artist <input name="artist" maxlength="100"></label>
-            <label>Finish <select name="finish"><option value="">Any</option><option>nonfoil</option><option>foil</option><option>etched</option></select></label>
-            <label>Language <input name="language" maxlength="30" placeholder="e.g. Japanese"></label>
-            <button type="submit">Apply filters</button>
-            <button type="button" id="ms-clear-search-filters">Clear filters</button>
-          </div>
-        </details>
       </form>
 
 
@@ -643,7 +628,7 @@
 
       <section
         class="scoutboard-panel"
-        id="scoutboard-panel-weekly" data-weekly-panel-theme="ocean"
+        id="scoutboard-panel-weekly" data-weekly-panel-theme="cosmic"
         aria-labelledby="weekly-heading"
       >
 
@@ -652,61 +637,65 @@
           <div>
 
             <p class="scoutboard-kicker">
-              CARD OF THE WEEK · WEEK 008
+              CARD OF THE WEEK · WEEK 009
             </p>
 
             <h3 id="weekly-heading">
-              The Jellyfish Bloom
+              Cosmic Spider-Man in zero gravity
             </h3>
 
             <p>
-              An unusual mono-blue commander. Flying Jellyfish, blink synergies and a very different way to build blue.
+              An extended-art foil from Marvel’s Spider-Man and a five-colour commander for Spider decks.
             </p>
 
           </div>
 
           <span class="weekly-edition-badge">
-            WEEK 008
+            WEEK 009
           </span>
 
         </div>
 
 
-        <article class="weekly-card-feature weekly-physical weekly-theme-ocean" id="card-of-the-week"
-          data-weekly-card="Cynette, Jelly Drover" data-weekly-week="8" data-weekly-id="8810b817-7349-468b-bcca-ba0843bbc852" data-weekly-guide-available="false" data-weekly-set="j25" data-weekly-number="35"
-          data-weekly-artist="Daisuke Tatsuma" data-weekly-finish="nonfoil" data-weekly-theme="ocean-jellyfish" data-weekly-art-ready="false">
-          <div class="weekly-scene ocean-depth" aria-hidden="true"></div>
+        <article class="weekly-card-feature weekly-physical weekly-theme-cosmic" id="card-of-the-week"
+          data-weekly-card="Cosmic Spider-Man" data-weekly-week="9" data-weekly-id="61b28030-6d05-429e-a4eb-fceead3f7b18"
+          data-weekly-guide-available="false" data-weekly-set="spm" data-weekly-number="271"
+          data-weekly-artist="Zoltan Boros" data-weekly-finish="foil" data-weekly-theme="cosmic-zero-gravity" data-weekly-art-ready="false">
+          <div class="weekly-scene cosmic-depth" aria-hidden="true"></div>
           <div class="weekly-card-column">
+            <svg class="weekly-cosmic-filaments" viewBox="0 0 440 560" fill="none" aria-hidden="true" focusable="false">
+              <path d="M4 160 C88 164 104 89 183 55 S336 70 422 14"/>
+              <path d="M12 516 C124 460 211 546 296 464 S364 337 438 334"/>
+            </svg>
             <div class="weekly-card-stage">
               <div class="weekly-card-halo" aria-hidden="true"></div>
               <div class="weekly-card-rest-shadow" aria-hidden="true"></div>
               <div class="weekly-card-float">
                 <div class="weekly-card-shell" id="weekly-card-shell">
                   <div class="weekly-card-face">
-                  <div class="weekly-card-placeholder" id="card-week-placeholder"><span aria-hidden="true">◇</span><small>CYNETTE, JELLY DROVER · J25 #35<br>Artwork unavailable? The exact printing link remains below.</small></div>
-                  <img id="card-week-image" class="weekly-card-image" src="https://cards.scryfall.io/normal/front/8/8/8810b817-7349-468b-bcca-ba0843bbc852.jpg?1783908859" alt="Cynette, Jelly Drover — Foundations Jumpstart J25 #35, Daisuke Tatsuma; nonfoil printing" loading="lazy" decoding="async" width="488" height="680">
-
-                  <div class="weekly-edge-light" aria-hidden="true"></div>
+                    <div class="weekly-card-placeholder" id="card-week-placeholder"><small>COSMIC SPIDER-MAN · SPM #271<br>Artwork unavailable. The exact printing link is below.</small></div>
+                    <img id="card-week-image" class="weekly-card-image" src="https://cards.scryfall.io/normal/front/6/1/61b28030-6d05-429e-a4eb-fceead3f7b18.jpg?1783905267" alt="Cosmic Spider-Man, Marvel’s Spider-Man SPM #271, extended art by Zoltan Boros, traditional foil" loading="lazy" decoding="async" width="488" height="680">
+                    <div class="weekly-foil-sheen" aria-hidden="true"></div>
+                    <div class="weekly-edge-light" aria-hidden="true"></div>
                   </div>
                 </div>
               </div>
             </div>
-            <p class="weekly-printing" id="card-week-printing">FOUNDATIONS JUMPSTART · #35</p>
-            <p class="weekly-printing-detail">NONFOIL · UNCOMMON · DAISUKE TATSUMA</p>
+            <p class="weekly-printing" id="card-week-printing">MARVEL’S SPIDER-MAN · SPM #271</p>
+            <p class="weekly-printing-detail">EXTENDED ART · TRADITIONAL FOIL · MYTHIC RARE · ZOLTAN BOROS</p>
           </div>
           <div class="weekly-story">
-<p class="weekly-kicker">MONO-BLUE · JELLYFISH &amp; FLYING</p><h3>Cynette, Jelly Drover</h3>
-<p class="weekly-intro">A small commander with a growing cloud of Jellyfish. Cynette makes a 1/1 blue Jellyfish with flying when she enters or dies, then gives your flying creatures +1/+1.</p>
-<div class="weekly-actions">
-<a class="weekly-build" data-cotw-action="deck" href="/deck/?card=Cynette%2C%20Jelly%20Drover&amp;printing=8810b817-7349-468b-bcca-ba0843bbc852&amp;finish=nonfoil&amp;set=j25&amp;number=35&amp;source=cotw&amp;intent=commander">Build a deck with Cynette</a>
-<a class="weekly-inspect" id="card-week-link" data-cotw-action="inspect" href="/?q=Cynette%2C%20Jelly%20Drover&amp;printing=8810b817-7349-468b-bcca-ba0843bbc852&amp;finish=nonfoil&amp;source=cotw">Inspect exact printing</a>
-</div>
-<p>Foundations Jumpstart <strong>J25 #35</strong>, released 15 November 2024, is an uncommon legendary Human Wizard illustrated by <strong>Daisuke Tatsuma</strong>. This exact English physical printing is <strong>nonfoil only</strong>.</p>
-<p>Blink, clone, flying and token strategies give this approachable mono-blue card several directions to explore. Inspect the card, then try the exact printing in Deck Studio without adding it automatically.</p>
-<div class="weekly-fact"><span class="weekly-fact-mark" aria-hidden="true">◌</span><div><small>PHYSICAL CARD · OCEAN ATMOSPHERE</small><p>The raised card, floating light and bubbles belong to ManaScout’s presentation. The artwork is unchanged and no foil surface is simulated. One meaningful English physical printing was found in this review; there is no multi-edition comparison claim.</p></div></div>
-
-<p class="weekly-source">Reviewed 17 November 2026. <a href="https://scryfall.com/card/j25/35/cynette-jelly-drover" target="_blank" rel="noopener noreferrer">Scryfall: exact J25 #35 record</a> · <a href="https://magic.wizards.com/en/products/foundations/card-image-gallery">Wizards: Foundations card gallery</a>. Current catalogue data determines legality and available finishes.</p>
-</div></article>
+            <p class="weekly-kicker">FIVE-COLOUR SPIDERS</p>
+            <h3>Cosmic Spider-Man</h3>
+            <p class="weekly-intro">At the beginning of combat on your turn, Cosmic Spider-Man gives your other Spiders flying, first strike, trample, lifelink and haste. In a five-colour Spider deck, even a Spider you just cast can join a sudden aerial attack.</p>
+            <div class="weekly-actions">
+              <a class="weekly-build" data-cotw-action="deck" href="/deck/?card=Cosmic%20Spider-Man&amp;printing=61b28030-6d05-429e-a4eb-fceead3f7b18&amp;finish=foil&amp;set=spm&amp;number=271&amp;source=cotw&amp;intent=commander">Build a deck with Cosmic Spider-Man</a>
+              <a class="weekly-inspect" id="card-week-link" data-cotw-action="inspect" href="/?q=Cosmic%20Spider-Man&amp;printing=61b28030-6d05-429e-a4eb-fceead3f7b18&amp;finish=foil&amp;source=cotw">Inspect exact printing</a>
+            </div>
+            <p>SPM #271 is the mythic extended-art printing of this legendary Spider Human Hero. Zoltan Boros’s artwork appears in both nonfoil and traditional foil, with the foil featured here.</p>
+            <p class="weekly-source"><a href="https://scryfall.com/card/spm/271/cosmic-spider-man">Scryfall catalogue record for SPM #271</a></p>
+          </div>
+        </article>
 
 
         <!-- WEEKLY ARCHIVE -->
@@ -716,7 +705,7 @@
           id="card-week-archive-data"
           type="application/json"
         >{
-  "currentWeek": 8,
+  "currentWeek": 9,
   "entries": [
     {
       "week": 1,
@@ -790,6 +779,19 @@
       "artist": "Daisuke Tatsuma",
       "treatment": "Nonfoil",
       "theme": "ocean-jellyfish",
+      "status": "archived"
+    },
+    {
+      "week": 9,
+      "card": "Cosmic Spider-Man",
+      "set": "Marvel's Spider-Man",
+      "setCode": "spm",
+      "collectorNumber": "271",
+      "printingId": "61b28030-6d05-429e-a4eb-fceead3f7b18",
+      "artist": "Zoltan Boros",
+      "treatment": "Extended Art",
+      "finish": "foil",
+      "theme": "cosmic-zero-gravity",
       "status": "current"
     }
   ]
@@ -1081,9 +1083,9 @@
   <script src="/assets/js/analytics-config.js?v=phase61"></script>
 <script src="/assets/js/analytics.js?v=phase7&amp;release=6&amp;product=61"></script>
   <script defer src="/assets/js/comparisons.js?v=3&amp;growth=5"></script>
-  <script src="/assets/js/search-intent.js?v=7"></script>
-  <script src="/assets/js/app.js?v=seo-ctr1&amp;phase7=1&amp;phase=1&amp;comparison=2&amp;growth=5&amp;release=6&amp;product=61"></script>
-  <script src="/assets/js/scoutboard.js?v=eldrazi-present3&amp;release=6&amp;product=61"></script>
+  <script src="/assets/js/search-intent.js?v=phase9"></script>
+  <script src="/assets/js/app.js?v=seo-ctr1&amp;phase7=1&amp;phase=1&amp;comparison=2&amp;phase9=1&amp;growth=5&amp;release=6&amp;product=61"></script>
+  <script src="/assets/js/scoutboard.js?v=eldrazi-present3&amp;release=6&amp;product=61&amp;phase9=1"></script>
 
 </body>
 

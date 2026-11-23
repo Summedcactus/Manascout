@@ -1,0 +1,90 @@
+{
+  "object": "card",
+  "id": "61b28030-6d05-429e-a4eb-fceead3f7b18",
+  "oracle_id": "0334a2f8-a74a-44c9-ba64-d9b7fabe160c",
+  "name": "Cosmic Spider-Man",
+  "set": "spm",
+  "set_name": "Marvel's Spider-Man",
+  "collector_number": "271",
+  "lang": "en",
+  "games": [
+    "paper",
+    "mtgo"
+  ],
+  "rarity": "mythic",
+  "artist": "Zoltan Boros",
+  "frame_effects": [
+    "extendedart",
+    "legendary"
+  ],
+  "finishes": [
+    "nonfoil",
+    "foil"
+  ],
+  "type_line": "Legendary Creature — Spider Human Hero",
+  "color_identity": [
+    "B",
+    "G",
+    "R",
+    "U",
+    "W"
+  ],
+  "colors": [
+    "B",
+    "G",
+    "R",
+    "U",
+    "W"
+  ],
+  "image_uris": {
+    "small": "https://cards.scryfall.io/small/front/6/1/61b28030-6d05-429e-a4eb-fceead3f7b18.jpg?1783905267",
+    "normal": "https://cards.scryfall.io/normal/front/6/1/61b28030-6d05-429e-a4eb-fceead3f7b18.jpg?1783905267",
+    "large": "https://cards.scryfall.io/large/front/6/1/61b28030-6d05-429e-a4eb-fceead3f7b18.jpg?1783905267",
+    "png": "https://cards.scryfall.io/png/front/6/1/61b28030-6d05-429e-a4eb-fceead3f7b18.png?1783905267",
+    "art_crop": "https://cards.scryfall.io/art_crop/front/6/1/61b28030-6d05-429e-a4eb-fceead3f7b18.jpg?1783905267",
+    "border_crop": "https://cards.scryfall.io/border_crop/front/6/1/61b28030-6d05-429e-a4eb-fceead3f7b18.jpg?1783905267",
+    "thumb": "https://cards.scryfall.io/thumb/front/6/1/61b28030-6d05-429e-a4eb-fceead3f7b18.webp?1783905267",
+    "grid": "https://cards.scryfall.io/grid/front/6/1/61b28030-6d05-429e-a4eb-fceead3f7b18.webp?1783905267",
+    "display": "https://cards.scryfall.io/display/front/6/1/61b28030-6d05-429e-a4eb-fceead3f7b18.webp?1783905267",
+    "art": "https://cards.scryfall.io/art/front/6/1/61b28030-6d05-429e-a4eb-fceead3f7b18.webp?1783905267",
+    "crop": "https://cards.scryfall.io/crop/front/6/1/61b28030-6d05-429e-a4eb-fceead3f7b18.webp?1783905267",
+    "jpeg": "https://cards.scryfall.io/normal/front/6/1/61b28030-6d05-429e-a4eb-fceead3f7b18.jpg?1783905267"
+  },
+  "oracle_text": "Flying, first strike, trample, lifelink, haste\nAt the beginning of combat on your turn, other Spiders you control gain flying, first strike, trample, lifelink, and haste until end of turn.",
+  "legalities": {
+    "standard": "legal",
+    "future": "legal",
+    "historic": "legal",
+    "timeless": "legal",
+    "gladiator": "legal",
+    "pioneer": "legal",
+    "modern": "legal",
+    "legacy": "legal",
+    "pauper": "not_legal",
+    "vintage": "legal",
+    "penny": "legal",
+    "commander": "legal",
+    "oathbreaker": "legal",
+    "standardbrawl": "legal",
+    "brawl": "legal",
+    "competitivebrawl": "legal",
+    "alchemy": "legal",
+    "paupercommander": "not_legal",
+    "duel": "legal",
+    "oldschool": "not_legal",
+    "premodern": "not_legal",
+    "predh": "not_legal",
+    "tlr": "not_legal"
+  },
+  "mana_cost": "{W}{U}{B}{R}{G}",
+  "cmc": 5.0,
+  "power": "5",
+  "toughness": "5",
+  "layout": "normal",
+  "border_color": "black",
+  "frame": "2015",
+  "oversized": false,
+  "scryfall_uri": "https://scryfall.com/card/spm/271/cosmic-spider-man?utm_source=api",
+  "released_at": "2025-09-26",
+  "prints_search_uri": "https://api.scryfall.com/cards/search?order=released&q=oracleid%3A0334a2f8-a74a-44c9-ba64-d9b7fabe160c&unique=prints"
+}
