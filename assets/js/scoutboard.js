@@ -1093,7 +1093,13 @@
       if (weekly.dataset.weeklyId && card.id !== weekly.dataset.weeklyId) throw new Error("Active weekly printing mismatch.");
       const isCynette = set === "j25" && number === "35";
       const validCynette = isCynette && card.id === "8810b817-7349-468b-bcca-ba0843bbc852" && card.name === "Cynette, Jelly Drover" && card.artist === "Daisuke Tatsuma" && card.lang === "en" && card.games?.includes("paper") && card.finishes?.length === 1 && card.finishes[0] === "nonfoil";
-      if (isCynette ? !validCynette : (!/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(card.id || "") || set !== "mh3" || number !== "383" || card.name !== "Ulamog, the Defiler" || card.artist !== "Vincent Proce" || !card.finishes?.includes("foil") || !card.promo_types?.includes("concept") || card.promo_types?.includes("serialized"))) {
+      const validEldrazi = set === "mh3" && number === "383" && card.name === "Ulamog, the Defiler" && card.artist === "Vincent Proce" && card.finishes?.includes("foil") && card.promo_types?.includes("concept") && !card.promo_types?.includes("serialized");
+      const isCosmic = set === "spm" && number === "271";
+      const validCosmic = isCosmic && card.name === "Cosmic Spider-Man" && card.artist === "Zoltan Boros" &&
+        card.lang === "en" && card.games?.includes("paper") && card.rarity === "mythic" &&
+        card.frame_effects?.includes("extendedart") && card.finishes?.includes("foil") && card.finishes.includes("nonfoil");
+      const validId = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(card.id || "");
+      if (!validId || !(validCosmic || validCynette || validEldrazi)) {
         throw new Error("Featured artwork/treatment mismatch; retaining the exact static fallback.");
       }
       if (!card.name || !card.set_name || !cardImage(card)) throw new Error("Incomplete featured record; retaining static identity.");
@@ -1111,10 +1117,10 @@
           art;
         weekly.dataset.weeklyArtReady = String(!!(weeklyImage.complete && weeklyImage.naturalWidth));
 
-        weeklyImage.alt =
-          isCynette ? `Cynette, Jelly Drover — ${card.set_name}, nonfoil #35, Daisuke Tatsuma` :
-          `${card.name} — ${card.set_name}, ` +
-          `borderless concept traditional foil #${number}, Vincent Proce`;
+        weeklyImage.alt = isCosmic
+          ? `${card.name}, ${card.set_name} SPM #${number}, extended art by ${card.artist}, traditional foil`
+          : isCynette ? `${card.name} — ${card.set_name}, nonfoil #${number}, ${card.artist}`
+            : `${card.name} — ${card.set_name}, borderless concept traditional foil #${number}, ${card.artist}`;
       }
 
       if (
@@ -1122,8 +1128,7 @@
       ) {
         weeklyPrinting.textContent =
           (
-            `${card.set_name}` +
-            ` · #${number}`
+            `${card.set_name} · ${set} #${number}`
           ).toUpperCase();
       }
 
@@ -1535,6 +1540,7 @@
     let homeVisible = !initialQuery?.trim();
     let touchPointer = null;
     const exactEldrazi = () => weekly.dataset.weeklySet === "mh3" && weekly.dataset.weeklyNumber === "383" && weekly.dataset.weeklyCard === "Ulamog, the Defiler";
+    const exactCosmic = () => weekly.dataset.weeklyTheme === "cosmic-zero-gravity";
     const exactCynette = () => weekly.dataset.weeklySet === "j25" && weekly.dataset.weeklyNumber === "35" && weekly.dataset.weeklyCard === "Cynette, Jelly Drover";
     const syncEffects = () => {
       weekly.dataset.weeklyEffectsPaused = String(!visible || !homeVisible || document.hidden || reducedMotion.matches);
@@ -1547,8 +1553,12 @@
       const restX = style?.getPropertyValue("--weekly-idle-xa").trim() || "2.8deg";
       const restY = style?.getPropertyValue("--weekly-idle-ya").trim() || "-5.5deg";
       const values = { "--weekly-x": "50%", "--weekly-y": "42%", "--weekly-rx": restX, "--weekly-ry": restY };
-      if (exactEldrazi() || exactCynette()) Object.assign(values, {
+      if (exactEldrazi() || exactCynette() || exactCosmic()) Object.assign(values, {
         "--weekly-light-angle": "-6deg", "--weekly-shadow-x": "0px", "--weekly-shadow-y": "0px", "--weekly-edge": ".78"
+      });
+      if (exactCosmic()) Object.assign(values, {
+        "--weekly-edge": ".38", "--weekly-parallax-x": "0px", "--weekly-parallax-y": "0px",
+        "--weekly-foil-x": "0%", "--weekly-foil-y": "0%"
       });
       if (exactEldrazi()) Object.assign(values,{"--weekly-reflection":".70","--weekly-light-x":"-2%","--weekly-light-y":"1%"});
       for (const [name, value] of Object.entries(values)) weekly.style.setProperty(name, value);
@@ -1643,7 +1653,7 @@
       weekly.style.setProperty("--weekly-y", `${y}%`);
       weekly.style.setProperty("--weekly-rx", `${Number(((50 - y) * (touch ? .12 : .22)).toFixed(2))}deg`);
       weekly.style.setProperty("--weekly-ry", `${Number(((x - 50) * (touch ? .14 : .28)).toFixed(2))}deg`);
-      if (exactEldrazi() || exactCynette()) {
+      if (exactEldrazi() || exactCynette() || exactCosmic()) {
         const incidence = Math.min(1, Math.hypot(x - 50, y - 50) / Math.hypot(50, 50));
         if(exactEldrazi()){
           weekly.style.setProperty("--weekly-reflection", (.76 + .24 * incidence).toFixed(3));
@@ -1653,7 +1663,14 @@
         weekly.style.setProperty("--weekly-light-angle", `${((x - 50) * .36).toFixed(2)}deg`);
         weekly.style.setProperty("--weekly-shadow-x", `${((50 - x) * .20).toFixed(2)}px`);
         weekly.style.setProperty("--weekly-shadow-y", `${((50 - y) * .12).toFixed(2)}px`);
-        weekly.style.setProperty("--weekly-edge", (.78 + .22 * incidence).toFixed(3));
+        weekly.style.setProperty("--weekly-edge", (exactCosmic() ? .38 + .32 * incidence : .78 + .22 * incidence).toFixed(3));
+        if (exactCosmic()) {
+          const depth = touch ? .036 : .10;
+          weekly.style.setProperty("--weekly-parallax-x", `${(x - 50) * depth}px`);
+          weekly.style.setProperty("--weekly-parallax-y", `${(y - 50) * depth}px`);
+          weekly.style.setProperty("--weekly-foil-x", `${(x - 50) * .55}%`);
+          weekly.style.setProperty("--weekly-foil-y", `${(y - 50) * .25}%`);
+        }
       }
     };
     stage.addEventListener("pointerdown", event => {

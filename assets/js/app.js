@@ -3096,10 +3096,6 @@
      AUTOCOMPLETE
      ======================================== */
 
-  const searchFilters = () => Object.fromEntries(
-    [...new FormData(ui.form)].filter(([name, value]) => name !== "q" && String(value).trim())
-  );
-
   async function catalogueSets(signal) {
     if (setIndex) return setIndex;
     const data = await readJson(`${API}/sets`, signal);
@@ -3156,6 +3152,10 @@
     });
   }
 
+  function searchTreatment(card) {
+    return treatments(card).filter(label => ["Extended art", "Showcase", "Borderless", "Full art", "Retro frame"].includes(label)).join(" · ");
+  }
+
   function renderSearchResults(page, intent, query, signal) {
     let records = page.cards;
     let next = page.next;
@@ -3192,7 +3192,7 @@
           ${img(card, "small") ? `<img src="${esc(img(card, "small"))}" alt="" width="72" height="100" loading="lazy">` : ""}
           <span><strong>${esc(card.name)}</strong>
           ${intent.printing ? `<span>${esc(card.set.toUpperCase())} #${esc(card.collector_number)} · ${esc(card.set_name)}</span>
-          <span>${esc([pretty(card.rarity), card.artist, LANGS[card.lang] || card.lang, finishText(card)].filter(Boolean).join(" · "))}</span>` :
+          <span>${esc([pretty(card.rarity), card.artist, searchTreatment(card), LANGS[card.lang] || card.lang, finishText(card)].filter(Boolean).join(" · "))}</span>` :
           `<span>${esc(card.type_line)}</span>`}
           </span></button>`;
         item.firstElementChild.addEventListener("click", () => {
@@ -3246,7 +3246,7 @@
 
   function searchError(error) {
     if (error.status === 429) return "Scryfall is rate limiting requests. Wait a moment and retry.";
-    if (error.status === 404) return "No paper cards or printings matched. Check the spelling or clear a filter.";
+    if (error.status === 404) return "No paper cards or printings matched. Check the spelling or try fewer search terms.";
     return "Catalogue search could not complete. Please retry.";
   }
 
@@ -3264,7 +3264,7 @@
     return card;
   }
 
-  async function submitSearch(query, filters = searchFilters(), fromHistory = false) {
+  async function submitSearch(query, filters = {}, fromHistory = false) {
     if (!intentEngine || !searchResults) return loadCard(query, { userSearch: !fromHistory });
     query = String(query).trim().slice(0, 160);
     searchController?.abort();
@@ -3312,10 +3312,15 @@
           searchStatus.textContent = "Set code not found. Check the code, or search for the collector number with #.";
           return;
         }
-        const card = await readJson(`${API}/cards/named?fuzzy=${encodeURIComponent(intent.cardName)}`, signal);
-        if (!validSearchCard(card)) throw new Error("Incomplete card response.");
-        if (!signal.aborted) return loadCard(card.name, { nameRecord: card, input: query, userSearch: !fromHistory });
-        return;
+        try {
+          const card = await readJson(`${API}/cards/named?fuzzy=${encodeURIComponent(intent.cardName)}`, signal);
+          if (!validSearchCard(card)) throw new Error("Incomplete card response.");
+          if (!signal.aborted) return loadCard(card.name, { nameRecord: card, input: query, userSearch: !fromHistory });
+          return;
+        } catch (error) {
+          if (error.status !== 404 || signal.aborted) throw error;
+          intent = intentEngine.interpret("", { artist: intent.cardName }, sets || undefined, LANGS);
+        }
       }
 
       const { set, collector_number, language } = intent.criteria;
@@ -3349,7 +3354,7 @@
       if (intent.lookup && page.cards.some(card => !paper(card) || card.set !== set ||
           norm(card.collector_number) !== norm(collector_number) || language && card.lang !== language ||
           intent.criteria.finish && !has(card, intent.criteria.finish))) throw new Error("Mismatched printing results.");
-      if (intent.lookup && page.total === 1 && page.cards.length === 1) {
+      if (intent.printing && (intent.lookup || intent.cardName) && page.total === 1 && page.cards.length === 1) {
         return selectSearchCard(page.cards[0], intent, query, { userSearch: !fromHistory });
       }
       controller?.abort();
@@ -3439,7 +3444,7 @@
       const set = sets?.get(norm(locator?.[1] || query));
       if (set && locator) {
         const card = await exactLocator(set.code, locator[2], "en", signal);
-        names = [{ query, label: `${set.code.toUpperCase()} #${card.collector_number} — ${card.name}` }];
+        names = [{ query, label: `${set.code.toUpperCase()} #${card.collector_number} — ${card.name}${searchTreatment(card) ? " · " + searchTreatment(card) : ""}` }];
       } else if (set) {
         names = [{ query: set.code, label: `${set.code.toUpperCase()} — ${set.name}` }];
       } else if (!locator && !/^#|^collector\s|artist:/i.test(query)) {
@@ -3508,23 +3513,11 @@
           ]?.dataset.name ||
           ui.input.value.trim();
 
-        if (name || Object.keys(searchFilters()).length) {
+        if (name) {
           void submitSearch(name);
         }
       }
     );
-
-    $("ms-clear-search-filters")?.addEventListener("click", () => {
-      for (const control of ui.form.elements) {
-        if (control.name && control.name !== "q") control.value = "";
-      }
-      if (ui.input.value.trim()) void submitSearch(ui.input.value.trim(), {});
-      else {
-        history.replaceState({}, "", "/");
-        updateSearchRobots();
-        setHome();
-      }
-    });
 
     ui.input.addEventListener(
       "input",
@@ -3825,9 +3818,6 @@
       if (event.state?.search && ui.input) {
         const { query, filters } = event.state.search;
         ui.input.value = query;
-        for (const control of ui.form.elements) {
-          if (control.name && control.name !== "q") control.value = filters[control.name] || "";
-        }
         void submitSearch(query, filters, true);
         return;
       }
@@ -3923,7 +3913,7 @@
       .ms-archive-options > summary:focus-visible,
       .table-wrap[tabindex]:focus-visible { outline: 2px solid var(--accent-bright); outline-offset: 3px; }
 
-      .card-display.ms-compact-card { grid-template-columns: minmax(72px, 120px) minmax(0, 1fr); gap: 12px; padding: 14px; }
+      body:not(.ms-home) .card-display.ms-compact-card { grid-template-columns: minmax(72px, 120px) minmax(0, 1fr); gap: 12px; padding: 14px; }
       .ms-compact-card h2 { font-size: clamp(1.2rem, 3vw, 1.8rem); overflow-wrap: anywhere; }
       .ms-compact-card .card-subtitle { margin: 0 0 6px; font-size: .875rem; line-height: 1.35; }
       .ms-compact-card .detail { padding: 0; border: 0; background: transparent; margin-bottom: 6px; }
@@ -3937,11 +3927,7 @@
       .ms-selected-actions { display: flex; flex-wrap: wrap; gap: 6px 12px; align-items: center; }
       .ms-selected-actions .manascout-guide-link { margin: 0; }
       #ms-card-information details, .ms-printing-notes { margin-block: 12px; }
-      #ms-card-information summary, .ms-search-filters summary, .ms-archive-options summary { cursor: pointer; }
-      .ms-search-filters { text-align: left; margin-block: 8px; }
-      .ms-search-filters .ms-controls { margin-top: 8px; }
-      .ms-search-filters .ms-controls > * { min-width: 0; }
-      .ms-search-filters input { width: 100%; box-sizing: border-box; }
+      #ms-card-information summary, .ms-archive-options summary { cursor: pointer; }
       .ms-language-toggle { display: inline-flex; align-items: center; min-height: 44px; gap: 8px; cursor: pointer; margin-inline-end: 12px; }
       #ms-language-filter:not([hidden]) { display: inline-flex; gap: 6px; align-items: center; }
       .ms-print-variants ul, #ms-search-results ul { list-style: none; padding: 0; }
@@ -3951,7 +3937,7 @@
       #ms-search-results li span { display: block; min-width: 0; }
       #ms-search-status:empty, #ms-archive-request:empty, .ms-mobile-finishes { display: none; }
       @media (max-width: 840px) {
-        .card-display.ms-compact-card { grid-template-columns: minmax(70px, 94px) minmax(0, 1fr); }
+        body:not(.ms-home) .card-display.ms-compact-card { grid-template-columns: minmax(70px, 94px) minmax(0, 1fr); }
         .ms-live-printings .printings-table { min-width: 0; table-layout: fixed; overflow-wrap: anywhere; }
         .ms-live-printings .printings-table th:nth-child(n+3),
         .ms-live-printings .printings-table td:nth-child(n+3) { display: none; }

@@ -230,16 +230,17 @@
     currentFinish = finish;
     face = 0;
     const printing = `${card.setName} · ${card.setCode} #${card.collectorNumber}`;
+    const finishName = finish === "nonfoil" ? "Nonfoil" : finish === "etched" ? "Etched foil" : finish === "foil" ? "Foil" : "Not supplied";
     const values = {
       "selection-name": card.name, "selection-set": `${card.setCode} #${card.collectorNumber}`,
-      "inspiration-name": card.name, "inspiration-printing": printing,
+      "inspiration-name": card.name, "inspiration-printing": [printing, card.language, finishName].filter(Boolean).join(" · "),
       "preview-name": card.name, "preview-type": card.type, "preview-mv": card.manaValue,
-      "preview-printing": printing, "preview-artist": card.artist, "preview-finish": finish === "nonfoil" ? "Nonfoil" : finish === "etched" ? "Etched foil" : finish === "foil" ? "Foil" : "Not supplied",
+      "preview-printing": printing, "preview-artist": card.artist, "preview-finish": finishName,
       "preview-finishes": card.finishes, "preview-language": card.language, "preview-released": card.released,
       "preview-id": card.id, "preview-oracle": card.oracle, "preview-brief": card.summary, "preview-note": card.availableFinishes.includes(finish) ? card.finishNotice : "The selected finish is not listed as available for this printing. Any saved entry is preserved; adding that finish is disabled."
     };
     for (const [id, value] of Object.entries(values)) $(id).textContent = value;
-    setImage($("inspiration-image"), card.images[0], `${card.name} selected printing`);
+    setImage($("inspiration-image"), card.images[0], `${card.name} — ${card.setCode} #${card.collectorNumber}`);
     setImage($("selection-thumb"), card.images[0], "");
     showFace();
     for (const [id, href] of [["preview-guide", card.guide], ["preview-source", card.sourceUrl]]) {
