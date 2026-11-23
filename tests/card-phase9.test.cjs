@@ -50,8 +50,8 @@ test("Week 009 has the verified foil profile and decorative effects are outside 
   assert.deepEqual(cosmic.finishes, ["nonfoil", "foil"]);
   assert.deepEqual(new Set(cosmic.color_identity), new Set("WUBRG"));
   assert.match(home, /<svg class="weekly-cosmic-filaments"[^>]+aria-hidden="true"/);
-  assert.ok(home.indexOf('class="weekly-cosmic-filaments"') < home.indexOf('class="weekly-card-stage"'));
-  assert.match(home, /class="weekly-card-face"[\s\S]*?<img[^>]+id="card-week-image"[\s\S]*?class="weekly-foil-sheen"/);
+  assert.ok(home.indexOf('class="weekly-cosmic-filaments"') < home.indexOf('class="weekly-card-stage ms-physical"'));
+  assert.match(home, /class="weekly-card-face ms-physical-face"[\s\S]*?<img[^>]+id="card-week-image"[\s\S]*?class="ms-physical-reflection"/);
 });
 
 test("Week 009 refresh checks the exact catalogue profile and keeps the static fallback on mismatch", async () => {
@@ -63,6 +63,7 @@ test("Week 009 refresh checks the exact catalogue profile and keeps the static f
   const image = new Element("img");
   const source = readFileSync("assets/js/scoutboard.js", "utf8");
   const context = vm.createContext({
+    presentation: {...require("../assets/js/printing-presentation.js"),enhance(){}},
     weekly, URLSearchParams, API: "https://api.scryfall.com", weeklyImage: image,
     weeklyPrinting: new Element("p"), weeklyLink: new Element("a"),
     console: { warn() {} }, norm: value => value.toLowerCase(), cardImage: card => card.image_uris.normal,

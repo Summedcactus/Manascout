@@ -1,36 +1,57 @@
-const {test}=require('node:test'),assert=require('node:assert/strict'),fs=require('node:fs');
-const {mount}=require('./helpers/weekly-card.cjs'),{computed}=require('./helpers/weekly-cascade.cjs');
-const nodes=s=>({face:s.shell.querySelector('.weekly-card-face'),foil:s.shell.querySelector('.weekly-foil-sheen'),glimmer:s.shell.querySelector('.weekly-foil-glimmer'),edge:s.shell.querySelector('.weekly-edge-light')});
-const pointer=(s,x,y,touch=false)=>s.shell.emit(touch?'pointerdown':'pointermove',{pointerType:touch?'touch':'mouse',pointerId:7,isPrimary:true,clientX:x,clientY:y});
-test('one inner face owns image, foil and edge paint inside the same transformed shell',()=>{
- const s=mount({cached:true}),{face,foil,glimmer,edge}=nodes(s);assert.equal(s.shell.querySelectorAll('.weekly-card-face').length,1);assert.equal(face.parentElement,s.shell);assert.equal(s.image.parentElement,face);assert.equal(foil.parentElement,face);assert.equal(edge.parentElement,face);assert.equal(glimmer.parentElement,foil);assert.equal(foil.closest('#weekly-card-shell'),s.shell);assert.equal(s.shell.parentElement.className,'weekly-card-float');
+const { test } = require('node:test');
+const assert = require('node:assert/strict');
+const fs = require('node:fs');
+const printing = require('../assets/js/printing-presentation.js');
+const cards = require('./fixtures/phase10-printings.json');
+
+const specialFinishes = {
+  surgefoil: 'Surge Foil', galaxyfoil: 'Galaxy Foil', halofoil: 'Halo Foil',
+  confettifoil: 'Confetti Foil', textured: 'Textured Foil', rainbowfoil: 'Rainbow Foil',
+  stepandcompleat: 'Step-and-Compleat Foil'
+};
+const css = fs.readFileSync('assets/css/printing-presentation.css', 'utf8');
+for (const [value, label] of Object.entries(specialFinishes)) test(`${label} requires a verified foil treatment and gets its own paint`, () => {
+  const card = { finishes: ['nonfoil', 'foil'], promo_types: [value] };
+  assert.equal(printing.defaultFinish(card), 'nonfoil');
+  assert.equal(printing.surface(card, 'nonfoil'), 'nonfoil');
+  assert.equal(printing.surface(card, 'foil'), value);
+  assert.equal(printing.finishLabel('foil', card), label);
+  assert.equal(printing.surface({ ...card, promo_types: [] }, 'foil'), 'foil');
+  const rule = css.match(new RegExp(`\\[data-surface="${value}"\\]\\s+\\.ms-physical-reflection\\s*{([^}]+)}`));
+  assert.match(rule[1], /background:/);
 });
-test('outer shell retains external depth while its inner face isolates and clips a flat surface',()=>{
- const s=mount({cached:true}),{face}=nodes(s),outer=computed(s.shell),inner=computed(face);assert.equal(outer['aspect-ratio'],'488 / 680');assert.equal(outer.overflow,'visible');assert.ok(outer['box-shadow'].includes('48px 62px'));assert.equal(inner.inset,'0');assert.equal(inner.position,'absolute');assert.equal(inner.overflow,'hidden');assert.equal(inner.isolation,'isolate');assert.equal(inner['transform-style'],'flat');assert.equal(inner['clip-path'],'inset(0 round 15px)');assert.equal(inner['-webkit-clip-path'],inner['clip-path']);const shadow=s.weekly.querySelector('.weekly-card-rest-shadow');assert.equal(face.contains(shadow),false);assert.equal(shadow.parentElement,s.stage);assert.equal(computed(s.weekly.querySelector('.weekly-card-column')).overflow,'visible');
+
+test('etching, classic foil, unavailable finishes and conflicting metadata remain distinct', () => {
+  assert.equal(printing.surface(cards[6], 'etched'), 'etched');
+  assert.equal(printing.surface(cards[6], 'foil'), 'unavailable');
+  assert.equal(printing.surface(cards[4], 'foil'), 'foil');
+  assert.equal(printing.surface({ finishes: ['foil'], promo_types: ['surgefoil', 'galaxyfoil'] }, 'foil'), 'foil');
+  assert.equal(printing.language('JA'), 'Japanese');
+  assert.equal(printing.language('en'), 'English');
+  assert.equal(printing.printing(cards[6]), 'Secret Lair Drop · SLD #1117');
 });
-for(const width of [320,360,390,430,820,1280])test(`${width}px: one 15px radius and zero-inset foil paint share the actual face boundary`,()=>{
- const s=mount({cached:true}),n=nodes(s);for(const node of [s.shell,n.face,s.image,n.foil,n.glimmer,n.edge])assert.equal(computed(node,{width})['border-radius'],'15px',node.className);for(const node of [n.face,n.foil,n.glimmer,n.edge])assert.equal(computed(node,{width}).inset,'0');for(const pseudo of ['before','after']){const style=computed(n.foil,{width,pseudo});assert.equal(style.inset,'0');assert.equal(style['border-radius'],'15px');assert.ok(!style.transform||style.transform==='none');}assert.equal(computed(n.foil,{width}).transform,'none');assert.equal(computed(n.glimmer,{width}).transform,'none');assert.equal(computed(s.image,{width})['object-fit'],'contain');assert.match(s.image.getAttribute('src'),/cards\/mh3\/383\?/);
+
+test('only differing verified collector attributes are shown and artwork IDs stay internal', () => {
+  const result = printing.differences(cards.slice(2, 4).map(card => ({ card, finish: 'foil' })));
+  assert.deepEqual(result.map(({ label }) => label), ['Set / Collector Number', 'Selected Finish']);
+  assert.deepEqual(result[1].values, ['Traditional Foil', 'Surge Foil']);
+  const variations = printing.differences(cards.slice(1, 4).map(card => ({ card, finish: 'foil' })));
+  assert.deepEqual(variations.find(({ label }) => label === 'Artwork').values, ['Artwork 1', 'Artwork 2', 'Artwork 2']);
+  assert.doesNotMatch(JSON.stringify(variations), /[\da-f]{8}-[\da-f]{4}-/);
 });
-// Project authored local geometry only: native GPU clipping/antialiasing is not verified.
-function project(x,y,w,h,rx,ry,z){x-=w/2;y-=h/2;const ax=rx*Math.PI/180,ay=ry*Math.PI/180,X=x*Math.cos(ay),Z=-x*Math.sin(ay),Y=y*Math.cos(ax)-Z*Math.sin(ax),depth=y*Math.sin(ax)+Z*Math.cos(ax)+z,scale=760/(760-depth);return[X*scale,Y*scale];}
-function outline(w,h,r){const out=[];for(const [cx,cy,start]of [[r,r,180],[w-r,r,270],[w-r,h-r,0],[r,h-r,90]])for(let i=0;i<=32;i++){const a=(start+90*i/32)*Math.PI/180;out.push([cx+r*Math.cos(a),cy+r*Math.sin(a)]);}return out;}
-function inside(p,polygon){let pos=false,neg=false;for(let i=0;i<polygon.length;i++){const a=polygon[i],b=polygon[(i+1)%polygon.length],d=(b[0]-a[0])*(p[1]-a[1])-(b[1]-a[1])*(p[0]-a[0]);if(d>1e-5)pos=true;if(d<-1e-5)neg=true;}return !(pos&&neg);}
-for(const [kind,w,limitX,limitY,z]of [['desktop',330,11,14,46],['touch',248,6,7,32]])test(`${kind} maximum tilt: authored clipping keeps surface samples within one shared projected rounded silhouette`,async()=>{
- const s=mount({cached:true,fine:kind==='desktop'}),{face,foil}=nodes(s),h=w*680/488,r=15;assert.equal(computed(face)['clip-path'],'inset(0 round 15px)');assert.equal(computed(foil).transform,'none');assert.equal(computed(foil).inset,'0');
- for(const [px,py]of [[0,0],[300,0],[300,420],[0,420]]){await pointer(s,px,py,kind==='touch');const rx=parseFloat(s.weekly.style['--weekly-rx']),ry=parseFloat(s.weekly.style['--weekly-ry']);assert.equal(Math.abs(rx),limitX);assert.equal(Math.abs(ry),limitY);const polygon=outline(w,h,r).map(([x,y])=>project(x,y,w,h,rx,ry,z));for(const [x,y]of [[0,0],[w,0],[w,h],[0,h]])assert.equal(inside(project(x,y,w,h,rx,ry,z),polygon),false,'square corners must be clipped');let checked=0;for(let x=1;x<w;x+=9)for(let y=1;y<h;y+=9){const cx=Math.min(w-r,Math.max(r,x)),cy=Math.min(h-r,Math.max(r,y));if(Math.hypot(x-cx,y-cy)>r-.1)continue;assert.equal(inside(project(x,y,w,h,rx,ry,z),polygon),true);checked++;}assert.ok(checked>500);}
+
+test('reference prices come from available finish fields and retain source currencies', () => {
+  const card = { finishes: ['foil', 'etched'], prices: { usd: '2.00', usd_foil: null, eur_foil: '5.20', usd_etched: '9.95' } };
+  assert.deepEqual(printing.prices(card, 'nonfoil'), []);
+  assert.deepEqual(printing.prices(card, 'foil'), ['€5.20 EUR']);
+  assert.deepEqual(printing.prices(card, 'etched'), ['$9.95 USD']);
 });
-test('pointer light changes gradient location, angle, intensity and edge response without moving the foil plane',async()=>{
- const s=mount({cached:true}),{foil,edge}=nodes(s);const paint=()=>({broad:computed(foil,{pseudo:'before'}),narrow:computed(foil,{pseudo:'after'}),surface:computed(foil),edge:computed(edge)});await pointer(s,0,0);const left=paint();await pointer(s,300,420);const right=paint();assert.notEqual(left.broad['background-image'],right.broad['background-image']);assert.notEqual(left.narrow['background-image'],right.narrow['background-image']);assert.notEqual(left.narrow['background-position'],right.narrow['background-position']);assert.notEqual(left.edge.background,right.edge.background);assert.equal(left.surface.transform,'none');assert.equal(right.surface.transform,'none');await pointer(s,150,210);assert.equal(Number(computed(foil).opacity),.76);assert.ok(Number(left.surface.opacity)>.9);assert.equal(computed(foil).inset,'0');
-});
-test('idle foil paints broad metal, a feathered specular highlight and faint cool separation; loops move only paint',()=>{
- const s=mount({cached:true}),{foil,glimmer}=nodes(s);assert.match(computed(foil,{pseudo:'before'})['background-image'],/radial-gradient\(ellipse 65% 100%/);assert.match(computed(foil,{pseudo:'after'})['background-image'],/linear-gradient\(calc\(115deg/);assert.match(computed(glimmer)['background-image'],/#86aaca35.*#ada4c526/);assert.equal(Number(computed(foil).opacity),.70);const css=fs.readFileSync('assets/css/home.css','utf8');for(const name of ['msWeeklyReflection','msWeeklyGlimmer']){const animation=css.match(new RegExp('@keyframes '+name+' \\{[^\\n]+'))[0];assert.match(animation,/background-position/);assert.doesNotMatch(animation,/transform:|opacity:|rotate\(/);}assert.match(computed(foil)['mask-image'],/#0003 84%/);
-});
-for(const width of [390,1280])test(`${width}px reduced motion retains the same clipped static foil and raised physical card`,()=>{
- const s=mount({cached:true,reduced:true}),{face,foil,glimmer,edge}=nodes(s),o={width,reduced:true};assert.equal(computed(face,o)['clip-path'],'inset(0 round 15px)');assert.equal(computed(foil,o).transform,'none');assert.equal(computed(foil,o).inset,'0');assert.equal(Number(computed(foil,o).opacity),.78);assert.equal(computed(foil,{...o,pseudo:'before'}).animation,'none');assert.equal(computed(foil,{...o,pseudo:'after'}).animation,'none');assert.equal(computed(glimmer,o).animation,'none');assert.notEqual(computed(s.shell.parentElement,o).transform,'none');assert.equal(computed(s.shell,o).transform,'translateZ(8px)');assert.ok(Number(computed(edge,o).opacity)>.7);
-});
-test('image failure and cached recovery still hide and restore only the clipped foil',async()=>{
- const s=mount({cached:true}),{foil}=nodes(s);s.image.naturalWidth=0;await s.image.emit('error');assert.equal(computed(foil).visibility,'hidden');await s.d.loaded(s.image);assert.notEqual(computed(foil).visibility,'hidden');assert.equal(computed(foil).transform,'none');assert.equal(foil.parentElement.className,'weekly-card-face');
-});
-test('takeover and return keep the same clipped face attached to the original shell object',async()=>{
- const s=mount({cached:true,animations:true}),{face,foil}=nodes(s);await pointer(s,300,0);assert.equal(s.weekly.dataset.weeklyPresentation,'interactive');assert.match(computed(s.shell).transform,/rotateX\(11deg\) rotateY\(14deg\)/);await s.shell.emit('pointerleave');assert.equal(s.weekly.dataset.weeklyPresentation,'returning');s.jobs.at(-1).finish();await Promise.resolve();assert.equal(s.weekly.dataset.weeklyPresentation,'idle');assert.equal(face.parentElement,s.shell);assert.equal(foil.parentElement,face);assert.equal(computed(face)['clip-path'],'inset(0 round 15px)');assert.equal(computed(foil).transform,'none');
+
+test('the same rounded face contains card art, reflection and edge paint', () => {
+  const html = printing.markup({ card: cards[3], finish: 'foil', src: cards[3].image_uris.normal, alt: 'Exact Spock artwork', compact: true });
+  assert.match(html, /data-compact[\s\S]*ms-physical-shell[\s\S]*ms-physical-face[\s\S]*<img[\s\S]*width="488" height="680"[\s\S]*ms-physical-reflection" aria-hidden="true"[\s\S]*ms-physical-edge" aria-hidden="true"/);
+  assert.match(css, /\.ms-physical-face\s*{[^}]+aspect-ratio: 488 \/ 680[^}]+overflow: hidden[^}]+clip-path: inset/);
+  assert.match(css, /touch-action: pan-y pinch-zoom/);
+  assert.match(css, /prefers-reduced-motion: reduce/);
+  assert.doesNotMatch(printing.markup({ card: cards[3], finish: 'foil', src: 'https://example.net/card.jpg' }), /<img/);
 });

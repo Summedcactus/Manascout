@@ -512,7 +512,7 @@
 @media (max-width: 349px) {
   .deck-studio .ds-printing-grid { grid-template-columns: minmax(0,1fr); }
   .deck-studio .ds-printing-choice { grid-template-columns: minmax(0,1fr); }
-  .deck-studio #printing-selected-image { display: none; }
+  .deck-studio .ds-printing-choice > .ms-physical { width: 62px; }
 }
 .deck-studio .ds-printing-options > summary { min-height: 44px; padding-block: 8px; cursor: pointer; color: var(--ds-accent-text); font-size: 13px; }
 
@@ -550,3 +550,10 @@
 .deck-studio #portable-review {max-height:42vh;overflow:auto}
 .deck-studio #portable-review article {border-top:1px solid var(--ds-line);padding:8px 0}
 .deck-studio .ds-portable-dialog :focus-visible {outline:2px solid var(--ds-linen);outline-offset:3px}
+
+
+.deck-studio :is(.ds-card-art, .ds-inspiration-image, .ds-printing-choice, .ds-printing-option) .ms-physical-face img {
+  width: 100%; height: 100%; margin: 0; border-radius: inherit; box-shadow: none;
+}
+.deck-studio .ds-card-art > .ms-physical { width: min(100%, 280px); margin-inline: auto; }
+.deck-studio #preview-finish-select { min-height: 44px; max-width: 100%; }

@@ -1,0 +1,771 @@
+[
+  {
+    "object": "card",
+    "id": "d19fc127-669e-4264-935a-e5991e6c0964",
+    "oracle_id": "869bde03-8813-43a9-9df5-a21c62511b4b",
+    "multiverse_ids": [],
+    "name": "Mr. Spock, Science Officer",
+    "set": "trk",
+    "set_name": "Star Trek",
+    "lang": "en",
+    "released_at": "2026-11-13",
+    "collector_number": "74",
+    "artist": "Colin Boyer",
+    "illustration_id": "9b0aa143-b3f3-47d4-bbc2-f7319e8dd5c4",
+    "layout": "normal",
+    "frame": "2015",
+    "frame_effects": [
+      "legendary"
+    ],
+    "border_color": "black",
+    "security_stamp": "oval",
+    "oversized": false,
+    "mana_cost": "{2}{U}{U}",
+    "cmc": 4.0,
+    "type_line": "Legendary Creature — Vulcan Human Scientist",
+    "oracle_text": "If you would draw a card, draw two cards instead.",
+    "colors": [
+      "U"
+    ],
+    "color_identity": [
+      "U"
+    ],
+    "keywords": [],
+    "legalities": {
+      "standard": "legal",
+      "future": "legal",
+      "historic": "legal",
+      "timeless": "legal",
+      "gladiator": "legal",
+      "pioneer": "legal",
+      "modern": "legal",
+      "legacy": "legal",
+      "pauper": "not_legal",
+      "vintage": "legal",
+      "penny": "not_legal",
+      "commander": "legal",
+      "oathbreaker": "legal",
+      "standardbrawl": "legal",
+      "brawl": "legal",
+      "competitivebrawl": "legal",
+      "alchemy": "not_legal",
+      "paupercommander": "not_legal",
+      "duel": "legal",
+      "oldschool": "not_legal",
+      "premodern": "not_legal",
+      "predh": "not_legal",
+      "tlr": "not_legal"
+    },
+    "games": [
+      "paper",
+      "mtgo",
+      "arena"
+    ],
+    "promo": false,
+    "promo_types": [
+      "universesbeyond"
+    ],
+    "full_art": false,
+    "reprint": false,
+    "textless": false,
+    "rarity": "mythic",
+    "finishes": [
+      "nonfoil",
+      "foil"
+    ],
+    "image_uris": {
+      "small": "https://cards.scryfall.io/small/front/d/1/d19fc127-669e-4264-935a-e5991e6c0964.jpg?1792508192",
+      "normal": "https://cards.scryfall.io/normal/front/d/1/d19fc127-669e-4264-935a-e5991e6c0964.jpg?1792508192",
+      "large": "https://cards.scryfall.io/large/front/d/1/d19fc127-669e-4264-935a-e5991e6c0964.jpg?1792508192",
+      "png": "https://cards.scryfall.io/png/front/d/1/d19fc127-669e-4264-935a-e5991e6c0964.png?1792508192",
+      "art_crop": "https://cards.scryfall.io/art_crop/front/d/1/d19fc127-669e-4264-935a-e5991e6c0964.jpg?1792508192",
+      "border_crop": "https://cards.scryfall.io/border_crop/front/d/1/d19fc127-669e-4264-935a-e5991e6c0964.jpg?1792508192",
+      "thumb": "https://cards.scryfall.io/thumb/front/d/1/d19fc127-669e-4264-935a-e5991e6c0964.webp?1792508192",
+      "grid": "https://cards.scryfall.io/grid/front/d/1/d19fc127-669e-4264-935a-e5991e6c0964.webp?1792508192",
+      "display": "https://cards.scryfall.io/display/front/d/1/d19fc127-669e-4264-935a-e5991e6c0964.webp?1792508192",
+      "art": "https://cards.scryfall.io/art/front/d/1/d19fc127-669e-4264-935a-e5991e6c0964.webp?1792508192",
+      "crop": "https://cards.scryfall.io/crop/front/d/1/d19fc127-669e-4264-935a-e5991e6c0964.webp?1792508192",
+      "jpeg": "https://cards.scryfall.io/normal/front/d/1/d19fc127-669e-4264-935a-e5991e6c0964.jpg?1792508192"
+    },
+    "prices": {
+      "usd": "13.58",
+      "usd_foil": "14.89",
+      "usd_etched": null,
+      "eur": "8.42",
+      "eur_foil": "14.87",
+      "tix": "0.37"
+    },
+    "scryfall_uri": "https://scryfall.com/card/trk/74/mr-spock-science-officer?utm_source=api",
+    "prints_search_uri": "https://api.scryfall.com/cards/search?order=released&q=oracleid%3A869bde03-8813-43a9-9df5-a21c62511b4b&unique=prints"
+  },
+  {
+    "object": "card",
+    "id": "7dd9dec1-5793-4514-8a15-c3bce21a5115",
+    "oracle_id": "869bde03-8813-43a9-9df5-a21c62511b4b",
+    "multiverse_ids": [],
+    "name": "Mr. Spock, Science Officer",
+    "set": "trk",
+    "set_name": "Star Trek",
+    "lang": "en",
+    "released_at": "2026-11-13",
+    "collector_number": "353",
+    "artist": "Mark Spears",
+    "illustration_id": "ad72081d-a175-4721-bbaf-7d3473301969",
+    "layout": "normal",
+    "frame": "2015",
+    "frame_effects": [
+      "legendary",
+      "inverted"
+    ],
+    "border_color": "borderless",
+    "security_stamp": "oval",
+    "oversized": false,
+    "mana_cost": "{2}{U}{U}",
+    "cmc": 4.0,
+    "type_line": "Legendary Creature — Vulcan Human Scientist",
+    "oracle_text": "If you would draw a card, draw two cards instead.",
+    "colors": [
+      "U"
+    ],
+    "color_identity": [
+      "U"
+    ],
+    "keywords": [],
+    "legalities": {
+      "standard": "legal",
+      "future": "legal",
+      "historic": "legal",
+      "timeless": "legal",
+      "gladiator": "legal",
+      "pioneer": "legal",
+      "modern": "legal",
+      "legacy": "legal",
+      "pauper": "not_legal",
+      "vintage": "legal",
+      "penny": "not_legal",
+      "commander": "legal",
+      "oathbreaker": "legal",
+      "standardbrawl": "legal",
+      "brawl": "legal",
+      "competitivebrawl": "legal",
+      "alchemy": "not_legal",
+      "paupercommander": "not_legal",
+      "duel": "legal",
+      "oldschool": "not_legal",
+      "premodern": "not_legal",
+      "predh": "not_legal",
+      "tlr": "not_legal"
+    },
+    "games": [
+      "paper",
+      "mtgo"
+    ],
+    "promo": false,
+    "promo_types": [
+      "universesbeyond"
+    ],
+    "full_art": false,
+    "reprint": false,
+    "textless": false,
+    "rarity": "mythic",
+    "finishes": [
+      "nonfoil",
+      "foil"
+    ],
+    "image_uris": {
+      "small": "https://cards.scryfall.io/small/front/7/d/7dd9dec1-5793-4514-8a15-c3bce21a5115.jpg?1792508674",
+      "normal": "https://cards.scryfall.io/normal/front/7/d/7dd9dec1-5793-4514-8a15-c3bce21a5115.jpg?1792508674",
+      "large": "https://cards.scryfall.io/large/front/7/d/7dd9dec1-5793-4514-8a15-c3bce21a5115.jpg?1792508674",
+      "png": "https://cards.scryfall.io/png/front/7/d/7dd9dec1-5793-4514-8a15-c3bce21a5115.png?1792508674",
+      "art_crop": "https://cards.scryfall.io/art_crop/front/7/d/7dd9dec1-5793-4514-8a15-c3bce21a5115.jpg?1792508674",
+      "border_crop": "https://cards.scryfall.io/border_crop/front/7/d/7dd9dec1-5793-4514-8a15-c3bce21a5115.jpg?1792508674",
+      "thumb": "https://cards.scryfall.io/thumb/front/7/d/7dd9dec1-5793-4514-8a15-c3bce21a5115.webp?1792508674",
+      "grid": "https://cards.scryfall.io/grid/front/7/d/7dd9dec1-5793-4514-8a15-c3bce21a5115.webp?1792508674",
+      "display": "https://cards.scryfall.io/display/front/7/d/7dd9dec1-5793-4514-8a15-c3bce21a5115.webp?1792508674",
+      "art": "https://cards.scryfall.io/art/front/7/d/7dd9dec1-5793-4514-8a15-c3bce21a5115.webp?1792508674",
+      "crop": "https://cards.scryfall.io/crop/front/7/d/7dd9dec1-5793-4514-8a15-c3bce21a5115.webp?1792508674",
+      "jpeg": "https://cards.scryfall.io/normal/front/7/d/7dd9dec1-5793-4514-8a15-c3bce21a5115.jpg?1792508674"
+    },
+    "prices": {
+      "usd": "19.54",
+      "usd_foil": "22.92",
+      "usd_etched": null,
+      "eur": "16.98",
+      "eur_foil": "52.47",
+      "tix": "0.31"
+    },
+    "scryfall_uri": "https://scryfall.com/card/trk/353/mr-spock-science-officer?utm_source=api",
+    "prints_search_uri": "https://api.scryfall.com/cards/search?order=released&q=oracleid%3A869bde03-8813-43a9-9df5-a21c62511b4b&unique=prints"
+  },
+  {
+    "object": "card",
+    "id": "e3e54e58-327c-4071-b99a-b78c7cc3fe6f",
+    "oracle_id": "869bde03-8813-43a9-9df5-a21c62511b4b",
+    "multiverse_ids": [],
+    "name": "Mr. Spock, Science Officer",
+    "set": "trk",
+    "set_name": "Star Trek",
+    "lang": "en",
+    "released_at": "2026-11-13",
+    "collector_number": "411",
+    "artist": "Grant Griffin",
+    "illustration_id": "319ed962-68a5-4f77-ac4e-ab6b789f4a64",
+    "layout": "normal",
+    "frame": "2015",
+    "frame_effects": [
+      "legendary",
+      "showcase"
+    ],
+    "border_color": "black",
+    "security_stamp": "oval",
+    "oversized": false,
+    "mana_cost": "{2}{U}{U}",
+    "cmc": 4.0,
+    "type_line": "Legendary Creature — Vulcan Human Scientist",
+    "oracle_text": "If you would draw a card, draw two cards instead.",
+    "colors": [
+      "U"
+    ],
+    "color_identity": [
+      "U"
+    ],
+    "keywords": [],
+    "legalities": {
+      "standard": "legal",
+      "future": "legal",
+      "historic": "legal",
+      "timeless": "legal",
+      "gladiator": "legal",
+      "pioneer": "legal",
+      "modern": "legal",
+      "legacy": "legal",
+      "pauper": "not_legal",
+      "vintage": "legal",
+      "penny": "not_legal",
+      "commander": "legal",
+      "oathbreaker": "legal",
+      "standardbrawl": "legal",
+      "brawl": "legal",
+      "competitivebrawl": "legal",
+      "alchemy": "not_legal",
+      "paupercommander": "not_legal",
+      "duel": "legal",
+      "oldschool": "not_legal",
+      "premodern": "not_legal",
+      "predh": "not_legal",
+      "tlr": "not_legal"
+    },
+    "games": [
+      "paper",
+      "mtgo"
+    ],
+    "promo": false,
+    "promo_types": [
+      "universesbeyond"
+    ],
+    "full_art": false,
+    "reprint": false,
+    "textless": false,
+    "rarity": "mythic",
+    "finishes": [
+      "nonfoil",
+      "foil"
+    ],
+    "image_uris": {
+      "small": "https://cards.scryfall.io/small/front/e/3/e3e54e58-327c-4071-b99a-b78c7cc3fe6f.jpg?1792508801",
+      "normal": "https://cards.scryfall.io/normal/front/e/3/e3e54e58-327c-4071-b99a-b78c7cc3fe6f.jpg?1792508801",
+      "large": "https://cards.scryfall.io/large/front/e/3/e3e54e58-327c-4071-b99a-b78c7cc3fe6f.jpg?1792508801",
+      "png": "https://cards.scryfall.io/png/front/e/3/e3e54e58-327c-4071-b99a-b78c7cc3fe6f.png?1792508801",
+      "art_crop": "https://cards.scryfall.io/art_crop/front/e/3/e3e54e58-327c-4071-b99a-b78c7cc3fe6f.jpg?1792508801",
+      "border_crop": "https://cards.scryfall.io/border_crop/front/e/3/e3e54e58-327c-4071-b99a-b78c7cc3fe6f.jpg?1792508801",
+      "thumb": "https://cards.scryfall.io/thumb/front/e/3/e3e54e58-327c-4071-b99a-b78c7cc3fe6f.webp?1792508801",
+      "grid": "https://cards.scryfall.io/grid/front/e/3/e3e54e58-327c-4071-b99a-b78c7cc3fe6f.webp?1792508801",
+      "display": "https://cards.scryfall.io/display/front/e/3/e3e54e58-327c-4071-b99a-b78c7cc3fe6f.webp?1792508801",
+      "art": "https://cards.scryfall.io/art/front/e/3/e3e54e58-327c-4071-b99a-b78c7cc3fe6f.webp?1792508801",
+      "crop": "https://cards.scryfall.io/crop/front/e/3/e3e54e58-327c-4071-b99a-b78c7cc3fe6f.webp?1792508801",
+      "jpeg": "https://cards.scryfall.io/normal/front/e/3/e3e54e58-327c-4071-b99a-b78c7cc3fe6f.jpg?1792508801"
+    },
+    "prices": {
+      "usd": "22.51",
+      "usd_foil": "37.70",
+      "usd_etched": null,
+      "eur": "27.49",
+      "eur_foil": "42.13",
+      "tix": "0.51"
+    },
+    "scryfall_uri": "https://scryfall.com/card/trk/411/mr-spock-science-officer?utm_source=api",
+    "prints_search_uri": "https://api.scryfall.com/cards/search?order=released&q=oracleid%3A869bde03-8813-43a9-9df5-a21c62511b4b&unique=prints"
+  },
+  {
+    "object": "card",
+    "id": "e855f782-9221-4b6f-a182-b738da4b7d48",
+    "oracle_id": "869bde03-8813-43a9-9df5-a21c62511b4b",
+    "multiverse_ids": [],
+    "name": "Mr. Spock, Science Officer",
+    "set": "trk",
+    "set_name": "Star Trek",
+    "lang": "en",
+    "released_at": "2026-11-13",
+    "collector_number": "535",
+    "artist": "Grant Griffin",
+    "illustration_id": "319ed962-68a5-4f77-ac4e-ab6b789f4a64",
+    "layout": "normal",
+    "frame": "2015",
+    "frame_effects": [
+      "legendary",
+      "showcase"
+    ],
+    "border_color": "black",
+    "security_stamp": "oval",
+    "oversized": false,
+    "mana_cost": "{2}{U}{U}",
+    "cmc": 4.0,
+    "type_line": "Legendary Creature — Vulcan Human Scientist",
+    "oracle_text": "If you would draw a card, draw two cards instead.",
+    "colors": [
+      "U"
+    ],
+    "color_identity": [
+      "U"
+    ],
+    "keywords": [],
+    "legalities": {
+      "standard": "legal",
+      "future": "legal",
+      "historic": "legal",
+      "timeless": "legal",
+      "gladiator": "legal",
+      "pioneer": "legal",
+      "modern": "legal",
+      "legacy": "legal",
+      "pauper": "not_legal",
+      "vintage": "legal",
+      "penny": "not_legal",
+      "commander": "legal",
+      "oathbreaker": "legal",
+      "standardbrawl": "legal",
+      "brawl": "legal",
+      "competitivebrawl": "legal",
+      "alchemy": "not_legal",
+      "paupercommander": "not_legal",
+      "duel": "legal",
+      "oldschool": "not_legal",
+      "premodern": "not_legal",
+      "predh": "not_legal",
+      "tlr": "not_legal"
+    },
+    "games": [
+      "paper",
+      "mtgo"
+    ],
+    "promo": false,
+    "promo_types": [
+      "surgefoil",
+      "universesbeyond"
+    ],
+    "full_art": false,
+    "reprint": false,
+    "textless": false,
+    "rarity": "mythic",
+    "finishes": [
+      "foil"
+    ],
+    "image_uris": {
+      "small": "https://cards.scryfall.io/small/front/e/8/e855f782-9221-4b6f-a182-b738da4b7d48.jpg?1792509132",
+      "normal": "https://cards.scryfall.io/normal/front/e/8/e855f782-9221-4b6f-a182-b738da4b7d48.jpg?1792509132",
+      "large": "https://cards.scryfall.io/large/front/e/8/e855f782-9221-4b6f-a182-b738da4b7d48.jpg?1792509132",
+      "png": "https://cards.scryfall.io/png/front/e/8/e855f782-9221-4b6f-a182-b738da4b7d48.png?1792509132",
+      "art_crop": "https://cards.scryfall.io/art_crop/front/e/8/e855f782-9221-4b6f-a182-b738da4b7d48.jpg?1792509132",
+      "border_crop": "https://cards.scryfall.io/border_crop/front/e/8/e855f782-9221-4b6f-a182-b738da4b7d48.jpg?1792509132",
+      "thumb": "https://cards.scryfall.io/thumb/front/e/8/e855f782-9221-4b6f-a182-b738da4b7d48.webp?1792509132",
+      "grid": "https://cards.scryfall.io/grid/front/e/8/e855f782-9221-4b6f-a182-b738da4b7d48.webp?1792509132",
+      "display": "https://cards.scryfall.io/display/front/e/8/e855f782-9221-4b6f-a182-b738da4b7d48.webp?1792509132",
+      "art": "https://cards.scryfall.io/art/front/e/8/e855f782-9221-4b6f-a182-b738da4b7d48.webp?1792509132",
+      "crop": "https://cards.scryfall.io/crop/front/e/8/e855f782-9221-4b6f-a182-b738da4b7d48.webp?1792509132",
+      "jpeg": "https://cards.scryfall.io/normal/front/e/8/e855f782-9221-4b6f-a182-b738da4b7d48.jpg?1792509132"
+    },
+    "prices": {
+      "usd": null,
+      "usd_foil": "150.19",
+      "usd_etched": null,
+      "eur": null,
+      "eur_foil": null,
+      "tix": null
+    },
+    "scryfall_uri": "https://scryfall.com/card/trk/535/mr-spock-science-officer?utm_source=api",
+    "prints_search_uri": "https://api.scryfall.com/cards/search?order=released&q=oracleid%3A869bde03-8813-43a9-9df5-a21c62511b4b&unique=prints"
+  },
+  {
+    "object": "card",
+    "id": "bd0c3372-4cc5-489c-b8fb-ea11e700fa16",
+    "oracle_id": "869bde03-8813-43a9-9df5-a21c62511b4b",
+    "multiverse_ids": [],
+    "name": "Mr. Spock, Science Officer",
+    "set": "trk",
+    "set_name": "Star Trek",
+    "lang": "en",
+    "released_at": "2026-11-13",
+    "collector_number": "1702",
+    "artist": "Gal Or",
+    "illustration_id": "332759d6-b61b-466c-b2c7-66228d86e28b",
+    "layout": "normal",
+    "frame": "2015",
+    "frame_effects": [
+      "legendary"
+    ],
+    "border_color": "borderless",
+    "security_stamp": "oval",
+    "oversized": false,
+    "mana_cost": "{2}{U}{U}",
+    "cmc": 4.0,
+    "type_line": "Legendary Creature — Vulcan Human Scientist",
+    "oracle_text": "If you would draw a card, draw two cards instead.",
+    "colors": [
+      "U"
+    ],
+    "color_identity": [
+      "U"
+    ],
+    "keywords": [],
+    "legalities": {
+      "standard": "legal",
+      "future": "legal",
+      "historic": "legal",
+      "timeless": "legal",
+      "gladiator": "legal",
+      "pioneer": "legal",
+      "modern": "legal",
+      "legacy": "legal",
+      "pauper": "not_legal",
+      "vintage": "legal",
+      "penny": "not_legal",
+      "commander": "legal",
+      "oathbreaker": "legal",
+      "standardbrawl": "legal",
+      "brawl": "legal",
+      "competitivebrawl": "legal",
+      "alchemy": "not_legal",
+      "paupercommander": "not_legal",
+      "duel": "legal",
+      "oldschool": "not_legal",
+      "premodern": "not_legal",
+      "predh": "not_legal",
+      "tlr": "not_legal"
+    },
+    "games": [
+      "paper",
+      "mtgo"
+    ],
+    "promo": false,
+    "promo_types": [
+      "headliner",
+      "universesbeyond"
+    ],
+    "full_art": false,
+    "reprint": false,
+    "textless": true,
+    "rarity": "mythic",
+    "finishes": [
+      "foil"
+    ],
+    "image_uris": {
+      "small": "https://cards.scryfall.io/small/front/b/d/bd0c3372-4cc5-489c-b8fb-ea11e700fa16.jpg?1792509230",
+      "normal": "https://cards.scryfall.io/normal/front/b/d/bd0c3372-4cc5-489c-b8fb-ea11e700fa16.jpg?1792509230",
+      "large": "https://cards.scryfall.io/large/front/b/d/bd0c3372-4cc5-489c-b8fb-ea11e700fa16.jpg?1792509230",
+      "png": "https://cards.scryfall.io/png/front/b/d/bd0c3372-4cc5-489c-b8fb-ea11e700fa16.png?1792509230",
+      "art_crop": "https://cards.scryfall.io/art_crop/front/b/d/bd0c3372-4cc5-489c-b8fb-ea11e700fa16.jpg?1792509230",
+      "border_crop": "https://cards.scryfall.io/border_crop/front/b/d/bd0c3372-4cc5-489c-b8fb-ea11e700fa16.jpg?1792509230",
+      "thumb": "https://cards.scryfall.io/thumb/front/b/d/bd0c3372-4cc5-489c-b8fb-ea11e700fa16.webp?1792509230",
+      "grid": "https://cards.scryfall.io/grid/front/b/d/bd0c3372-4cc5-489c-b8fb-ea11e700fa16.webp?1792509230",
+      "display": "https://cards.scryfall.io/display/front/b/d/bd0c3372-4cc5-489c-b8fb-ea11e700fa16.webp?1792509230",
+      "art": "https://cards.scryfall.io/art/front/b/d/bd0c3372-4cc5-489c-b8fb-ea11e700fa16.webp?1792509230",
+      "crop": "https://cards.scryfall.io/crop/front/b/d/bd0c3372-4cc5-489c-b8fb-ea11e700fa16.webp?1792509230",
+      "jpeg": "https://cards.scryfall.io/normal/front/b/d/bd0c3372-4cc5-489c-b8fb-ea11e700fa16.jpg?1792509230"
+    },
+    "prices": {
+      "usd": null,
+      "usd_foil": null,
+      "usd_etched": null,
+      "eur": null,
+      "eur_foil": "3999.00",
+      "tix": null
+    },
+    "scryfall_uri": "https://scryfall.com/card/trk/1702/mr-spock-science-officer?utm_source=api",
+    "prints_search_uri": "https://api.scryfall.com/cards/search?order=released&q=oracleid%3A869bde03-8813-43a9-9df5-a21c62511b4b&unique=prints"
+  },
+  {
+    "object": "card",
+    "id": "c4300d24-1cae-4dd5-be7e-38cc677cf5bd",
+    "oracle_id": "6ad8011d-3471-4369-9d68-b264cc027487",
+    "multiverse_ids": [
+      40
+    ],
+    "name": "Sol Ring",
+    "set": "lea",
+    "set_name": "Limited Edition Alpha",
+    "lang": "en",
+    "released_at": "1993-08-05",
+    "collector_number": "269",
+    "artist": "Mark Tedin",
+    "illustration_id": "54462260-8d64-4ec2-bac7-f2d469f187f3",
+    "layout": "normal",
+    "frame": "1993",
+    "border_color": "black",
+    "oversized": false,
+    "mana_cost": "{1}",
+    "cmc": 1.0,
+    "type_line": "Artifact",
+    "oracle_text": "{T}: Add {C}{C}.",
+    "colors": [],
+    "color_identity": [],
+    "keywords": [],
+    "legalities": {
+      "standard": "not_legal",
+      "future": "not_legal",
+      "historic": "not_legal",
+      "timeless": "not_legal",
+      "gladiator": "not_legal",
+      "pioneer": "not_legal",
+      "modern": "not_legal",
+      "legacy": "banned",
+      "pauper": "not_legal",
+      "vintage": "restricted",
+      "penny": "not_legal",
+      "commander": "legal",
+      "oathbreaker": "banned",
+      "standardbrawl": "not_legal",
+      "brawl": "not_legal",
+      "competitivebrawl": "not_legal",
+      "alchemy": "not_legal",
+      "paupercommander": "not_legal",
+      "duel": "banned",
+      "oldschool": "restricted",
+      "premodern": "not_legal",
+      "predh": "legal",
+      "tlr": "banned"
+    },
+    "games": [
+      "paper"
+    ],
+    "promo": false,
+    "full_art": false,
+    "reprint": false,
+    "textless": false,
+    "rarity": "uncommon",
+    "finishes": [
+      "nonfoil"
+    ],
+    "image_uris": {
+      "small": "https://cards.scryfall.io/small/front/c/4/c4300d24-1cae-4dd5-be7e-38cc677cf5bd.jpg?1783948661",
+      "normal": "https://cards.scryfall.io/normal/front/c/4/c4300d24-1cae-4dd5-be7e-38cc677cf5bd.jpg?1783948661",
+      "large": "https://cards.scryfall.io/large/front/c/4/c4300d24-1cae-4dd5-be7e-38cc677cf5bd.jpg?1783948661",
+      "png": "https://cards.scryfall.io/png/front/c/4/c4300d24-1cae-4dd5-be7e-38cc677cf5bd.png?1783948661",
+      "art_crop": "https://cards.scryfall.io/art_crop/front/c/4/c4300d24-1cae-4dd5-be7e-38cc677cf5bd.jpg?1783948661",
+      "border_crop": "https://cards.scryfall.io/border_crop/front/c/4/c4300d24-1cae-4dd5-be7e-38cc677cf5bd.jpg?1783948661",
+      "thumb": "https://cards.scryfall.io/thumb/front/c/4/c4300d24-1cae-4dd5-be7e-38cc677cf5bd.webp?1783948661",
+      "grid": "https://cards.scryfall.io/grid/front/c/4/c4300d24-1cae-4dd5-be7e-38cc677cf5bd.webp?1783948661",
+      "display": "https://cards.scryfall.io/display/front/c/4/c4300d24-1cae-4dd5-be7e-38cc677cf5bd.webp?1783948661",
+      "art": "https://cards.scryfall.io/art/front/c/4/c4300d24-1cae-4dd5-be7e-38cc677cf5bd.webp?1783948661",
+      "crop": "https://cards.scryfall.io/crop/front/c/4/c4300d24-1cae-4dd5-be7e-38cc677cf5bd.webp?1783948661",
+      "jpeg": "https://cards.scryfall.io/normal/front/c/4/c4300d24-1cae-4dd5-be7e-38cc677cf5bd.jpg?1783948661"
+    },
+    "prices": {
+      "usd": "1540.00",
+      "usd_foil": null,
+      "usd_etched": null,
+      "eur": "1061.58",
+      "eur_foil": null,
+      "tix": null
+    },
+    "scryfall_uri": "https://scryfall.com/card/lea/269/sol-ring?utm_source=api",
+    "prints_search_uri": "https://api.scryfall.com/cards/search?order=released&q=oracleid%3A6ad8011d-3471-4369-9d68-b264cc027487&unique=prints"
+  },
+  {
+    "object": "card",
+    "id": "1ecc64b6-6f2c-4b20-aa80-54cc47382606",
+    "oracle_id": "edd8d1e8-be43-4c38-bb3a-83081fbaf0b5",
+    "multiverse_ids": [],
+    "name": "Thoughtseize",
+    "set": "sld",
+    "set_name": "Secret Lair Drop",
+    "lang": "en",
+    "released_at": "2022-11-28",
+    "collector_number": "1117",
+    "artist": "Junji Ito",
+    "illustration_id": "e8ae57a0-2697-490c-a06e-22559920640a",
+    "layout": "normal",
+    "frame": "2015",
+    "frame_effects": [
+      "inverted"
+    ],
+    "border_color": "borderless",
+    "security_stamp": "oval",
+    "oversized": false,
+    "mana_cost": "{B}",
+    "cmc": 1.0,
+    "type_line": "Sorcery",
+    "oracle_text": "Target player reveals their hand. You choose a nonland card from it. That player discards that card. You lose 2 life.",
+    "colors": [
+      "B"
+    ],
+    "color_identity": [
+      "B"
+    ],
+    "keywords": [],
+    "legalities": {
+      "standard": "not_legal",
+      "future": "not_legal",
+      "historic": "legal",
+      "timeless": "legal",
+      "gladiator": "legal",
+      "pioneer": "legal",
+      "modern": "legal",
+      "legacy": "legal",
+      "pauper": "not_legal",
+      "vintage": "legal",
+      "penny": "not_legal",
+      "commander": "legal",
+      "oathbreaker": "legal",
+      "standardbrawl": "not_legal",
+      "brawl": "legal",
+      "competitivebrawl": "legal",
+      "alchemy": "not_legal",
+      "paupercommander": "not_legal",
+      "duel": "legal",
+      "oldschool": "not_legal",
+      "premodern": "not_legal",
+      "predh": "legal",
+      "tlr": "legal"
+    },
+    "games": [
+      "paper"
+    ],
+    "promo": false,
+    "full_art": false,
+    "reprint": true,
+    "textless": false,
+    "rarity": "rare",
+    "finishes": [
+      "nonfoil",
+      "etched"
+    ],
+    "image_uris": {
+      "small": "https://cards.scryfall.io/small/front/1/e/1ecc64b6-6f2c-4b20-aa80-54cc47382606.jpg?1783919209",
+      "normal": "https://cards.scryfall.io/normal/front/1/e/1ecc64b6-6f2c-4b20-aa80-54cc47382606.jpg?1783919209",
+      "large": "https://cards.scryfall.io/large/front/1/e/1ecc64b6-6f2c-4b20-aa80-54cc47382606.jpg?1783919209",
+      "png": "https://cards.scryfall.io/png/front/1/e/1ecc64b6-6f2c-4b20-aa80-54cc47382606.png?1783919209",
+      "art_crop": "https://cards.scryfall.io/art_crop/front/1/e/1ecc64b6-6f2c-4b20-aa80-54cc47382606.jpg?1783919209",
+      "border_crop": "https://cards.scryfall.io/border_crop/front/1/e/1ecc64b6-6f2c-4b20-aa80-54cc47382606.jpg?1783919209",
+      "thumb": "https://cards.scryfall.io/thumb/front/1/e/1ecc64b6-6f2c-4b20-aa80-54cc47382606.webp?1783919209",
+      "grid": "https://cards.scryfall.io/grid/front/1/e/1ecc64b6-6f2c-4b20-aa80-54cc47382606.webp?1783919209",
+      "display": "https://cards.scryfall.io/display/front/1/e/1ecc64b6-6f2c-4b20-aa80-54cc47382606.webp?1783919209",
+      "art": "https://cards.scryfall.io/art/front/1/e/1ecc64b6-6f2c-4b20-aa80-54cc47382606.webp?1783919209",
+      "crop": "https://cards.scryfall.io/crop/front/1/e/1ecc64b6-6f2c-4b20-aa80-54cc47382606.webp?1783919209",
+      "jpeg": "https://cards.scryfall.io/normal/front/1/e/1ecc64b6-6f2c-4b20-aa80-54cc47382606.jpg?1783919209"
+    },
+    "prices": {
+      "usd": "36.84",
+      "usd_foil": null,
+      "usd_etched": "49.66",
+      "eur": "29.57",
+      "eur_foil": null,
+      "tix": null
+    },
+    "scryfall_uri": "https://scryfall.com/card/sld/1117/thoughtseize?utm_source=api",
+    "prints_search_uri": "https://api.scryfall.com/cards/search?order=released&q=oracleid%3Aedd8d1e8-be43-4c38-bb3a-83081fbaf0b5&unique=prints"
+  },
+  {
+    "object": "card",
+    "id": "e1d8efe5-3356-4dbe-a05f-c87c9b4264a8",
+    "oracle_id": "4c445455-5b91-4c22-8b3b-8cff4e97f00a",
+    "multiverse_ids": [],
+    "name": "Aardwolf's Advantage",
+    "set": "unf",
+    "set_name": "Unfinity",
+    "lang": "en",
+    "released_at": "2022-10-07",
+    "collector_number": "383",
+    "artist": "Tomek Larek",
+    "illustration_id": "046f3885-ba60-4cc1-80d0-be16aa221330",
+    "layout": "normal",
+    "frame": "2015",
+    "border_color": "black",
+    "security_stamp": "acorn",
+    "oversized": false,
+    "mana_cost": "{2}{R}",
+    "cmc": 3.0,
+    "type_line": "Sorcery",
+    "oracle_text": "Creatures you control get +2/+0 and gain alpha strike until end of turn. (A creature with alpha strike has first strike as long as it's blocking or being blocked by a creature that comes after it alphabetically.)",
+    "colors": [
+      "R"
+    ],
+    "color_identity": [
+      "R"
+    ],
+    "keywords": [],
+    "legalities": {
+      "standard": "not_legal",
+      "future": "not_legal",
+      "historic": "not_legal",
+      "timeless": "not_legal",
+      "gladiator": "not_legal",
+      "pioneer": "not_legal",
+      "modern": "not_legal",
+      "legacy": "not_legal",
+      "pauper": "not_legal",
+      "vintage": "not_legal",
+      "penny": "not_legal",
+      "commander": "not_legal",
+      "oathbreaker": "not_legal",
+      "standardbrawl": "not_legal",
+      "brawl": "not_legal",
+      "competitivebrawl": "not_legal",
+      "alchemy": "not_legal",
+      "paupercommander": "not_legal",
+      "duel": "not_legal",
+      "oldschool": "not_legal",
+      "premodern": "not_legal",
+      "predh": "not_legal",
+      "tlr": "not_legal"
+    },
+    "games": [
+      "paper"
+    ],
+    "promo": false,
+    "promo_types": [
+      "galaxyfoil",
+      "boosterfun"
+    ],
+    "full_art": false,
+    "reprint": false,
+    "textless": false,
+    "rarity": "common",
+    "finishes": [
+      "foil"
+    ],
+    "image_uris": {
+      "small": "https://cards.scryfall.io/small/front/e/1/e1d8efe5-3356-4dbe-a05f-c87c9b4264a8.jpg?1783920403",
+      "normal": "https://cards.scryfall.io/normal/front/e/1/e1d8efe5-3356-4dbe-a05f-c87c9b4264a8.jpg?1783920403",
+      "large": "https://cards.scryfall.io/large/front/e/1/e1d8efe5-3356-4dbe-a05f-c87c9b4264a8.jpg?1783920403",
+      "png": "https://cards.scryfall.io/png/front/e/1/e1d8efe5-3356-4dbe-a05f-c87c9b4264a8.png?1783920403",
+      "art_crop": "https://cards.scryfall.io/art_crop/front/e/1/e1d8efe5-3356-4dbe-a05f-c87c9b4264a8.jpg?1783920403",
+      "border_crop": "https://cards.scryfall.io/border_crop/front/e/1/e1d8efe5-3356-4dbe-a05f-c87c9b4264a8.jpg?1783920403",
+      "thumb": "https://cards.scryfall.io/thumb/front/e/1/e1d8efe5-3356-4dbe-a05f-c87c9b4264a8.webp?1783920403",
+      "grid": "https://cards.scryfall.io/grid/front/e/1/e1d8efe5-3356-4dbe-a05f-c87c9b4264a8.webp?1783920403",
+      "display": "https://cards.scryfall.io/display/front/e/1/e1d8efe5-3356-4dbe-a05f-c87c9b4264a8.webp?1783920403",
+      "art": "https://cards.scryfall.io/art/front/e/1/e1d8efe5-3356-4dbe-a05f-c87c9b4264a8.webp?1783920403",
+      "crop": "https://cards.scryfall.io/crop/front/e/1/e1d8efe5-3356-4dbe-a05f-c87c9b4264a8.webp?1783920403",
+      "jpeg": "https://cards.scryfall.io/normal/front/e/1/e1d8efe5-3356-4dbe-a05f-c87c9b4264a8.jpg?1783920403"
+    },
+    "prices": {
+      "usd": null,
+      "usd_foil": "0.25",
+      "usd_etched": null,
+      "eur": null,
+      "eur_foil": "0.33",
+      "tix": null
+    },
+    "scryfall_uri": "https://scryfall.com/card/unf/383/aardwolfs-advantage?utm_source=api",
+    "prints_search_uri": "https://api.scryfall.com/cards/search?order=released&q=oracleid%3A4c445455-5b91-4c22-8b3b-8cff4e97f00a&unique=prints"
+  }
+]

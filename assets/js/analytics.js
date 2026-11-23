@@ -18,6 +18,9 @@
     exact_printing_select:{source:oneOf(['search','guide','comparison','cotw','unknown']),
       language_group:oneOf(['english','other']),finish:oneOf(FINISHES)},
     guide_compare_start:{guide,selection_count:count},
+    printing_table_select:{table:oneOf(['search','archive']),surface:oneOf(['home','guide'])},
+    finish_switch:{surface:oneOf(['home','guide','deck'])},
+    printing_difference_expand:{surface:oneOf(['guide'])},
     comparison_save:{selection_count:count,storage:oneOf(['browser','memory'])},
     comparison_share:{selection_count:count,method:oneOf(['clipboard','manual'])},
     deck_import_complete:{import_format:oneOf(['text','csv','json']),deck_format:oneOf(FORMATS)},
@@ -31,7 +34,7 @@
     merchant_exit:{merchant:()=>false,guide,exact_printing:bool,finish:oneOf(FINISHES)}
   });
   for(const schema of Object.values(schemas))Object.freeze(schema);
-  const MAPPING=Object.freeze({search_success:'Search Success',exact_printing_select:'Exact Printing Select',guide_compare_start:'Compare Started',comparison_save:'Comparison Save',comparison_share:'Comparison Share',deck_import_complete:'Deck Import Complete',deck_export:'Deck Export',cotw_inspect:'COTW Inspect',cotw_deck_start:'COTW Deck Start',deck_studio_open:'Deck Studio Open',guide_deck_start:'Guide Deck Start',deck_generation_start:'Deck Generation Start',deck_generation_complete:'Deck Generation Complete',merchant_exit:'Merchant Exit'});
+  const MAPPING=Object.freeze({search_success:'Search Success',exact_printing_select:'Exact Printing Select',guide_compare_start:'Compare Started',printing_table_select:'Printing Table Select',finish_switch:'Finish Switch',printing_difference_expand:'Printing Difference Expand',comparison_save:'Comparison Save',comparison_share:'Comparison Share',deck_import_complete:'Deck Import Complete',deck_export:'Deck Export',cotw_inspect:'COTW Inspect',cotw_deck_start:'COTW Deck Start',deck_studio_open:'Deck Studio Open',guide_deck_start:'Guide Deck Start',deck_generation_start:'Deck Generation Start',deck_generation_complete:'Deck Generation Complete',merchant_exit:'Merchant Exit'});
   function validate(event,properties,approved=new Set()){
     try{
       if(typeof event!=='string'||!Object.hasOwn(schemas,event)||!properties||typeof properties!=='object'||Array.isArray(properties))return null;

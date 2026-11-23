@@ -629,10 +629,6 @@
 }
 
 .weekly-card-feature {
-  --weekly-x: 50%;
-  --weekly-y: 42%;
-  --weekly-rx: 2.8deg;
-  --weekly-ry: -5.5deg;
 
   position: relative;
   isolation: isolate;
@@ -786,41 +782,7 @@
   pointer-events: none;
 }
 
-.weekly-card-shell {
-  position: relative;
-  z-index: 3;
 
-  width: min(100%,290px);
-  aspect-ratio: 488 / 680;
-
-  overflow: hidden;
-  border-radius: 15px;
-
-  background: #07100a;
-
-  transform:
-    perspective(1100px)
-    rotateX(var(--weekly-rx))
-    rotateY(var(--weekly-ry));
-
-  transform-style: preserve-3d;
-
-  box-shadow:
-    0 30px 70px rgba(0,0,0,.7),
-    0 0 42px rgba(57,188,92,.2),
-    0 0 0 1px rgba(144,235,170,.1);
-
-  transition:
-    transform .15s ease-out,
-    box-shadow .25s ease;
-}
-
-.weekly-card-shell:hover {
-  box-shadow:
-    0 34px 82px rgba(0,0,0,.75),
-    0 0 58px rgba(77,211,108,.28),
-    0 0 0 1px rgba(158,255,184,.17);
-}
 
 .weekly-card-image {
   position: relative;
@@ -1411,9 +1373,6 @@
     border-bottom: 1px solid rgba(139,227,157,.1);
   }
 
-  .weekly-card-shell {
-    width: min(275px,73vw);
-  }
 
   .weekly-story {
     padding: 2.7rem 2.3rem;
@@ -1573,9 +1532,6 @@
     padding: 2.2rem 1rem;
   }
 
-  .weekly-card-shell {
-    width: min(245px,75vw);
-  }
 
   .weekly-card-halo {
     width: 295px;
@@ -1727,9 +1683,6 @@
     min-height: 420px;
   }
 
-  .weekly-card-shell {
-    width: min(225px,73vw);
-  }
 
   .weekly-card-halo {
     width: 270px;
@@ -1757,14 +1710,10 @@
   .weekly-card-halo,
   .weekly-card-feature::after,
   .weekly-scene::before,
-  .weekly-scene::after,
-  .weekly-foil-sheen {
+  .weekly-scene::after {
     animation: none !important;
   }
 
-  .weekly-card-shell {
-    transition: none !important;
-  }
 
   .scoutboard-feature-card,
   .scoutboard-feature-art img,
@@ -1875,14 +1824,13 @@
 @media (max-width: 760px) { .home-editorial-grid { grid-template-columns: 1fr; } .home-editorial { margin: 1.7rem 0; } }
 
 /* Week 007 — MH3 #383 concept traditional foil. Existing stage, input and visibility state. */
-.weekly-physical {  --weekly-card-radius: 15px;
-  --weekly-light-angle: -6deg; --weekly-shadow-x: 0px; --weekly-shadow-y: 0px; --weekly-edge: .78;
+.weekly-physical {  --weekly-shadow-x: 0px;
   --weekly-idle-z: 38px; --weekly-idle-lift: -6px;
   --weekly-idle-xa: 2.8deg; --weekly-idle-xb: -2.1deg; --weekly-idle-xc: 1.3deg;
   --weekly-idle-ya: -5.5deg; --weekly-idle-yb: 4.2deg; --weekly-idle-yc: -3.2deg;
 }
 .weekly-theme-eldrazi {
-  --weekly-reflection:.70;--weekly-light-x:-2%;--weekly-light-y:1%;
+
   background: linear-gradient(130deg,#050609,#101019 54%,#050509);
   border-color: #a9a1c139; box-shadow: 0 28px 75px #0008,inset 0 1px 0 #ede9f10a;
 }
@@ -1893,55 +1841,12 @@
 .weekly-theme-eldrazi .weekly-scene::before { content: ""; position: absolute; inset: 0; background: radial-gradient(ellipse at 19% 37%,#9a84bd14,transparent 46%),linear-gradient(105deg,#0006,transparent 48%,#0006); opacity: .5; animation: msVoidAtmosphere 16s ease-in-out infinite alternate; }
 .weekly-physical .weekly-card-stage { position: relative; z-index: 3; width: min(100%,330px); max-width: 100%; perspective: 760px; perspective-origin: 50% 45%; transform-style: preserve-3d; }
 .weekly-physical .weekly-card-float { position: relative; width: 100%; z-index: 3; transform-style: preserve-3d; transform: translate3d(0,2px,var(--weekly-idle-z)) rotateX(var(--weekly-idle-xa)) rotateY(var(--weekly-idle-ya)); animation: msWeeklyFloat 13s ease-in-out infinite alternate; }
-.weekly-physical .weekly-card-float > .weekly-card-shell { width: 100%; overflow: visible; border-radius: var(--weekly-card-radius); background: #08080c; transform: translateZ(8px); transition: transform .55s cubic-bezier(.18,.75,.2,1),box-shadow .25s ease; touch-action: pan-y pinch-zoom; }
-.weekly-physical .weekly-card-shell, .weekly-physical .weekly-card-shell:hover { box-shadow: 0 1px 0 #eee8f299,1px 2px 0 #595260,2px 3px 0 #17131e,3px 4px 0 #020204,0 10px 15px #000a,var(--weekly-shadow-x) calc(28px + var(--weekly-shadow-y)) 32px #000d,var(--weekly-shadow-x) 48px 62px #0009; }
-/* One flat, rounded face is composited before the outer shell's 3D projection.
-   The shell owns external depth/shadows; only this inner face clips its children. */
-.weekly-physical .weekly-card-face {
-  position: absolute; inset: 0; overflow: hidden; border-radius: inherit;
-  isolation: isolate; transform-style: flat;
-  clip-path: inset(0 round var(--weekly-card-radius));
-  -webkit-clip-path: inset(0 round var(--weekly-card-radius));
-}
 .weekly-physical .weekly-card-image { object-fit: contain; border-radius: inherit; }
 .weekly-theme-eldrazi .weekly-card-placeholder { color: #c2b8d1; }
 .weekly-theme-eldrazi .weekly-card-placeholder small { color: #b8adc8; }
 .weekly-theme-eldrazi .weekly-card-halo { inset: -11% -16%; width: auto; height: auto; border-radius: 0; filter: blur(6px); opacity: .2; background: linear-gradient(119deg,transparent 16%,#b9a8d629 46%,transparent 72%),linear-gradient(36deg,transparent 36%,#8cabc21a 57%,transparent 80%); mask-image: linear-gradient(180deg,transparent,#000 28%,#000 70%,transparent); -webkit-mask-image: linear-gradient(180deg,transparent,#000 28%,#000 70%,transparent); animation: msVoidAtmosphere 16s ease-in-out infinite alternate; }
 .weekly-theme-eldrazi .weekly-card-halo::after { content: ""; position: absolute; inset: -4%; border-radius: 43% 57% 54% 46%; border: 1px solid #c3b7d929; box-shadow: 0 0 14px #bdb3cc0a; opacity: 0; animation: msVoidRipple 19s ease-out infinite; }
 .weekly-physical .weekly-card-rest-shadow { position: absolute; z-index: 1; left: 7%; right: 7%; bottom: -19px; height: 30px; pointer-events: none; background: radial-gradient(ellipse,#000c,#0006 32%,transparent 73%); opacity: .72; animation: msWeeklyRestShadow 13s ease-in-out infinite alternate; }
-.weekly-physical .weekly-edge-light { position: absolute; inset: 0; z-index: 7; pointer-events: none; border: 1px solid #e9e2f178; border-radius: inherit; opacity: var(--weekly-edge); background: linear-gradient(var(--weekly-light-angle),#e8e4ed32,transparent 7%,transparent 93%,#7f839936); box-shadow: inset 0 1px 0 #fff9,inset 1px 0 0 #dcd4ea66,inset -1px -1px 0 #000a; transition: opacity .16s ease; }
-/* Traditional-foil light is painted inside the face. No separate foil plane,
-   negative inset, Z offset or rotating rectangle; only gradient positions drift. */
-.weekly-theme-eldrazi .weekly-foil-sheen {
-  position: absolute; inset: 0; z-index: 5; overflow: hidden; border-radius: inherit;
-  pointer-events: none; mix-blend-mode: screen; opacity: var(--weekly-reflection);
-  transform: none; transition: opacity .12s ease-out;
-  mask-image: linear-gradient(#000 20%,#000 58%,#0009 70%,#0003 84%,#0003 100%);
-  -webkit-mask-image: linear-gradient(#000 20%,#000 58%,#0009 70%,#0003 84%,#0003 100%);
-}
-.weekly-theme-eldrazi .weekly-foil-sheen::before,
-.weekly-theme-eldrazi .weekly-foil-sheen::after {
-  content: ""; position: absolute; inset: 0; border-radius: inherit;
-  background-repeat: no-repeat; background-position: calc(50% + var(--weekly-light-x)) calc(50% + var(--weekly-light-y));
-}
-/* Broad, soft metallic reflection. */
-.weekly-theme-eldrazi .weekly-foil-sheen::before {
-  background-image: radial-gradient(ellipse 65% 100% at var(--weekly-x) var(--weekly-y),#f1eee078 0%,#e0e5e857 26%,#bac7d030 48%,transparent 72%);
-  background-size: 125% 125%; animation: msWeeklyReflection 11s ease-in-out -3s infinite alternate;
-}
-/* Narrow feathered specular highlight: the light angle changes, not the rectangle. */
-.weekly-theme-eldrazi .weekly-foil-sheen::after {
-  opacity: .82;
-  background-image: linear-gradient(calc(115deg + var(--weekly-light-angle)),transparent 42%,#dbe2e900 46%,#f5f3e14d 48.5%,#ffffffa3 51%,#e1e7ed52 53%,transparent 57%);
-  background-size: 180% 180%; animation: msWeeklyReflection 17s ease-in-out -8s infinite alternate-reverse;
-}
-/* Faint cool separation; constant surface opacity, no whole-card pulse. */
-.weekly-theme-eldrazi .weekly-foil-glimmer {
-  position: absolute; inset: 0; border-radius: inherit; opacity: .24; transform: none;
-  background-image: radial-gradient(ellipse 38% 62% at calc(100% - var(--weekly-x)) calc(100% - var(--weekly-y)),#86aaca35,#ada4c526 32%,transparent 72%);
-  background-size: 135% 135%; background-repeat: no-repeat; background-position: 50% 50%;
-  animation: msWeeklyGlimmer 23s ease-in-out -5s infinite alternate;
-}
 .weekly-theme-eldrazi .weekly-kicker, .weekly-theme-eldrazi .weekly-fact small, .weekly-theme-eldrazi .weekly-fact-mark { color: #c3b5dd; }
 .weekly-theme-eldrazi .weekly-story h3 { color: #f0edf3; }
 .weekly-theme-eldrazi .weekly-fact { background: #b4a8c509; border-color: #c6b4da22; }
@@ -1962,15 +1867,10 @@
 .weekly-physical[data-weekly-presentation="interactive"] .weekly-card-rest-shadow,
 .weekly-physical[data-weekly-presentation="returning"] .weekly-card-float,
 .weekly-physical[data-weekly-presentation="returning"] .weekly-card-rest-shadow { animation-play-state: paused; }
-.weekly-physical[data-weekly-interacting="true"] .weekly-card-shell { transform: translateZ(8px) rotateX(var(--weekly-rx)) rotateY(var(--weekly-ry)); transition-duration: .12s,.2s; }
 .weekly-physical .weekly-card-rest-shadow { transform: translate3d(var(--weekly-shadow-x),2px,0); }
 [data-weekly-effects-paused="true"] *, [data-weekly-effects-paused="true"]::after, [data-weekly-effects-paused="true"] *::before, [data-weekly-effects-paused="true"] *::after { animation-play-state: paused !important; }
-[data-weekly-art-ready="false"] .weekly-foil-sheen { visibility: hidden; }
-[data-weekly-art-ready="false"] .weekly-foil-sheen *, [data-weekly-art-ready="false"] .weekly-foil-sheen::before, [data-weekly-art-ready="false"] .weekly-foil-sheen::after { animation-play-state: paused !important; }
 @keyframes msWeeklyFloat { 0% { transform: translate3d(0,2px,var(--weekly-idle-z)) rotateX(var(--weekly-idle-xa)) rotateY(var(--weekly-idle-ya)); } 48% { transform: translate3d(0,var(--weekly-idle-lift),calc(var(--weekly-idle-z) + 5px)) rotateX(var(--weekly-idle-xb)) rotateY(var(--weekly-idle-yb)); } 100% { transform: translate3d(0,0,calc(var(--weekly-idle-z) + 1px)) rotateX(var(--weekly-idle-xc)) rotateY(var(--weekly-idle-yc)); } }
 @keyframes msWeeklyRestShadow { 0% { transform: translate3d(var(--weekly-shadow-x),1px,0) scale(.94,.9); opacity: .76; } 48% { transform: translate3d(var(--weekly-shadow-x),3px,0) scale(1.05,1.15); opacity: .48; } 100% { transform: translate3d(var(--weekly-shadow-x),0px,0) scale(.98,1); opacity: .67; } }
-@keyframes msWeeklyReflection { 0% { background-position: calc(48% + var(--weekly-light-x)) calc(51% + var(--weekly-light-y)); } 57% { background-position: calc(52% + var(--weekly-light-x)) calc(48% + var(--weekly-light-y)); } 100% { background-position: calc(49% + var(--weekly-light-x)) calc(53% + var(--weekly-light-y)); } }
-@keyframes msWeeklyGlimmer { 0% { background-position: calc(49% + var(--weekly-light-x)) calc(52% + var(--weekly-light-y)); } 100% { background-position: calc(52% + var(--weekly-light-x)) calc(49% + var(--weekly-light-y)); } }
 @keyframes msVoidAtmosphere { 0%,100% { opacity: .12; transform: translate3d(-1%,.5%,0) scale(.98,1.01); } 61% { opacity: .25; transform: translate3d(.7%,-.6%,0) scale(1.025,.98); } }
 @keyframes msVoidRipple { 0%,68%,100% { opacity: 0; transform: scale(.94,1); } 75% { opacity: .13; } 94% { opacity: 0; transform: scale(1.1,1.07); } }
 @media (max-width: 820px) {
@@ -1983,17 +1883,12 @@
 @media (max-width: 390px) { .weekly-physical .weekly-card-stage { width: min(248px,72vw); } }
 @media (prefers-reduced-motion: reduce) {
   .weekly-physical *, .weekly-physical *::before, .weekly-physical *::after { animation: none !important; transition: none !important; }
-  /* No animation, but the base raised/angled float pose remains visible. */
-  .weekly-theme-eldrazi .weekly-foil-sheen { opacity: .78; }
-  .weekly-theme-eldrazi .weekly-foil-sheen::before,
-  .weekly-theme-eldrazi .weekly-foil-sheen::after { background-position: 50% 50%; }
-  .weekly-theme-eldrazi .weekly-foil-glimmer { opacity: .3; background-position: 50% 50%; }
   .weekly-theme-eldrazi .weekly-card-halo::after { display: none; }
 }
 
 /* Week 008: Cynette. Reuse the physical-card geometry; light stays around the
    nonfoil card, never on its artwork. Existing Eldrazi surface remains archived. */
-.weekly-theme-ocean {background:radial-gradient(ellipse at 22% 42%,#063c54 0%,#062233 40%,#030d1c 78%);border-color:#6ae8ff30;--weekly-card-radius:15px;--weekly-edge:.6}
+.weekly-theme-ocean {background:radial-gradient(ellipse at 22% 42%,#063c54 0%,#062233 40%,#030d1c 78%);border-color:#6ae8ff30;}
 .weekly-theme-ocean::before {background:linear-gradient(165deg,#75efff0c,transparent 48%,#0005)}
 .weekly-theme-ocean::after {background:radial-gradient(ellipse at 20% 25%,#63f9ff15,transparent 60%);opacity:.5}
 .weekly-theme-ocean .weekly-card-column {background:radial-gradient(ellipse at 50% 42%,#12637c55,#031426 72%);border-color:#70eaff18}
@@ -2001,13 +1896,10 @@
 .weekly-theme-ocean .weekly-scene::after {content:"";position:absolute;inset:0;pointer-events:none;background:radial-gradient(circle at 12% 80%,#87ecff88 0 1px,transparent 2px),radial-gradient(circle at 48% 50%,#6cdbff66 0 1px,transparent 2px),radial-gradient(circle at 83% 76%,#bbf7ff66 0 1px,transparent 2px),radial-gradient(circle at 68% 24%,#8adfff55 0 1px,transparent 2px);background-size:190px 230px;opacity:.45;animation:msOceanBubbles 22s linear infinite}
 .weekly-theme-ocean .weekly-card-halo {background:radial-gradient(ellipse,#4ee5ff28,transparent 67%);box-shadow:none;filter:none}
 .weekly-theme-ocean .weekly-card-halo::before,.weekly-theme-ocean .weekly-card-halo::after {background:radial-gradient(ellipse at 50% 30%,#80f8ff25,transparent 65%);border-color:#91faff20;box-shadow:none}
-.weekly-theme-ocean .weekly-card-shell,.weekly-theme-ocean .weekly-card-shell:hover {box-shadow:0 1px 0 #a9d7e77a,1px 2px 0 #335562,2px 3px 0 #102a38,3px 4px 0 #02070c,0 10px 15px #0009,var(--weekly-shadow-x) calc(28px + var(--weekly-shadow-y)) 32px #000c,var(--weekly-shadow-x) 48px 62px #0009}
-.weekly-theme-ocean .weekly-edge-light {background:none;box-shadow:inset 0 1px 0 #c9faff55,inset 1px 0 0 #c9faff33;opacity:.55;border-color:#a0eaff40}
 .weekly-theme-ocean .weekly-story h3 {color:#e4fbff;text-shadow:none}
 .weekly-theme-ocean .weekly-kicker,.weekly-theme-ocean .weekly-printing-detail {color:#8cdeec}
 .weekly-theme-ocean .weekly-fact {border-color:#74e8ff22;background:#05223580}
 .weekly-theme-ocean .weekly-link,.weekly-theme-ocean .weekly-source a {color:#9be7f2}
-.weekly-theme-ocean .weekly-foil-sheen,.weekly-theme-ocean .weekly-foil-glimmer {display:none!important}
 .weekly-theme-ocean[data-weekly-effects-paused="true"] .weekly-scene::after {animation-play-state:paused}
 @keyframes msOceanDepth {from {opacity:.45;transform:translate3d(-1%,0,0)} to {opacity:.7;transform:translate3d(1%,1%,0)}}
 @keyframes msOceanBubbles {from {background-position:0 0} to {background-position:12px -230px}}
@@ -2050,7 +1942,6 @@
   --weekly-idle-z: 18px;
   --weekly-idle-xa: .6deg;
   --weekly-idle-ya: -.8deg;
-  --weekly-edge: .38;
   background: radial-gradient(ellipse at 18% 46%, #12122a, #090814 52%, #05050b 84%);
   border-color: #b6a2e433;
 }
@@ -2097,35 +1988,6 @@
 .weekly-theme-cosmic[data-weekly-interacting="true"] .weekly-card-halo {
   opacity: .64;
   scale: .95;
-}
-.weekly-theme-cosmic .weekly-edge-light {
-  border: 0;
-  background: linear-gradient(var(--weekly-light-angle), #f1daff75, transparent 8%, transparent 93%, #779fdf79);
-  box-shadow: inset 0 1px 0 #fff6, inset 1px 0 0 #b1a2f05c, inset -1px -1px 0 #94508050;
-}
-.weekly-theme-cosmic .weekly-foil-sheen {
-  position: absolute;
-  inset: 0;
-  z-index: 5;
-  pointer-events: none;
-  mix-blend-mode: screen;
-  opacity: .21;
-  transition: opacity .4s ease;
-  mask-image: linear-gradient(#000 38%, #0009 67%, #0004 92%);
-}
-.weekly-theme-cosmic[data-weekly-interacting="true"] .weekly-foil-sheen { opacity: .38; }
-.weekly-theme-cosmic .weekly-foil-sheen::before {
-  content: "";
-  position: absolute;
-  inset: -25%;
-  background: linear-gradient(116deg, transparent 29%, #435fd334 38%, #a583eb51 46%, #ecedff77 51%, #cb66814a 57%, transparent 69%);
-  translate: var(--weekly-foil-x, 0%) var(--weekly-foil-y, 0%);
-  transition: translate .25s ease-out;
-  animation: msCosmicReflection 26s ease-in-out infinite alternate;
-}
-@keyframes msCosmicReflection {
-  from { transform: translateX(-5%); }
-  to { transform: translateX(5%); }
 }
 .weekly-cosmic-filaments {
   position: absolute;
@@ -2174,3 +2036,9 @@
   .weekly-theme-cosmic .weekly-scene::before,
   .weekly-theme-cosmic .weekly-scene::after { transform: none; }
 }
+
+.weekly-physical .ms-physical-shell { background: #08080c; }
+.weekly-physical .ms-physical-face > img { border-radius: inherit; }
+.weekly-physical[data-weekly-art-ready="false"] :is(.ms-physical-edge, .ms-physical-reflection) { visibility: hidden; }
+.scoutboard-feature-art > .ms-physical { width: min(100%, 180px); margin-inline: auto; }
+.scoutboard-feature-art > .ms-physical img { transform: none; }

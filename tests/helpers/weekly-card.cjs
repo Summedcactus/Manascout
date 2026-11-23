@@ -16,7 +16,7 @@ function mount({fine=true,reduced=false,set='mh3',number='383',name='Ulamog, the
   floating.animate=(frames,options)=>{let resolve,reject,observed=false;const promise=new Promise((a,b)=>{resolve=a;reject=b;});const job={frames,options,current:frames[0].transform,cancelled:false,get finished(){observed=true;return promise;},cancel(){this.cancelled=true;if(active===this)active=null;if(observed)reject(Error('cancelled'));},finish(){this.current=frames.at(-1).transform;resolve();},sample(value){this.current=value;}};jobs.push(job);active=job;return job;};
  }
  if(!observer)c.IntersectionObserver=undefined;
- vm.createContext(c);vm.runInContext(source.slice(source.indexOf('  /* One input system'),source.indexOf('  /* ========================================\n     END')),c);
+ vm.createContext(c);vm.runInContext(source.slice(source.indexOf('  /* Keep the scene'),source.indexOf('  /* ========================================\n     END')),c);
  return {d,c,weekly,stage,shell,image,listeners,listenerOptions,jobs,basePose,state(state){listeners['manascout:statechange'].forEach(fn=>fn({detail:{state}}));},visible(value){d.observers[0]?.deliver(stage,value);}};
 }
 module.exports={mount};

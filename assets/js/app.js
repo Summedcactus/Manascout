@@ -85,41 +85,8 @@
     "worldly-tutor"
   ]);
 
-  const TREATMENT = {
-    surgefoil: "Surge foil",
-    galaxyfoil: "Galaxy foil",
-    halofoil: "Halo foil",
-    rainbowfoil: "Rainbow foil",
-    textured: "Textured foil",
-    stepandcompleat: "Step-and-Compleat foil",
-    serialized: "Serialized",
-    extendedart: "Extended art",
-    showcase: "Showcase",
-    inverted: "Inverted",
-    boosterfun: "Booster Fun",
-    etched: "Etched foil",
-    confettifoil: "Confetti foil"
-  };
-
-  const LANGS = {
-    en: "English",
-    es: "Spanish",
-    fr: "French",
-    de: "German",
-    it: "Italian",
-    pt: "Portuguese",
-    ja: "Japanese",
-    ko: "Korean",
-    ru: "Russian",
-    zhs: "Simplified Chinese",
-    zht: "Traditional Chinese",
-    he: "Hebrew",
-    la: "Latin",
-    grc: "Ancient Greek",
-    ar: "Arabic",
-    sa: "Sanskrit",
-    ph: "Phyrexian"
-  };
+  const presentation = window.ManaScoutPrinting;
+  const LANGS = presentation.languages;
 
   const previews = new Map();
   const pickCache = new Map();
@@ -141,6 +108,7 @@
   const searchPages = new Map();
   const searchStatus = $("ms-search-status");
   const searchResults = $("ms-search-results");
+  let showingExactResults = false;
   const intentEngine = window.ManaScoutSearchIntent;
 
 
@@ -441,6 +409,7 @@
     resultController?.abort();
     if (searchStatus) searchStatus.textContent = "";
     if (searchResults) searchResults.hidden = true;
+    showingExactResults = false;
     suggestController?.abort();
     clearTimeout(suggestTimer);
 
@@ -508,7 +477,13 @@
   }
 
   function installGuideImages() {
-    for (const img of document.querySelectorAll(".guide-static-art img")) {
+    for (const img of document.querySelectorAll(".guide-static-art img, .guide-variant-grid img")) {
+      const { printingId, verifiedFinish, verifiedTreatments } = img.closest("figure").dataset;
+      presentation.enhance(img, {
+        id: printingId,
+        finishes: verifiedFinish ? [verifiedFinish] : [],
+        promo_types: verifiedTreatments?.split(" ") || []
+      }, verifiedFinish);
       const failed = () => {
         img.hidden = true;
         const notice = img.closest("figure")?.querySelector(".guide-image-error");
@@ -547,63 +522,15 @@
      PRINTING FINISHES
      ======================================== */
 
-  function finishes(card) {
-    return Array.isArray(card?.finishes)
-      ? card.finishes
-      : [];
-  }
+  const finishes = presentation.available;
 
   function selectedFinish(card) {
-    const options =
-      finishes(card);
-
-    const requested =
-      previews.get(card?.id);
-
-    if (
-      requested &&
-      options.includes(requested)
-    ) {
-      return requested;
-    }
-
-    if (options.includes("foil")) {
-      return "foil";
-    }
-
-    if (options.includes("etched")) {
-      return "etched";
-    }
-
-    return options.includes("nonfoil")
-      ? "nonfoil"
-      : options[0] || "";
+    const requested = previews.get(card?.id);
+    return finishes(card).includes(requested) ? requested : presentation.defaultFinish(card);
   }
 
-  function finishLabel(finish) {
-    return {
-      nonfoil: "Nonfoil",
-      foil: "Foil",
-      etched: "Etched foil"
-    }[finish] ||
-      pretty(finish) ||
-      "Unknown";
-  }
-
-  function finishText(card) {
-    return finishes(card)
-      .map(finishLabel)
-      .join(", ") || "—";
-  }
-
-  function shimmer(card) {
-    return [
-      "foil",
-      "etched"
-    ].includes(
-      selectedFinish(card)
-    );
-  }
+  const finishLabel = presentation.finishLabel;
+  const finishText = presentation.finishList;
 
   function chooseFinish(card, requested) {
     if (
@@ -636,44 +563,28 @@
     return result.every(Boolean) && result[0].src !== result[1].src ? result : [];
   }
 
-  function foilControl(card, small = false) {
-    if (small || !shimmer(card) || !has(card, "nonfoil")) return "";
-    const label = `Use nonfoil finish for ${card.name}; turn off simulated foil`;
-    return `<button type="button" class="ms-surface-control ms-nonfoil-control" data-ms-nonfoil="${esc(card.id)}" aria-label="${esc(label)}" title="Use nonfoil"><span aria-hidden="true">×</span></button>`;
-  }
-
   function finishSelector(card) {
     const available = finishes(card);
-    if (available.length < 2) return stat("Preview finish", available.length ? finishLabel(available[0]) : "Not supplied");
-    return `<div class="detail"><strong><label for="ms-selected-finish">Preview finish</label></strong><select id="ms-selected-finish" data-ms-selected-finish="${esc(card.id)}">${available.map(finish => `<option value="${esc(finish)}"${finish === selectedFinish(card) ? " selected" : ""}>${esc(finishLabel(finish))}</option>`).join("")}</select></div>`;
+    if (available.length < 2) return stat("Selected Finish", finishLabel(selectedFinish(card), card));
+    return `<div class="detail"><strong><label for="ms-selected-finish">Selected Finish</label></strong><select id="ms-selected-finish" data-ms-selected-finish="${esc(card.id)}">${available.map(finish => `<option value="${esc(finish)}"${finish === selectedFinish(card) ? " selected" : ""}>${esc(finishLabel(finish, card))}</option>`).join("")}</select></div>`;
   }
 
-  function previewImage(card, small = false) {
-    const pair = small ? [] : reversibleFaces(card);
-    const src = pair[0]?.src || img(card, small ? "small" : "normal");
-    const glint = !small && shimmer(card) && src ? '<span class="ms-foil-glint" aria-hidden="true"></span>' : "";
-    const picture = (source, name, back = false) => `<span class="ms-card-face${back ? " ms-card-back" : ""}"${back ? ' aria-hidden="true"' : ""}><img class="${small ? "printing-card-image" : "card-image"}" src="${esc(source)}" alt="${esc(name)} — ${esc(card.set_name)} #${esc(card.collector_number)}"${small ? ' loading="lazy"' : ""} decoding="async" width="488" height="680">${glint}</span>`;
-    return `<div class="ms-preview ${small ? "ms-thumb" : "ms-card-image"}" data-ms-preview="${esc(card.id || "")}" data-ms-image-ready="false">
-      ${src ? `<div class="ms-face-turner" data-ms-face="front">${picture(src, pair[0]?.name || card.name)}${pair.length ? picture(pair[1].src, pair[1].name, true) : ""}</div>` : '<span class="muted">Image unavailable</span>'}
-      ${!small ? foilControl(card) : ""}
+  function previewImage(card, small = false, finish = selectedFinish(card)) {
+    const src = img(card, small ? "small" : "normal");
+    if (small) return presentation.markup({
+      card, finish, src, alt: "", compact: true, lazy: true, imageClass: "printing-card-image"
+    });
+    const pair = reversibleFaces(card);
+    const picture = (source, name, back = false) => `<span class="ms-card-face${back ? " ms-card-back" : ""}"${back ? ' aria-hidden="true"' : ""}>${presentation.markup({
+      card, finish, src: source, alt: `${name} — ${presentation.printing(card)}`, imageClass: "card-image"
+    })}</span>`;
+    return `<div class="ms-preview ms-card-image" data-ms-preview="${esc(card.id || "")}">
+      <div class="ms-face-turner" data-ms-face="front">${picture(pair[0]?.src || src, pair[0]?.name || card.name)}${pair.length ? picture(pair[1].src, pair[1].name, true) : ""}</div>
       ${pair.length ? `<button class="ms-surface-control ms-flip-control" type="button" data-ms-flip="${esc(card.id)}" aria-label="${esc(`Flip to back: ${pair[1].name}`)}" aria-pressed="false" title="Flip card" disabled><span aria-hidden="true">↻</span></button><span class="ms-face-status" role="status" aria-live="polite"></span>` : ""}
     </div>`;
   }
 
   let previewSession = null;
-  let effectObserver = null;
-  const effectHosts = new Set();
-  function observeCardEffects(container) {
-    if (!container?.querySelectorAll) return;
-    if (!effectObserver && typeof IntersectionObserver === "function") effectObserver = new IntersectionObserver(entries => {
-      for (const entry of entries) entry.target.dataset.msEffectsPaused = String(!entry.isIntersecting);
-    }, { rootMargin: "80px" });
-    for (const host of effectHosts) if (!host.isConnected) { effectObserver?.unobserve(host); effectHosts.delete(host); }
-    for (const glint of container.querySelectorAll(".ms-foil-glint")) {
-      const host = glint.closest(".ms-preview, .ms-thumb-frame");
-      if (host && !effectHosts.has(host)) { effectHosts.add(host); host.dataset.msEffectsPaused = String(!!effectObserver); effectObserver?.observe(host); }
-    }
-  }
   function disposePreview() {
     previewSession?.controller.abort();
     previewSession = null;
@@ -710,7 +621,6 @@
       if (!active()) return;
       session.ready = true; button.disabled = false;
     }).catch(() => { if (active()) { button.disabled = true; button.title = "Card flip unavailable — artwork could not load"; showAction("Both face images must load before flipping. The original front and exact printing are preserved."); status.textContent = "Both face images must load before flipping. The front and exact printing are preserved."; } });
-    observeCardEffects(ui.details);
   }
   function flipPreview(button) {
     const session = previewSession;
@@ -729,49 +639,8 @@
      CARD DETAILS
      ======================================== */
 
-  function treatments(card) {
-    const tags = [];
-
-    if (
-      card?.border_color === "borderless"
-    ) {
-      tags.push("Borderless");
-    }
-
-    if (card?.full_art) {
-      tags.push("Full art");
-    }
-
-    if (card?.textless) {
-      tags.push("Textless");
-    }
-
-    if (card?.promo) {
-      tags.push("Promo");
-    }
-
-    for (
-      const x of [
-        ...(card?.frame_effects || []),
-        ...(card?.promo_types || [])
-      ]
-    ) {
-      tags.push(
-        TREATMENT[x] ||
-        pretty(x)
-      );
-    }
-
-    return [
-      ...new Set(tags)
-    ];
-  }
-
-  function treatmentText(card) {
-    return treatments(card)
-      .join(" · ") ||
-      "Standard frame";
-  }
+  const treatments = presentation.treatments;
+  const treatmentText = card => treatments(card).join(" · ") || presentation.frame(card) || "Frame not supplied";
 
   function legalFormats(card) {
     const special = {
@@ -913,13 +782,47 @@
       if (notice) notice.hidden = true;
       image.src = imageUrl;
     }
-    if (image) image.alt = `${card.name} — ${String(card.set || "").toUpperCase()} #${card.collector_number}, ${finishLabel(selectedFinish(card))}`;
-    if (label) label.textContent = `Selected printing · ${String(card.set || "").toUpperCase()} #${card.collector_number} · ${card.artist || "Artist not listed"} · ${LANGS[card.lang] || card.lang || "Language not listed"} · ${finishLabel(selectedFinish(card))}. Catalogue image; physical finishes vary.`;
+    if (image) image.alt = `${card.name} — ${presentation.setCode(card.set)} #${card.collector_number}, ${finishLabel(selectedFinish(card), card)}`;
+    presentation.enhance(image, card, selectedFinish(card));
+    if (label) label.textContent = `Selected printing · ${presentation.setCode(card.set)} #${card.collector_number} · ${card.artist || "Artist not listed"} · ${presentation.language(card.lang)} · ${finishLabel(selectedFinish(card), card)}. Catalogue image; physical finishes vary.`;
     for (const sourceLink of [link, figure.querySelector(".guide-reference-source")]) {
       if (!sourceLink) continue;
       if (sourceUrl) sourceLink.href = sourceUrl;
       else sourceLink.removeAttribute("href");
     }
+  }
+
+  function guideDifferences(card) {
+    if (!card || !document.body?.dataset?.guideIntent) return "";
+    const referenceId = document.querySelector("[data-guide-reference]")?.dataset.printingId;
+    const baseline = archive?.cards.find(item => item.id === referenceId && item.oracle_id === card.oracle_id);
+    if (!baseline || baseline.id === card.id) return "";
+    const changes = presentation.differences([
+      { card: baseline, finish: presentation.defaultFinish(baseline) },
+      { card, finish: selectedFinish(card) }
+    ]);
+    if (!changes.length) return "";
+    const art = presentation.artwork(card);
+    const sameArtwork = art && art === presentation.artwork(baseline);
+    const rules = presentation.rules(card);
+    const sameRules = rules && rules === presentation.rules(baseline);
+    return `<details data-version-differences><summary>What makes this version different?</summary>
+      <p>Compared with ${esc(presentation.printing(baseline))}.</p>
+      <ul>${changes.map(({label, values}) => `<li><strong>${esc(label)}</strong> · ${esc(label === "Artwork" ? "Different artwork" : values[1] || "Not supplied")}</li>`).join("")}
+        ${sameArtwork ? "<li>Same artwork</li>" : ""}
+        ${sameRules ? "<li>Same gameplay text</li>" : ""}
+      </ul></details>`;
+  }
+
+  function refreshGuideFacts(result) {
+    const count = document.querySelector("[data-intent-record-count]");
+    if (!count || !result.complete || result.notice) return;
+    const records = result.cards.filter(card => sameName(card.name, guideName) && card.lang === "en" && paper(card));
+    const artworks = records.map(presentation.artwork).filter(Boolean);
+    const families = new Set(artworks).size;
+    const exactCount = new Set(records.map(card => card.id)).size;
+    if (exactCount) count.textContent = `${exactCount} English paper printing ${exactCount === 1 ? "record" : "records"}`;
+    if (exactCount && artworks.length === records.length) count.textContent += ` · ${families} artwork ${families === 1 ? "family" : "families"}`;
   }
 
   function renderCard(
@@ -935,7 +838,7 @@
 
     currentCard = card;
     currentPick = isPick;
-    updateGuideReference(card);
+    if (!document.body?.dataset?.guideIntent) updateGuideReference(card);
 
     const artwork = (
       card.card_faces || []
@@ -954,14 +857,17 @@
         <div class="card-text-details">
 
           <h2 tabindex="-1">${esc(card.name || "Unknown card")}</h2>
-          <p class="card-subtitle">${esc([
-            card.set?.toUpperCase(), card.collector_number && "#" + card.collector_number,
-            pretty(card.rarity), card.artist, LANGS[card.lang] || card.lang
-          ].filter(Boolean).join(" · "))}</p>
-          ${finishSelector(card)}
+          <p class="card-subtitle"><strong>${esc(presentation.printing(card))}</strong></p>
+          <p class="card-subtitle">${esc([card.artist, presentation.language(card.lang)].filter(Boolean).join(" · "))}</p>
+          <div class="ms-printing-facts">
+            ${stat("Frame / Treatment", treatmentText(card))}
+            ${finishSelector(card)}
+            ${selectedPrice(card, selectedFinish(card))}
+          </div>
           <div class="ms-selected-actions">
             <button type="button" data-compare-id="${esc(card.id)}">Compare this version</button><a href="#ms-comparison-current" data-compare-jump hidden>View comparison</a>
             ${deckLink(card)}
+            ${showingExactResults ? '<button type="button" data-open-printing-archive>All printings of this card</button>' : ""}
           </div>
         </div>
       </article>
@@ -980,18 +886,19 @@
       explorer.after(information);
     }
     if (information) information.innerHTML = `
+      <div data-guide-difference-slot>${guideDifferences(card)}</div>
       <details><summary>Card details</summary>
           <p>${esc(card.type_line)} ${esc(card.mana_cost)}</p>
           <div class="detail-grid">
             ${stat("Set", card.set_name)}
-            ${stat("Set code", String(card.set || "").toUpperCase())}
+            ${stat("Set code", presentation.setCode(card.set))}
             ${stat("Collector number", card.collector_number)}
-            ${stat("Released", card.released_at)}
+            ${stat("Release Date", card.released_at)}
             ${stat("Rarity", pretty(card.rarity))}
             ${stat("Artist", card.artist)}
-            ${stat("Language", LANGS[card.lang] || String(card.lang || "").toUpperCase())}
-            ${stat("Available finishes", finishText(card))}
-            ${stat("Treatments", treatmentText(card))}
+            ${stat("Language", presentation.language(card.lang))}
+            ${stat("Available Finishes", finishText(card))}
+            ${stat("Frame / Treatment", treatmentText(card))}
           </div>
 
           <div class="ms-card-extra">
@@ -1098,6 +1005,7 @@
         printingId: card.id || ""
       }
     );
+    if (explorer && showingExactResults) explorer.hidden = true;
   }
 
 
@@ -1205,74 +1113,6 @@
         ? value
         : null;
   }
-
-  function priceHtml(
-    c,
-    finish,
-    rates
-  ) {
-    const converted =
-      gbp(c, finish, rates);
-
-    if (converted !== null) {
-      return `
-        <span class="price">
-          <strong>
-            £${converted.toFixed(2)}
-          </strong>
-        </span>
-      `;
-    }
-
-    const prices =
-      c?.prices || {};
-
-    const eur =
-      number(
-        prices[
-          finish === "foil"
-            ? "eur_foil"
-            : "eur"
-        ]
-      );
-
-    const usd =
-      number(
-        prices[
-          finish === "foil"
-            ? "usd_foil"
-            : finish === "etched"
-              ? "usd_etched"
-              : "usd"
-        ]
-      );
-
-    if (
-      finish !== "etched" &&
-      eur !== null
-    ) {
-      return `
-        <span class="price">
-          <strong>
-            €${eur.toFixed(2)}
-          </strong>
-        </span>
-      `;
-    }
-
-    if (usd !== null) {
-      return `
-        <span class="price">
-          <strong>
-            $${usd.toFixed(2)}
-          </strong>
-        </span>
-      `;
-    }
-
-    return '<span class="muted">—</span>';
-  }
-
 
   /* ========================================
      ALL PRINTINGS
@@ -1912,148 +1752,44 @@
      PRINTING TABLE
      ======================================== */
 
-  function row(
-    card,
-    selected,
-    rates,
-    variants = []
-  ) {
-    const chosen =
-      card.id === selected?.id;
+  function selectedPrice(card, finish) {
+    const values = presentation.prices(card, finish);
+    return values.length ? stat("Scryfall Reference Price", values.join(" · ")) : "";
+  }
 
-    return `
-      <tr
-        class="${chosen
-          ? "is-selected-printing"
-          : ""}"
-      >
+  function referencePrices(card) {
+    const values = finishes(card).flatMap(finish => {
+      const prices = presentation.prices(card, finish);
+      return prices.length ? [`<span><strong>${esc(finishLabel(finish, card))}</strong> ${esc(prices.join(" · "))}</span>`] : [];
+    });
+    return values.length ? values.join("") : '<span class="muted">No reference price</span>';
+  }
 
-        <td class="printing-image-cell">
+  const printingHead = '<thead role="rowgroup"><tr role="row"><th scope="col" role="columnheader">Card</th><th scope="col" role="columnheader">Printing</th><th scope="col" role="columnheader">Finish / Treatment</th><th scope="col" role="columnheader">Reference Price</th></tr></thead>';
 
-          <div class="ms-thumb-frame">
+  function recordId(target) {
+    return target.closest("[data-print-id]")?.dataset.printId ||
+      (!target.closest("button, a, summary, details") && target.closest("[data-record-id]")?.dataset.recordId);
+  }
 
-            <button
-              class="printing-select-button printing-image-button"
-              type="button"
-              data-print-id="${esc(card.id)}"
-              title="Select this exact printing"
-              aria-label="Select ${esc(card.set_name)} number ${esc(card.collector_number)}, ${esc(LANGS[card.lang] || card.lang)}"
-            >
-              ${img(card, "small")
-                ? `
-                  <img
-                    class="printing-card-image"
-                    src="${esc(img(card, "small"))}"
-                    alt="${esc(card.name)} — ${esc(card.set_name)}"
-                    loading="lazy"
-                    decoding="async"
-                  >
-                `
-                : "—"}
-            </button>
-
-            <div class="ms-mobile-finishes">
-            <span class="ms-note">${esc(finishText(card))}</span>
-            <details><summary>Printing details and prices</summary>
-              <span class="ms-note">${esc([card.released_at, treatmentText(card)].filter(Boolean).join(" · "))}</span>
-              ${["nonfoil", "foil", "etched"].map(finish => `<div>${esc(finishLabel(finish))} ${priceHtml(card, finish, rates)}</div>`).join("")}
-            </details>
-          </div>
-          ${variants.length ? `<details class="ms-print-variants"><summary>${variants.length} other language ${variants.length === 1 ? "version" : "versions"}</summary>
-            <ul>${variants.map(variant => `<li><button type="button" data-print-id="${esc(variant.id)}">
-              ${esc(LANGS[variant.lang] || variant.lang)} · ${esc(finishText(variant))}
-            </button></li>`).join("")}</ul></details>` : ""}
-
-          ${chosen && shimmer(card) &&
-              img(card, "small")
-                ? `
-                  <span
-                    class="ms-foil-glint"
-                    aria-hidden="true"
-                  ></span>
-                `
-                : ""}
-
-
-          </div>
-
-        </td>
-
-        <td>
-
-          <button
-            class="printing-select-button printing-name-button"
-            type="button"
-            data-print-id="${esc(card.id)}"
-          >
-            <span class="set-name">
-              ${esc(card.set_name || "—")}
-            </span>
-          </button>
-
-          <br>
-
-          <span class="muted">
-            ${esc(String(card.set || "").toUpperCase())} · #${esc(card.collector_number)} · ${esc(pretty(card.rarity))}
-          </span>
-
-          <button type="button" data-compare-id="${esc(card.id)}">Compare version</button><a href="#ms-comparison-current" data-compare-jump hidden>View comparison</a>
-          <span class="ms-note">
-            ${esc(card.artist || "Artist not listed")}
-          </span>
-
-          <span class="ms-note">
-            ${esc(LANGS[card.lang] || card.lang || "Unknown language")}
-          </span>
-
-          ${chosen
-            ? `
-              <span class="ms-note">
-                ◇ SELECTED
-              </span>
-            `
-            : ""}
-
-        </td>
-
-        <td>
-          ${esc(card.released_at || "—")}
-        </td>
-
-        <td>
-          ${esc(card.collector_number || "—")}
-        </td>
-
-        <td>
-          ${esc(pretty(card.rarity) || "—")}
-        </td>
-
-        <td>
-
-          <span class="ms-note">
-            ${esc(finishText(card))}
-          </span>
-
-          <span class="ms-note">
-            ${esc(treatmentText(card))}
-          </span>
-
-        </td>
-
-        <td>
-          ${priceHtml(card, "nonfoil", rates)}
-        </td>
-
-        <td>
-          ${priceHtml(card, "foil", rates)}
-        </td>
-
-        <td>
-          ${priceHtml(card, "etched", rates)}
-        </td>
-
-      </tr>
-    `;
+  function row(card, selected, { variants = [], search = false, requested } = {}) {
+    const chosen = card.id === selected?.id;
+    const finish = !chosen && card.finishes?.includes(requested) ? requested : selectedFinish(card);
+    const identity = `${card.name}, ${presentation.printing(card)}, ${presentation.language(card.lang)}, ${finishLabel(finish, card)}`;
+    const select = `type="button" data-print-id="${esc(card.id)}" aria-pressed="${chosen}"`;
+    const tags = treatments(card);
+    return `<tr role="row" data-record-id="${esc(card.id)}" class="${chosen ? "is-selected-printing" : ""}">
+      <td role="cell" class="ms-print-art"><button class="ms-print-thumbnail" ${select} aria-label="${esc(`Inspect ${identity}`)}">${previewImage(card, true, finish)}</button></td>
+      <td role="cell" class="ms-print-identity">
+        <button class="ms-print-name" ${select}>${search ? `<strong>${esc(card.name)}</strong>` : ""}${esc(presentation.printing(card))}</button>
+        <span class="ms-print-note">${esc([card.artist, card.lang !== "en" && presentation.language(card.lang), !search && card.released_at].filter(Boolean).join(" · "))}</span>
+        ${!search ? `<button type="button" data-compare-id="${esc(card.id)}">Compare version</button><a href="#ms-comparison-current" data-compare-jump hidden>View comparison</a>` : ""}
+        ${variants.length ? `<details class="ms-print-variants"><summary>${variants.length} other language ${variants.length === 1 ? "version" : "versions"}</summary>
+          <ul>${variants.map(variant => `<li><button type="button" data-print-id="${esc(variant.id)}">${esc(presentation.language(variant.lang))} · ${esc(finishText(variant))}</button></li>`).join("")}</ul></details>` : ""}
+      </td>
+      <td role="cell" class="ms-print-finish"><strong>${esc(finishText(card))}</strong>${tags.length ? `<span class="ms-print-note">${esc(tags.join(" · "))}</span>` : ""}</td>
+      <td role="cell" class="ms-print-prices">${referencePrices(card)}</td>
+    </tr>`;
   }
 
   function selectOptions(
@@ -2154,8 +1890,7 @@
       .map(
         id => [
           id,
-          LANGS[id] ||
-          id.toUpperCase()
+          presentation.language(id)
         ]
       );
 
@@ -2170,6 +1905,9 @@
     };
 
     archive = state;
+    refreshGuideFacts(result);
+    const differences = document.querySelector("[data-guide-difference-slot]");
+    if (differences) differences.innerHTML = guideDifferences(currentCard);
 
     ui.printings.innerHTML = `
       <label class="ms-language-toggle"><input id="ms-show-languages" type="checkbox" aria-controls="ms-language-filter ms-print-body"> Show other languages</label>
@@ -2255,16 +1993,16 @@
               Full art
             </option>
             <option value="surgefoil">
-              Surge foil
+              Surge Foil
             </option>
             <option value="galaxyfoil">
-              Galaxy foil
+              Galaxy Foil
             </option>
             <option value="halofoil">
-              Halo foil
+              Halo Foil
             </option>
             <option value="textured">
-              Textured foil
+              Textured Foil
             </option>
             <option value="serialized">
               Serialized
@@ -2310,28 +2048,11 @@
 
       </details>
 
-      <div class="table-wrap ms-live-printings" role="region" aria-label="Printing catalogue records" tabindex="0">
-
-        <table class="printings-table">
-
-          <thead>
-            <tr>
-              <th scope="col">Card</th>
-              <th scope="col">Set / Artist / Language</th>
-              <th scope="col">Released</th>
-              <th scope="col">Collector #</th>
-              <th scope="col">Rarity</th>
-              <th scope="col">Finishes / Treatments</th>
-              <th scope="col">Nonfoil reference</th>
-              <th scope="col">Foil reference</th>
-              <th scope="col">Etched reference</th>
-            </tr>
-          </thead>
-
-          <tbody id="ms-print-body"></tbody>
-
+      <div class="ms-live-printings">
+        <table role="table" class="ms-printing-table" aria-label="Printing catalogue records">
+          ${printingHead}
+          <tbody role="rowgroup" id="ms-print-body"></tbody>
         </table>
-
       </div>
 
       <div
@@ -2348,8 +2069,7 @@
       <details class="ms-printing-notes"><summary>About printing records and prices</summary><p class="ms-help">
         Each row is a catalogue record for a set, collector number and language;
         another language does not necessarily mean different artwork.
-        One record can offer several physical finishes. Price columns are
-        source references, not shop offers. The foil shimmer is illustrative.
+        A record can offer several finishes. Scryfall reference prices are shown in their source currencies. Foil effects illustrate the selected finish.
       </p></details>
     `;
 
@@ -2588,15 +2308,15 @@
       const languageSelection = $("ms-language-selection");
       languageSelection.hidden = c.multilingual.checked || state.selected?.lang === "en" || !state.selected;
       languageSelection.textContent = languageSelection.hidden ? "" :
-        `Browsing English printings. Your ${LANGS[state.selected.lang] || state.selected.lang} printing is still selected.`;
+        `Browsing English printings. Your ${presentation.language(state.selected.lang)} printing is still selected.`;
 
       c.body.innerHTML = page.map(({ primary, variants }) =>
-        row(primary, state.selected, rates, variants)
+        row(primary, state.selected, { variants })
       ).join("") ||
         `
           <tr>
             <td
-              colspan="9"
+              colspan="4"
               class="ms-table-empty"
             >
               No printings match these filters.
@@ -2610,7 +2330,6 @@
         : `${list.length} English ${list.length === 1 ? "printing" : "printings"}`;
       if (!result.complete) ui.status.textContent += " · from loaded records";
 
-      observeCardEffects(c.body);
 
       c.pages.innerHTML = groups.length ? `<span>Showing ${start + 1}–${start + page.length} of ${groups.length} editions</span>
         <button type="button" data-print-page="previous"${start === 0 ? " disabled" : ""}>Previous</button>
@@ -2677,6 +2396,7 @@
 
       replaceUrl(card);
       trackExact(card, guideName ? "guide" : "search");
+      trackTableSelection("archive");
       update();
 
       if (scroll) focusSelectedCard();
@@ -2685,20 +2405,8 @@
     c.body.addEventListener(
       "click",
       event => {
-        const button =
-          event.target.closest(
-            "[data-print-id]"
-          );
-
-        if (button) {
-          selectCard(
-            cards.find(
-              x =>
-                x.id ===
-                button.dataset.printId
-            )
-          );
-        }
+        const id = recordId(event.target);
+        if (id) selectCard(cards.find(card => card.id === id));
       }
     );
 
@@ -2743,9 +2451,7 @@
           }
 
           scrollTo(
-            ui.printings.querySelector(
-              ".table-wrap"
-            )
+            ui.printings.querySelector(".ms-live-printings")
           );
         }
       );
@@ -2971,7 +2677,7 @@
         card,
         false
       );
-      if (exact && (opts.userSearch || opts.selectionOnly)) trackExact(card, "search");
+      if (exact && opts.userSearch) trackExact(card, "search");
 
       const rateRequest = Promise.race([exchangeRates(), delay(750).then(() => null)]).catch(() => null);
       let result;
@@ -3065,7 +2771,7 @@
       }
 
       if (opts.userSearch) trackSearch(opts.searchType || (exact ? "exact_printing" : "name"), exact, 1);
-      if (opts.userSearch || opts.selectionOnly || opts.focusSelection) focusSelectedCard();
+      if (opts.userSearch || opts.focusSelection) focusSelectedCard();
       return card;
 
     } catch (error) {
@@ -3139,7 +2845,7 @@
     return page;
   }
 
-  function selectSearchCard(card, intent, query, { userSearch = false, selectionOnly = false } = {}) {
+  function selectSearchCard(card, intent, query, { userSearch = false } = {}) {
     return loadCard(card.name, {
       record: card,
       printingId: card.id,
@@ -3147,13 +2853,12 @@
       input: query,
       searchType: intent.category,
       userSearch,
-      selectionOnly,
-      replace: !userSearch && !selectionOnly
+      replace: !userSearch
     });
   }
 
-  function searchTreatment(card) {
-    return treatments(card).filter(label => ["Extended art", "Showcase", "Borderless", "Full art", "Retro frame"].includes(label)).join(" · ");
+  function trackTableSelection(table) {
+    window.ManaScoutAnalytics?.track("printing_table_select", { table, surface: guideName ? "guide" : "home" });
   }
 
   function renderSearchResults(page, intent, query, signal) {
@@ -3163,8 +2868,16 @@
     const pageSize = 16;
     const visited = new Set();
     const heading = document.createElement("h2");
-    heading.textContent = intent.printing ? "Printing matches" : "Card matches";
-    const list = document.createElement("ul");
+    heading.textContent = intent.printing ? "Exact printings" : "Card matches";
+    const list = document.createElement(intent.printing ? "table" : "ul");
+    if (intent.printing) {
+      list.className = "ms-printing-table";
+      list.setAttribute("aria-label", "Exact printing results");
+      list.setAttribute("role", "table");
+      list.innerHTML = `${printingHead}<tbody role="rowgroup"></tbody>`;
+    }
+    const body = intent.printing ? list.querySelector("tbody") : list;
+    showingExactResults = intent.printing;
     const previous = document.createElement("button");
     previous.type = "button";
     previous.textContent = "Previous results";
@@ -3185,24 +2898,17 @@
 
     function drawPage() {
       const group = records.slice(start, start + pageSize);
-      list.replaceChildren();
-      for (const card of group) {
-        const item = document.createElement("li");
-        item.innerHTML = `<button type="button">
-          ${img(card, "small") ? `<img src="${esc(img(card, "small"))}" alt="" width="72" height="100" loading="lazy">` : ""}
-          <span><strong>${esc(card.name)}</strong>
-          ${intent.printing ? `<span>${esc(card.set.toUpperCase())} #${esc(card.collector_number)} · ${esc(card.set_name)}</span>
-          <span>${esc([pretty(card.rarity), card.artist, searchTreatment(card), LANGS[card.lang] || card.lang, finishText(card)].filter(Boolean).join(" · "))}</span>` :
-          `<span>${esc(card.type_line)}</span>`}
-          </span></button>`;
-        item.firstElementChild.addEventListener("click", () => {
-          if (intent.printing) {
-            void selectSearchCard(card, intent, query, { selectionOnly: true });
-          } else {
-            void loadCard(card.name, { focusSelection: true });
-          }
-        });
-        list.append(item);
+      if (intent.printing) {
+        body.innerHTML = group.map(card => row(card, currentCard, { search: true, requested: intent.criteria.finish })).join("");
+      } else {
+        body.replaceChildren();
+        for (const card of group) {
+          const item = document.createElement("li");
+          item.innerHTML = `<button type="button">${img(card, "small") ? `<img src="${esc(img(card, "small"))}" alt="" width="72" height="100" loading="lazy">` : ""}
+            <span><strong>${esc(card.name)}</strong><span>${esc(card.type_line)}</span></button>`;
+          item.firstElementChild.addEventListener("click", () => void loadCard(card.name, { focusSelection: true }));
+          body.append(item);
+        }
       }
       previous.disabled = start === 0;
       more.disabled = start + group.length >= records.length && !next;
@@ -3210,6 +2916,24 @@
       const shown = group.length === 1 ? String(start + 1) : `${start + 1}–${start + group.length}`;
       searchStatus.textContent = `Showing ${shown} of ${page.total} ${intent.printing ? "printings" : "cards"}.`;
     }
+
+    if (intent.printing) list.closest("section").addEventListener("ms:finish-change", drawPage, { signal });
+    if (intent.printing) body.addEventListener("click", event => {
+      const id = recordId(event.target);
+      const card = records.find(item => item.id === id);
+      if (!card || signal.aborted) return;
+      if (intent.criteria.finish && !previews.has(card.id)) chooseFinish(card, intent.criteria.finish);
+      startUrl(card.name, card.id, false);
+      renderCard(card);
+      replaceUrl(card);
+      const selection = ui.details.closest("section");
+      if (selection?.nextElementSibling !== searchResults) selection?.after(searchResults);
+      document.title = `${card.name} Printings, Foils & Art | ManaScout`;
+      trackExact(card, "search");
+      trackTableSelection("search");
+      drawPage();
+      focusSelectedCard();
+    });
 
     previous.addEventListener("click", () => {
       start -= pageSize;
@@ -3444,7 +3168,8 @@
       const set = sets?.get(norm(locator?.[1] || query));
       if (set && locator) {
         const card = await exactLocator(set.code, locator[2], "en", signal);
-        names = [{ query, label: `${set.code.toUpperCase()} #${card.collector_number} — ${card.name}${searchTreatment(card) ? " · " + searchTreatment(card) : ""}` }];
+        const style = treatments(card).find(label => ["Extended art", "Showcase", "Borderless", "Full art", "Retro frame"].includes(label));
+        names = [{ query, label: `${presentation.setCode(set.code)} #${card.collector_number} — ${card.name}${style ? " · " + style : ""}` }];
       } else if (set) {
         names = [{ query: set.code, label: `${set.code.toUpperCase()} — ${set.name}` }];
       } else if (!locator && !/^#|^collector\s|artist:/i.test(query)) {
@@ -3635,31 +3360,30 @@
   }
 
   function updateSelectedFinish(finish) {
-    if (!currentCard || !chooseFinish(currentCard, finish)) return;
+    if (!currentCard || finish === selectedFinish(currentCard) || !chooseFinish(currentCard, finish)) return;
     const card = currentCard;
     renderCard(card, currentPick);
     replaceUrl(card);
+    window.ManaScoutAnalytics?.track("finish_switch", { surface: guideName ? "guide" : "home" });
     archive?.update();
+    if (showingExactResults) searchResults.dispatchEvent(new Event("ms:finish-change"));
     ui.details?.querySelector("[data-ms-selected-finish]")?.focus({ preventScroll: true });
-    showAction(`${finishLabel(finish)} selected for this exact printing.`);
+    showAction(`${finishLabel(finish, card)} selected for this exact printing.`);
   }
+  document.addEventListener("toggle", event => {
+    if (event.target.open && event.target.hasAttribute?.("data-version-differences")) {
+      window.ManaScoutAnalytics?.track("printing_difference_expand", { surface: "guide" });
+    }
+  }, true);
   document.addEventListener("change", event => {
     const select = event.target.closest("[data-ms-selected-finish]");
     if (select && ui.details?.contains(select) && currentCard?.id === select.dataset.msSelectedFinish) updateSelectedFinish(select.value);
   });
-  document.body.dataset.msEffectsPaused = String(document.hidden);
-  document.addEventListener("visibilitychange", () => {
-    document.body.dataset.msEffectsPaused = String(document.hidden);
-  });
-
-  document.addEventListener(
-    "click",
-    async event => {
+  document.addEventListener("click", async event => {
       const flip = event.target.closest("[data-ms-flip]");
       if (flip && ui.details?.contains(flip)) { flipPreview(flip); return; }
-      const nonfoil = event.target.closest("[data-ms-nonfoil]");
-      if (nonfoil && ui.details?.contains(nonfoil) && currentCard?.id === nonfoil.dataset.msNonfoil && shimmer(currentCard) && has(currentCard, "nonfoil")) {
-        updateSelectedFinish("nonfoil");
+      if (event.target.closest("[data-open-printing-archive]") && currentCard) {
+        void loadCard(currentCard.name, { record: currentCard, printingId: currentCard.id, finish: selectedFinish(currentCard), focusSelection: true });
         return;
       }
 
@@ -3855,12 +3579,7 @@
         card: id => currentCard?.id === id ? currentCard : archive?.cards.find(c => c.id === id),
         finish: selectedFinish,
         exact: cardId,
-        present: (card, finish) => ({
-          image: img(card), language: LANGS[card.lang] || card.lang || "Unknown",
-          treatment: treatmentText(card), priceHtml: priceHtml(card, finish, null),
-          estimate: archive?.rates ? gbp(card, finish, archive.rates) : null,
-          link: pageUrl(card, finish)
-        })
+        image: img
       }),
       guidePath: name => {
         const path = slug(name);
@@ -3913,7 +3632,6 @@
       .ms-archive-options > summary:focus-visible,
       .table-wrap[tabindex]:focus-visible { outline: 2px solid var(--accent-bright); outline-offset: 3px; }
 
-      body:not(.ms-home) .card-display.ms-compact-card { grid-template-columns: minmax(72px, 120px) minmax(0, 1fr); gap: 12px; padding: 14px; }
       .ms-compact-card h2 { font-size: clamp(1.2rem, 3vw, 1.8rem); overflow-wrap: anywhere; }
       .ms-compact-card .card-subtitle { margin: 0 0 6px; font-size: .875rem; line-height: 1.35; }
       .ms-compact-card .detail { padding: 0; border: 0; background: transparent; margin-bottom: 6px; }
@@ -3935,59 +3653,24 @@
       #ms-search-results li button { text-align: left; display: flex; gap: 10px; width: 100%; align-items: center; overflow-wrap: anywhere; }
       #ms-search-results li img { flex: 0 0 auto; max-width: 72px; object-fit: contain; }
       #ms-search-results li span { display: block; min-width: 0; }
-      #ms-search-status:empty, #ms-archive-request:empty, .ms-mobile-finishes { display: none; }
-      @media (max-width: 840px) {
-        body:not(.ms-home) .card-display.ms-compact-card { grid-template-columns: minmax(70px, 94px) minmax(0, 1fr); }
-        .ms-live-printings .printings-table { min-width: 0; table-layout: fixed; overflow-wrap: anywhere; }
-        .ms-live-printings .printings-table th:nth-child(n+3),
-        .ms-live-printings .printings-table td:nth-child(n+3) { display: none; }
-        .ms-live-printings .printings-table th:first-child { width: 85px; }
-        .ms-live-printings .printings-table td { padding: 8px; }
-        .ms-live-printings .printing-card-image { max-width: 100%; height: auto; }
-        .ms-live-printings .ms-mobile-finishes { display: block; }
-      }
-      .ms-preview { position: relative; isolation: isolate; display: inline-block; width: 100%; max-width: 100%; border-radius: 11px; overflow: hidden; perspective: 1100px; }
+      #ms-search-status:empty, #ms-archive-request:empty { display: none; }
+      .ms-preview { position: relative; width: 100%; perspective: 1100px; }
       .ms-face-turner { position: relative; width: 100%; transform-style: preserve-3d; transform: rotateY(0deg); transition: transform .62s cubic-bezier(.3,.05,.25,1); }
       .ms-face-turner[data-ms-face="back"] { transform: rotateY(180deg); }
       .ms-card-face { position: relative; display: block; width: 100%; backface-visibility: hidden; -webkit-backface-visibility: hidden; border-radius: inherit; overflow: hidden; }
       .ms-card-face img { display: block; width: 100%; height: auto; aspect-ratio: 488 / 680; object-fit: contain; }
       .ms-card-back { position: absolute; inset: 0; transform: rotateY(180deg); }
       .ms-card-back img { height: 100%; }
-      .ms-foil-glint { position: absolute; inset: -8% -60%; pointer-events: none; border-radius: inherit; mix-blend-mode: screen; opacity: .22; background: linear-gradient(110deg, transparent 23%, #6eedc21a 36%, #b988f626 47%, #ffffff38 51%, #f3a2d71a 60%, transparent 74%); animation: msFoil 11s ease-in-out infinite; }
-      @keyframes msFoil { 0%, 100% { transform: translate3d(-20%,0,0) rotate(1deg); } 50% { transform: translate3d(20%,0,0) rotate(-1deg); } }
-      .ms-preview[data-ms-image-ready="false"] .ms-foil-glint { visibility: hidden; animation-play-state: paused; }
-      [data-ms-effects-paused="true"] .ms-foil-glint { animation-play-state: paused; }
       .ms-surface-control { position: absolute; z-index: 5; width: 44px; height: 44px; display: grid; place-items: center; padding: 10px; border: 0; background: transparent; color: #eee6e9; cursor: pointer; font: inherit; font-size: 16px; line-height: 1; touch-action: manipulation; }
       .ms-surface-control::before { content: ""; position: absolute; inset: 10px; border-radius: 50%; border: 1px solid #a79a9f99; background: #0e1013dc; box-shadow: 0 2px 6px #0005; }
       .ms-surface-control span { position: relative; }
       .ms-flip-control { right: 2px; bottom: 6px; }
-      .ms-nonfoil-control { left: 2px; bottom: 6px; color: #ee8395; }
-      .ms-nonfoil-control::before { border-color: #b8586b; }
       .ms-surface-control:hover::before { background: #252027; }
       .ms-surface-control:focus-visible { outline: 2px solid #ebdce3; outline-offset: -4px; border-radius: 50%; }
       .ms-surface-control:disabled { opacity: .45; cursor: wait; }
       .ms-face-status { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
       #ms-selected-finish { max-width: 100%; min-height: 44px; margin-top: 4px; padding: 6px 10px; border: 1px solid #ffffff2b; border-radius: 7px; background: #171318; color: #f4e9ec; font: inherit; }
       #ms-selected-finish:focus-visible { outline: 2px solid #d7768b; outline-offset: 2px; }
-
-      .ms-thumb-frame {
-        position: relative;
-        display: inline-block;
-        max-width: 100%;
-        border-radius: 7px;
-        overflow: hidden;
-      }
-
-      .ms-thumb-frame img {
-        display: block;
-        width: 64px;
-        height: auto;
-        border-radius: 7px;
-      }
-
-      .ms-thumb-frame .ms-foil-glint {
-        opacity: .3;
-      }
 
       .ms-card-extra,
       .ms-card-actions {
@@ -4151,7 +3834,6 @@
       }
 
       @media (prefers-reduced-motion:reduce) {
-        .ms-foil-glint { animation: none !important; }
         .ms-face-turner { transition: none !important; }
       }
     `;

@@ -56,6 +56,7 @@
   const weeklyLink =
     $("card-week-link");
 
+  const presentation = window.ManaScoutPrinting;
   const weeklyShell =
     $("weekly-card-shell");
 
@@ -70,10 +71,6 @@
       "(prefers-reduced-motion: reduce)"
     );
 
-  const finePointer =
-    window.matchMedia(
-      "(hover: hover) and (pointer: fine)"
-    );
 
   const cache = new Map();
 
@@ -931,9 +928,8 @@
             }
           );
 
-          art.replaceChildren(
-            picture
-          );
+          art.replaceChildren(picture);
+          presentation.enhance(picture, card, presentation.defaultFinish(card));
         }
 
         if (anchor) {
@@ -1117,19 +1113,16 @@
           art;
         weekly.dataset.weeklyArtReady = String(!!(weeklyImage.complete && weeklyImage.naturalWidth));
 
-        weeklyImage.alt = isCosmic
-          ? `${card.name}, ${card.set_name} SPM #${number}, extended art by ${card.artist}, traditional foil`
-          : isCynette ? `${card.name} — ${card.set_name}, nonfoil #${number}, ${card.artist}`
-            : `${card.name} — ${card.set_name}, borderless concept traditional foil #${number}, ${card.artist}`;
+        const finish = weekly.dataset.weeklyFinish;
+        weeklyImage.alt = `${card.name} — ${presentation.printing(card)} · ${card.artist} · ${presentation.finishLabel(finish, card)}`;
+        presentation.enhance(weeklyImage, card, finish);
       }
 
       if (
         weeklyPrinting
       ) {
         weeklyPrinting.textContent =
-          (
-            `${card.set_name} · ${set} #${number}`
-          ).toUpperCase();
+          presentation.printing(card);
       }
 
       if (
@@ -1496,7 +1489,7 @@
   void loadArchive();
 
 
-  /* One input system on the stationary perspective stage; no continuous JS loop. */
+  /* Keep the scene’s environmental animation in sync with the shared card surface. */
   if (weekly && weeklyShell) {
     const stage = weeklyShell.closest(".weekly-card-stage") || weeklyShell;
     const floating = weeklyShell.parentElement;
@@ -1538,30 +1531,13 @@
     };
     let visible = false;
     let homeVisible = !initialQuery?.trim();
-    let touchPointer = null;
-    const exactEldrazi = () => weekly.dataset.weeklySet === "mh3" && weekly.dataset.weeklyNumber === "383" && weekly.dataset.weeklyCard === "Ulamog, the Defiler";
-    const exactCosmic = () => weekly.dataset.weeklyTheme === "cosmic-zero-gravity";
-    const exactCynette = () => weekly.dataset.weeklySet === "j25" && weekly.dataset.weeklyNumber === "35" && weekly.dataset.weeklyCard === "Cynette, Jelly Drover";
     const syncEffects = () => {
       weekly.dataset.weeklyEffectsPaused = String(!visible || !homeVisible || document.hidden || reducedMotion.matches);
     };
     const reset = (immediate = false) => {
       if (!immediate && weekly.dataset.weeklyPresentation === "returning" && handoff) return;
-      touchPointer = null;
       weekly.dataset.weeklyInteracting = "false";
-      const style = typeof window.getComputedStyle === "function" ? window.getComputedStyle(weekly) : null;
-      const restX = style?.getPropertyValue("--weekly-idle-xa").trim() || "2.8deg";
-      const restY = style?.getPropertyValue("--weekly-idle-ya").trim() || "-5.5deg";
-      const values = { "--weekly-x": "50%", "--weekly-y": "42%", "--weekly-rx": restX, "--weekly-ry": restY };
-      if (exactEldrazi() || exactCynette() || exactCosmic()) Object.assign(values, {
-        "--weekly-light-angle": "-6deg", "--weekly-shadow-x": "0px", "--weekly-shadow-y": "0px", "--weekly-edge": ".78"
-      });
-      if (exactCosmic()) Object.assign(values, {
-        "--weekly-edge": ".38", "--weekly-parallax-x": "0px", "--weekly-parallax-y": "0px",
-        "--weekly-foil-x": "0%", "--weekly-foil-y": "0%"
-      });
-      if (exactEldrazi()) Object.assign(values,{"--weekly-reflection":".70","--weekly-light-x":"-2%","--weekly-light-y":"1%"});
-      for (const [name, value] of Object.entries(values)) weekly.style.setProperty(name, value);
+      for (const name of ["--weekly-shadow-x", "--weekly-parallax-x", "--weekly-parallax-y"]) weekly.style.removeProperty(name);
       if (!immediate && presentationPose && !reducedMotion.matches && visible && homeVisible && !document.hidden) {
         const target = presentationPose;
         const current = samplePose();
@@ -1635,58 +1611,19 @@
       else if (typeof media.addListener === "function") media.addListener(listener);
     };
     watchMedia(reducedMotion, () => { reset(true); artReady(); });
-    watchMedia(finePointer, () => reset(true));
-    const canTilt = () => {
-      artReady(); // Repairs stale visibility/image flags at the point of interaction.
-      return !reducedMotion.matches && visible && homeVisible && !document.hidden;
-    };
-    const tilt = event => {
-      if (!canTilt()) return;
-      const rect = stage.getBoundingClientRect();
-      if (!rect.width || !rect.height) return;
-      const x = Math.max(0, Math.min(100, (event.clientX - rect.left) / rect.width * 100));
-      const y = Math.max(0, Math.min(100, (event.clientY - rect.top) / rect.height * 100));
-      const touch = event.pointerType === "touch";
+    stage.addEventListener("ms:physical-angle", event => {
+      if (!event.detail) { reset(); return; }
+      if (reducedMotion.matches || document.hidden || !homeVisible) return;
+      artReady();
+      if (!visible) return;
+      const { x, y, isTouch } = event.detail;
       takeControl();
       weekly.dataset.weeklyInteracting = "true";
-      weekly.style.setProperty("--weekly-x", `${x}%`);
-      weekly.style.setProperty("--weekly-y", `${y}%`);
-      weekly.style.setProperty("--weekly-rx", `${Number(((50 - y) * (touch ? .12 : .22)).toFixed(2))}deg`);
-      weekly.style.setProperty("--weekly-ry", `${Number(((x - 50) * (touch ? .14 : .28)).toFixed(2))}deg`);
-      if (exactEldrazi() || exactCynette() || exactCosmic()) {
-        const incidence = Math.min(1, Math.hypot(x - 50, y - 50) / Math.hypot(50, 50));
-        if(exactEldrazi()){
-          weekly.style.setProperty("--weekly-reflection", (.76 + .24 * incidence).toFixed(3));
-          weekly.style.setProperty("--weekly-light-x", `${((x - 50) * .24).toFixed(2)}%`);
-          weekly.style.setProperty("--weekly-light-y", `${((y - 50) * .20).toFixed(2)}%`);
-        }
-        weekly.style.setProperty("--weekly-light-angle", `${((x - 50) * .36).toFixed(2)}deg`);
-        weekly.style.setProperty("--weekly-shadow-x", `${((50 - x) * .20).toFixed(2)}px`);
-        weekly.style.setProperty("--weekly-shadow-y", `${((50 - y) * .12).toFixed(2)}px`);
-        weekly.style.setProperty("--weekly-edge", (exactCosmic() ? .38 + .32 * incidence : .78 + .22 * incidence).toFixed(3));
-        if (exactCosmic()) {
-          const depth = touch ? .036 : .10;
-          weekly.style.setProperty("--weekly-parallax-x", `${(x - 50) * depth}px`);
-          weekly.style.setProperty("--weekly-parallax-y", `${(y - 50) * depth}px`);
-          weekly.style.setProperty("--weekly-foil-x", `${(x - 50) * .55}%`);
-          weekly.style.setProperty("--weekly-foil-y", `${(y - 50) * .25}%`);
-        }
-      }
-    };
-    stage.addEventListener("pointerdown", event => {
-      if (event.pointerType !== "touch" || !event.isPrimary || !canTilt()) return;
-      touchPointer = event.pointerId;
-      tilt(event); // Passive: vertical scrolling and pinch zoom remain available.
-    }, { passive: true });
-    stage.addEventListener("pointermove", event => {
-      if (event.pointerType === "touch") { if (event.pointerId === touchPointer) tilt(event); }
-      else if (finePointer.matches || ["mouse", "pen"].includes(event.pointerType)) tilt(event);
-    }, { passive: true });
-    const endInteraction = event => {
-      if (event.pointerType === "touch" && touchPointer !== null && event.pointerId !== touchPointer) return;
-      reset();
-    };
-    for (const name of ["pointerleave", "pointercancel", "pointerup", "lostpointercapture"]) stage.addEventListener(name, endInteraction, { passive: true });
+      const depth = isTouch ? 1.8 : 5;
+      weekly.style.setProperty("--weekly-shadow-x", `${-x * 10}px`);
+      weekly.style.setProperty("--weekly-parallax-x", `${x * depth}px`);
+      weekly.style.setProperty("--weekly-parallax-y", `${y * depth}px`);
+    });
     reset();
     checkVisibility();
   }

@@ -18,30 +18,32 @@
   <meta property="og:url" content="https://manascout.co.uk/deck/">
   <meta property="og:site_name" content="ManaScout">
   <meta name="twitter:card" content="summary">
-  <link rel="stylesheet" href="/assets/css/deck-studio.css?v=phase9">
+  <link rel="stylesheet" href="/assets/css/deck-studio.css?v=phase9&amp;presentation=10">
   <script type="application/ld+json">
   {"@context":"https://schema.org","@type":"WebPage","name":"ManaScout Deck Studio","url":"https://manascout.co.uk/deck/","description":"Build Commander, Standard and other Magic decks with ManaScout. Keep exact printings, check deck construction, and import, export or save your deck locally.","isPartOf":{"@type":"WebSite","name":"ManaScout","url":"https://manascout.co.uk/"}}
   </script>
   <script src="/assets/js/analytics-config.js?v=phase61"></script>
-<script src="/assets/js/analytics.js?v=phase5&amp;release=6&amp;product=61" defer></script>
+<script src="/assets/js/analytics.js?v=phase5&amp;release=6&amp;product=61&amp;presentation=10" defer></script>
+  <script src="/assets/js/printing-presentation.js?v=phase10" defer></script>
   <script src="/assets/js/deck-formats.js?v=5d1" defer></script>
-  <script src="/assets/js/deck-data.js?v=stage5" defer></script>
+  <script src="/assets/js/deck-data.js?v=stage5&amp;presentation=10" defer></script>
   <script src="/assets/js/deck-model.js?v=phase3" defer></script>
   <script src="/assets/js/deck-client.js?v=phase3" defer></script>
   <script src="/assets/js/deck-rules.js?v=phase3" defer></script>
-  <script src="/assets/js/deck-view.js?v=phase4" defer></script>
+  <script src="/assets/js/deck-view.js?v=phase4&amp;presentation=10" defer></script>
   <script src="/assets/js/deck-store.js?v=phase3" defer></script>
   <script src="/assets/js/deck-quality.js?v=phase4" defer></script>
   <script src="/assets/js/deck-identity.js?v=phase4" defer></script>
   <script src="/assets/js/deck-health.js?v=phase4" defer></script>
   <script src="/assets/js/deck-generator.js?v=phase4" defer></script>
-  <script src="/assets/js/deck-printings.js?v=printing1" defer></script>
-  <script src="/assets/js/deck-printing-selector.js?v=printing1" defer></script>
+  <script src="/assets/js/deck-printings.js?v=printing1&amp;presentation=10" defer></script>
+  <script src="/assets/js/deck-printing-selector.js?v=printing1&amp;presentation=10" defer></script>
   <script src="/assets/js/deck-appearance.js?v=stage5" defer></script>
-  <script src="/assets/js/deck-appearance-controls.js?v=stage5" defer></script>
+  <script src="/assets/js/deck-appearance-controls.js?v=stage5&amp;presentation=10" defer></script>
   <script src="/assets/js/deck-interoperability.js?v=3" defer></script>
   <script src="/assets/js/deck-interoperability-controls.js?v=3&amp;growth=5" defer></script>
-  <script src="/assets/js/deck-studio.js?v=phase9" defer></script>
+  <script src="/assets/js/deck-studio.js?v=phase9&amp;presentation=10" defer></script>
+  <link rel="stylesheet" href="/assets/css/printing-presentation.css?v=phase10">
 </head>
 <body class="deck-studio" data-active-panel="deck">
   <a class="ds-skip" href="#deck-heading">Skip to deck workspace</a>
@@ -244,7 +246,7 @@
         </details>
         <p class="ds-note" id="generation-status" role="status" aria-live="polite">Build around this assigned printing. Options are optional.</p>
       </section>
-      <dl class="ds-printing-facts"><div><dt>Mana value</dt><dd id="preview-mv"></dd></div><div><dt>Printing</dt><dd id="preview-printing"></dd></div><div><dt>Artist</dt><dd id="preview-artist"></dd></div><div><dt>Preview finish</dt><dd id="preview-finish"></dd></div></dl>
+      <dl class="ds-printing-facts"><div><dt>Mana value</dt><dd id="preview-mv"></dd></div><div><dt>Printing</dt><dd id="preview-printing"></dd></div><div><dt>Artist</dt><dd id="preview-artist"></dd></div><div><dt>Selected Finish</dt><dd><span id="preview-finish"></span><span id="preview-finish-control" hidden><select id="preview-finish-select" aria-label="Selected Finish"></select></span></dd></div></dl>
       <p class="ds-note" id="preview-note"></p>
       <div class="ds-preview-quantity"><label for="preview-quantity">Copies to add</label><input id="preview-quantity" type="number" value="1" min="1" max="10000" inputmode="numeric"><label for="preview-zone">Section</label><select id="preview-zone"><option value="main">Main deck</option><option value="sideboard" disabled>Sideboard</option></select></div>
 
@@ -254,7 +256,7 @@
       <p class="ds-note">Use Change printing on a deck entry to curate its exact edition and finish.</p>
       <p class="ds-note" id="preview-actions-note">Adds this exact printing and finish. Choose a role before adding. Commander eligibility is checked separately from main-deck legality; construction warnings still apply.</p>
       <p class="ds-note" id="preview-save-status" role="status">Changes are saved only in this browser.</p>
-      <details class="ds-card-more"><summary>Roles, rules &amp; printing details</summary><p class="ds-preview-roles" id="preview-roles"></p><p class="ds-oracle" id="preview-oracle"></p><dl class="ds-extra-facts"><div><dt>Available finishes</dt><dd id="preview-finishes"></dd></div><div><dt>Language</dt><dd id="preview-language"></dd></div><div><dt>Released</dt><dd id="preview-released"></dd></div><div><dt>Scryfall printing ID</dt><dd id="preview-id"></dd></div></dl><p class="ds-note">Format availability is distinct from commander eligibility and full-deck construction.</p></details>
+      <details class="ds-card-more"><summary>Roles, rules &amp; printing details</summary><p class="ds-preview-roles" id="preview-roles"></p><p class="ds-oracle" id="preview-oracle"></p><dl class="ds-extra-facts"><div><dt>Available Finishes</dt><dd id="preview-finishes"></dd></div><div><dt>Language</dt><dd id="preview-language"></dd></div><div><dt>Release Date</dt><dd id="preview-released"></dd></div><div><dt>Frame / Treatment</dt><dd id="preview-treatment"></dd></div></dl><details><summary>Technical details</summary><p>Scryfall printing ID <span id="preview-id"></span></p></details><p class="ds-note">Format availability is distinct from commander eligibility and full-deck construction.</p></details>
       <div class="ds-source-links"><a class="ds-text-link" id="preview-guide" hidden>Full ManaScout guide ↗</a><a class="ds-text-link" id="preview-source" target="_blank" rel="noopener noreferrer" hidden>Printing on Scryfall ↗</a></div>
       <button class="ds-back-button" id="back-to-workspace" type="button">← Back to workspace</button>
     </div>

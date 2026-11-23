@@ -92,3 +92,41 @@
 .printing-guide .guide-primary-cta:focus-visible {outline:2px solid var(--accent-bright,#d7768b);outline-offset:3px}
 .printing-guide .guide-intent-answer p {max-width:72ch;line-height:1.65;margin:12px 0}
 .printing-guide .guide-update-note {font-size:13px;color:var(--muted);margin:24px 0;line-height:1.6}
+
+.printing-guide .guide-value-strip {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .35rem .8rem;
+  padding: .8rem 0;
+  margin: 0;
+  font-size: .91rem;
+  border-block: 1px solid #ffffff27;
+  color: #e9d5e2;
+}
+.printing-guide .guide-value-strip > span { color: #cdbbc7; }
+.printing-guide .guide-collector-module { margin-block: 1rem 1.5rem; padding: clamp(.85rem, 2vw, 1.5rem); border: 1px solid #ffffff27; border-radius: 12px; background: #1c1720; }
+.printing-guide .guide-collector-module h2 { font-size: clamp(1.18rem, 2.4vw, 1.6rem); line-height: 1.22; margin: 0 0 .45rem; }
+.printing-guide .guide-collector-module p { max-width: 59ch; margin: .3rem 0; color: #dbcdd8; }
+.printing-guide .guide-collector-module .guide-edition-name { color: #fff1fb; font-size: 1.13rem; font-weight: 700; }
+.printing-guide .guide-collector-module .guide-edition-facts { font-weight: 650; }
+.printing-guide .guide-collector-link { align-items: center; display: inline-flex; min-height: 44px; color: #ffc2d4; text-decoration: underline; text-underline-offset: .2em; }
+.printing-guide .guide-variant-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: clamp(.65rem, 2vw, 1.45rem); margin: 1rem 0; }
+.printing-guide .guide-variant-grid figure { margin: 0; min-width: 0; }
+.printing-guide .guide-variant-grid img { display: block; width: 100%; height: auto; aspect-ratio: 488 / 680; object-fit: contain; border-radius: 4%; }
+.printing-guide .guide-variant-grid figcaption { font-size: .9rem; margin-top: .8rem; overflow-wrap: anywhere; }
+.printing-guide .guide-variant-grid figcaption span { display: block; color: #cdbbc7; }
+.printing-guide .guide-variant-grid a:focus-visible { outline: 2px solid #e496aa; outline-offset: 4px; }
+.printing-guide[data-guide-intent] .guide-overview .guide-static-art { width: 100%; }
+@media (min-width: 621px) {
+  .printing-guide[data-guide-intent] .guide-overview { grid-template-columns: minmax(0, 1fr) minmax(160px, 25%); }
+  .printing-guide[data-guide-intent] .guide-overview .guide-static-art { max-width: 295px; }
+}
+@media (max-width: 620px) {
+  .printing-guide .guide-variant-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .printing-guide[data-guide-intent] .guide-value-strip,
+  .printing-guide[data-guide-intent] .guide-collector-module { grid-column: 1 / -1; margin-block: 0; }
+  .printing-guide[data-guide-intent] .guide-overview > .guide-static-art { grid-row: 4; }
+  .printing-guide[data-guide-intent="first-printing"] .guide-overview .guide-collector-module { grid-column: 1; grid-row: 3; }
+  .printing-guide[data-guide-intent="first-printing"] .guide-overview > .guide-static-art { grid-row: 3; }
+  .printing-guide[data-guide-intent="first-printing"] .guide-overview-copy > .hero-copy { grid-column: 1 / -1; }
+}

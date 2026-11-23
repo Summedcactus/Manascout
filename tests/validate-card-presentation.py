@@ -7,6 +7,7 @@ import re
 ROOT = Path(__file__).resolve().parents[1]
 html = (ROOT / 'index.html').read_text()
 home = (ROOT / 'assets/css/home.css').read_text()
+physical = (ROOT / 'assets/css/printing-presentation.css').read_text()
 app = (ROOT / 'assets/js/app.js').read_text()
 css = app.split('    style.textContent = `', 1)[1].split('    `;', 1)[0]
 
@@ -23,7 +24,7 @@ class ArtworkStructure(HTMLParser):
         if attrs.get('id') in ['card-week-image']:
             assert any('weekly-card-face' in a.get('class', '').split() for a in ancestors)
             self.image_urls[attrs['id']] = attrs.get('src') or attrs.get('href')
-        if set(attrs.get('class', '').split()) & {'weekly-foil-sheen', 'weekly-foil-glimmer', 'weekly-edge-light'}:
+        if set(attrs.get('class', '').split()) & {'ms-physical-reflection', 'ms-physical-edge'}:
             assert any(a.get('id') == 'weekly-card-shell' for a in ancestors)
             assert any('weekly-card-face' in a.get('class', '').split() for a in ancestors)
             assert any('weekly-card-float' in a.get('class', '').split() for a in ancestors)
@@ -42,8 +43,8 @@ class ArtworkStructure(HTMLParser):
 structure = ArtworkStructure(html)
 card = json.loads((ROOT / 'tests/fixtures/cosmic-spider-man.json').read_text())
 assert card['image_uris']['normal'] == structure.image_urls['card-week-image']
-assert 'weekly-edge-light' in structure.layers
-assert 'weekly-foil-sheen' in structure.layers
+assert 'ms-physical-edge' in structure.layers
+assert 'ms-physical-reflection' in structure.layers
 
 
 def validate_css(text):
@@ -70,23 +71,24 @@ def validate_css(text):
 
 validate_css(home)
 validate_css(css)
+validate_css(physical)
 keyframes = re.findall(r'@keyframes\s+([\w-]+)', home)
 assert len(keyframes) == len(set(keyframes)), 'Duplicate homepage keyframes'
 assert 'data-weekly-set="spm"' in html and 'data-weekly-number="271"' in html
 assert card['scryfall_uri'].split('?')[0] in html
 assert 'Zoltan Boros' in html and 'EXTENDED ART · TRADITIONAL FOIL · MYTHIC RARE' in html
-assert 'perspective(1100px)' in home and 'rotateX(var(--weekly-rx))' in home and 'rotateY(var(--weekly-ry))' in home
+assert 'perspective: 950px' in physical and 'rotateX(var(--rx' in physical and 'rotateY(var(--ry' in physical
 eldrazi = home.split('/* Week 007', 1)[1]
 assert 'saturate(' not in eldrazi and 'brightness(' not in eldrazi
 assert all(float(radius) <= 8 for radius in re.findall(r'blur\(([0-9.]+)px\)', eldrazi))
 for block in re.findall(r'@keyframes ms(?:Weekly|Void)[^\{]*\{(.*?)(?=\n(?:@|/|\.)|$)', eldrazi, re.S):
     assert 'filter:' not in block, 'Decorative filters must remain static'
 assert 'morgul-window' not in html and 'card-week-light-map' not in html
-assert 'class="weekly-foil-sheen"' in html and 'class="weekly-edge-light"' in html
-assert 'touch-action: pan-y pinch-zoom' in eldrazi
-assert 'animation-play-state: paused' in home and 'animation-play-state: paused' in css
+assert 'class="ms-physical-reflection"' in html and 'class="ms-physical-edge"' in html
+assert 'touch-action: pan-y pinch-zoom' in physical
+assert 'animation-play-state: paused' in home
 assert 'data-weekly-effects-paused="true"' not in html
-assert 'data-weekly-art-ready="false"' in html and 'data-ms-image-ready="false"' in css
+assert 'data-weekly-art-ready="false"' in html
 assert 'prefers-reduced-motion:reduce' in css and '.ms-face-turner { transition: none !important; }' in css
 assert 'backface-visibility: hidden' in css and 'rotateY(180deg)' in css
 assert 'width: 44px; height: 44px;' in css and ':focus-visible' in css

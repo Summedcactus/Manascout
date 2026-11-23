@@ -1,6 +1,7 @@
 /* Small DOM-only renderers. All card strings are text, never HTML. */
 ((root) => {
   "use strict";
+  const presentation = typeof module === "object" && module.exports ? require("./printing-presentation.js") : root.ManaScoutPrinting;
   const formats = typeof module === "object" && module.exports ? require("./deck-formats.js") : root.ManaScoutDeckFormats;
   function node(tag, className = "", text = "") {
     const element = document.createElement(tag);
@@ -71,17 +72,17 @@
         const card = deck.cards[entry.printingId];
         const article = articles.get(entry.key) || createEntry(entry), ui = entryNodes.get(article);
         article.dataset.zone = zone; article.dataset.printingId = entry.printingId; article.dataset.finish = entry.finish;
-        ui.inspect.setAttribute("aria-label", `Inspect ${card.name}, ${card.setCode} #${card.collectorNumber}, ${entry.finish}`);
+        ui.inspect.setAttribute("aria-label", `Inspect ${card.name}, ${card.setCode} #${card.collectorNumber}, ${presentation.finishLabel(entry.finish, card)}`);
         const url = card.images[0]?.url || "";
         if (ui.url !== url) {
           ui.art?.remove(); ui.art = image(card); ui.url = url;
           ui.inspect.insertBefore(ui.art, ui.name);
         }
         text(ui.name, card.name);
-        text(ui.info, `${card.setCode} #${card.collectorNumber} · ${entry.finish}${entry.identityChoices ? ` · Import: ${entry.identityChoices.unspecified||entry.identityChoices.finishOnly ? "printing unspecified; representative record" : "exact printing supplied"}${entry.identityChoices.unspecified||entry.identityChoices.printingOnly ? "; finish unspecified" : ""}` : ""}`);
+        text(ui.info, `${card.setCode} #${card.collectorNumber} · ${presentation.finishLabel(entry.finish, card)}${entry.identityChoices ? ` · Import: ${entry.identityChoices.unspecified||entry.identityChoices.finishOnly ? "printing unspecified; representative record" : "exact printing supplied"}${entry.identityChoices.unspecified||entry.identityChoices.printingOnly ? "; finish unspecified" : ""}` : ""}`);
         ui.printing.dataset.printingId = entry.printingId;
         ui.change.hidden = !card.oracleId; ui.change.disabled = !card.oracleId;
-        ui.change.setAttribute("aria-label", `Change printing of ${card.name}, ${card.setCode} #${card.collectorNumber}, ${entry.finish}`);
+        ui.change.setAttribute("aria-label", `Change printing of ${card.name}, ${card.setCode} #${card.collectorNumber}, ${presentation.finishLabel(entry.finish, card)}`);
         for (const [control, label] of [[ui.decrease,"Remove one copy of"],[ui.increase,"Add one copy of"],[ui.remove,"Remove all copies of"]]) control.setAttribute("aria-label", `${label} ${card.name}`);
         ui.increase.disabled = ["commander", "signature"].includes(zone);
         text(ui.quantity, String(entry.quantity)); ui.quantity.setAttribute("aria-label", `${entry.quantity} copies of ${card.name}`);
