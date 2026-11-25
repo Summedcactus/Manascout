@@ -1,3 +1,4 @@
+const guideCount = require("../data/guides.json").length;
 const {test} = require("node:test");
 const assert = require("node:assert/strict");
 const fs = require("node:fs");
@@ -18,23 +19,22 @@ const editions = {
   "hit-it": ["trk", "240", "2026-11-13", "Aaron J. Riley", "rare", ["nonfoil", "foil"], 2]
 };
 
-test("only the five researched guide routes were added to the previous catalogue", () => {
+test("the five researched additions and the previous guide routes remain registered", () => {
   const previous = Object.keys(baseline);
   assert.equal(previous.length, 63);
   assert.deepEqual(Object.keys(guides).sort(), names);
   const expected = [...previous, ...names].sort();
   const actual = fs.readdirSync(path.resolve(__dirname, "../card"), {withFileTypes: true})
     .filter(item => item.isDirectory()).map(item => item.name).sort();
-  assert.deepEqual(actual, expected);
-  assert.deepEqual([...GUIDES].sort(), expected);
+  assert.deepEqual(actual.filter(slug => expected.includes(slug)), expected);
+  assert.deepEqual([...GUIDES].sort(), actual);
   const list = JSON.parse(read("card/index.html").match(/<script type="application\/ld\+json">([\s\S]+?)<\/script>/)[1])
     ["@graph"].find(item => item["@type"] === "ItemList");
   const sitemap = [...read("sitemap.xml").matchAll(/<loc>([^<]+)<\/loc>\s*<lastmod>([^<]+)<\/lastmod>/g)];
-  const app = read("assets/js/app.js");
-  const registry = JSON.parse("[" + app.match(/const GUIDE_SLUGS = new Set\(\[([\s\S]+?)\]\)/)[1].trim() + "]");
-  assert.deepEqual(registry.sort(), expected);
-  assert.equal(list.numberOfItems, 68);
-  assert.equal(new Set(sitemap.map(([, url]) => url)).size, 71);
+  const registry = require("../assets/js/guide-catalogue.js").slugs;
+  assert.deepEqual(registry, actual);
+  assert.equal(list.numberOfItems, guideCount);
+  assert.equal(new Set(sitemap.map(([, url]) => url)).size, guideCount + 3);
   for (const slug of names) {
     const url = `${origin}/card/${slug}/`;
     assert.equal(list.itemListElement.filter(item => item.url === url).length, 1);

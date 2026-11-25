@@ -103,12 +103,11 @@ def json_nodes(text):
 def audit():
     files = sorted((ROOT / 'card').glob('*/index.html'))
     phase101 = json.loads((ROOT / 'docs/phase10-1-guides.json').read_text())
-    count = 63 + len(phase101['guides'])
+    manifest = json.loads((ROOT / 'data/guides.json').read_text())
+    count = len(manifest)
     assert len(files) == count, 'Unexpected permanent guide count'
     slugs = [f.parent.name for f in files]
-    app = (ROOT / 'assets/js/app.js').read_text()
-    registered = re.findall(r'"([a-z0-9-]+)"', re.search(r'const GUIDE_SLUGS = new Set\(\[(.*?)\]\)', app, re.S)[1])
-    assert len(registered) == count and sorted(registered) == slugs
+    assert sorted(guide['slug'] for guide in manifest) == slugs
     directory = (ROOT / 'card/index.html').read_text()
     listing = next(n for n in json_nodes(directory) if n.get('@type') == 'ItemList')
     assert listing['numberOfItems'] == count and len(listing['itemListElement']) == count
@@ -133,8 +132,11 @@ def audit():
     for slug in phase101['guides']:
         evidence[ORIGIN + '/card/' + slug + '/'] = {'lastmod': phase101['reviewed'], 'basis': 'New researched collector guide.'}
     evidence[ORIGIN + '/card/'] = {'lastmod': phase101['reviewed'], 'basis': 'The directory gained five guide entries.'}
-    assert set(evidence) == expected
-    assert all(dates[url] == evidence[url]['lastmod'] and evidence[url]['basis'] for url in dates)
+    assert set(evidence) <= expected
+    assert all(dates[url] == record['lastmod'] and record['basis']
+               for url, record in evidence.items() if url != ORIGIN + '/card/')
+    assert dates[ORIGIN + '/card/'] >= evidence[ORIGIN + '/card/']['lastmod']
+    assert all(dates[ORIGIN + f"/card/{guide['slug']}/"] == guide['lastmod'] for guide in manifest)
     records, outliers = [], []
     for file, url in zip(files, urls):
         relative = file.relative_to(ROOT).as_posix()

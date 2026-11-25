@@ -3,7 +3,7 @@ const fs=require('node:fs'),vm=require('node:vm');
 const app=fs.readFileSync('assets/js/app.js','utf8');
 const guides=fs.readdirSync('card',{withFileTypes:true}).filter(e=>e.isDirectory()&&!Object.hasOwn(require('../docs/phase10-1-guides.json').guides,e.name));
 const references=JSON.parse(fs.readFileSync('docs/phase1-reference-verification.json','utf8'));
-const registry=new Set([...app.match(/const GUIDE_SLUGS = new Set\(\[([^]*?)\]\)/)[1].matchAll(/"([a-z0-9-]+)"/g)].map(m=>m[1]));
+const registry=new Set(require("../assets/js/guide-catalogue.js").slugs);
 test('every original permanent guide exposes one compact navigation, static reference and early comparison',()=>{
  assert.equal(guides.length,63);
  for(const g of guides){

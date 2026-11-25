@@ -12,6 +12,7 @@ test("every archive entry has an explicit editorial category assignment", () => 
   assert.equal(entries.length, directory.length);
   assert.deepEqual([...tags.keys()].sort(), directory);
   for (const values of tags.values()) {
+    assert.ok(values.length > 0);
     assert.equal(new Set(values).size, values.length);
     assert.ok(values.every(value => ["original", "premium", "artwork"].includes(value)));
   }
@@ -22,7 +23,7 @@ test("every archive entry has an explicit editorial category assignment", () => 
     assert.ok(tags.get(slug).includes("premium"), slug);
   }
   assert.deepEqual(tags.get("grim-monolith"), ["original", "artwork"]);
-  assert.deepEqual(tags.get("hit-it"), []);
+  assert.deepEqual(tags.get("hit-it"), ["artwork"]);
 });
 
 test("archive metadata and static counts agree with the catalogue", () => {

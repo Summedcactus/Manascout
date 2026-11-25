@@ -123,7 +123,7 @@ def archive_filters(page, width):
     verify_category("premium", premium, "deep-space-9", "black-lotus")
     artwork.focus()
     page.keyboard.press("Enter")
-    verify_category("artwork", artwork, "reanimate", "hit-it")
+    verify_category("artwork", artwork, "hit-it", "cavern-of-souls")
     if width <= 430:
         assert row.evaluate("e => e.scrollLeft > 0")
     all_guides.click()
