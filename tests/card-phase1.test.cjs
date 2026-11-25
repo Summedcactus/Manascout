@@ -47,7 +47,7 @@ test('guide links carry the selected exact printing and finish without inventing
 test('copying a guide printing retains its finish while the permanent guide stays clean',()=>{
  const page=fs.readFileSync('assets/js/card-page.js','utf8'),id='11111111-1111-4111-8111-111111111111';
  for(const finish of ['foil','etched','nonfoil','invalid']){
-  const c={presentation:{...require("../assets/js/printing-presentation.js"),enhance(){}},URL,guideUrl:()=> 'https://manascout.co.uk/card/sol-ring/',parameters:()=>new URLSearchParams({finish})};vm.createContext(c);
+  const c={presentation:{...require("../assets/js/printing-presentation.js"),enhance(){}},URL,guideUrl:()=> 'https://manascout.co.uk/card/sol-ring/',urlState:require('../assets/js/url-state.js'),window:{location:{search:new URLSearchParams({printing:id,finish}).toString()}}};vm.createContext(c);
   vm.runInContext(page.slice(page.indexOf('  function printingUrl('),page.indexOf('  function scrollToTarget(')),c);
   const url=new URL(c.printingUrl(id));assert.equal(url.searchParams.get('printing'),id);
   assert.equal(url.searchParams.get('finish'),finish==='invalid'?null:finish);
@@ -55,16 +55,16 @@ test('copying a guide printing retains its finish while the permanent guide stay
 });
 for(const failure of ['request','identity','uuid','finish'])test(`exact-printing ${failure} failure cannot silently substitute another edition`,async()=>{
  let namedCalls=0,error='',kept='';
- const c={presentation:{...require("../assets/js/printing-presentation.js"),enhance(){}},AbortController,generation:0,controller:null,ui:{},console:{error(){}},
+ const c={presentation:{...require("../assets/js/printing-presentation.js"),enhance(){}},AbortController,generation:0,controller:null,loadingCard:null,urlState:require('../assets/js/url-state.js'),validSearchCard:()=>true,ui:{},console:{error(){}},
   cancelActive(){},startUrl(name,id){kept=id;},clearSuggestions(){},announce(){},
   sameName:(a,b)=>a===b,norm:x=>x,cardId:async()=>{
    if(failure==='request')throw Error('Request failed');
-   return {name:failure==='identity'?'Another card':'Sol Ring',id:failure==='uuid'?'another-id':'exact-id'};
+   return {name:failure==='identity'?'Another card':'Sol Ring',id:failure==='uuid'?'another-id':'11111111-1111-4111-8111-111111111111'};
   },namedCard:async()=>{namedCalls++;return {name:'Sol Ring',id:'substituted'};},
   chooseFinish:()=>false,errorState:message=>{error=message;}};
  vm.createContext(c);vm.runInContext(app.slice(app.indexOf('  async function loadCard('),app.indexOf('  /* ========================================\n     AUTOCOMPLETE')),c);
- assert.equal(await c.loadCard('Sol Ring',{printingId:'exact-id',finish:failure==='finish'?'etched':''}),null);
- assert.equal(namedCalls,0);assert.equal(kept,'exact-id');assert.match(error,/exact link has been kept/);
+ assert.equal(await c.loadCard('Sol Ring',{printingId:'11111111-1111-4111-8111-111111111111',finish:failure==='finish'?'etched':''}),null);
+ assert.equal(namedCalls,0);assert.equal(kept,'11111111-1111-4111-8111-111111111111');assert.match(error,/exact link has been kept/);
 });
 test('guide overview follows the live selected identity, language and finish',()=>{
  const {dom}=require('./helpers/card-dom.cjs'),d=dom();

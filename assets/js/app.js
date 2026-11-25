@@ -4,6 +4,7 @@
   "use strict";
 
   const { origin: API, get: getScryfall, searchPageUrl: printingSearchUrl } = window.ManaScoutScryfall;
+  const urlState = window.ManaScoutURLState;
   const FX = "https://api.frankfurter.dev/v2/rate";
   const $ = id => document.getElementById(id);
 
@@ -28,6 +29,7 @@
   const pickCache = new Map();
 
   let controller = null;
+  let loadingCard = null;
   let suggestController = null;
   let suggestTimer = 0;
   let generation = 0;
@@ -105,7 +107,7 @@
         : null;
 
   const paper = c =>
-    (c?.games || []).includes("paper");
+    Array.isArray(c?.games) && c.games.includes("paper");
 
   const motion = () =>
     window.matchMedia(
@@ -124,17 +126,6 @@
     new Promise(resolve =>
       setTimeout(resolve, ms)
     );
-
-  const params = () =>
-    new URLSearchParams(
-      window.location.search
-    );
-
-  const readPrinting = () =>
-    params().get("printing")?.trim() || "";
-
-  const readFinish = () =>
-    params().get("finish")?.trim() || "";
 
   const sameName = (a, b) =>
     norm(a) === norm(b);
@@ -164,108 +155,29 @@
      ======================================== */
 
   function pageUrl(card, finish = "") {
-    const url =
-      new URL(window.location.href);
+    return urlState.selectionUrl(window.location.href, {
+      query: card?.name, printingId: card?.id, finish, guideName
+    });
+  }
 
-    if (
-      guideName &&
-      sameName(guideName, card?.name)
-    ) {
-      url.searchParams.delete("q");
-    } else if (card?.name) {
-      url.searchParams.set(
-        "q",
-        card.name
-      );
-    } else {
-      url.searchParams.delete("q");
-    }
-
-    if (card?.id) {
-      url.searchParams.set(
-        "printing",
-        card.id
-      );
-    } else {
-      url.searchParams.delete("printing");
-    }
-
-    if (finish) {
-      url.searchParams.set(
-        "finish",
-        finish
-      );
-    } else {
-      url.searchParams.delete("finish");
-    }
-
-    return url;
+  function setSelectionUrl(url, replace) {
+    history[replace ? "replaceState" : "pushState"]({}, "", url);
+    updateSearchRobots();
   }
 
   function replaceUrl(card, replace = true) {
-    const finish = card
-      ? selectedFinish(card)
-      : "";
-
-    const url = pageUrl(
-      card,
-      finish
-    );
-
-    history[
-      replace
-        ? "replaceState"
-        : "pushState"
-    ]({}, "", url);
-    updateSearchRobots();
+    setSelectionUrl(pageUrl(card, card ? selectedFinish(card) : ""), replace);
   }
 
   function updateSearchRobots() {
     if (!intentEngine || window.location.pathname !== "/") return;
-    const utility = ["q", "printing", "finish", "set", "collector_number", "rarity", "colour", "type", "artist", "language"]
-      .some(key => params().has(key));
+    const utility = urlState.isVariant(window.location.search);
     document.querySelector('meta[name="robots"]')?.setAttribute("content", utility ? "noindex,follow" : "index,follow,max-image-preview:large");
   }
 
-  function startUrl(
-    name,
-    printingId = "",
-    replace = false
-  ) {
-    const url =
-      new URL(window.location.href);
-
-    if (
-      guideName &&
-      sameName(guideName, name)
-    ) {
-      url.searchParams.delete("q");
-    } else {
-      url.searchParams.set(
-        "q",
-        name
-      );
-    }
-
-    if (printingId) {
-      url.searchParams.set(
-        "printing",
-        printingId
-      );
-    } else {
-      url.searchParams.delete("printing");
-    }
-
-    if (!printingId) {
-      url.searchParams.delete("finish");
-    }
-
-    history[
-      replace
-        ? "replaceState"
-        : "pushState"
-    ]({}, "", url);
-    updateSearchRobots();
+  function startUrl(query, printingId, replace = false) {
+    const { finish } = urlState.parse(window.location.search);
+    setSelectionUrl(urlState.selectionUrl(window.location.href, { query, printingId, finish, guideName }), replace);
   }
 
 
@@ -2449,31 +2361,12 @@
     const token =
       generation;
 
-    controller =
-      new AbortController();
-
-    const signal =
-      controller.signal;
-
-    const requestedId =
-      String(
-        opts.printingId ||
-        (
-          opts.fromHistory
-            ? readPrinting()
-            : ""
-        )
-      ).trim();
-
-    const requestedFinish =
-      String(
-        opts.finish ||
-        (
-          opts.fromHistory
-            ? readFinish()
-            : ""
-        )
-      ).trim();
+    const request = new AbortController();
+    const { signal } = request;
+    controller = loadingCard = request;
+    const restored = opts.fromHistory ? urlState.parse(window.location.search) : {};
+    const requestedId = urlState.printing(opts.printingId || restored.printingId);
+    const requestedFinish = urlState.finish(opts.finish || restored.finish);
 
     if (!opts.fromHistory) {
       startUrl(
@@ -2554,10 +2447,12 @@
       }
 
       if (
-        token !== generation
+        signal.aborted || token !== generation
       ) {
         return null;
       }
+
+      if (!validSearchCard(card)) throw new Error("Incomplete physical card response.");
 
       if (
         exact &&
@@ -2609,7 +2504,7 @@
       }
 
       if (
-        token !== generation
+        signal.aborted || token !== generation
       ) {
         return null;
       }
@@ -2617,7 +2512,7 @@
       const rates = await rateRequest;
 
       if (
-        token !== generation
+        signal.aborted || token !== generation
       ) {
         return null;
       }
@@ -2671,7 +2566,7 @@
     } catch (error) {
       if (
         error.name === "AbortError" ||
-        token !== generation
+        signal.aborted || token !== generation
       ) {
         return null;
       }
@@ -2688,6 +2583,8 @@
       );
 
       return null;
+    } finally {
+      if (loadingCard === request) loadingCard = null;
     }
   }
 
@@ -2722,7 +2619,8 @@
     });
   }
 
-  const validSearchCard = card => Boolean(card?.id && card.name && card.set && card.collector_number && card.lang);
+  const validSearchCard = card => Boolean(urlState.printing(card?.id) && paper(card) &&
+    ["name", "set", "collector_number", "lang"].every(key => typeof card[key] === "string" && card[key].trim()));
 
   async function cataloguePage(url, signal) {
     const cached = searchPages.get(url);
@@ -2873,7 +2771,7 @@
     const endpoint = `${API}/cards/${set}/${encodeURIComponent(number)}/${language}`;
     if (locators.has(endpoint)) return locators.get(endpoint);
     const card = await getScryfall(endpoint, { signal });
-    if (!validSearchCard(card) || !paper(card) || card.set !== set ||
+    if (!validSearchCard(card) || card.set !== set ||
         norm(card.collector_number) !== norm(number) || card.lang !== language) {
       throw new Error("The catalogue returned a different printing.");
     }
@@ -2885,6 +2783,11 @@
   async function submitSearch(query, filters = {}, fromHistory = false) {
     if (!intentEngine || !searchResults) return loadCard(query, { userSearch: !fromHistory });
     query = String(query).trim().slice(0, 160);
+    if (loadingCard) {
+      loadingCard.abort();
+      ui.details?.querySelector('.empty-state[role="status"]')?.remove();
+      if (ui.status) ui.status.textContent = "";
+    }
     searchController?.abort();
     suggestController?.abort();
     clearTimeout(suggestTimer);
@@ -2908,7 +2811,7 @@
         try {
           const card = await getScryfall(`${API}/cards/named?exact=${encodeURIComponent(query)}`, { signal });
           if (!validSearchCard(card)) throw new Error("Incomplete card response.");
-          if (!signal.aborted) return loadCard(card.name, { nameRecord: card, input: query, userSearch: !fromHistory });
+          if (!signal.aborted) return loadCard(card.name, { nameRecord: card, input: query, fromHistory, userSearch: !fromHistory });
           return;
         } catch (error) {
           if (error.status !== 404) throw error;
@@ -2933,7 +2836,7 @@
         try {
           const card = await getScryfall(`${API}/cards/named?fuzzy=${encodeURIComponent(intent.cardName)}`, { signal });
           if (!validSearchCard(card)) throw new Error("Incomplete card response.");
-          if (!signal.aborted) return loadCard(card.name, { nameRecord: card, input: query, userSearch: !fromHistory });
+          if (!signal.aborted) return loadCard(card.name, { nameRecord: card, input: query, fromHistory, userSearch: !fromHistory });
           return;
         } catch (error) {
           if (error.status !== 404 || signal.aborted) throw error;
@@ -2984,8 +2887,8 @@
       generation++;
       announce("loading");
       if (!fromHistory) {
-        const url = new URL("/", window.location.href);
-        history.pushState({ search: { query, filters } }, "", url);
+        const entry = urlState.searchEntry(window.location.href, query, filters);
+        history.pushState(entry.state, "", entry.url);
         trackSearch(intent.category, false, page.total);
       }
       setSearchTitle("MTG Card Search | ManaScout");
@@ -3053,8 +2956,8 @@
     suggestController =
       new AbortController();
 
+    const { signal } = suggestController;
     try {
-      const { signal } = suggestController;
       let names = [];
       let sets = setIndex;
       const locator = query.match(/^([a-z0-9]{2,8})\s+#?(\d[\p{L}\d★†-]{0,15})$/iu);
@@ -3110,7 +3013,7 @@
 
     } catch (error) {
       if (
-        error.name !== "AbortError"
+        !signal.aborted && error.name !== "AbortError"
       ) {
         clearSuggestions();
       }
@@ -3429,37 +3332,23 @@
      BROWSER HISTORY
      ======================================== */
 
-  window.addEventListener(
-    "popstate",
-    event => {
-      updateSearchRobots();
-      if (event.state?.search && ui.input) {
-        const { query, filters } = event.state.search;
-        ui.input.value = query;
-        void submitSearch(query, filters, true);
-        return;
-      }
-      const query =
-        params().get("q")?.trim() ||
-        guideName;
-
-      if (query && intentEngine && !readPrinting() && !guideName) {
-        ui.input.value = query;
-        void submitSearch(query, {}, true);
-      } else if (query) {
-        void loadCard(
-          query,
-          {
-            fromHistory: true,
-            printingId: readPrinting(),
-            finish: readFinish()
-          }
-        );
-      } else {
-        setHome();
-      }
+  function restoreSelection(state) {
+    if (state.kind === "home") {
+      setHome();
+    } else if (state.kind === "search" && intentEngine && ui.input) {
+      ui.input.value = state.query;
+      void submitSearch(state.query, state.filters, true);
+    } else {
+      void loadCard(state.query, {
+        fromHistory: true, printingId: state.printingId, finish: state.finish
+      });
     }
-  );
+  }
+
+  window.addEventListener("popstate", event => {
+    updateSearchRobots();
+    restoreSelection(urlState.restore(window.location.search, event.state, guideName));
+  });
 
 
   /* ========================================
@@ -3504,21 +3393,8 @@
   installGuideImages();
   updateSearchRobots();
 
-  const first =
-    params().get("q")?.trim();
-
-  if (first && intentEngine && !readPrinting()) {
-    if (ui.input) ui.input.value = first;
-    void submitSearch(first, {}, true);
-  } else if (first) {
-    void loadCard(
-      first,
-      {
-        fromHistory: true,
-        printingId: readPrinting(),
-        finish: readFinish()
-      }
-    );
+  if (urlState.parse(window.location.search).query) {
+    restoreSelection(urlState.restore(window.location.search, null, guideName));
   }
 
 })();

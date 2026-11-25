@@ -30,10 +30,10 @@ def style_snapshot(page):
 def screenshot(page, path, selector):
     if path:
         page.locator(selector).evaluate("e => window.scrollTo({top: scrollY + e.getBoundingClientRect().top - 76, behavior: 'instant'})")
-        page.locator(selector).evaluate("""async e => {
-            const viewportImages = [...e.querySelectorAll('img')].filter(image => {
+        page.evaluate("""async () => {
+            const viewportImages = [...document.images].filter(image => {
                 const rect = image.getBoundingClientRect();
-                return rect.bottom > 0 && rect.top < innerHeight;
+                return rect.width > 0 && rect.height > 0 && rect.bottom > 0 && rect.top < innerHeight;
             });
             await Promise.allSettled(viewportImages.map(image => image.decode()));
         }""")

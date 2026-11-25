@@ -26,6 +26,7 @@
   "use strict";
 
   const body = document.body;
+  const urlState = window.ManaScoutURLState;
 
   const guideName = String(
     body?.dataset?.cardName || ""
@@ -53,17 +54,7 @@
      HELPERS
      ======================================== */
 
-  function parameters() {
-    return new URLSearchParams(
-      window.location.search
-    );
-  }
-
-  function getPrintingId() {
-    return (
-      parameters().get("printing") || ""
-    ).trim();
-  }
+  const getPrintingId = () => urlState.parse(window.location.search).printingId;
 
   function normalise(value) {
     return String(value || "")
@@ -84,18 +75,9 @@
   }
 
   function printingUrl(id) {
-    const url = new URL(guideUrl());
-
-    if (id) {
-      url.searchParams.set(
-        "printing",
-        id
-      );
-    }
-
-    const finish = parameters().get("finish");
-    if (["nonfoil", "foil", "etched"].includes(finish)) url.searchParams.set("finish", finish);
-    return url.href;
+    return urlState.selectionUrl(guideUrl(), {
+      printingId: id, finish: urlState.parse(window.location.search).finish
+    }).href;
   }
 
   function scrollToTarget(id) {
@@ -509,13 +491,9 @@
      *
      * Avoid performing the same fetch twice.
      */
-    const query =
-      parameters().get("q");
+    const { query } = urlState.parse(window.location.search);
 
-    if (
-      query &&
-      sameCard(query)
-    ) {
+    if (query) {
       updatePrintingSelection();
       return;
     }
