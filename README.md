@@ -16,6 +16,8 @@ python tests/run-deck-studio.py
 
 The runner includes JavaScript regressions, syntax, guide registry, HTML/ARIA/local links, JSON-LD, sitemap and site integrity checks. Native mobile/desktop rendering, live API responses and real storage concurrency require separate browser checks. See `docs/deck-studio.md`, `docs/deck-appearance.md` and `docs/stage5-integrity.md`.
 
+Guide membership, catalogue dates and archive categories are authored in `data/guides.json`. When adding a guide, update the manifest and the hand-curated archive card, then run `python scripts/sync-guide-catalogue.py`. The [engineering audit](docs/engineering-stabilisation.md) describes the catalogue workflow, dependency map and release sequence.
+
 ## Hosting
 
 GitHub Pages serves the repository root on the configured publishing branch after the owner's manual release workflow. `CNAME` specifies `manascout.co.uk`. Development tasks must not change hosting settings or publish/merge to main automatically.

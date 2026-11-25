@@ -9,7 +9,6 @@ html = (ROOT / 'index.html').read_text()
 home = (ROOT / 'assets/css/home.css').read_text()
 physical = (ROOT / 'assets/css/printing-presentation.css').read_text()
 app = (ROOT / 'assets/js/app.js').read_text()
-css = app.split('    style.textContent = `', 1)[1].split('    `;', 1)[0]
 
 
 class ArtworkStructure(HTMLParser):
@@ -70,7 +69,6 @@ def validate_css(text):
 
 
 validate_css(home)
-validate_css(css)
 validate_css(physical)
 keyframes = re.findall(r'@keyframes\s+([\w-]+)', home)
 assert len(keyframes) == len(set(keyframes)), 'Duplicate homepage keyframes'
@@ -89,9 +87,10 @@ assert 'touch-action: pan-y pinch-zoom' in physical
 assert 'animation-play-state: paused' in home
 assert 'data-weekly-effects-paused="true"' not in html
 assert 'data-weekly-art-ready="false"' in html
-assert 'prefers-reduced-motion:reduce' in css and '.ms-face-turner { transition: none !important; }' in css
-assert 'backface-visibility: hidden' in css and 'rotateY(180deg)' in css
-assert 'width: 44px; height: 44px;' in css and ':focus-visible' in css
+assert 'prefers-reduced-motion:reduce' in physical and '.ms-face-turner { transition: none !important; }' in physical
+assert 'backface-visibility: hidden' in physical and 'rotateY(180deg)' in physical
+assert 'width: 44px; height: 44px;' in physical and ':focus-visible' in physical
+assert not re.search(r'createElement\(\s*["\']style["\']', app)
 assert 'ms-finish-control' not in app and 'ms-thumb-toggle' not in app and 'data-ms-finish-toggle' not in app
 print('PASS homepage/shared-preview CSS structure, unique keyframes, exact featured printing, preserved 3D, conditional overlays, motion and touch/focus structure')
 print('LIMITATION: no pixels, native 3D compositing or Android performance are verified here. Traditional foil is a restrained digital illustration; physical reflectivity and native touch scrolling need owner review.')

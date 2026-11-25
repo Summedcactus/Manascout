@@ -39,9 +39,7 @@ test("Search and analytics recognise manifest routes only", () => {
   const document = {
     getElementById: () => null,
     querySelectorAll: () => [],
-    addEventListener() {},
-    createElement: () => ({}),
-    head: { appendChild() {} }
+    addEventListener() {}
   };
   const window = {
     location: { pathname: "/", search: "" },

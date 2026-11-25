@@ -67,7 +67,8 @@ def archive_html(source, guides):
             {"@type": "ListItem", "position": index, "name": guide["name"], "url": ORIGIN + guide_path(guide)}
             for index, guide in enumerate(ordered, 1)
         ]
-        return match[1] + json.dumps(graph, ensure_ascii=False, indent=2) + match[3]
+        encoded = json.dumps(graph, ensure_ascii=False, indent=2).replace("<", "\\u003c")
+        return match[1] + encoded + match[3]
 
     source = replace_once(r'(<script type="application/ld\+json">)([\s\S]*?)(</script>)', schema, source)
     for before, after in (

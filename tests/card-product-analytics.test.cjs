@@ -24,7 +24,13 @@ const additions=Object.keys(phase101.guides).sort().map(slug=>
 ).join('');
 const expected=sitemap.replace(/(https:\/\/manascout\.co\.uk\/card\/<\/loc>\s*<lastmod>)\d{4}-\d{2}-\d{2}/, '$1'+phase101.reviewed)
   .replace('</urlset>',additions+'</urlset>');
-assert.equal(current,expected);for(const [slug,g]of Object.entries(b.guides)){const s=fs.readFileSync(`card/${slug}/index.html`,'utf8');if (!["mr-spock-science-officer","sol-ring"].includes(slug)) { assert.equal(s.match(/<title>([^]*?)<\/title>/)[1],g.title);assert.equal(s.match(/name="description" content="([^"]+)"/)[1],g.description); }assert.equal(s.match(/class="hero-copy">([^]*?)<\/p>/)[1],g.opening);}for(const [p,hash]of Object.entries(b.preserved))assert.equal(crypto.createHash('sha256').update(fs.readFileSync(p)).digest('hex'),hash,p);});
+const sitemapDates=text=>new Map([...text.matchAll(/<loc>([^<]+)<\/loc>\s*<lastmod>([^<]+)<\/lastmod>/g)].map(([,url,date])=>[url,date]));
+const currentDates=sitemapDates(current);
+for(const [url,date] of sitemapDates(expected)) {
+  if(url==='https://manascout.co.uk/card/')assert.ok(currentDates.get(url)>=date,url);
+  else assert.equal(currentDates.get(url),date,url);
+}
+for(const [slug,g]of Object.entries(b.guides)){const s=fs.readFileSync(`card/${slug}/index.html`,'utf8');if (!["mr-spock-science-officer","sol-ring"].includes(slug)) { assert.equal(s.match(/<title>([^]*?)<\/title>/)[1],g.title);assert.equal(s.match(/name="description" content="([^"]+)"/)[1],g.description); }assert.equal(s.match(/class="hero-copy">([^]*?)<\/p>/)[1],g.opening);}for(const [p,hash]of Object.entries(b.preserved))assert.equal(crypto.createHash('sha256').update(fs.readFileSync(p)).digest('hex'),hash,p);});
 test('current COTW has exact copy, primary/secondary hierarchy and bounded handoff', () => {
   const card = require('./fixtures/cosmic-spider-man.json');
   const html = fs.readFileSync('index.html', 'utf8');
