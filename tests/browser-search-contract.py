@@ -175,14 +175,13 @@ def error_flow(browser, base, width, artwork):
         select_named(page, "Sol Ring")
         expect(status).to_have_text("")
 
-    submit("Slow Fixture")
-    # Playwright drives the HTTP interception while the browser waits for the body.
-    for _ in range(15):
-        if "Slow Fixture" in pending:
-            break
-        page.wait_for_timeout(20)
-    assert "Slow Fixture" in pending
+    # The shared scheduler may still be starting Scoutboard requests. Wait for
+    # the actual lookup to start before issuing the successor that cancels it.
+    with page.expect_request(lambda request: request.url.startswith("https://api.scryfall.com/cards/named?")
+                             and parse_qs(urlsplit(request.url).query).get("exact") == ["Slow Fixture"]):
+        submit("Slow Fixture")
     select_named(page, SPOCK["name"])
+    assert "Slow Fixture" in pending
     try:
         pending.pop("Slow Fixture").fulfill(json=SOL)
     except Error:
