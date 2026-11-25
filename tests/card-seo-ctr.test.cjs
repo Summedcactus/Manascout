@@ -1,3 +1,4 @@
+const guideCount = require("../data/guides.json").length;
 const phase6=JSON.parse(require('node:fs').readFileSync('docs/phase6-search-growth.json','utf8'));
 const phase5={...JSON.parse(require('node:fs').readFileSync('docs/us-search-baseline.json','utf8')).guides,...phase6.upgrades,...phase6.metadata_only};
 /* Dated catalogue facts are independent fixtures. These checks do not claim live API or browser verification. */
@@ -61,15 +62,15 @@ test('upgraded guides retain their curated tables and clarify their most-confuse
 test('contextual cross-links connect new guides with related printing histories',()=>{
  const links={'sol-ring':['arcane-signet','dark-ritual'],'rhystic-study':['mystic-remora','brainstorm','mystical-tutor'],brainstorm:['counterspell','force-of-will'],thoughtseize:['demonic-tutor','vampiric-tutor'],'mystical-tutor':['enlightened-tutor','worldly-tutor'],'dark-ritual':['necropotence','demonic-tutor']};for(const [slug,targets]of Object.entries(links))for(const target of targets)assert.ok(read(`card/${slug}/index.html`).includes(`href="/card/${target}/"`),slug+' → '+target);
 });
-test('63 guide routes appear once in registry, directory and the 71-URL sitemap',()=>{
- const app=read('assets/js/app.js'),registered=[...app.match(/const GUIDE_SLUGS = new Set\(\[([^]*?)\]\)/)[1].matchAll(/"([a-z0-9-]+)"/g)].map(x=>x[1]),list=graph(read('card/index.html')).find(n=>n['@type']==='ItemList'),urls=[...read('sitemap.xml').matchAll(/<loc>([^<]+)<\/loc>/g)].map(m=>m[1]);assert.equal(registered.length,68);assert.equal(new Set(registered).size,68);assert.equal(list.numberOfItems,68);assert.equal(urls.length,71);assert.equal(new Set(urls).size,71);for(const slug of slugs){const url=host+'/card/'+slug+'/';assert.equal(registered.filter(s=>s===slug).length,1);assert.equal(list.itemListElement.filter(x=>x.url===url).length,1);assert.equal(urls.filter(x=>x===url).length,1);}assert.ok(!urls.includes(host+'/contact/'));assert.ok(!urls.some(u=>u.includes('?')));assert.ok(!urls.includes(host+'/privacy/'));assert.ok(!urls.includes(host+'/terms/'));
+test('Guide routes appear once in registry, directory and sitemap',()=>{
+ const registered=require("../assets/js/guide-catalogue.js").slugs,list=graph(read('card/index.html')).find(n=>n['@type']==='ItemList'),urls=[...read('sitemap.xml').matchAll(/<loc>([^<]+)<\/loc>/g)].map(m=>m[1]);assert.equal(registered.length, guideCount);assert.equal(new Set(registered).size, guideCount);assert.equal(list.numberOfItems, guideCount);assert.equal(urls.length, guideCount + 3);assert.equal(new Set(urls).size, guideCount + 3);for(const slug of slugs){const url=host+'/card/'+slug+'/';assert.equal(registered.filter(s=>s===slug).length,1);assert.equal(list.itemListElement.filter(x=>x.url===url).length,1);assert.equal(urls.filter(x=>x===url).length,1);}assert.ok(!urls.includes(host+'/contact/'));assert.ok(!urls.some(u=>u.includes('?')));assert.ok(!urls.includes(host+'/privacy/'));assert.ok(!urls.includes(host+'/terms/'));
 });
 test('new sitemap dates are limited to the editorial batch and the directory',()=>{
  const expected=new Set([... [host+'/card/',...slugs.map(s=>host+'/card/'+s+'/')]].filter(url=>!phase6.sitemap[url])),entries=[...read('sitemap.xml').matchAll(/<loc>([^<]+)<\/loc>\s*<lastmod>([^<]+)<\/lastmod>/g)];assert.deepEqual(new Set(entries.filter(x=>x[2]===day).map(x=>x[1])),new Set([...expected].filter(url=>!Object.values(phase5).some(g=>g.sitemap.url===url))));assert.equal(entries.find(x=>x[1]===host+'/')[2],'2026-11-17');assert.equal(entries.find(x=>x[1]===host+'/deck/')[2],'2026-11-22');assert.ok(!entries.some(x=>x[1]===host+'/contact/'));
 });
 test('registry cache refresh is loaded by the homepage and all eight explorer guides',()=>{for(const path of ['index.html',...slugs.map(s=>'card/'+s+'/index.html')])assert.match(read(path),/\/assets\/js\/app.js\?v=seo-ctr1/);});
 test('new guide names resolve through the existing shared exact-name search and guide/deck handoff',async()=>{
- const app=read('assets/js/app.js'),registry=new Set([...app.match(/const GUIDE_SLUGS = new Set\(\[([^]*?)\]\)/)[1].matchAll(/"([a-z0-9-]+)"/g)].map(x=>x[1]));for(const [slug,card]of Object.entries(ledger.new_guides)){
+ const app=read('assets/js/app.js'),registry=new Set(require("../assets/js/guide-catalogue.js").slugs);for(const [slug,card]of Object.entries(ledger.new_guides)){
   const calls=[],c={API:'https://api.scryfall.com',encodeURIComponent,readJson:async u=>{calls.push(u);return{name:card.name};}};vm.createContext(c);vm.runInContext(app.slice(app.indexOf('  async function namedCard('),app.indexOf('  async function cardId(')),c);assert.equal((await c.namedCard(card.name)).name,card.name);assert.equal(new URL(calls[0]).searchParams.get('exact'),card.name);
   Object.assign(c,{GUIDE_SLUGS:registry,window:{location:{pathname:'/'}},URLSearchParams,slug:s=>s.toLowerCase().replace(/['’]/g,'').replace(/[^a-z0-9]+/g,'-'),esc:s=>s,selectedFinish:()=> 'foil'});vm.runInContext(app.slice(app.indexOf('  function guideLink('),app.indexOf('  function marketplace(')),c);const record={name:card.name,id:'11111111-1111-4111-8111-111111111111'};assert.ok(c.guideLink(record).includes('/card/'+slug+'/'));const url=new URL(c.deckLink(record).match(/href="([^"]+)"/)[1].replace(/&amp;/g,'&'),host);assert.equal(url.searchParams.get('printing'),record.id);assert.equal(url.searchParams.get('finish'),'foil');
  }
@@ -93,7 +94,7 @@ test('the two experiments give a card-specific answer within the first screen', 
   assert.match(sol, /First Printing[\s\S]*Limited Edition Alpha[\s\S]*1993 · Mark Tedin · Nonfoil[\s\S]*LEA #269 is the catalogue identity/);
 });
 
-test('the 68 guide sharing images are unique per metadata field and match exact featured artwork', () => {
+test('the guide sharing images are unique per metadata field and match exact featured artwork', () => {
   for (const entry of fs.readdirSync('card', {withFileTypes:true}).filter(item => item.isDirectory())) {
     const html = read(`card/${entry.name}/index.html`);
     const src = html.match(/<img[^>]+src="([^"]+)"/)[1];

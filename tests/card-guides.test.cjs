@@ -1,3 +1,4 @@
+const guideCount = require("../data/guides.json").length;
 const phase6=JSON.parse(require('node:fs').readFileSync('docs/phase6-search-growth.json','utf8'));
 const phase5={...JSON.parse(require('node:fs').readFileSync('docs/us-search-baseline.json','utf8')).guides,...phase6.upgrades,...phase6.metadata_only};
 /* Editorial facts cross-checked against the cited catalogues on 4 November 2026.
@@ -11,7 +12,7 @@ const guides=[
 const read=p=>fs.readFileSync(p,'utf8');const plain=s=>s.replace(/<[^>]+>/g,' ').replace(/&amp;/g,'&').replace(/\s+/g,' ').trim();
 const app=read('assets/js/app.js'),directory=read('card/index.html');
 const graph=html=>JSON.parse(html.match(/<script type="application\/ld\+json">([^]*?)<\/script>/)[1]);
-const registry=new Set([...app.match(/const GUIDE_SLUGS = new Set\(\[([^]*?)\]\)/)[1].matchAll(/"([a-z0-9-]+)"/g)].map(x=>x[1]));
+const registry=new Set(require("../assets/js/guide-catalogue.js").slugs);
 const catalogue=()=>fs.readdirSync('card',{withFileTypes:true}).filter(f=>f.isDirectory()&&fs.existsSync(`card/${f.name}/index.html`)&&/data-card-name=/.test(read(`card/${f.name}/index.html`))).map(f=>f.name);
 const esc=s=>String(s??'').replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;');
 const slug=s=>s.toLowerCase().replace(/['’]/g,'').replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');
@@ -34,7 +35,7 @@ for(const g of guides){
  });
 }
 test('directory metadata, visible counts, ItemList, registry and actual permanent guide count stay consistent',()=>{
- const actual=catalogue();assert.equal(actual.length,68);assert.equal(registry.size,actual.length);assert.deepEqual([...registry].sort(),actual.sort());const list=graph(directory)['@graph'].find(x=>x['@type']==='ItemList');assert.equal(list.numberOfItems,actual.length);assert.equal(list.itemListElement.length,actual.length);assert.deepEqual(list.itemListElement.map(x=>x.position),Array.from({length:actual.length},(_,i)=>i+1));assert.equal(new Set(list.itemListElement.map(x=>x.url)).size,68);assert.equal((directory.match(/class="hub-guide"/g)||[]).length,68);assert.match(directory,/Showing all 68 ManaScout card guides/);assert.match(directory,/<strong>68<\/strong> card guides/);assert.doesNotMatch(directory,/\b38 (?:Magic|ManaScout|card|guides)/);assert.match(read('deck/index.html'),/Explore 68 card guides/);
+ const actual=catalogue();assert.equal(actual.length, guideCount);assert.equal(registry.size,actual.length);assert.deepEqual([...registry].sort(),actual.sort());const list=graph(directory)['@graph'].find(x=>x['@type']==='ItemList');assert.equal(list.numberOfItems,actual.length);assert.equal(list.itemListElement.length,actual.length);assert.deepEqual(list.itemListElement.map(x=>x.position),Array.from({length:actual.length},(_,i)=>i+1));assert.equal(new Set(list.itemListElement.map(x=>x.url)).size, guideCount);assert.equal((directory.match(/class="hub-guide"/g)||[]).length, guideCount);assert.match(directory,new RegExp(`id="hub-status"[^>]*>\\s*${guideCount} guides`));assert.match(directory,new RegExp(`All <span id="hub-total">${guideCount}</span> Guides`));assert.doesNotMatch(directory,/\b38 (?:Magic|ManaScout|card|guides)/);assert.match(read('deck/index.html'),new RegExp(`Explore ${guideCount} card guides`));
  const group=directory.slice(directory.indexOf('id="showcase-releases"'),directory.indexOf('id="hub-empty"'));for(const g of guides){assert.ok(group.includes(`/card/${g.slug}/`));assert.ok(list.itemListElement.some(x=>x.url.endsWith(`/card/${g.slug}/`)&&x.name===g.name));}
 });
 test('sitemap preserves existing entries and contains both new canonical URLs exactly once',()=>{

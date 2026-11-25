@@ -98,7 +98,7 @@ function rendererContext(card, pathname) {
   const source = fs.readFileSync(path.join(root, 'assets/js/app.js'), 'utf8');
   const deckLink = source.slice(source.indexOf('  function deckLink('), source.indexOf('  function marketplace('));
   const render = source.slice(source.indexOf('  function renderCard('), source.indexOf('  /* ========================================\n     CURRENCY AND PRICE DATA'));
-  const registry = new Set([...source.match(/const GUIDE_SLUGS = new Set\(\[([\s\S]*?)\]\)/)[1].matchAll(/"([a-z0-9-]+)"/g)].map(m => m[1]));
+  const registry = new Set(require("../assets/js/guide-catalogue.js").slugs);
   const blank = () => '';
   const information = { innerHTML: "" };
   const c = { card, URLSearchParams, GUIDE_SLUGS: registry, window: { location: { pathname } },
