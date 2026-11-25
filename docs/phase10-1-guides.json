@@ -1,0 +1,1292 @@
+{
+  "reviewed": "2026-11-25",
+  "guides": {
+    "heroic-intervention": {
+      "name": "Heroic Intervention",
+      "title": "Heroic Intervention MTG — Aether Revolt to Etched Foil",
+      "description": "Identify the Aether Revolt original and compare James Ryman’s etched reprint, Fallout Surge Foil, Source Material art and Secret Lair versions.",
+      "intent": "finish-identification",
+      "first": "8f5a620c-fde7-4b72-bf8a-efc4f14560c5",
+      "catalogueRecords": 30,
+      "sources": [
+        "https://magic.wizards.com/en/news/feature/collecting-commander-masters",
+        "https://magic.wizards.com/en/news/feature/collecting-magic-the-gathering-fallout",
+        "https://magic.wizards.com/en/news/feature/collecting-marvel-super-heroes",
+        "https://scryfall.com/card/aer/109/heroic-intervention",
+        "https://scryfall.com/card/m21/375/heroic-intervention",
+        "https://scryfall.com/card/afc/161/heroic-intervention",
+        "https://scryfall.com/card/cmm/295/heroic-intervention",
+        "https://scryfall.com/card/cmm/563/heroic-intervention",
+        "https://scryfall.com/card/who/1067/heroic-intervention",
+        "https://scryfall.com/card/pip/471/heroic-intervention",
+        "https://scryfall.com/card/pip/999/heroic-intervention",
+        "https://scryfall.com/card/sld/1872/heroic-intervention",
+        "https://scryfall.com/card/mar/78/heroic-intervention",
+        "https://scryfall.com/card/slc/66/heroic-intervention",
+        "https://scryfall.com/card/slc/97/heroic-intervention"
+      ],
+      "curated": [
+        {
+          "id": "8f5a620c-fde7-4b72-bf8a-efc4f14560c5",
+          "name": "Heroic Intervention",
+          "oracle_id": "24882fa2-3fe9-4c1b-aa3d-0e6488b9db27",
+          "set": "aer",
+          "set_name": "Aether Revolt",
+          "collector_number": "109",
+          "released_at": "2017-01-20",
+          "lang": "en",
+          "games": [
+            "paper",
+            "mtgo"
+          ],
+          "rarity": "rare",
+          "artist": "James Ryman",
+          "illustration_id": "16b9c334-bec0-4911-aecf-93c420e4e53d",
+          "image_uris": {
+            "normal": "https://cards.scryfall.io/normal/front/8/f/8f5a620c-fde7-4b72-bf8a-efc4f14560c5.jpg?1783936743",
+            "small": "https://cards.scryfall.io/small/front/8/f/8f5a620c-fde7-4b72-bf8a-efc4f14560c5.jpg?1783936743"
+          },
+          "scryfall_uri": "https://scryfall.com/card/aer/109/heroic-intervention?utm_source=api",
+          "finishes": [
+            "nonfoil",
+            "foil"
+          ],
+          "frame": "2015",
+          "border_color": "black",
+          "full_art": false,
+          "oracle_text": "Permanents you control gain hexproof and indestructible until end of turn.",
+          "type_line": "Instant",
+          "cmc": 2.0,
+          "legalities": {
+            "commander": "legal",
+            "legacy": "legal",
+            "modern": "legal",
+            "standard": "not_legal"
+          }
+        },
+        {
+          "id": "cf9fb88e-d13d-46d0-a3c5-da886f43ffb9",
+          "name": "Heroic Intervention",
+          "oracle_id": "24882fa2-3fe9-4c1b-aa3d-0e6488b9db27",
+          "set": "m21",
+          "set_name": "Core Set 2021",
+          "collector_number": "375",
+          "released_at": "2020-07-03",
+          "lang": "en",
+          "games": [
+            "paper",
+            "mtgo"
+          ],
+          "rarity": "rare",
+          "artist": "James Ryman",
+          "illustration_id": "16b9c334-bec0-4911-aecf-93c420e4e53d",
+          "image_uris": {
+            "normal": "https://cards.scryfall.io/normal/front/c/f/cf9fb88e-d13d-46d0-a3c5-da886f43ffb9.jpg?1783930602",
+            "small": "https://cards.scryfall.io/small/front/c/f/cf9fb88e-d13d-46d0-a3c5-da886f43ffb9.jpg?1783930602"
+          },
+          "scryfall_uri": "https://scryfall.com/card/m21/375/heroic-intervention?utm_source=api",
+          "finishes": [
+            "nonfoil",
+            "foil"
+          ],
+          "frame": "2015",
+          "frame_effects": [
+            "extendedart"
+          ],
+          "promo_types": [
+            "boosterfun"
+          ],
+          "border_color": "black",
+          "full_art": false,
+          "oracle_text": "Permanents you control gain hexproof and indestructible until end of turn.",
+          "type_line": "Instant",
+          "cmc": 2.0,
+          "legalities": {
+            "commander": "legal",
+            "legacy": "legal",
+            "modern": "legal",
+            "standard": "not_legal"
+          }
+        },
+        {
+          "id": "c5e72882-dbf8-42d2-9a98-31f2f71e2ed9",
+          "name": "Heroic Intervention",
+          "oracle_id": "24882fa2-3fe9-4c1b-aa3d-0e6488b9db27",
+          "set": "afc",
+          "set_name": "Forgotten Realms Commander",
+          "collector_number": "161",
+          "released_at": "2021-07-23",
+          "lang": "en",
+          "games": [
+            "paper",
+            "mtgo"
+          ],
+          "rarity": "rare",
+          "artist": "Randy Vargas",
+          "illustration_id": "c5fbf407-21b4-455a-a3ba-8fb3a34c8005",
+          "image_uris": {
+            "normal": "https://cards.scryfall.io/normal/front/c/5/c5e72882-dbf8-42d2-9a98-31f2f71e2ed9.jpg?1783926191",
+            "small": "https://cards.scryfall.io/small/front/c/5/c5e72882-dbf8-42d2-9a98-31f2f71e2ed9.jpg?1783926191"
+          },
+          "scryfall_uri": "https://scryfall.com/card/afc/161/heroic-intervention?utm_source=api",
+          "finishes": [
+            "nonfoil"
+          ],
+          "frame": "2015",
+          "border_color": "black",
+          "full_art": false,
+          "oracle_text": "Permanents you control gain hexproof and indestructible until end of turn.",
+          "type_line": "Instant",
+          "cmc": 2.0,
+          "legalities": {
+            "commander": "legal",
+            "legacy": "legal",
+            "modern": "legal",
+            "standard": "not_legal"
+          }
+        },
+        {
+          "id": "e32c67d1-187f-40df-b3b3-6036f5c92834",
+          "name": "Heroic Intervention",
+          "oracle_id": "24882fa2-3fe9-4c1b-aa3d-0e6488b9db27",
+          "set": "cmm",
+          "set_name": "Commander Masters",
+          "collector_number": "295",
+          "released_at": "2023-08-04",
+          "lang": "en",
+          "games": [
+            "paper",
+            "mtgo"
+          ],
+          "rarity": "rare",
+          "artist": "James Ryman",
+          "illustration_id": "16b9c334-bec0-4911-aecf-93c420e4e53d",
+          "image_uris": {
+            "normal": "https://cards.scryfall.io/normal/front/e/3/e32c67d1-187f-40df-b3b3-6036f5c92834.jpg?1783915629",
+            "small": "https://cards.scryfall.io/small/front/e/3/e32c67d1-187f-40df-b3b3-6036f5c92834.jpg?1783915629"
+          },
+          "scryfall_uri": "https://scryfall.com/card/cmm/295/heroic-intervention?utm_source=api",
+          "finishes": [
+            "nonfoil",
+            "foil"
+          ],
+          "frame": "2015",
+          "border_color": "black",
+          "full_art": false,
+          "oracle_text": "Permanents you control gain hexproof and indestructible until end of turn.",
+          "type_line": "Instant",
+          "cmc": 2.0,
+          "legalities": {
+            "commander": "legal",
+            "legacy": "legal",
+            "modern": "legal",
+            "standard": "not_legal"
+          }
+        },
+        {
+          "id": "ff5c1e29-4b8e-4783-8bc7-163670face9d",
+          "name": "Heroic Intervention",
+          "oracle_id": "24882fa2-3fe9-4c1b-aa3d-0e6488b9db27",
+          "set": "cmm",
+          "set_name": "Commander Masters",
+          "collector_number": "563",
+          "released_at": "2023-08-04",
+          "lang": "en",
+          "games": [
+            "paper",
+            "mtgo"
+          ],
+          "rarity": "rare",
+          "artist": "James Ryman",
+          "illustration_id": "16b9c334-bec0-4911-aecf-93c420e4e53d",
+          "image_uris": {
+            "normal": "https://cards.scryfall.io/normal/front/f/f/ff5c1e29-4b8e-4783-8bc7-163670face9d.jpg?1783915538",
+            "small": "https://cards.scryfall.io/small/front/f/f/ff5c1e29-4b8e-4783-8bc7-163670face9d.jpg?1783915538"
+          },
+          "scryfall_uri": "https://scryfall.com/card/cmm/563/heroic-intervention?utm_source=api",
+          "finishes": [
+            "etched"
+          ],
+          "frame": "2015",
+          "frame_effects": [
+            "inverted",
+            "etched"
+          ],
+          "promo_types": [
+            "boosterfun"
+          ],
+          "border_color": "black",
+          "full_art": false,
+          "oracle_text": "Permanents you control gain hexproof and indestructible until end of turn.",
+          "type_line": "Instant",
+          "cmc": 2.0,
+          "legalities": {
+            "commander": "legal",
+            "legacy": "legal",
+            "modern": "legal",
+            "standard": "not_legal"
+          }
+        },
+        {
+          "id": "b77ce389-1610-4122-b1a5-bbbfa7b80a74",
+          "name": "Heroic Intervention",
+          "oracle_id": "24882fa2-3fe9-4c1b-aa3d-0e6488b9db27",
+          "set": "who",
+          "set_name": "Doctor Who",
+          "collector_number": "1067",
+          "released_at": "2023-10-13",
+          "lang": "en",
+          "games": [
+            "paper"
+          ],
+          "rarity": "rare",
+          "artist": "Billy Christian",
+          "illustration_id": "6b382e43-b19d-4eab-aaff-9ebc5a442c88",
+          "image_uris": {
+            "normal": "https://cards.scryfall.io/normal/front/b/7/b77ce389-1610-4122-b1a5-bbbfa7b80a74.jpg?1783914281",
+            "small": "https://cards.scryfall.io/small/front/b/7/b77ce389-1610-4122-b1a5-bbbfa7b80a74.jpg?1783914281"
+          },
+          "scryfall_uri": "https://scryfall.com/card/who/1067/heroic-intervention?utm_source=api",
+          "finishes": [
+            "foil"
+          ],
+          "frame": "2015",
+          "frame_effects": [
+            "extendedart"
+          ],
+          "promo_types": [
+            "surgefoil",
+            "universesbeyond",
+            "boosterfun"
+          ],
+          "border_color": "black",
+          "full_art": false,
+          "oracle_text": "Permanents you control gain hexproof and indestructible until end of turn.",
+          "type_line": "Instant",
+          "cmc": 2.0,
+          "legalities": {
+            "commander": "legal",
+            "legacy": "legal",
+            "modern": "legal",
+            "standard": "not_legal"
+          }
+        },
+        {
+          "id": "2e5f9fb7-e881-4f54-bcb0-833fd11bcae2",
+          "name": "Heroic Intervention",
+          "oracle_id": "24882fa2-3fe9-4c1b-aa3d-0e6488b9db27",
+          "set": "pip",
+          "set_name": "Fallout",
+          "collector_number": "471",
+          "released_at": "2024-03-08",
+          "lang": "en",
+          "games": [
+            "paper",
+            "mtgo"
+          ],
+          "rarity": "rare",
+          "artist": "Josh Hass",
+          "illustration_id": "8d98761c-a881-4b50-9867-e80b36e7bbab",
+          "image_uris": {
+            "normal": "https://cards.scryfall.io/normal/front/2/e/2e5f9fb7-e881-4f54-bcb0-833fd11bcae2.jpg?1783912252",
+            "small": "https://cards.scryfall.io/small/front/2/e/2e5f9fb7-e881-4f54-bcb0-833fd11bcae2.jpg?1783912252"
+          },
+          "scryfall_uri": "https://scryfall.com/card/pip/471/heroic-intervention?utm_source=api",
+          "finishes": [
+            "nonfoil",
+            "foil"
+          ],
+          "frame": "2015",
+          "frame_effects": [
+            "extendedart"
+          ],
+          "promo_types": [
+            "universesbeyond"
+          ],
+          "border_color": "black",
+          "full_art": false,
+          "oracle_text": "Permanents you control gain hexproof and indestructible until end of turn.",
+          "type_line": "Instant",
+          "cmc": 2.0,
+          "legalities": {
+            "commander": "legal",
+            "legacy": "legal",
+            "modern": "legal",
+            "standard": "not_legal"
+          }
+        },
+        {
+          "id": "72ad0069-25a4-4e1d-8ef5-a5223e57d699",
+          "name": "Heroic Intervention",
+          "oracle_id": "24882fa2-3fe9-4c1b-aa3d-0e6488b9db27",
+          "set": "pip",
+          "set_name": "Fallout",
+          "collector_number": "999",
+          "released_at": "2024-03-08",
+          "lang": "en",
+          "games": [
+            "paper",
+            "mtgo"
+          ],
+          "rarity": "rare",
+          "artist": "Josh Hass",
+          "illustration_id": "8d98761c-a881-4b50-9867-e80b36e7bbab",
+          "image_uris": {
+            "normal": "https://cards.scryfall.io/normal/front/7/2/72ad0069-25a4-4e1d-8ef5-a5223e57d699.jpg?1783912071",
+            "small": "https://cards.scryfall.io/small/front/7/2/72ad0069-25a4-4e1d-8ef5-a5223e57d699.jpg?1783912071"
+          },
+          "scryfall_uri": "https://scryfall.com/card/pip/999/heroic-intervention?utm_source=api",
+          "finishes": [
+            "foil"
+          ],
+          "frame": "2015",
+          "frame_effects": [
+            "extendedart"
+          ],
+          "promo_types": [
+            "surgefoil",
+            "universesbeyond"
+          ],
+          "border_color": "black",
+          "full_art": false,
+          "oracle_text": "Permanents you control gain hexproof and indestructible until end of turn.",
+          "type_line": "Instant",
+          "cmc": 2.0,
+          "legalities": {
+            "commander": "legal",
+            "legacy": "legal",
+            "modern": "legal",
+            "standard": "not_legal"
+          }
+        },
+        {
+          "id": "e65a0c1e-97f7-440c-be96-0adf5003bc52",
+          "name": "Heroic Intervention",
+          "oracle_id": "24882fa2-3fe9-4c1b-aa3d-0e6488b9db27",
+          "set": "sld",
+          "set_name": "Secret Lair Drop",
+          "collector_number": "1872",
+          "released_at": "2025-06-09",
+          "lang": "en",
+          "games": [
+            "paper"
+          ],
+          "rarity": "rare",
+          "artist": "Justyna Dura",
+          "illustration_id": "21fc1d70-bb4a-4888-a9e5-d8341fb4b8e6",
+          "image_uris": {
+            "normal": "https://cards.scryfall.io/normal/front/e/6/e65a0c1e-97f7-440c-be96-0adf5003bc52.jpg?1789284384",
+            "small": "https://cards.scryfall.io/small/front/e/6/e65a0c1e-97f7-440c-be96-0adf5003bc52.jpg?1789284384"
+          },
+          "scryfall_uri": "https://scryfall.com/card/sld/1872/heroic-intervention?utm_source=api",
+          "finishes": [
+            "nonfoil",
+            "foil"
+          ],
+          "frame": "2015",
+          "frame_effects": [
+            "inverted"
+          ],
+          "promo_types": [
+            "universesbeyond",
+            "ffvii"
+          ],
+          "border_color": "borderless",
+          "full_art": false,
+          "oracle_text": "Permanents you control gain hexproof and indestructible until end of turn.",
+          "type_line": "Instant",
+          "cmc": 2.0,
+          "legalities": {
+            "commander": "legal",
+            "legacy": "legal",
+            "modern": "legal",
+            "standard": "not_legal"
+          }
+        },
+        {
+          "id": "12edbdcc-085f-48c8-9605-3c7e3fe63bc7",
+          "name": "Heroic Intervention",
+          "oracle_id": "24882fa2-3fe9-4c1b-aa3d-0e6488b9db27",
+          "set": "mar",
+          "set_name": "Marvel Universe",
+          "collector_number": "78",
+          "released_at": "2026-06-26",
+          "lang": "en",
+          "games": [
+            "paper",
+            "mtgo",
+            "arena"
+          ],
+          "rarity": "mythic",
+          "artist": "Bob Layton",
+          "illustration_id": "06de0805-c1ec-4949-9782-7b8fe9eb4b8d",
+          "image_uris": {
+            "normal": "https://cards.scryfall.io/normal/front/1/2/12edbdcc-085f-48c8-9605-3c7e3fe63bc7.jpg?1783903312",
+            "small": "https://cards.scryfall.io/small/front/1/2/12edbdcc-085f-48c8-9605-3c7e3fe63bc7.jpg?1783903312"
+          },
+          "scryfall_uri": "https://scryfall.com/card/mar/78/heroic-intervention?utm_source=api",
+          "finishes": [
+            "nonfoil",
+            "foil"
+          ],
+          "frame": "2015",
+          "frame_effects": [
+            "inverted"
+          ],
+          "promo_types": [
+            "sourcematerial",
+            "universesbeyond"
+          ],
+          "border_color": "borderless",
+          "full_art": true,
+          "oracle_text": "Permanents you control gain hexproof and indestructible until end of turn.",
+          "type_line": "Instant",
+          "cmc": 2.0,
+          "legalities": {
+            "commander": "legal",
+            "legacy": "legal",
+            "modern": "legal",
+            "standard": "not_legal"
+          }
+        },
+        {
+          "id": "9ae40924-d2cc-4be1-b130-8bb6f4a39d65",
+          "name": "Heroic Intervention",
+          "oracle_id": "24882fa2-3fe9-4c1b-aa3d-0e6488b9db27",
+          "set": "slc",
+          "set_name": "Secret Lair Countdown",
+          "collector_number": "66",
+          "released_at": "2026-11-02",
+          "lang": "en",
+          "games": [
+            "paper"
+          ],
+          "rarity": "rare",
+          "artist": "Russell Dauterman",
+          "illustration_id": "d90e6328-2a5e-402b-b10a-1e58a26f5010",
+          "image_uris": {
+            "normal": "https://cards.scryfall.io/normal/front/9/a/9ae40924-d2cc-4be1-b130-8bb6f4a39d65.jpg?1792154892",
+            "small": "https://cards.scryfall.io/small/front/9/a/9ae40924-d2cc-4be1-b130-8bb6f4a39d65.jpg?1792154892"
+          },
+          "scryfall_uri": "https://scryfall.com/card/slc/66/heroic-intervention?utm_source=api",
+          "finishes": [
+            "nonfoil",
+            "foil"
+          ],
+          "frame": "2015",
+          "frame_effects": [
+            "inverted"
+          ],
+          "promo_types": [
+            "universesbeyond"
+          ],
+          "border_color": "borderless",
+          "full_art": false,
+          "oracle_text": "Permanents you control gain hexproof and indestructible until end of turn.",
+          "type_line": "Instant",
+          "cmc": 2.0,
+          "legalities": {
+            "commander": "legal",
+            "legacy": "legal",
+            "modern": "legal",
+            "standard": "not_legal"
+          }
+        },
+        {
+          "id": "b0c1cbdb-c488-4ea6-993e-8a04912b7ccb",
+          "name": "Heroic Intervention",
+          "oracle_id": "24882fa2-3fe9-4c1b-aa3d-0e6488b9db27",
+          "set": "slc",
+          "set_name": "Secret Lair Countdown",
+          "collector_number": "97",
+          "released_at": "2026-11-02",
+          "lang": "en",
+          "games": [
+            "paper"
+          ],
+          "rarity": "rare",
+          "artist": "Russell Dauterman",
+          "illustration_id": "d90e6328-2a5e-402b-b10a-1e58a26f5010",
+          "image_uris": {
+            "normal": "https://cards.scryfall.io/normal/front/b/0/b0c1cbdb-c488-4ea6-993e-8a04912b7ccb.jpg?1794618198",
+            "small": "https://cards.scryfall.io/small/front/b/0/b0c1cbdb-c488-4ea6-993e-8a04912b7ccb.jpg?1794618198"
+          },
+          "scryfall_uri": "https://scryfall.com/card/slc/97/heroic-intervention?utm_source=api",
+          "finishes": [
+            "foil"
+          ],
+          "frame": "2015",
+          "frame_effects": [
+            "inverted"
+          ],
+          "promo_types": [
+            "surgefoil",
+            "universesbeyond"
+          ],
+          "border_color": "borderless",
+          "full_art": false,
+          "oracle_text": "Permanents you control gain hexproof and indestructible until end of turn.",
+          "type_line": "Instant",
+          "cmc": 2.0,
+          "legalities": {
+            "commander": "legal",
+            "legacy": "legal",
+            "modern": "legal",
+            "standard": "not_legal"
+          }
+        }
+      ]
+    },
+    "reanimate": {
+      "name": "Reanimate",
+      "title": "Reanimate MTG — Tempest Original and Alternate Art",
+      "description": "Trace Reanimate from Robert Bliss’s Tempest original to early foils, the Ultimate Box Topper, Breaking News and the Final Fantasy Surge Foil.",
+      "intent": "artwork-comparison",
+      "first": "ae1ef31c-8ca5-444c-8f39-e1d1827318f5",
+      "catalogueRecords": 16,
+      "sources": [
+        "https://scryfall.com/card/tmp/151/reanimate",
+        "https://scryfall.com/card/f04/10/reanimate",
+        "https://scryfall.com/card/pd3/15/reanimate",
+        "https://scryfall.com/card/uma/110/reanimate",
+        "https://scryfall.com/card/puma/U12/reanimate",
+        "https://scryfall.com/card/cc2/5/reanimate",
+        "https://scryfall.com/card/otp/18/reanimate",
+        "https://scryfall.com/card/fic/282/reanimate",
+        "https://scryfall.com/card/mar/20/reanimate"
+      ],
+      "curated": [
+        {
+          "id": "ae1ef31c-8ca5-444c-8f39-e1d1827318f5",
+          "name": "Reanimate",
+          "oracle_id": "a044474a-cd72-4e9d-bd8d-a08f2de9cdc0",
+          "set": "tmp",
+          "set_name": "Tempest",
+          "collector_number": "151",
+          "released_at": "1997-10-14",
+          "lang": "en",
+          "games": [
+            "paper",
+            "mtgo"
+          ],
+          "rarity": "uncommon",
+          "artist": "Robert Bliss",
+          "illustration_id": "fc00f897-988b-4602-969a-c510804ec12a",
+          "image_uris": {
+            "normal": "https://cards.scryfall.io/normal/front/a/e/ae1ef31c-8ca5-444c-8f39-e1d1827318f5.jpg?1783946636",
+            "small": "https://cards.scryfall.io/small/front/a/e/ae1ef31c-8ca5-444c-8f39-e1d1827318f5.jpg?1783946636"
+          },
+          "scryfall_uri": "https://scryfall.com/card/tmp/151/reanimate?utm_source=api",
+          "finishes": [
+            "nonfoil"
+          ],
+          "frame": "1997",
+          "border_color": "black",
+          "full_art": false,
+          "oracle_text": "Put target creature card from a graveyard onto the battlefield under your control. You lose life equal to that card's mana value.",
+          "type_line": "Sorcery",
+          "cmc": 1.0,
+          "legalities": {
+            "commander": "legal",
+            "legacy": "legal",
+            "modern": "not_legal",
+            "standard": "not_legal"
+          }
+        },
+        {
+          "id": "d0391889-b3a6-4723-814f-aebec1c2a64f",
+          "name": "Reanimate",
+          "oracle_id": "a044474a-cd72-4e9d-bd8d-a08f2de9cdc0",
+          "set": "f04",
+          "set_name": "Friday Night Magic 2004",
+          "collector_number": "10",
+          "released_at": "2004-01-01",
+          "lang": "en",
+          "games": [
+            "paper"
+          ],
+          "rarity": "rare",
+          "artist": "Robert Bliss",
+          "illustration_id": "fc00f897-988b-4602-969a-c510804ec12a",
+          "image_uris": {
+            "normal": "https://cards.scryfall.io/normal/front/d/0/d0391889-b3a6-4723-814f-aebec1c2a64f.jpg?1783944462",
+            "small": "https://cards.scryfall.io/small/front/d/0/d0391889-b3a6-4723-814f-aebec1c2a64f.jpg?1783944462"
+          },
+          "scryfall_uri": "https://scryfall.com/card/f04/10/reanimate?utm_source=api",
+          "finishes": [
+            "foil"
+          ],
+          "frame": "2003",
+          "promo_types": [
+            "tourney",
+            "fnm"
+          ],
+          "border_color": "black",
+          "full_art": false,
+          "oracle_text": "Put target creature card from a graveyard onto the battlefield under your control. You lose life equal to that card's mana value.",
+          "type_line": "Sorcery",
+          "cmc": 1.0,
+          "legalities": {
+            "commander": "legal",
+            "legacy": "legal",
+            "modern": "not_legal",
+            "standard": "not_legal"
+          }
+        },
+        {
+          "id": "5dbb2d73-ba3c-4266-8945-63629f932566",
+          "name": "Reanimate",
+          "oracle_id": "a044474a-cd72-4e9d-bd8d-a08f2de9cdc0",
+          "set": "pd3",
+          "set_name": "Premium Deck Series: Graveborn",
+          "collector_number": "15",
+          "released_at": "2011-11-18",
+          "lang": "en",
+          "games": [
+            "paper",
+            "mtgo"
+          ],
+          "rarity": "uncommon",
+          "artist": "Robert Bliss",
+          "illustration_id": "fc00f897-988b-4602-969a-c510804ec12a",
+          "image_uris": {
+            "normal": "https://cards.scryfall.io/normal/front/5/d/5dbb2d73-ba3c-4266-8945-63629f932566.jpg?1783940875",
+            "small": "https://cards.scryfall.io/small/front/5/d/5dbb2d73-ba3c-4266-8945-63629f932566.jpg?1783940875"
+          },
+          "scryfall_uri": "https://scryfall.com/card/pd3/15/reanimate?utm_source=api",
+          "finishes": [
+            "foil"
+          ],
+          "frame": "2003",
+          "border_color": "black",
+          "full_art": false,
+          "oracle_text": "Put target creature card from a graveyard onto the battlefield under your control. You lose life equal to that card's mana value.",
+          "type_line": "Sorcery",
+          "cmc": 1.0,
+          "legalities": {
+            "commander": "legal",
+            "legacy": "legal",
+            "modern": "not_legal",
+            "standard": "not_legal"
+          }
+        },
+        {
+          "id": "04fc99dc-bfbe-4567-b791-6b1db96471ec",
+          "name": "Reanimate",
+          "oracle_id": "a044474a-cd72-4e9d-bd8d-a08f2de9cdc0",
+          "set": "uma",
+          "set_name": "Ultimate Masters",
+          "collector_number": "110",
+          "released_at": "2018-12-07",
+          "lang": "en",
+          "games": [
+            "paper",
+            "mtgo"
+          ],
+          "rarity": "rare",
+          "artist": "Johann Bodin",
+          "illustration_id": "05602716-fdf8-4273-9d5c-e87a56af890b",
+          "image_uris": {
+            "normal": "https://cards.scryfall.io/normal/front/0/4/04fc99dc-bfbe-4567-b791-6b1db96471ec.jpg?1783933816",
+            "small": "https://cards.scryfall.io/small/front/0/4/04fc99dc-bfbe-4567-b791-6b1db96471ec.jpg?1783933816"
+          },
+          "scryfall_uri": "https://scryfall.com/card/uma/110/reanimate?utm_source=api",
+          "finishes": [
+            "nonfoil",
+            "foil"
+          ],
+          "frame": "2015",
+          "border_color": "black",
+          "full_art": false,
+          "oracle_text": "Put target creature card from a graveyard onto the battlefield under your control. You lose life equal to that card's mana value.",
+          "type_line": "Sorcery",
+          "cmc": 1.0,
+          "legalities": {
+            "commander": "legal",
+            "legacy": "legal",
+            "modern": "not_legal",
+            "standard": "not_legal"
+          }
+        },
+        {
+          "id": "ac394f35-d999-43ea-97cf-99a736d4b2dd",
+          "name": "Reanimate",
+          "oracle_id": "a044474a-cd72-4e9d-bd8d-a08f2de9cdc0",
+          "set": "puma",
+          "set_name": "Ultimate Box Topper",
+          "collector_number": "U12",
+          "released_at": "2018-12-07",
+          "lang": "en",
+          "games": [
+            "paper",
+            "mtgo"
+          ],
+          "rarity": "mythic",
+          "artist": "Johann Bodin",
+          "illustration_id": "05602716-fdf8-4273-9d5c-e87a56af890b",
+          "image_uris": {
+            "normal": "https://cards.scryfall.io/normal/front/a/c/ac394f35-d999-43ea-97cf-99a736d4b2dd.jpg?1783933747",
+            "small": "https://cards.scryfall.io/small/front/a/c/ac394f35-d999-43ea-97cf-99a736d4b2dd.jpg?1783933747"
+          },
+          "scryfall_uri": "https://scryfall.com/card/puma/U12/reanimate?utm_source=api",
+          "finishes": [
+            "foil"
+          ],
+          "frame": "2015",
+          "frame_effects": [
+            "extendedart"
+          ],
+          "promo_types": [
+            "boxtopper"
+          ],
+          "border_color": "black",
+          "full_art": false,
+          "oracle_text": "Put target creature card from a graveyard onto the battlefield under your control. You lose life equal to that card's mana value.",
+          "type_line": "Sorcery",
+          "cmc": 1.0,
+          "legalities": {
+            "commander": "legal",
+            "legacy": "legal",
+            "modern": "not_legal",
+            "standard": "not_legal"
+          }
+        },
+        {
+          "id": "d27c6aaa-289e-451e-8fde-97a044c53fc4",
+          "name": "Reanimate",
+          "oracle_id": "a044474a-cd72-4e9d-bd8d-a08f2de9cdc0",
+          "set": "cc2",
+          "set_name": "Commander Collection: Black",
+          "collector_number": "5",
+          "released_at": "2022-01-28",
+          "lang": "en",
+          "games": [
+            "paper"
+          ],
+          "rarity": "rare",
+          "artist": "Nils Hamm",
+          "illustration_id": "60d41d20-7439-497d-84a0-e70b7858b95a",
+          "image_uris": {
+            "normal": "https://cards.scryfall.io/normal/front/d/2/d27c6aaa-289e-451e-8fde-97a044c53fc4.jpg?1783924135",
+            "small": "https://cards.scryfall.io/small/front/d/2/d27c6aaa-289e-451e-8fde-97a044c53fc4.jpg?1783924135"
+          },
+          "scryfall_uri": "https://scryfall.com/card/cc2/5/reanimate?utm_source=api",
+          "finishes": [
+            "nonfoil",
+            "foil"
+          ],
+          "frame": "2015",
+          "border_color": "black",
+          "full_art": false,
+          "oracle_text": "Put target creature card from a graveyard onto the battlefield under your control. You lose life equal to that card's mana value.",
+          "type_line": "Sorcery",
+          "cmc": 1.0,
+          "legalities": {
+            "commander": "legal",
+            "legacy": "legal",
+            "modern": "not_legal",
+            "standard": "not_legal"
+          }
+        },
+        {
+          "id": "609c34f9-9f53-4773-a02b-517209024fc2",
+          "name": "Reanimate",
+          "oracle_id": "a044474a-cd72-4e9d-bd8d-a08f2de9cdc0",
+          "set": "otp",
+          "set_name": "Breaking News",
+          "collector_number": "18",
+          "released_at": "2024-04-19",
+          "lang": "en",
+          "games": [
+            "paper",
+            "mtgo",
+            "arena"
+          ],
+          "rarity": "rare",
+          "artist": "Michal Ivan",
+          "illustration_id": "c0aba299-27e1-4f0c-88bd-83065d5fd603",
+          "image_uris": {
+            "normal": "https://cards.scryfall.io/normal/front/6/0/609c34f9-9f53-4773-a02b-517209024fc2.jpg?1783911724",
+            "small": "https://cards.scryfall.io/small/front/6/0/609c34f9-9f53-4773-a02b-517209024fc2.jpg?1783911724"
+          },
+          "scryfall_uri": "https://scryfall.com/card/otp/18/reanimate?utm_source=api",
+          "finishes": [
+            "nonfoil",
+            "foil"
+          ],
+          "frame": "2015",
+          "frame_effects": [
+            "showcase"
+          ],
+          "promo_types": [
+            "boosterfun"
+          ],
+          "border_color": "borderless",
+          "full_art": false,
+          "oracle_text": "Put target creature card from a graveyard onto the battlefield under your control. You lose life equal to that card's mana value.",
+          "type_line": "Sorcery",
+          "cmc": 1.0,
+          "legalities": {
+            "commander": "legal",
+            "legacy": "legal",
+            "modern": "not_legal",
+            "standard": "not_legal"
+          }
+        },
+        {
+          "id": "58838b71-404f-41ad-9a9b-2c7f875bab06",
+          "name": "Reanimate",
+          "oracle_id": "a044474a-cd72-4e9d-bd8d-a08f2de9cdc0",
+          "set": "fic",
+          "set_name": "Final Fantasy Commander",
+          "collector_number": "282",
+          "released_at": "2025-06-13",
+          "lang": "en",
+          "games": [
+            "paper",
+            "mtgo"
+          ],
+          "rarity": "rare",
+          "artist": "Wei Guan",
+          "illustration_id": "439d1edc-657f-4101-8768-0a33083a925a",
+          "image_uris": {
+            "normal": "https://cards.scryfall.io/normal/front/5/8/58838b71-404f-41ad-9a9b-2c7f875bab06.jpg?1783906269",
+            "small": "https://cards.scryfall.io/small/front/5/8/58838b71-404f-41ad-9a9b-2c7f875bab06.jpg?1783906269"
+          },
+          "scryfall_uri": "https://scryfall.com/card/fic/282/reanimate?utm_source=api",
+          "finishes": [
+            "nonfoil",
+            "foil"
+          ],
+          "frame": "2015",
+          "promo_types": [
+            "surgefoil",
+            "ffvi",
+            "universesbeyond"
+          ],
+          "border_color": "black",
+          "full_art": false,
+          "oracle_text": "Put target creature card from a graveyard onto the battlefield under your control. You lose life equal to that card's mana value.",
+          "type_line": "Sorcery",
+          "cmc": 1.0,
+          "legalities": {
+            "commander": "legal",
+            "legacy": "legal",
+            "modern": "not_legal",
+            "standard": "not_legal"
+          }
+        },
+        {
+          "id": "3e560cb9-3036-46a2-a5c7-edb04d0095b7",
+          "name": "Reanimate",
+          "oracle_id": "a044474a-cd72-4e9d-bd8d-a08f2de9cdc0",
+          "set": "mar",
+          "set_name": "Marvel Universe",
+          "collector_number": "20",
+          "released_at": "2025-09-26",
+          "lang": "en",
+          "games": [
+            "paper",
+            "mtgo",
+            "arena"
+          ],
+          "rarity": "mythic",
+          "artist": "Mike Zeck & Bob McLeod",
+          "illustration_id": "7ff16033-17b9-42ac-a626-1fd2d5a3edc1",
+          "image_uris": {
+            "normal": "https://cards.scryfall.io/normal/front/3/e/3e560cb9-3036-46a2-a5c7-edb04d0095b7.jpg?1783905386",
+            "small": "https://cards.scryfall.io/small/front/3/e/3e560cb9-3036-46a2-a5c7-edb04d0095b7.jpg?1783905386"
+          },
+          "scryfall_uri": "https://scryfall.com/card/mar/20/reanimate?utm_source=api",
+          "finishes": [
+            "nonfoil",
+            "foil"
+          ],
+          "frame": "2015",
+          "frame_effects": [
+            "inverted"
+          ],
+          "promo_types": [
+            "sourcematerial",
+            "universesbeyond",
+            "boosterfun"
+          ],
+          "border_color": "borderless",
+          "full_art": true,
+          "oracle_text": "Put target creature card from a graveyard onto the battlefield under your control. You lose life equal to that card's mana value.",
+          "type_line": "Sorcery",
+          "cmc": 1.0,
+          "legalities": {
+            "commander": "legal",
+            "legacy": "legal",
+            "modern": "not_legal",
+            "standard": "not_legal"
+          }
+        }
+      ]
+    },
+    "deep-space-9": {
+      "name": "Deep Space 9",
+      "title": "Deep Space 9 MTG — Three Star Trek Printings",
+      "description": "Identify Deep Space 9’s three English paper printing records. Compare TRK #263, extended-art #479 and the Traditional Foil Beam Me Up Bundle promo #556.",
+      "intent": "version-count",
+      "first": "76b039c5-e0a1-410a-954b-52f304e31f7f",
+      "catalogueRecords": 3,
+      "sources": [
+        "https://magic.wizards.com/en/news/feature/collecting-star-trek",
+        "https://magic.wizards.com/en/news/feature/star-trek-buyers-guide",
+        "https://scryfall.com/card/trk/263/deep-space-9",
+        "https://scryfall.com/card/trk/479/deep-space-9",
+        "https://scryfall.com/card/trk/556/deep-space-9"
+      ],
+      "curated": [
+        {
+          "id": "76b039c5-e0a1-410a-954b-52f304e31f7f",
+          "name": "Deep Space 9",
+          "oracle_id": "14442f5b-0bad-4c58-b268-d775787571d8",
+          "set": "trk",
+          "set_name": "Star Trek",
+          "collector_number": "263",
+          "released_at": "2026-11-13",
+          "lang": "en",
+          "games": [
+            "paper",
+            "mtgo",
+            "arena"
+          ],
+          "rarity": "mythic",
+          "artist": "Paolo Puggioni",
+          "illustration_id": "20bb4eb0-0a4c-4179-84df-48d3c9f81f2c",
+          "image_uris": {
+            "normal": "https://cards.scryfall.io/normal/front/7/6/76b039c5-e0a1-410a-954b-52f304e31f7f.jpg?1792508419",
+            "small": "https://cards.scryfall.io/small/front/7/6/76b039c5-e0a1-410a-954b-52f304e31f7f.jpg?1792508419"
+          },
+          "scryfall_uri": "https://scryfall.com/card/trk/263/deep-space-9?utm_source=api",
+          "finishes": [
+            "nonfoil",
+            "foil"
+          ],
+          "frame": "2015",
+          "frame_effects": [
+            "legendary"
+          ],
+          "promo_types": [
+            "universesbeyond"
+          ],
+          "border_color": "black",
+          "full_art": false,
+          "oracle_text": "When Deep Space 9 enters and at the beginning of your upkeep, exile the top four cards of your library. Put all permanent cards exiled this way onto the battlefield.\nStation (Tap another creature you control: Put charge counters equal to its power on this Spacecraft. Station only as a sorcery.)\n9+ | Creatures you control get +3/+3.",
+          "type_line": "Legendary Artifact — Spacecraft",
+          "cmc": 9.0,
+          "legalities": {
+            "commander": "legal",
+            "legacy": "legal",
+            "modern": "legal",
+            "standard": "legal"
+          }
+        },
+        {
+          "id": "473aab2f-cfc2-430b-b785-4b6a491bcd28",
+          "name": "Deep Space 9",
+          "oracle_id": "14442f5b-0bad-4c58-b268-d775787571d8",
+          "set": "trk",
+          "set_name": "Star Trek",
+          "collector_number": "479",
+          "released_at": "2026-11-13",
+          "lang": "en",
+          "games": [
+            "paper",
+            "mtgo"
+          ],
+          "rarity": "mythic",
+          "artist": "Paolo Puggioni",
+          "illustration_id": "20bb4eb0-0a4c-4179-84df-48d3c9f81f2c",
+          "image_uris": {
+            "normal": "https://cards.scryfall.io/normal/front/4/7/473aab2f-cfc2-430b-b785-4b6a491bcd28.jpg?1792508974",
+            "small": "https://cards.scryfall.io/small/front/4/7/473aab2f-cfc2-430b-b785-4b6a491bcd28.jpg?1792508974"
+          },
+          "scryfall_uri": "https://scryfall.com/card/trk/479/deep-space-9?utm_source=api",
+          "finishes": [
+            "nonfoil",
+            "foil"
+          ],
+          "frame": "2015",
+          "frame_effects": [
+            "legendary",
+            "extendedart"
+          ],
+          "promo_types": [
+            "universesbeyond"
+          ],
+          "border_color": "black",
+          "full_art": false,
+          "oracle_text": "When Deep Space 9 enters and at the beginning of your upkeep, exile the top four cards of your library. Put all permanent cards exiled this way onto the battlefield.\nStation (Tap another creature you control: Put charge counters equal to its power on this Spacecraft. Station only as a sorcery.)\n9+ | Creatures you control get +3/+3.",
+          "type_line": "Legendary Artifact — Spacecraft",
+          "cmc": 9.0,
+          "legalities": {
+            "commander": "legal",
+            "legacy": "legal",
+            "modern": "legal",
+            "standard": "legal"
+          }
+        },
+        {
+          "id": "65585609-563d-47e9-92b8-d4b65baa95bd",
+          "name": "Deep Space 9",
+          "oracle_id": "14442f5b-0bad-4c58-b268-d775787571d8",
+          "set": "trk",
+          "set_name": "Star Trek",
+          "collector_number": "556",
+          "released_at": "2026-11-13",
+          "lang": "en",
+          "games": [
+            "paper",
+            "mtgo"
+          ],
+          "rarity": "mythic",
+          "artist": "Scott Okumura",
+          "illustration_id": "d1b0bd9c-503f-405e-88cc-18a5bc0596b1",
+          "image_uris": {
+            "normal": "https://cards.scryfall.io/normal/front/6/5/65585609-563d-47e9-92b8-d4b65baa95bd.jpg?1792509174",
+            "small": "https://cards.scryfall.io/small/front/6/5/65585609-563d-47e9-92b8-d4b65baa95bd.jpg?1792509174"
+          },
+          "scryfall_uri": "https://scryfall.com/card/trk/556/deep-space-9?utm_source=api",
+          "finishes": [
+            "foil"
+          ],
+          "frame": "2015",
+          "frame_effects": [
+            "legendary",
+            "showcase"
+          ],
+          "promo_types": [
+            "poster",
+            "universesbeyond",
+            "bundle"
+          ],
+          "border_color": "borderless",
+          "full_art": false,
+          "oracle_text": "When Deep Space 9 enters and at the beginning of your upkeep, exile the top four cards of your library. Put all permanent cards exiled this way onto the battlefield.\nStation (Tap another creature you control: Put charge counters equal to its power on this Spacecraft. Station only as a sorcery.)\n9+ | Creatures you control get +3/+3.",
+          "type_line": "Legendary Artifact — Spacecraft",
+          "cmc": 9.0,
+          "legalities": {
+            "commander": "legal",
+            "legacy": "legal",
+            "modern": "legal",
+            "standard": "legal"
+          }
+        }
+      ]
+    },
+    "highly-illogical": {
+      "name": "Highly Illogical",
+      "title": "Highly Illogical MTG — Commander Party Promo or TRK #62?",
+      "description": "Tell Joel Chaim Holtzman’s TRK #62 from Patricia Pria’s extended-art PW26 #17 and see how Wizards distributed Nonfoil and Traditional Foil promos.",
+      "intent": "promo-identification",
+      "first": "11c94c5f-abf4-429e-8703-c5db9abd79bf",
+      "catalogueRecords": 2,
+      "sources": [
+        "https://magic.wizards.com/en/news/feature/where-to-play-star-trek",
+        "https://magic.wizards.com/en/news/feature/star-trek-release-notes",
+        "https://scryfall.com/card/trk/62/highly-illogical",
+        "https://scryfall.com/card/pw26/17/highly-illogical"
+      ],
+      "curated": [
+        {
+          "id": "11c94c5f-abf4-429e-8703-c5db9abd79bf",
+          "name": "Highly Illogical",
+          "oracle_id": "38c43f30-0e01-4dcd-88fc-f1de318a5e29",
+          "set": "trk",
+          "set_name": "Star Trek",
+          "collector_number": "62",
+          "released_at": "2026-11-13",
+          "lang": "en",
+          "games": [
+            "paper",
+            "mtgo",
+            "arena"
+          ],
+          "rarity": "uncommon",
+          "artist": "Joel Chaim Holtzman",
+          "illustration_id": "dd8883d6-8cb9-49f1-b670-5b90b0e2fbd0",
+          "image_uris": {
+            "normal": "https://cards.scryfall.io/normal/front/1/1/11c94c5f-abf4-429e-8703-c5db9abd79bf.jpg?1784065440",
+            "small": "https://cards.scryfall.io/small/front/1/1/11c94c5f-abf4-429e-8703-c5db9abd79bf.jpg?1784065440"
+          },
+          "scryfall_uri": "https://scryfall.com/card/trk/62/highly-illogical?utm_source=api",
+          "finishes": [
+            "nonfoil",
+            "foil"
+          ],
+          "frame": "2015",
+          "promo_types": [
+            "universesbeyond"
+          ],
+          "border_color": "black",
+          "full_art": false,
+          "oracle_text": "Kicker {1}{U} (You may pay an additional {1}{U} as you cast this spell.)\nCounter target spell with mana value 2 or less. If this spell was kicked, instead counter target spell.",
+          "type_line": "Instant",
+          "cmc": 2.0,
+          "legalities": {
+            "commander": "legal",
+            "legacy": "legal",
+            "modern": "legal",
+            "standard": "legal"
+          }
+        },
+        {
+          "id": "841d539f-4578-489f-b41a-55c884a7a9fe",
+          "name": "Highly Illogical",
+          "oracle_id": "38c43f30-0e01-4dcd-88fc-f1de318a5e29",
+          "set": "pw26",
+          "set_name": "Wizards Play Network 2026",
+          "collector_number": "17",
+          "released_at": "2026-11-20",
+          "lang": "en",
+          "games": [
+            "paper"
+          ],
+          "rarity": "rare",
+          "artist": "Patricia Pria",
+          "illustration_id": "ffb0aa59-ad40-43d0-8482-3efc1bb7a47d",
+          "image_uris": {
+            "normal": "https://cards.scryfall.io/normal/front/8/4/841d539f-4578-489f-b41a-55c884a7a9fe.jpg?1794581622",
+            "small": "https://cards.scryfall.io/small/front/8/4/841d539f-4578-489f-b41a-55c884a7a9fe.jpg?1794581622"
+          },
+          "scryfall_uri": "https://scryfall.com/card/pw26/17/highly-illogical?utm_source=api",
+          "finishes": [
+            "nonfoil",
+            "foil"
+          ],
+          "frame": "2015",
+          "frame_effects": [
+            "extendedart"
+          ],
+          "promo_types": [
+            "playpromo",
+            "commanderparty",
+            "wizardsplaynetwork",
+            "universesbeyond"
+          ],
+          "border_color": "black",
+          "full_art": false,
+          "oracle_text": "Kicker {1}{U} (You may pay an additional {1}{U} as you cast this spell.)\nCounter target spell with mana value 2 or less. If this spell was kicked, instead counter target spell.",
+          "type_line": "Instant",
+          "cmc": 2.0,
+          "legalities": {
+            "commander": "legal",
+            "legacy": "legal",
+            "modern": "legal",
+            "standard": "legal"
+          }
+        }
+      ]
+    },
+    "hit-it": {
+      "name": "Hit It!",
+      "title": "Hit It! MTG — TRK #240 vs #476 and Oracle Text",
+      "description": "Identify Hit It! TRK #240 and extended-art #476. Both use Aaron J. Riley’s art, and Wizards updated the printed “look at” instruction to reveal the cards.",
+      "intent": "printing-and-rules",
+      "first": "6266506f-fabf-4b53-8f93-6e2115a3e5a4",
+      "catalogueRecords": 2,
+      "sources": [
+        "https://magic.wizards.com/en/news/feature/star-trek-release-notes",
+        "https://magic.wizards.com/en/news/feature/collecting-star-trek",
+        "https://scryfall.com/card/trk/240/hit-it!",
+        "https://scryfall.com/card/trk/476/hit-it!"
+      ],
+      "curated": [
+        {
+          "id": "6266506f-fabf-4b53-8f93-6e2115a3e5a4",
+          "name": "Hit It!",
+          "oracle_id": "62361438-3da4-4ce9-95b8-fc361b824f58",
+          "set": "trk",
+          "set_name": "Star Trek",
+          "collector_number": "240",
+          "released_at": "2026-11-13",
+          "lang": "en",
+          "games": [
+            "paper",
+            "mtgo",
+            "arena"
+          ],
+          "rarity": "rare",
+          "artist": "Aaron J. Riley",
+          "illustration_id": "66db7c78-393c-42fa-a41a-c2df92112096",
+          "image_uris": {
+            "normal": "https://cards.scryfall.io/normal/front/6/2/6266506f-fabf-4b53-8f93-6e2115a3e5a4.jpg?1795256865",
+            "small": "https://cards.scryfall.io/small/front/6/2/6266506f-fabf-4b53-8f93-6e2115a3e5a4.jpg?1795256865"
+          },
+          "scryfall_uri": "https://scryfall.com/card/trk/240/hit-it!?utm_source=api",
+          "finishes": [
+            "nonfoil",
+            "foil"
+          ],
+          "frame": "2015",
+          "frame_effects": [
+            "enchantment"
+          ],
+          "promo_types": [
+            "universesbeyond"
+          ],
+          "border_color": "black",
+          "full_art": false,
+          "oracle_text": "Creatures you control have haste.\nWhen this enchantment enters, reveal the top five cards of your library. Put a land card from among them onto the battlefield tapped and the rest into your graveyard.",
+          "type_line": "Enchantment",
+          "cmc": 3.0,
+          "legalities": {
+            "commander": "legal",
+            "legacy": "legal",
+            "modern": "legal",
+            "standard": "legal"
+          }
+        },
+        {
+          "id": "2dad81b5-caf4-4d1c-9a29-8b556984d3f1",
+          "name": "Hit It!",
+          "oracle_id": "62361438-3da4-4ce9-95b8-fc361b824f58",
+          "set": "trk",
+          "set_name": "Star Trek",
+          "collector_number": "476",
+          "released_at": "2026-11-13",
+          "lang": "en",
+          "games": [
+            "paper",
+            "mtgo"
+          ],
+          "rarity": "rare",
+          "artist": "Aaron J. Riley",
+          "illustration_id": "66db7c78-393c-42fa-a41a-c2df92112096",
+          "image_uris": {
+            "normal": "https://cards.scryfall.io/normal/front/2/d/2dad81b5-caf4-4d1c-9a29-8b556984d3f1.jpg?1792508964",
+            "small": "https://cards.scryfall.io/small/front/2/d/2dad81b5-caf4-4d1c-9a29-8b556984d3f1.jpg?1792508964"
+          },
+          "scryfall_uri": "https://scryfall.com/card/trk/476/hit-it!?utm_source=api",
+          "finishes": [
+            "nonfoil",
+            "foil"
+          ],
+          "frame": "2015",
+          "frame_effects": [
+            "enchantment",
+            "extendedart"
+          ],
+          "promo_types": [
+            "universesbeyond"
+          ],
+          "border_color": "black",
+          "full_art": false,
+          "oracle_text": "Creatures you control have haste.\nWhen this enchantment enters, reveal the top five cards of your library. Put a land card from among them onto the battlefield tapped and the rest into your graveyard.",
+          "type_line": "Enchantment",
+          "cmc": 3.0,
+          "legalities": {
+            "commander": "legal",
+            "legacy": "legal",
+            "modern": "legal",
+            "standard": "legal"
+          }
+        }
+      ]
+    }
+  }
+}

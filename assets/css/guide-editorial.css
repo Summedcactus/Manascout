@@ -130,3 +130,15 @@
   .printing-guide[data-guide-intent="first-printing"] .guide-overview > .guide-static-art { grid-row: 3; }
   .printing-guide[data-guide-intent="first-printing"] .guide-overview-copy > .hero-copy { grid-column: 1 / -1; }
 }
+
+.printing-guide[data-guide-initial-printing] .guide-static-art figcaption span { display: block; }
+.printing-guide[data-guide-initial-printing] .guide-variant-grid:has(> :only-child) { grid-template-columns: minmax(0, 240px); }
+.printing-guide[data-guide-initial-printing] .guide-collector-module h3 { margin: 1rem 0 .35rem; }
+@media (min-width: 621px) {
+  .printing-guide[data-guide-initial-printing] .guide-variant-grid:has(> :nth-child(2):last-child) {
+    grid-template-columns: repeat(2, minmax(0, 240px));
+  }
+}
+@media (max-width: 600px) {
+  .printing-guide[data-guide-initial-printing]:not([data-guide-intent="version-count"]) .guide-overview > .guide-static-art { grid-row: 3; }
+}

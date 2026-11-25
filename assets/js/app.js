@@ -20,6 +20,11 @@
     document.body?.dataset?.cardName?.trim() || "";
 
   const GUIDE_SLUGS = new Set([
+    "deep-space-9",
+    "heroic-intervention",
+    "highly-illogical",
+    "hit-it",
+    "reanimate",
     "captain-james-t-kirk",
     "smaug-the-magnificent",
     "bloodline-recollector",

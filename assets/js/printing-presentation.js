@@ -20,7 +20,9 @@
     headliner: "Headliner", signed: "Signed", universesbeyond: "Universes Beyond",
     thick: "Thick stock", rainbow: "Rainbow Foil", texturedfoil: "Textured Foil",
     datestamped: "Date stamped", prerelease: "Prerelease", setpromo: "Set promo", promopack: "Promo pack",
-    playpromo: "Play promo", fnm: "Friday Night Magic", instore: "In-store promo"
+    playpromo: "Play promo", fnm: "Friday Night Magic", instore: "In-store promo",
+    commanderparty: "Commander Party", bundle: "Bundle promo", poster: "Poster",
+    sourcematerial: "Source Material", boxtopper: "Box topper"
   });
   const special = ["surgefoil", "galaxyfoil", "halofoil", "confettifoil", "textured", "rainbowfoil", "stepandcompleat"];
   const aliases = Object.freeze({ texturedfoil: "textured", rainbow: "rainbowfoil", etchedfoil: "etched" });
@@ -115,8 +117,9 @@
   function markup({ card, finish, src, alt = "", compact = false, lazy = false, imageClass = "" }) {
     const url = imageUrl(src);
     if (!url) return '<span class="ms-physical-missing">Artwork unavailable</span>';
+    const shell = `<span class="ms-physical-shell"><span class="ms-physical-face"><img class="${escape(imageClass)}" src="${escape(url)}" alt="${escape(alt)}" width="488" height="680" decoding="async"${lazy ? ' loading="lazy"' : ""}>${decoration}</span></span>`;
     return `<span class="ms-physical" data-ms-physical="${escape(card.id || "")}" data-surface="${surface(card, finish)}"${compact ? ' data-compact' : ""}>
-      <span class="ms-physical-shell"><span class="ms-physical-face"><img class="${escape(imageClass)}" src="${escape(url)}" alt="${escape(alt)}" width="488" height="680" decoding="async"${lazy ? ' loading="lazy"' : ""}>${decoration}</span></span>
+      ${compact ? shell : `<span class="ms-physical-drift">${shell}</span>`}
     </span>`;
   }
 
@@ -136,7 +139,14 @@
       shell = ownerDocument.createElement("span");
       face = ownerDocument.createElement("span");
       image.before(host);
-      host.append(shell);
+      if (compact) {
+        host.append(shell);
+      } else {
+        const drift = ownerDocument.createElement("span");
+        drift.className = "ms-physical-drift";
+        host.append(drift);
+        drift.append(shell);
+      }
       shell.append(face);
       face.append(image);
     }
@@ -155,7 +165,53 @@
   if (typeof module === "object" && module.exports) { module.exports = api; return; }
   root.ManaScoutPrinting = Object.freeze(api);
 
+  if (document.body.matches(".ms-home, .printing-guide")) {
+    const atmosphere = document.createElement("div");
+    atmosphere.className = "ms-edge-atmosphere";
+    atmosphere.setAttribute("aria-hidden", "true");
+    for (let index = 0; index < 4; index++) atmosphere.append(document.createElement("span"));
+    document.body.prepend(atmosphere);
+  }
+
+  // Observe only the floating wrapper. Exact-printing changes can replace its host.
+  if (typeof IntersectionObserver === "function") {
+    const floating = new Set();
+    const viewport = new IntersectionObserver(entries => {
+      for (const { target, isIntersecting } of entries) {
+        target.toggleAttribute("data-idle-offscreen", !isIntersecting);
+      }
+    });
+    document.addEventListener("animationstart", event => {
+      if (event.animationName !== "ms-card-idle") return;
+      for (const wrap of floating) {
+        if (wrap.isConnected) continue;
+        viewport.unobserve(wrap);
+        floating.delete(wrap);
+      }
+      floating.add(event.target);
+      viewport.observe(event.target);
+    });
+  }
+
   const reduced = root.matchMedia("(prefers-reduced-motion: reduce)");
+  const idleReturns = new WeakMap();
+  const idleReturnMs = 500;
+
+  function holdIdle(host) {
+    if (!host.querySelector(".ms-physical-drift")) return;
+    clearTimeout(idleReturns.get(host));
+    host.setAttribute("data-idle-held", "");
+  }
+
+  function returnToIdle(host) {
+    if (!host.hasAttribute("data-idle-held")) return;
+    const resume = () => {
+      idleReturns.delete(host);
+      host.removeAttribute("data-idle-held");
+    };
+    if (reduced.matches || document.hidden || !host.isConnected) resume();
+    else idleReturns.set(host, setTimeout(resume, idleReturnMs));
+  }
   let active = null;
   let touch = null;
   let pending = null;
@@ -167,6 +223,7 @@
     if (active) {
       active.removeAttribute("data-tilting");
       for (const key of ["--rx", "--ry", "--px", "--py", "--sx", "--sy", "--incidence"]) active.style.removeProperty(key);
+      returnToIdle(active);
       scene(active, null);
     }
     active = pending = null;
@@ -201,6 +258,7 @@
       reset();
       active = host;
       touch = pointer;
+      if (host) holdIdle(host);
     }
     if (!host) return;
     pending = event;

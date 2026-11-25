@@ -474,7 +474,7 @@
           guideName,
           {
             fromHistory: true,
-            printingId: getPrintingId()
+            printingId: getPrintingId() || document.body?.dataset?.guideInitialPrinting
           }
         );
 

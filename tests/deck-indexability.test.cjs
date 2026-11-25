@@ -48,13 +48,13 @@ test("workspace comes before static explanations of implemented capabilities", (
   for (const profile of profiles) assert.ok(copy.includes(profile.name.split(/ [—(]/)[0]), profile.name);
 });
 
-test("Contact is crawlable with noindex and all 66 sitemap targets are clean", () => {
+test("Contact is crawlable with noindex and all sitemap targets are clean", () => {
   const contact = read("contact/index.html");
   assert.match(contact, /<meta name="robots" content="noindex,follow">/);
   assert.ok(contact.includes(`<link rel="canonical" href="${origin}/contact/">`));
   const targets = [...read("sitemap.xml").matchAll(/<loc>([^<]+)<\/loc>/g)].map(match => match[1]);
-  assert.equal(new Set(targets).size, 66);
-  assert.equal(targets.length, 66);
+  assert.equal(new Set(targets).size, targets.length);
+  assert.equal(targets.length, 71);
   assert.deepEqual(targets.filter(url => url.startsWith(origin + "/deck/")), [origin + "/deck/"]);
   assert.ok(targets.every(url => url.startsWith(origin + "/") && !/[?#]/.test(url)));
   assert.ok(!targets.includes(origin + "/contact/"));

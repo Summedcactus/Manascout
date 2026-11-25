@@ -118,33 +118,95 @@ body.printing-guide > main.container:has(#ms-search-results:not([hidden]) .ms-pr
   width: min(100% - 2rem, 1320px);
   max-width: none;
 }
-:is(.ms-home, .printing-guide):has(#ms-search-results:not([hidden]) .ms-printing-table, .printings-section:not([hidden]) .ms-printing-table, .cmp-current:not([hidden])) {
-  isolation: isolate;
-}
-:is(.ms-home, .printing-guide):has(#ms-search-results:not([hidden]) .ms-printing-table, .printings-section:not([hidden]) .ms-printing-table, .cmp-current:not([hidden]))::before {
-  content: "";
+:is(.ms-home, .printing-guide) { isolation: isolate; }
+.ms-edge-atmosphere {
+  --mist-strength: 1;
+  --mist-travel: 1;
   position: fixed;
-  z-index: -1;
   inset: 0;
+  z-index: -1;
+  overflow: hidden;
   pointer-events: none;
-  opacity: .56;
-  background: radial-gradient(ellipse 12vw 70vh at 0 49%, #4b4b5260, transparent 85%),
-    radial-gradient(ellipse 11vw 68vh at 100% 63%, #51515a4c, transparent 88%);
 }
-@media (max-width: 820px) {
-  :is(.ms-home, .printing-guide):has(#ms-search-results:not([hidden]) .ms-printing-table, .printings-section:not([hidden]) .ms-printing-table, .cmp-current:not([hidden]))::before {
-    opacity: .33;
-    background-size: 76% 100%;
-    background-repeat: no-repeat;
-    background-position: left center, right center;
+.ms-edge-atmosphere > span {
+  position: absolute;
+  width: clamp(145px, 15vw, 275px);
+  height: 63vh;
+  filter: blur(var(--mist-softness, 15px));
+  background:
+    radial-gradient(ellipse 58% 29% at 43% 23%, #44444d 6%, transparent 87%),
+    radial-gradient(ellipse 48% 46% at 25% 60%, #36363d 11%, transparent 88%),
+    radial-gradient(ellipse 54% 30% at 30% 78%, #4b4b54 0%, transparent 87%);
+  opacity: calc(.22 * var(--mist-strength));
+  animation: ms-edge-drift var(--mist-cycle) ease-in-out var(--mist-offset) infinite;
+}
+.ms-edge-atmosphere > :nth-child(1) {
+  left: -3%; top: -20%;
+  --mist-cycle: 37s; --mist-offset: -7s; --mist-x: 15px; --mist-y: 28px;
+}
+.ms-edge-atmosphere > :nth-child(2) {
+  left: -5%; bottom: -22%; height: 57vh;
+  --mist-cycle: 46s; --mist-offset: -28s; --mist-x: 19px; --mist-y: -32px; --mist-softness: 21px;
+}
+.ms-edge-atmosphere > :nth-child(3) {
+  right: -4%; top: -15%; scale: -1 1;
+  --mist-cycle: 41s; --mist-offset: -19s; --mist-x: -17px; --mist-y: 21px;
+}
+.ms-edge-atmosphere > :nth-child(4) {
+  right: -4%; bottom: -23%; height: 56vh; scale: -1 1;
+  --mist-cycle: 49s; --mist-offset: -34s; --mist-x: -12px; --mist-y: -25px; --mist-softness: 19px;
+}
+@keyframes ms-edge-drift {
+  0%, 100% { transform: translate3d(0, 0, 0) scale(.97); opacity: calc(.14 * var(--mist-strength)); }
+  42% { transform: translate3d(calc(var(--mist-x) * var(--mist-travel)), var(--mist-y), 0) scale(1.07); opacity: calc(.32 * var(--mist-strength)); }
+  74% { transform: translate3d(0, calc(var(--mist-y) * .38), 0) scale(1.02); opacity: calc(.23 * var(--mist-strength)); }
+}
+@media (max-width: 1024px) {
+  .ms-edge-atmosphere { --mist-strength: .53; --mist-travel: .42; }
+  .ms-edge-atmosphere > span { width: clamp(92px, 12vw, 125px); }
+}
+@media (max-width: 620px) {
+  .ms-edge-atmosphere { --mist-strength: .27; }
+  .ms-edge-atmosphere > span { width: 64px; animation: none; }
+}
+
+.ms-physical-drift {
+  --idle-intensity: 1;
+  --idle-play: running;
+  display: block;
+  transform-style: preserve-3d;
+  animation: ms-card-idle 16s ease-in-out infinite;
+  animation-play-state: var(--idle-play);
+}
+.ms-physical[data-idle-held] .ms-physical-drift,
+.ms-physical-drift[data-idle-offscreen] { --idle-play: paused; }
+@supports (animation-composition: add) {
+  .ms-physical-drift .ms-physical-reflection {
+    animation: ms-foil-idle 19s ease-in-out infinite;
+    animation-composition: add;
+    animation-play-state: var(--idle-play);
   }
+}
+@keyframes ms-card-idle {
+  0%, 100% { transform: translateY(0) rotateX(0) rotateY(0); }
+  33% { transform: translateY(calc(-2.5px * var(--idle-intensity))) rotateX(calc(.7deg * var(--idle-intensity))) rotateY(calc(-.9deg * var(--idle-intensity))); }
+  70% { transform: translateY(calc(-1px * var(--idle-intensity))) rotateX(calc(-.55deg * var(--idle-intensity))) rotateY(calc(.6deg * var(--idle-intensity))); }
+}
+@keyframes ms-foil-idle {
+  0%, 100% { opacity: 0; }
+  42% { opacity: .07; }
+  73% { opacity: .025; }
+}
+@media (max-width: 620px) {
+  .ms-physical-drift { --idle-intensity: .36; }
+  .ms-physical-drift .ms-physical-reflection { animation: none; }
 }
 @media (max-width: 430px) {
   body.ms-home:has(#ms-search-results:not([hidden]) .ms-printing-table, .printings-section:not([hidden]) .ms-printing-table, .cmp-current:not([hidden])) > main.container,
   body.printing-guide > main.container:has(#ms-search-results:not([hidden]) .ms-printing-table, .printings-section:not([hidden]) .ms-printing-table, .cmp-current:not([hidden])) { width: calc(100% - 1rem); }
-  :is(.ms-home, .printing-guide):has(#ms-search-results:not([hidden]) .ms-printing-table, .printings-section:not([hidden]) .ms-printing-table, .cmp-current:not([hidden]))::before { opacity: .16; }
 }
 @media (prefers-reduced-motion: reduce) {
+  .ms-edge-atmosphere > span, .ms-physical-drift, .ms-physical-drift .ms-physical-reflection { animation: none; }
   .ms-physical .ms-physical-shell, .ms-physical[data-tilting] .ms-physical-shell { transform: none; transition: none; }
   .ms-physical-edge, .ms-physical-reflection { transition: none; }
 }

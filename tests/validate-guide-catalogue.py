@@ -102,21 +102,23 @@ def json_nodes(text):
 
 def audit():
     files = sorted((ROOT / 'card').glob('*/index.html'))
-    assert len(files) == 63, 'Permanent guide count changed'
+    phase101 = json.loads((ROOT / 'docs/phase10-1-guides.json').read_text())
+    count = 63 + len(phase101['guides'])
+    assert len(files) == count, 'Unexpected permanent guide count'
     slugs = [f.parent.name for f in files]
     app = (ROOT / 'assets/js/app.js').read_text()
     registered = re.findall(r'"([a-z0-9-]+)"', re.search(r'const GUIDE_SLUGS = new Set\(\[(.*?)\]\)', app, re.S)[1])
-    assert len(registered) == 63 and sorted(registered) == slugs
+    assert len(registered) == count and sorted(registered) == slugs
     directory = (ROOT / 'card/index.html').read_text()
     listing = next(n for n in json_nodes(directory) if n.get('@type') == 'ItemList')
-    assert listing['numberOfItems'] == 63 and len(listing['itemListElement']) == 63
+    assert listing['numberOfItems'] == count and len(listing['itemListElement']) == count
     urls = [ORIGIN + '/card/' + s + '/' for s in slugs]
     assert sorted(i['url'] for i in listing['itemListElement']) == urls
-    assert [i['position'] for i in listing['itemListElement']] == list(range(1, 64))
+    assert [i['position'] for i in listing['itemListElement']] == list(range(1, count + 1))
     archive = [a['href'] for tag, a in Page(directory).tags if tag == 'a' and 'hub-guide' in a.get('class', '').split()]
-    assert len(archive) == len(set(archive)) == 63
+    assert len(archive) == len(set(archive)) == count
     assert sorted(archive) == ['/card/' + s + '/' for s in slugs]
-    assert 'Showing all 63 ManaScout card guides' in directory and '<strong>63</strong> card guides' in directory
+    assert f'Showing all {count} ManaScout card guides' in directory and f'<strong>{count}</strong> card guides' in directory
     expected = set(urls + [ORIGIN + '/', ORIGIN + '/card/', ORIGIN + '/deck/'])
     dates = check_sitemap((ROOT / 'sitemap.xml').read_text(), expected, datetime.now(timezone.utc).date())
     evidence = json.loads((ROOT / 'docs/card-guide-research-3b.json').read_text())['sitemap_lastmod']['entries']
@@ -127,6 +129,9 @@ def audit():
     evidence.update(json.loads((ROOT / 'docs/phase6-search-growth.json').read_text())['sitemap'])
     evidence.pop(ORIGIN + '/contact/')
     evidence[ORIGIN + '/deck/'] = {'lastmod': '2026-11-22', 'basis': 'Deck Studio gained visible landing content.'}
+    for slug in phase101['guides']:
+        evidence[ORIGIN + '/card/' + slug + '/'] = {'lastmod': phase101['reviewed'], 'basis': 'New researched collector guide.'}
+    evidence[ORIGIN + '/card/'] = {'lastmod': phase101['reviewed'], 'basis': 'The directory gained five guide entries.'}
     assert set(evidence) == expected
     assert all(dates[url] == evidence[url]['lastmod'] and evidence[url]['basis'] for url in dates)
     records, outliers = [], []
@@ -175,7 +180,7 @@ def audit():
         if '/assets/css/guide-editorial.css' not in [a.get('href', '').split('?')[0] for t, a in page.tags if t == 'link']: reasons.append('Does not load guide-editorial.css')
         if reasons: outliers.append({'path': relative, 'reasons': reasons})
         records.append({'path': relative, 'card_name': body[0]['data-card-name'], 'canonical': url, 'lastmod': dates[url], 'schema_types': types, 'local_links_assets_aria': 'pass', 'metadata': 'pass', 'unique_explorer_ids': 'pass'})
-    return {'reviewed': '2026-11-10', 'guide_count': len(files), 'registry_count': len(slugs), 'itemlist_count': len(archive), 'sitemap_unique_urls': len(dates), 'sitemap_lastmod_counts': {d: list(dates.values()).count(d) for d in sorted(set(dates.values()))}, 'pages': records, 'structural_outliers_for_final_audit': outliers, 'preservation': 'Four new guides and four focused guide upgrades; unrelated dates retained. Shared registry updated without altering Deck Studio.', 'limitations': ['Static validation does not prove visual/mobile rendering, physical foil appearance, live API responses, marketplace stock or indexing.']}
+    return {'reviewed': phase101['reviewed'], 'guide_count': len(files), 'registry_count': len(slugs), 'itemlist_count': len(archive), 'sitemap_unique_urls': len(dates), 'sitemap_lastmod_counts': {d: list(dates.values()).count(d) for d in sorted(set(dates.values()))}, 'pages': records, 'structural_outliers_for_final_audit': outliers, 'preservation': 'Five new collector guides and a revised directory. Historical guide dates are preserved.', 'limitations': ['Static validation does not prove visual/mobile rendering, physical foil appearance, live API responses, marketplace stock or indexing.']}
 
 
 if __name__ == '__main__':
@@ -186,8 +191,8 @@ if __name__ == '__main__':
     if not result.wasSuccessful(): raise SystemExit(1)
     report = audit()
     if args.report: (ROOT / args.report).write_text(json.dumps(report, ensure_ascii=False, indent=2) + '\n')
-    print('PASS 63 guides: registry, directory, metadata, canonicals, unique explorer IDs, ARIA and local links/assets')
-    print('PASS 66 unique sitemap URLs: one loc/lastmod per entry, valid non-future dates and URL-specific history evidence')
+    print(f"PASS {report['guide_count']} guides: registry, directory, metadata, canonicals, unique explorer IDs, ARIA and local links/assets")
+    print(f"PASS {report['sitemap_unique_urls']} unique sitemap URLs: one loc/lastmod per entry, valid non-future dates and URL-specific history evidence")
     print('LASTMOD', report['sitemap_lastmod_counts'])
     print('REPORT structural outliers for separate final audit:', len(report['structural_outliers_for_final_audit']))
     for item in report['structural_outliers_for_final_audit']: print('OUTLIER', item['path'], '; '.join(item['reasons']))

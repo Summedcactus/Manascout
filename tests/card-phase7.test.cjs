@@ -69,7 +69,7 @@ test("homepage explorer comes before editorial material and rules are appended a
   assert.match(app, /explorer\.after\(information\);[^]*?<summary>Rules &amp; legality<\/summary>[^]*?oracleHtml\(card\)[^]*?<summary>Collector information/);
   assert.match(app, /selection\.after\(explorer\)/);
   assert.match(html, /rel="canonical"\s+href="https:\/\/manascout\.co\.uk\/"/);
-  assert.equal((fs.readFileSync("sitemap.xml", "utf8").match(/<loc>/g) || []).length, 66);
+  assert.equal((fs.readFileSync("sitemap.xml", "utf8").match(/<loc>/g) || []).length, 71);
 });
 
 test("grouping preserves UUID and finish, and stays conservative when art or edition evidence differs", () => {

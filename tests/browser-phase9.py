@@ -91,6 +91,7 @@ async def main():
             if width <= 430:
                 touch = await context.new_cdp_session(page)
                 await touch.send("Input.dispatchTouchEvent", {"type": "touchStart", "touchPoints": [{"x": x, "y": y}]})
+                await page.wait_for_function("document.querySelector('#card-of-the-week').dataset.weeklyInteracting === 'true'")
                 assert await feature.evaluate("""e => e.dataset.weeklyInteracting === 'true'
                     && Math.abs(parseFloat(e.querySelector('.ms-physical').style.getPropertyValue('--rx'))) <= 6
                     && Math.abs(parseFloat(e.querySelector('.ms-physical').style.getPropertyValue('--ry'))) <= 7
@@ -99,6 +100,7 @@ async def main():
                 assert await feature.locator(".ms-physical").evaluate("e => getComputedStyle(e).touchAction === 'pan-y pinch-zoom'")
             else:
                 await page.mouse.move(x, y)
+                await page.wait_for_function("document.querySelector('#card-of-the-week').dataset.weeklyInteracting === 'true'")
                 assert await feature.evaluate("""e => e.dataset.weeklyInteracting === 'true'
                     && Math.abs(parseFloat(e.querySelector('.ms-physical').style.getPropertyValue('--ry'))) <= 14
                     && parseFloat(e.style.getPropertyValue('--weekly-shadow-x')) !== 0
