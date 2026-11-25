@@ -43,7 +43,7 @@ for(const slug of slugs){
   for(const key of ['quick','rules','history','shortlist','art','foil','choice','pick','printings','related','sources'])assert.ok(html.includes(`id="${slug}-${key}-heading"`));for(const id of ['card-details','printings-status','printings-container'])assert.equal((html.match(new RegExp(`id="${id}"`,'g'))||[]).length,1);
   assert.match(html,/<div class="table-wrap" role="region"[^>]+tabindex="0">/);assert.match(html,/<caption>/);assert.match(html,/<th scope="row">/);assert.ok(html.includes('/assets/css/guide-editorial.css?v=1'));assert.ok(html.includes('/assets/js/app.js?v=eldrazi-guides1'));assert.ok(html.includes('/assets/js/card-page.js'));assert.match(html,/<noscript>/);assert.doesNotMatch(html,/data-ms-flip|data-ms-nonfoil/);
   for(const related of g.related)assert.ok(html.includes(`href="/card/${related}/"`));
-  const calls=[],c={API:'https://api.scryfall.com',encodeURIComponent,readJson:async u=>{calls.push(u);return{name};}};vm.createContext(c);vm.runInContext(app.slice(app.indexOf('  async function namedCard('),app.indexOf('  async function cardId(')),c);assert.equal((await c.namedCard(name)).name,name);assert.equal(new URL(calls[0]).searchParams.get('exact'),name);assert.equal(calls.length,1);
+  const calls=[],c={API:'https://api.scryfall.com',encodeURIComponent,getScryfall:async u=>{calls.push(u);return{name};}};vm.createContext(c);vm.runInContext(app.slice(app.indexOf('  async function namedCard('),app.indexOf('  async function cardId(')),c);assert.equal((await c.namedCard(name)).name,name);assert.equal(new URL(calls[0]).searchParams.get('exact'),name);assert.equal(calls.length,1);
  });
 }
 test('Birds: Seventh Edition foil star, artists and later retro frame are distinct physical records',()=>{

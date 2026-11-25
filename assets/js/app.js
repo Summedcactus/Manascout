@@ -3,7 +3,7 @@
 (() => {
   "use strict";
 
-  const API = "https://api.scryfall.com";
+  const { origin: API, get: getScryfall, searchPageUrl: printingSearchUrl } = window.ManaScoutScryfall;
   const FX = "https://api.frankfurter.dev/v2/rate";
   const $ = id => document.getElementById(id);
 
@@ -39,8 +39,6 @@
   let searchController = null;
   let resultController = null;
   let setIndex = null;
-  let lastCatalogueRequest = 0;
-  let catalogueCooldown = 0;
   const searchPages = new Map();
   const searchStatus = $("ms-search-status");
   const searchResults = $("ms-search-results");
@@ -275,67 +273,28 @@
      NETWORK REQUESTS
      ======================================== */
 
-  async function readJson(url, signal, timeout = 12000) {
-    if (url.startsWith(API + "/")) {
-      if (Date.now() < catalogueCooldown) throw Object.assign(new Error("Scryfall rate limit"), { status: 429 });
-      while (!signal?.aborted && Date.now() - lastCatalogueRequest < 105) {
-        await delay(Math.max(1, 105 - (Date.now() - lastCatalogueRequest)));
-      }
-      if (!signal?.aborted && Date.now() < catalogueCooldown) {
-        throw Object.assign(new Error("Scryfall rate limit"), { status: 429 });
-      }
-      if (!signal?.aborted) lastCatalogueRequest = Date.now();
-    }
-    const request = new AbortController();
-    let timer, interrupt;
-    const boundary = new Promise((_, reject) => { interrupt = reject; });
-    const cancel = () => {
-      request.abort();
-      interrupt(signal?.aborted ? Object.assign(new Error("Request cancelled."), { name: "AbortError" }) : new Error("Card data request timed out. Please retry."));
-    };
-    if (signal?.aborted) throw Object.assign(new Error("Request cancelled."), { name: "AbortError" });
-    signal?.addEventListener("abort", cancel, { once: true });
-    timer = setTimeout(cancel, timeout);
-    try {
-      const work = (async () => {
-        const response = await fetch(url, { signal: request.signal, headers: { Accept: "application/json" } });
-        if (response.status === 429 && url.startsWith(API + "/")) {
-          const retry = response.headers?.get("Retry-After");
-          const seconds = Number(retry) || (Date.parse(retry) - Date.now()) / 1000 || 10;
-          catalogueCooldown = Date.now() + Math.max(1, Math.min(60, seconds)) * 1000;
-        }
-        if (!response.ok) throw Object.assign(new Error(`HTTP ${response.status}`), { status: response.status });
-        return response.json();
-      })();
-      return await Promise.race([work, boundary]);
-    } finally { clearTimeout(timer); signal?.removeEventListener("abort", cancel); }
-  }
-  function printingSearchUrl(value) {
-    try { const u = new URL(value); return u.origin === API && !u.username && !u.password && u.pathname === "/cards/search" ? u.href : ""; } catch { return ""; }
-  }
-
   async function namedCard(name, signal) {
     try {
-      return await readJson(
+      return await getScryfall(
         `${API}/cards/named?exact=${encodeURIComponent(name)}`,
-        signal
+        { signal }
       );
     } catch (error) {
       if (error.status !== 404) {
         throw error;
       }
 
-      return readJson(
+      return getScryfall(
         `${API}/cards/named?fuzzy=${encodeURIComponent(name)}`,
-        signal
+        { signal }
       );
     }
   }
 
   async function cardId(id, signal) {
-    return readJson(
+    return getScryfall(
       `${API}/cards/${encodeURIComponent(id)}`,
-      signal
+      { signal }
     );
   }
 
@@ -953,21 +912,20 @@
      ======================================== */
 
   async function fetchRate(currency) {
-    const data =
-      await readJson(
-        `${FX}/${encodeURIComponent(currency)}/GBP`
-      );
-
-    if (
-      !Number.isFinite(Number(data.rate)) ||
-      Number(data.rate) <= 0
-    ) {
-      throw new Error(
-        "FX rate invalid"
-      );
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), 12000);
+    try {
+      const response = await fetch(`${FX}/${encodeURIComponent(currency)}/GBP`, {
+        signal: controller.signal, headers: { Accept: "application/json" }
+      });
+      if (!response.ok) throw new Error("FX rate unavailable");
+      const data = await response.json();
+      const rate = Number(data?.rate);
+      if (!Number.isFinite(rate) || rate <= 0) throw new Error("FX rate invalid");
+      return rate;
+    } finally {
+      clearTimeout(timer);
     }
-
-    return Number(data.rate);
   }
 
   function exchangeRates() {
@@ -1140,9 +1098,9 @@
 
       try {
         data =
-          await readJson(
+          await getScryfall(
             next,
-            signal
+            { signal }
           );
 
       } catch (error) {
@@ -2740,7 +2698,7 @@
 
   async function catalogueSets(signal) {
     if (setIndex) return setIndex;
-    const data = await readJson(`${API}/sets`, signal);
+    const data = await getScryfall(`${API}/sets`, { signal });
     if (!Array.isArray(data?.data) || !data.data.length) throw new Error("Set catalogue unavailable.");
     setIndex = intentEngine.makeSetIndex(data.data);
     return setIndex;
@@ -2769,7 +2727,7 @@
   async function cataloguePage(url, signal) {
     const cached = searchPages.get(url);
     if (cached && cached.expires > Date.now()) return cached.data;
-    const data = await readJson(url, signal);
+    const data = await getScryfall(url, { signal });
     if (!Array.isArray(data?.data) || !data.data.length || !data.data.every(validSearchCard)) {
       throw new Error("Incomplete catalogue response.");
     }
@@ -2914,7 +2872,7 @@
   async function exactLocator(set, number, language, signal) {
     const endpoint = `${API}/cards/${set}/${encodeURIComponent(number)}/${language}`;
     if (locators.has(endpoint)) return locators.get(endpoint);
-    const card = await readJson(endpoint, signal);
+    const card = await getScryfall(endpoint, { signal });
     if (!validSearchCard(card) || !paper(card) || card.set !== set ||
         norm(card.collector_number) !== norm(number) || card.lang !== language) {
       throw new Error("The catalogue returned a different printing.");
@@ -2948,7 +2906,7 @@
       const exactNameFirst = !constrained || !Object.keys(filters).length && !intent.printing && Boolean(intent.cardName) && !intent.criteria.type;
       if (exactNameFirst && intent.cardName) {
         try {
-          const card = await readJson(`${API}/cards/named?exact=${encodeURIComponent(query)}`, signal);
+          const card = await getScryfall(`${API}/cards/named?exact=${encodeURIComponent(query)}`, { signal });
           if (!validSearchCard(card)) throw new Error("Incomplete card response.");
           if (!signal.aborted) return loadCard(card.name, { nameRecord: card, input: query, userSearch: !fromHistory });
           return;
@@ -2973,7 +2931,7 @@
           return;
         }
         try {
-          const card = await readJson(`${API}/cards/named?fuzzy=${encodeURIComponent(intent.cardName)}`, signal);
+          const card = await getScryfall(`${API}/cards/named?fuzzy=${encodeURIComponent(intent.cardName)}`, { signal });
           if (!validSearchCard(card)) throw new Error("Incomplete card response.");
           if (!signal.aborted) return loadCard(card.name, { nameRecord: card, input: query, userSearch: !fromHistory });
           return;
@@ -3109,7 +3067,7 @@
       } else if (set) {
         names = [{ query: set.code, label: `${set.code.toUpperCase()} — ${set.name}` }];
       } else if (!locator && !/^#|^collector\s|artist:/i.test(query)) {
-        const response = await readJson(`${API}/cards/autocomplete?q=${encodeURIComponent(query)}`, signal);
+        const response = await getScryfall(`${API}/cards/autocomplete?q=${encodeURIComponent(query)}`, { signal });
         names = (Array.isArray(response?.data) ? response.data : []).filter(name => typeof name === "string").slice(0, 8)
           .map(name => ({ query: name, label: name }));
       }
@@ -3430,7 +3388,7 @@
 
       try {
         const item =
-          await readJson(
+          await getScryfall(
             `${API}/cards/random?q=${encodeURIComponent(q)}`
           );
 
@@ -3524,7 +3482,7 @@
 
       scoutRandom: async () => {
         const result =
-          await readJson(
+          await getScryfall(
             `${API}/cards/random?q=${encodeURIComponent("game:paper")}`
           );
 
