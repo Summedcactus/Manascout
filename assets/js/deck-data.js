@@ -3,6 +3,8 @@
   "use strict";
   const formats = typeof module === "object" && module.exports ? require("./deck-formats.js") : root.ManaScoutDeckFormats;
 
+  const transport = typeof module === "object" && module.exports ? require("./scryfall-client.js") : root.ManaScoutScryfall;
+
   const uuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
   const finishLabels = { nonfoil: "Nonfoil", foil: "Foil", etched: "Etched foil" };
   const slug = name => String(name).trim().toLowerCase().replace(/['’]/g, "").replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
@@ -83,28 +85,23 @@
     };
   }
 
-  async function fetchPrinting(selection, { fetchImpl = root.fetch?.bind(root), timeout = 12000 } = {}) {
+  async function fetchPrinting(selection, { fetchImpl, timeout = 12000 } = {}) {
     if (!uuid.test(selection?.id || "")) throw new SelectionError("This printing link is invalid. Return to ManaScout Search.");
-    if (!fetchImpl) throw new SelectionError("Card data cannot be requested in this browser. Return to ManaScout Search.");
-    const controller = new AbortController();
-    let timer;
-    const boundary = new Promise((_,reject) => { timer=setTimeout(() => { controller.abort(); reject(new SelectionError("The card request timed out. Check your connection and try again.",true)); },timeout); });
+    if (typeof (fetchImpl === undefined ? root.fetch : fetchImpl) !== "function") {
+      throw new SelectionError("Card data cannot be requested in this browser. Return to ManaScout Search.");
+    }
+    const client = fetchImpl ? transport.createClient({ fetchImpl }) : transport;
     try {
-      const work = (async () => {
-      const response = await fetchImpl(`https://api.scryfall.com/cards/${selection.id}`, { headers: { Accept: "application/json" }, signal: controller.signal });
-      if (!response.ok) {
-        if (response.status === 404) throw new SelectionError("That printing could not be found on Scryfall. Choose another printing in Search.");
-        if (response.status === 429) throw new SelectionError("Scryfall is receiving too many requests. Wait a moment before trying again.", true);
-        throw new SelectionError("Scryfall could not load this printing right now. You can try again.", true);
-      }
-      return normaliseCard(await response.json(), selection);
-      })();
-      return await Promise.race([work,boundary]);
+      const card = await client.get(`${transport.origin}/cards/${selection.id}`, { timeout });
+      return normaliseCard(card, selection);
     } catch (error) {
       if (error instanceof SelectionError) throw error;
-      if (controller.signal.aborted) throw new SelectionError("The card request timed out. Check your connection and try again.", true);
+      if (error.status === 404) throw new SelectionError("That printing could not be found on Scryfall. Choose another printing in Search.");
+      if (error.status === 429) throw new SelectionError("Scryfall is receiving too many requests. Wait a moment before trying again.", true);
+      if (error.code === "http") throw new SelectionError("Scryfall could not load this printing right now. You can try again.", true);
+      if (error.code === "timeout") throw new SelectionError("The card request timed out. Check your connection and try again.", true);
       throw new SelectionError("Card data is unavailable. Check your connection and try again.", true);
-    } finally { clearTimeout(timer); }
+    }
   }
 
   // Printing, artwork and finish may vary; gameplay facts must agree for a version swap.

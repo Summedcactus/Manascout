@@ -3,7 +3,8 @@
 (() => {
   "use strict";
 
-  const API = "https://api.scryfall.com";
+  const { origin: API, get: getScryfall, searchPageUrl: printingSearchUrl } = window.ManaScoutScryfall;
+  const urlState = window.ManaScoutURLState;
   const FX = "https://api.frankfurter.dev/v2/rate";
   const $ = id => document.getElementById(id);
 
@@ -28,6 +29,7 @@
   const pickCache = new Map();
 
   let controller = null;
+  let loadingCard = null;
   let suggestController = null;
   let suggestTimer = 0;
   let generation = 0;
@@ -39,8 +41,6 @@
   let searchController = null;
   let resultController = null;
   let setIndex = null;
-  let lastCatalogueRequest = 0;
-  let catalogueCooldown = 0;
   const searchPages = new Map();
   const searchStatus = $("ms-search-status");
   const searchResults = $("ms-search-results");
@@ -107,7 +107,7 @@
         : null;
 
   const paper = c =>
-    (c?.games || []).includes("paper");
+    Array.isArray(c?.games) && c.games.includes("paper");
 
   const motion = () =>
     window.matchMedia(
@@ -126,17 +126,6 @@
     new Promise(resolve =>
       setTimeout(resolve, ms)
     );
-
-  const params = () =>
-    new URLSearchParams(
-      window.location.search
-    );
-
-  const readPrinting = () =>
-    params().get("printing")?.trim() || "";
-
-  const readFinish = () =>
-    params().get("finish")?.trim() || "";
 
   const sameName = (a, b) =>
     norm(a) === norm(b);
@@ -166,108 +155,29 @@
      ======================================== */
 
   function pageUrl(card, finish = "") {
-    const url =
-      new URL(window.location.href);
+    return urlState.selectionUrl(window.location.href, {
+      query: card?.name, printingId: card?.id, finish, guideName
+    });
+  }
 
-    if (
-      guideName &&
-      sameName(guideName, card?.name)
-    ) {
-      url.searchParams.delete("q");
-    } else if (card?.name) {
-      url.searchParams.set(
-        "q",
-        card.name
-      );
-    } else {
-      url.searchParams.delete("q");
-    }
-
-    if (card?.id) {
-      url.searchParams.set(
-        "printing",
-        card.id
-      );
-    } else {
-      url.searchParams.delete("printing");
-    }
-
-    if (finish) {
-      url.searchParams.set(
-        "finish",
-        finish
-      );
-    } else {
-      url.searchParams.delete("finish");
-    }
-
-    return url;
+  function setSelectionUrl(url, replace) {
+    history[replace ? "replaceState" : "pushState"]({}, "", url);
+    updateSearchRobots();
   }
 
   function replaceUrl(card, replace = true) {
-    const finish = card
-      ? selectedFinish(card)
-      : "";
-
-    const url = pageUrl(
-      card,
-      finish
-    );
-
-    history[
-      replace
-        ? "replaceState"
-        : "pushState"
-    ]({}, "", url);
-    updateSearchRobots();
+    setSelectionUrl(pageUrl(card, card ? selectedFinish(card) : ""), replace);
   }
 
   function updateSearchRobots() {
     if (!intentEngine || window.location.pathname !== "/") return;
-    const utility = ["q", "printing", "finish", "set", "collector_number", "rarity", "colour", "type", "artist", "language"]
-      .some(key => params().has(key));
+    const utility = urlState.isVariant(window.location.search);
     document.querySelector('meta[name="robots"]')?.setAttribute("content", utility ? "noindex,follow" : "index,follow,max-image-preview:large");
   }
 
-  function startUrl(
-    name,
-    printingId = "",
-    replace = false
-  ) {
-    const url =
-      new URL(window.location.href);
-
-    if (
-      guideName &&
-      sameName(guideName, name)
-    ) {
-      url.searchParams.delete("q");
-    } else {
-      url.searchParams.set(
-        "q",
-        name
-      );
-    }
-
-    if (printingId) {
-      url.searchParams.set(
-        "printing",
-        printingId
-      );
-    } else {
-      url.searchParams.delete("printing");
-    }
-
-    if (!printingId) {
-      url.searchParams.delete("finish");
-    }
-
-    history[
-      replace
-        ? "replaceState"
-        : "pushState"
-    ]({}, "", url);
-    updateSearchRobots();
+  function startUrl(query, printingId, replace = false) {
+    const { finish } = urlState.parse(window.location.search);
+    setSelectionUrl(urlState.selectionUrl(window.location.href, { query, printingId, finish, guideName }), replace);
   }
 
 
@@ -275,67 +185,28 @@
      NETWORK REQUESTS
      ======================================== */
 
-  async function readJson(url, signal, timeout = 12000) {
-    if (url.startsWith(API + "/")) {
-      if (Date.now() < catalogueCooldown) throw Object.assign(new Error("Scryfall rate limit"), { status: 429 });
-      while (!signal?.aborted && Date.now() - lastCatalogueRequest < 105) {
-        await delay(Math.max(1, 105 - (Date.now() - lastCatalogueRequest)));
-      }
-      if (!signal?.aborted && Date.now() < catalogueCooldown) {
-        throw Object.assign(new Error("Scryfall rate limit"), { status: 429 });
-      }
-      if (!signal?.aborted) lastCatalogueRequest = Date.now();
-    }
-    const request = new AbortController();
-    let timer, interrupt;
-    const boundary = new Promise((_, reject) => { interrupt = reject; });
-    const cancel = () => {
-      request.abort();
-      interrupt(signal?.aborted ? Object.assign(new Error("Request cancelled."), { name: "AbortError" }) : new Error("Card data request timed out. Please retry."));
-    };
-    if (signal?.aborted) throw Object.assign(new Error("Request cancelled."), { name: "AbortError" });
-    signal?.addEventListener("abort", cancel, { once: true });
-    timer = setTimeout(cancel, timeout);
-    try {
-      const work = (async () => {
-        const response = await fetch(url, { signal: request.signal, headers: { Accept: "application/json" } });
-        if (response.status === 429 && url.startsWith(API + "/")) {
-          const retry = response.headers?.get("Retry-After");
-          const seconds = Number(retry) || (Date.parse(retry) - Date.now()) / 1000 || 10;
-          catalogueCooldown = Date.now() + Math.max(1, Math.min(60, seconds)) * 1000;
-        }
-        if (!response.ok) throw Object.assign(new Error(`HTTP ${response.status}`), { status: response.status });
-        return response.json();
-      })();
-      return await Promise.race([work, boundary]);
-    } finally { clearTimeout(timer); signal?.removeEventListener("abort", cancel); }
-  }
-  function printingSearchUrl(value) {
-    try { const u = new URL(value); return u.origin === API && !u.username && !u.password && u.pathname === "/cards/search" ? u.href : ""; } catch { return ""; }
-  }
-
   async function namedCard(name, signal) {
     try {
-      return await readJson(
+      return await getScryfall(
         `${API}/cards/named?exact=${encodeURIComponent(name)}`,
-        signal
+        { signal }
       );
     } catch (error) {
       if (error.status !== 404) {
         throw error;
       }
 
-      return readJson(
+      return getScryfall(
         `${API}/cards/named?fuzzy=${encodeURIComponent(name)}`,
-        signal
+        { signal }
       );
     }
   }
 
   async function cardId(id, signal) {
-    return readJson(
+    return getScryfall(
       `${API}/cards/${encodeURIComponent(id)}`,
-      signal
+      { signal }
     );
   }
 
@@ -953,21 +824,20 @@
      ======================================== */
 
   async function fetchRate(currency) {
-    const data =
-      await readJson(
-        `${FX}/${encodeURIComponent(currency)}/GBP`
-      );
-
-    if (
-      !Number.isFinite(Number(data.rate)) ||
-      Number(data.rate) <= 0
-    ) {
-      throw new Error(
-        "FX rate invalid"
-      );
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), 12000);
+    try {
+      const response = await fetch(`${FX}/${encodeURIComponent(currency)}/GBP`, {
+        signal: controller.signal, headers: { Accept: "application/json" }
+      });
+      if (!response.ok) throw new Error("FX rate unavailable");
+      const data = await response.json();
+      const rate = Number(data?.rate);
+      if (!Number.isFinite(rate) || rate <= 0) throw new Error("FX rate invalid");
+      return rate;
+    } finally {
+      clearTimeout(timer);
     }
-
-    return Number(data.rate);
   }
 
   function exchangeRates() {
@@ -1140,9 +1010,9 @@
 
       try {
         data =
-          await readJson(
+          await getScryfall(
             next,
-            signal
+            { signal }
           );
 
       } catch (error) {
@@ -2491,31 +2361,12 @@
     const token =
       generation;
 
-    controller =
-      new AbortController();
-
-    const signal =
-      controller.signal;
-
-    const requestedId =
-      String(
-        opts.printingId ||
-        (
-          opts.fromHistory
-            ? readPrinting()
-            : ""
-        )
-      ).trim();
-
-    const requestedFinish =
-      String(
-        opts.finish ||
-        (
-          opts.fromHistory
-            ? readFinish()
-            : ""
-        )
-      ).trim();
+    const request = new AbortController();
+    const { signal } = request;
+    controller = loadingCard = request;
+    const restored = opts.fromHistory ? urlState.parse(window.location.search) : {};
+    const requestedId = urlState.printing(opts.printingId || restored.printingId);
+    const requestedFinish = urlState.finish(opts.finish || restored.finish);
 
     if (!opts.fromHistory) {
       startUrl(
@@ -2596,10 +2447,12 @@
       }
 
       if (
-        token !== generation
+        signal.aborted || token !== generation
       ) {
         return null;
       }
+
+      if (!validSearchCard(card)) throw new Error("Incomplete physical card response.");
 
       if (
         exact &&
@@ -2651,7 +2504,7 @@
       }
 
       if (
-        token !== generation
+        signal.aborted || token !== generation
       ) {
         return null;
       }
@@ -2659,7 +2512,7 @@
       const rates = await rateRequest;
 
       if (
-        token !== generation
+        signal.aborted || token !== generation
       ) {
         return null;
       }
@@ -2713,7 +2566,7 @@
     } catch (error) {
       if (
         error.name === "AbortError" ||
-        token !== generation
+        signal.aborted || token !== generation
       ) {
         return null;
       }
@@ -2730,6 +2583,8 @@
       );
 
       return null;
+    } finally {
+      if (loadingCard === request) loadingCard = null;
     }
   }
 
@@ -2740,7 +2595,7 @@
 
   async function catalogueSets(signal) {
     if (setIndex) return setIndex;
-    const data = await readJson(`${API}/sets`, signal);
+    const data = await getScryfall(`${API}/sets`, { signal });
     if (!Array.isArray(data?.data) || !data.data.length) throw new Error("Set catalogue unavailable.");
     setIndex = intentEngine.makeSetIndex(data.data);
     return setIndex;
@@ -2764,12 +2619,13 @@
     });
   }
 
-  const validSearchCard = card => Boolean(card?.id && card.name && card.set && card.collector_number && card.lang);
+  const validSearchCard = card => Boolean(urlState.printing(card?.id) && paper(card) &&
+    ["name", "set", "collector_number", "lang"].every(key => typeof card[key] === "string" && card[key].trim()));
 
   async function cataloguePage(url, signal) {
     const cached = searchPages.get(url);
     if (cached && cached.expires > Date.now()) return cached.data;
-    const data = await readJson(url, signal);
+    const data = await getScryfall(url, { signal });
     if (!Array.isArray(data?.data) || !data.data.length || !data.data.every(validSearchCard)) {
       throw new Error("Incomplete catalogue response.");
     }
@@ -2914,8 +2770,8 @@
   async function exactLocator(set, number, language, signal) {
     const endpoint = `${API}/cards/${set}/${encodeURIComponent(number)}/${language}`;
     if (locators.has(endpoint)) return locators.get(endpoint);
-    const card = await readJson(endpoint, signal);
-    if (!validSearchCard(card) || !paper(card) || card.set !== set ||
+    const card = await getScryfall(endpoint, { signal });
+    if (!validSearchCard(card) || card.set !== set ||
         norm(card.collector_number) !== norm(number) || card.lang !== language) {
       throw new Error("The catalogue returned a different printing.");
     }
@@ -2927,6 +2783,11 @@
   async function submitSearch(query, filters = {}, fromHistory = false) {
     if (!intentEngine || !searchResults) return loadCard(query, { userSearch: !fromHistory });
     query = String(query).trim().slice(0, 160);
+    if (loadingCard) {
+      loadingCard.abort();
+      ui.details?.querySelector('.empty-state[role="status"]')?.remove();
+      if (ui.status) ui.status.textContent = "";
+    }
     searchController?.abort();
     suggestController?.abort();
     clearTimeout(suggestTimer);
@@ -2948,9 +2809,9 @@
       const exactNameFirst = !constrained || !Object.keys(filters).length && !intent.printing && Boolean(intent.cardName) && !intent.criteria.type;
       if (exactNameFirst && intent.cardName) {
         try {
-          const card = await readJson(`${API}/cards/named?exact=${encodeURIComponent(query)}`, signal);
+          const card = await getScryfall(`${API}/cards/named?exact=${encodeURIComponent(query)}`, { signal });
           if (!validSearchCard(card)) throw new Error("Incomplete card response.");
-          if (!signal.aborted) return loadCard(card.name, { nameRecord: card, input: query, userSearch: !fromHistory });
+          if (!signal.aborted) return loadCard(card.name, { nameRecord: card, input: query, fromHistory, userSearch: !fromHistory });
           return;
         } catch (error) {
           if (error.status !== 404) throw error;
@@ -2973,9 +2834,9 @@
           return;
         }
         try {
-          const card = await readJson(`${API}/cards/named?fuzzy=${encodeURIComponent(intent.cardName)}`, signal);
+          const card = await getScryfall(`${API}/cards/named?fuzzy=${encodeURIComponent(intent.cardName)}`, { signal });
           if (!validSearchCard(card)) throw new Error("Incomplete card response.");
-          if (!signal.aborted) return loadCard(card.name, { nameRecord: card, input: query, userSearch: !fromHistory });
+          if (!signal.aborted) return loadCard(card.name, { nameRecord: card, input: query, fromHistory, userSearch: !fromHistory });
           return;
         } catch (error) {
           if (error.status !== 404 || signal.aborted) throw error;
@@ -3026,8 +2887,8 @@
       generation++;
       announce("loading");
       if (!fromHistory) {
-        const url = new URL("/", window.location.href);
-        history.pushState({ search: { query, filters } }, "", url);
+        const entry = urlState.searchEntry(window.location.href, query, filters);
+        history.pushState(entry.state, "", entry.url);
         trackSearch(intent.category, false, page.total);
       }
       setSearchTitle("MTG Card Search | ManaScout");
@@ -3095,8 +2956,8 @@
     suggestController =
       new AbortController();
 
+    const { signal } = suggestController;
     try {
-      const { signal } = suggestController;
       let names = [];
       let sets = setIndex;
       const locator = query.match(/^([a-z0-9]{2,8})\s+#?(\d[\p{L}\d★†-]{0,15})$/iu);
@@ -3109,7 +2970,7 @@
       } else if (set) {
         names = [{ query: set.code, label: `${set.code.toUpperCase()} — ${set.name}` }];
       } else if (!locator && !/^#|^collector\s|artist:/i.test(query)) {
-        const response = await readJson(`${API}/cards/autocomplete?q=${encodeURIComponent(query)}`, signal);
+        const response = await getScryfall(`${API}/cards/autocomplete?q=${encodeURIComponent(query)}`, { signal });
         names = (Array.isArray(response?.data) ? response.data : []).filter(name => typeof name === "string").slice(0, 8)
           .map(name => ({ query: name, label: name }));
       }
@@ -3152,7 +3013,7 @@
 
     } catch (error) {
       if (
-        error.name !== "AbortError"
+        !signal.aborted && error.name !== "AbortError"
       ) {
         clearSuggestions();
       }
@@ -3430,7 +3291,7 @@
 
       try {
         const item =
-          await readJson(
+          await getScryfall(
             `${API}/cards/random?q=${encodeURIComponent(q)}`
           );
 
@@ -3471,37 +3332,23 @@
      BROWSER HISTORY
      ======================================== */
 
-  window.addEventListener(
-    "popstate",
-    event => {
-      updateSearchRobots();
-      if (event.state?.search && ui.input) {
-        const { query, filters } = event.state.search;
-        ui.input.value = query;
-        void submitSearch(query, filters, true);
-        return;
-      }
-      const query =
-        params().get("q")?.trim() ||
-        guideName;
-
-      if (query && intentEngine && !readPrinting() && !guideName) {
-        ui.input.value = query;
-        void submitSearch(query, {}, true);
-      } else if (query) {
-        void loadCard(
-          query,
-          {
-            fromHistory: true,
-            printingId: readPrinting(),
-            finish: readFinish()
-          }
-        );
-      } else {
-        setHome();
-      }
+  function restoreSelection(state) {
+    if (state.kind === "home") {
+      setHome();
+    } else if (state.kind === "search" && intentEngine && ui.input) {
+      ui.input.value = state.query;
+      void submitSearch(state.query, state.filters, true);
+    } else {
+      void loadCard(state.query, {
+        fromHistory: true, printingId: state.printingId, finish: state.finish
+      });
     }
-  );
+  }
+
+  window.addEventListener("popstate", event => {
+    updateSearchRobots();
+    restoreSelection(urlState.restore(window.location.search, event.state, guideName));
+  });
 
 
   /* ========================================
@@ -3524,7 +3371,7 @@
 
       scoutRandom: async () => {
         const result =
-          await readJson(
+          await getScryfall(
             `${API}/cards/random?q=${encodeURIComponent("game:paper")}`
           );
 
@@ -3546,21 +3393,8 @@
   installGuideImages();
   updateSearchRobots();
 
-  const first =
-    params().get("q")?.trim();
-
-  if (first && intentEngine && !readPrinting()) {
-    if (ui.input) ui.input.value = first;
-    void submitSearch(first, {}, true);
-  } else if (first) {
-    void loadCard(
-      first,
-      {
-        fromHistory: true,
-        printingId: readPrinting(),
-        finish: readFinish()
-      }
-    );
+  if (urlState.parse(window.location.search).query) {
+    restoreSelection(urlState.restore(window.location.search, null, guideName));
   }
 
 })();

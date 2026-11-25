@@ -4,7 +4,7 @@
 
 The audit used `DEVELOPMENT` at `ba12866e98d89b87e9fbfb5d01fa6952ee9ba4ee` and fetched `main` at `fc779b94e8b4fd13d992f37a1c1448a7856cbead`. Both match the brief. The Phase 10.2 commit was unique to `DEVELOPMENT`, and four historical release merge commits were unique to `main`. The current branch model is recorded below. The static page and browser-local Deck Studio architecture is retained.
 
-## Dependency map
+## Dependency map after Prompt 2
 
 ```mermaid
 flowchart LR
@@ -21,7 +21,11 @@ flowchart LR
     Scout["scoutboard.js · COTW and Discover"]
     Deck["Deck Studio · selection, model and store"]
     Analytics["Analytics validation and provider adapter"]
-    Scryfall["Scryfall"]
+    URLState["Pure URL and history state"]
+    Transport["Shared Scryfall GET transport"]
+    Compat["Exported exact helper · deck-data.js"]
+    FX["Frankfurter FX"]
+    Scryfall["Scryfall API"]
     Tests["Contract, historical and browser checks"]
 
     Manifest --> Sync
@@ -42,9 +46,14 @@ flowchart LR
     Compare --> Presentation
     Deck --> Presentation
     Scout --> Presentation
-    App --> Scryfall
-    Scout --> Scryfall
-    Deck -->|"deck-client and deck-data helper"| Scryfall
+    App --> URLState
+    Guide --> URLState
+    App --> Transport
+    Compat --> Transport
+    Transport --> Scryfall
+    App --> FX
+    Scout -->|"retained getJson"| Scryfall
+    Deck -->|"retained deck-client"| Scryfall
     App --> Analytics
     Compare --> Analytics
     Scout --> Analytics
@@ -57,7 +66,7 @@ flowchart LR
     Deck --> Tests
 ```
 
-## Backlog audit
+## Prompt 1 backlog audit
 
 | Item | Current implementation and duplication | Dependencies and regression risk | Independence and order |
 | --- | --- | --- | --- |
@@ -159,3 +168,81 @@ git ls-remote origin refs/heads/main refs/heads/DEVELOPMENT
 ```
 
 Stop if the worktree is dirty, the ancestry check fails, or a fast-forward is unavailable. Inspect the two ranges with `git log --left-right origin/main...DEVELOPMENT`. If unreleased changes remain, the owner can review a normal reconciliation on DEVELOPMENT that preserves both histories. Once authorised, recheck before updating the backup branch through its own verified fast-forward. This phase left the existing branch ancestry intact.
+
+## Prompt 2 release sync and baseline
+
+The fetched release head was `e39487d76ef0a40c43a9b9f27bdbe091af11e5bf` on `main`, the merge of PR #82. The remote and local `DEVELOPMENT` heads were `2a7a604fc640cefd1d0c636b12ba822ee30f9fe8`. The left/right ancestry counts were 0 development-only and 5 main-only commits. Both heads had tree `6429eca4e470421ec9eb63d6e6593850f222e895`. The clean worktree, ancestor relationship and Prompt 1 catalogue and title checks were verified before the local and remote fast-forward. Both refs then equalled the released SHA before implementation. This synchronisation created no merge commit.
+
+The pre-migration production search found five literal API-origin references. The homepage preconnect is one. The four network sites were `app.js:readJson`, `deck-client.js:request`, `deck-data.js:fetchPrinting` and `scoutboard.js:getJson`. Search's `readJson` also dispatched exchange rates. The Deck data helper is exported and tested, with no live repository caller. Comparison exact reconstruction already delegated to `window.ManaScout.comparison.exact`, so it never added a direct fetch. Search had a 105ms start gate and 429 cooldown. The active Deck client had its own 130ms serial queue. Scoutboard used a 64-entry in-flight cache and the Deck helper had its own timeout. Neither introduced another rate scheduler.
+
+| Page | Released script order before migration |
+|---|---|
+| `/` | analytics config → guide catalogue → analytics → printing presentation → comparisons tag (deferred) → search intent → app → Scoutboard |
+| `/card/sol-ring/` | analytics config → guide catalogue → analytics → printing presentation → comparisons tag (deferred) → app → card-page |
+| `/card/` | printing presentation → analytics config → guide catalogue → analytics |
+| `/deck/` | analytics config → deferred guide catalogue, analytics, printing presentation, deck formats, deck data, model, client, rules, view, store, quality, identity, health, generator, printings, printing selector, appearance, appearance controls, interoperability, interoperability controls, Studio |
+
+The shared client and URL-state script now appear before `app.js` on home and all guide pages. The guide controller follows `app.js` and reuses the same URL module. The Deck page inserts the shared client as a deferred dependency before `deck-data.js`. The archive order is identical. Version-query bumps reflect only the new or changed dependencies.
+
+## Prompt 2 transport and URL ownership
+
+`assets/js/scryfall-client.js` exposes the browser singleton `ManaScoutScryfall`, its `origin` and `searchPageUrl` helpers, and a `createClient` factory for isolated consumers and Node tests. The request API is `get(absoluteApiUrl, { signal, cache, timeout })`. It accepts absolute HTTPS Scryfall API URLs with no credentials or fragments, disables redirect following, and rejects unsafe response URLs. Search pagination is restricted to the exact `/cards/search` path. Path, query and card identity validation stay in the calling product layer.
+
+Requests start FIFO at least 105ms apart per shared instance. The queue releases when a request starts, allowing a slow response body and a later independent lookup to coexist. Caller cancellation rejects with `AbortError`. A request aborts once its last subscriber cancels. Compatible deterministic GETs share in-flight work. Rejections are evicted. Random requests bypass coalescing, the shared cache and the browser cache. Cache use defaults off. Opted-in successful responses use a 32-entry LRU and a five-minute TTL on the default instance. Search keeps its existing validated set index, exact-identity map and result-page cache at the application boundary, where bad card data can be rejected before it is stored.
+
+The 12-second default deadline bounds fetch and JSON decoding even when a test double ignores the signal. Errors expose `code` values for `invalid_url`, `abort`, `timeout`, `http`, `network` and `invalid_response`, plus `status` for HTTP responses. A 429 applies the visible numeric or HTTP-date `Retry-After` to the shared scheduler, bounded from 1 to 60 seconds, with a 10-second fallback. Cooldown rejects new network starts with status 429 and `retryAt`. No request is retried automatically. The client can read `Retry-After` only when the browser exposes it to the origin.
+
+Migrated Search paths include exact and fuzzy named lookups, UUID restores, autocomplete, the set catalogue, set/number/language lookups, query and guide-archive pagination, Get More results, and the app's random helpers. Comparison exact restoration inherits the migration through its existing bridge. Search still rejects incomplete and non-paper records, verifies exact identities and requested finishes, and keeps its existing result and failure copy. The small exported exact helper in `deck-data.js` now reuses GET while retaining its original `SelectionError` mapping and local card normalization. Its non-transport core is pinned to the released source by the historical protection checks.
+
+The former Search request, timeout, pace and cooldown block and the helper's independent fetch/timeout block were removed. Frankfurter requests continue through a small separate FX path in `app.js`. Deck Studio's active `deck-client.js` retains its 130ms queue, POST collection support and proof/freshness state. Scoutboard retains its feature cache and snapshots. Neither client changed in this phase.
+
+`assets/js/url-state.js` parses and validates Search query, printing UUID, finish and the allowed history filters. It constructs selection URLs and history payloads, and reconstructs home, results or exact states. It has no DOM or mutable history dependency. The route, unrelated parameters and hash survive selection. Same-card guide selection omits `q`. A different-card dynamic lookup uses `q` while keeping the guide route and static canonical. Guide header handoff still targets homepage Search. `app.js` owns history writes, robots updates, UI state and request arbitration. `card-page.js` uses the same parser for exact guide links and leaves direct query startup to Search.
+
+Earlier loads were already generation-scoped, but a new typed Search could previously leave a public exact load running while the next request was pending. Search now cancels that stale active load, checks both the signal and generation before committing, and prevents aborted autocomplete failures from closing newer suggestions. The `window.ManaScout` method names and comparison bridge are unchanged.
+
+## Prompt 2 measurements
+
+Decoded page JS totals sum unique linked first-party external scripts. Direct fetches and wrappers count production source sites, including the callable legacy helper, with tests and fixtures excluded. The archive is outside the transport dependency chain.
+
+| Measure | Released baseline | Prompt 2 |
+|---|---:|---:|
+| `app.js` bytes / lines | 100,417 / 3,576 | 97,488 / 3,410 |
+| `scryfall-client.js` bytes / lines | 0 / 0 | 7,718 / 211 |
+| `url-state.js` bytes / lines | 0 / 0 | 2,845 / 74 |
+| `deck-client.js` bytes / lines | 28,045 / 360 | 28,045 / 360 |
+| `deck-data.js` bytes / lines | 9,556 / 121 | 9,310 / 118 |
+| `scoutboard.js` bytes / lines | 37,218 / 1,642 | 37,218 / 1,642 |
+| Homepage first-party scripts / decoded bytes | 8 / 194,527 | 10 / 202,161 |
+| Sol Ring first-party scripts / decoded bytes | 7 / 160,496 | 9 / 167,879 |
+| Archive first-party scripts / decoded bytes | 4 / 26,803 | 4 / 26,803 |
+| Deck first-party scripts / decoded bytes | 22 / 368,507 | 23 / 375,979 |
+| Scryfall API-origin literals, including preconnect | 5 | 4 |
+| Direct Scryfall fetch sites and request wrappers | 4 | 3 |
+| Active start schedulers | 2 local | 1 shared plus the active Deck scheduler |
+| Independent 429 cooldown policies | 1 in Search | 1 shared |
+
+Decoded JS grows because the shared transport implements queue sharing, subscriber cancellation, explicit error types, cache policy and URL validation. Migration removes one independent transport implementation and makes the new behavior reusable. The remaining literal origins are the homepage preconnect, shared client, Deck client and Scoutboard.
+
+## Prompt 2 backlog position
+
+| Backlog | Status and next decision |
+|---|---|
+| D · App boundaries | Pure URL state and transport extracted. Search UI, autocomplete, archive rendering, pick scoring and FX stay in the app. Next extract stateful controllers only behind the Search contracts. |
+| E · Runtime CSS | Completed in Prompt 1. |
+| F · Scryfall | Search, comparison exact and compatibility helper migrated. Scoutboard comes next. Keep random response freshness, weekly exact verification, and static/offline fallback in scope. Treat the active Deck client separately because it uses both GET and read-only collection POST, and caches exact verification evidence. |
+| G · Asset versioning | Add a dry-run deterministic asset-version process, then validate cache refresh and Pages-compatible output before approving publish integration. |
+| H · Contracts | Added permanent Scryfall, URL and Search tests. Keep adding observable contract coverage before removing duplicated phase assertions. Phase 6.1's retired foil selector still fails identically on baseline. |
+| I · Guide behaviour | Guide parser and link state are shared. The repeated header script and explorer glue remain eligible for a focused migration. |
+| J · Performance | Payload measured. Use the asset-version and transport seams to profile cold/warm mobile load and network calls before deferring features. |
+| K · Analytics | Remains disabled. The external site registration and release steps in Prompt 1 still apply. |
+| L · Git workflow | The documented fast-forward procedure was verified in this release. Repeat only when the next manual release contains the current development head. |
+
+For Prompt 3, establish Scoutboard contracts for random identity, concurrent cache use, featured fallbacks and COTW exact verification before switching its reads. Then evaluate deterministic asset versions and independent browser checks. Plan a separate Deck stage that first proves collection POST parity, abort behavior, verification TTL and no cross-contamination between cached hints and current proof.
+
+## Prompt 2 verification
+
+The full dependency-free runner passed 1,251 JavaScript cases plus syntax and static validators. The focused card and contract run passed 529 cases. The three new permanent contracts contain 21 transport, six URL state and nine Search cases.
+
+The current stabilisation and Phase 9, 10, 10.1 and 10.2 browser suites each passed ten widths between 320 and 1920px. The focused Search browser contract passed at 390 and 1440px, including named/autocomplete, exact and list state, back and forward, clear, Discover, both guide flows, archive filtering, Deck Studio handoff and mocked failure recovery. It used a short injected deadline only for the timeout case. The Phase 6.1 legacy foil selector failed at 320px on both the released baseline and the refactor.
+
+The selected-card homepage and guide visuals were compared against the released tree at 320, 390, 768, 1024, 1440 and 1920px. All 12 pairs matched the computed styles and had zero differences at the screenshot comparison threshold after visible images had decoded. No CSS changed. The archive and COTW browser suites also verified mist, motion, surface rendering and overflow. Browser data came from saved or mocked responses in local Chromium.

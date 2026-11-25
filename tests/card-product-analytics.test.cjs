@@ -1,4 +1,5 @@
-const {test}=require('node:test'),assert=require('node:assert/strict'),fs=require('node:fs'),vm=require('node:vm'),crypto=require('node:crypto');
+const {assertPreserved}=require("./helpers/preserved-hash.cjs");
+const {test}=require('node:test'),assert=require('node:assert/strict'),fs=require('node:fs'),vm=require('node:vm');
 const api=require('../assets/js/analytics.js'),{createTracker,createPlausibleAdapter,createDebugAdapter,canonicalPath}=api;
 const samples={printing_table_select:{table:"search",surface:"home"},finish_switch:{surface:"deck"},printing_difference_expand:{surface:"guide"},cotw_inspect:{week:8,guide_available:false,exact_printing:true},cotw_deck_start:{week:8,exact_printing:true,commander_seeded:true},deck_studio_open:{source:'cotw'},guide_deck_start:{guide:'sol-ring',commander_seeded:false},deck_generation_start:{deck_format:'commander',primary_style:'auto',commander_seeded:true,bracket_selected:2},deck_generation_complete:{deck_format:'commander',primary_style:'blink',commander_seeded:true,result:'success'}};
 const enabled={provider:'plausible',enabled:true,domain:'manascout.co.uk'};
@@ -30,7 +31,7 @@ for(const [url,date] of sitemapDates(expected)) {
   if(url==='https://manascout.co.uk/card/')assert.ok(currentDates.get(url)>=date,url);
   else assert.equal(currentDates.get(url),date,url);
 }
-for(const [slug,g]of Object.entries(b.guides)){const s=fs.readFileSync(`card/${slug}/index.html`,'utf8');if (!["mr-spock-science-officer","sol-ring"].includes(slug)) { assert.equal(s.match(/<title>([^]*?)<\/title>/)[1],g.title);assert.equal(s.match(/name="description" content="([^"]+)"/)[1],g.description); }assert.equal(s.match(/class="hero-copy">([^]*?)<\/p>/)[1],g.opening);}for(const [p,hash]of Object.entries(b.preserved))assert.equal(crypto.createHash('sha256').update(fs.readFileSync(p)).digest('hex'),hash,p);});
+for(const [slug,g]of Object.entries(b.guides)){const s=fs.readFileSync(`card/${slug}/index.html`,'utf8');if (!["mr-spock-science-officer","sol-ring"].includes(slug)) { assert.equal(s.match(/<title>([^]*?)<\/title>/)[1],g.title);assert.equal(s.match(/name="description" content="([^"]+)"/)[1],g.description); }assert.equal(s.match(/class="hero-copy">([^]*?)<\/p>/)[1],g.opening);}for(const [p,hash]of Object.entries(b.preserved))assertPreserved(p,hash);});
 test('current COTW has exact copy, primary/secondary hierarchy and bounded handoff', () => {
   const card = require('./fixtures/cosmic-spider-man.json');
   const html = fs.readFileSync('index.html', 'utf8');

@@ -48,7 +48,7 @@ for(const slug of slugs){
   for(const id of ['card-details','printings-status','printings-container'])assert.equal((html.match(new RegExp(`id="${id}"`,'g'))||[]).length,1);
   assert.ok(html.includes('/assets/js/card-page.js'));assert.ok(html.includes('/assets/js/app.js?v='+ (revisions[slug]?'seo-ctr1':'eldrazi-guides1')));assert.match(html,/<noscript>/);assert.doesNotMatch(html,/data-ms-flip|data-ms-nonfoil/);assert.equal((html.match(/<img\b/g)||[]).length,1);
   for(const link of g.related)assert.ok(html.includes(`href="/card/${link}/"`));
-  const calls=[],ctx={API:'https://api.scryfall.com',encodeURIComponent,readJson:async u=>{calls.push(u);return{name};}};vm.createContext(ctx);vm.runInContext(app.slice(app.indexOf('  async function namedCard('),app.indexOf('  async function cardId(')),ctx);assert.equal((await ctx.namedCard(name)).name,name);assert.equal(new URL(calls[0]).searchParams.get('exact'),name);assert.equal(calls.length,1);
+  const calls=[],ctx={API:'https://api.scryfall.com',encodeURIComponent,getScryfall:async u=>{calls.push(u);return{name};}};vm.createContext(ctx);vm.runInContext(app.slice(app.indexOf('  async function namedCard('),app.indexOf('  async function cardId(')),ctx);assert.equal((await ctx.namedCard(name)).name,name);assert.equal(new URL(calls[0]).searchParams.get('exact'),name);assert.equal(calls.length,1);
  });
 }
 const card=slug=>ledger.cards.find(x=>x.slug===slug),row=(slug,code,num)=>card(slug).records.find(x=>x.code===code&&x.number===num);

@@ -47,7 +47,7 @@ test("Search and analytics recognise manifest routes only", () => {
     addEventListener() {}
   };
   const browser = vm.createContext({ document, window, URLSearchParams });
-  for (const script of ["guide-catalogue.js", "app.js", "analytics.js"]) {
+  for (const script of ["guide-catalogue.js", "scryfall-client.js", "url-state.js", "app.js", "analytics.js"]) {
     vm.runInContext(readFileSync(`assets/js/${script}`, "utf8"), browser);
   }
   for (const { slug, name } of manifest) {
