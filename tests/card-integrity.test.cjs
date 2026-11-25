@@ -1,15 +1,36 @@
 /* Runtime network/integrity regressions; no native browser/live-service claims. */
 const {test}=require('node:test'),assert=require('node:assert/strict'),fs=require('node:fs'),vm=require('node:vm');
 const data=require('../assets/js/deck-data.js'),model=require('../assets/js/deck-model.js'),{raw,card,id}=require('./helpers/cards.cjs'),{MemoryStorage}=require('./helpers/memory-storage.cjs'),store=require('../assets/js/deck-store.js');
-const app=fs.readFileSync('assets/js/app.js','utf8'),scout=fs.readFileSync('assets/js/scoutboard.js','utf8');
+const app=fs.readFileSync('assets/js/app.js','utf8');
 const { createClient, searchPageUrl } = require("../assets/js/scryfall-client.js");
 function network(fetchImpl) { return createClient({ fetchImpl, interval: 0 }); }
 for(const phase of ['fetch','json'])test(`shared explorer: uncooperative ${phase} has a hard deadline`,async()=>{const c=network(async()=>phase==='fetch'?new Promise(()=>{}):{ok:true,json:()=>new Promise(()=>{})});await assert.rejects(c.get('https://api.scryfall.com/cards/test',{timeout:3}),/timed out/);});
 test('shared explorer: cancellation settles, preserves abort identity and clears its timeout',async()=>{const c=network(()=>new Promise(()=>{})),signal=new AbortController(),pending=c.get('https://api.scryfall.com/cards/test',{signal:signal.signal});signal.abort();await assert.rejects(pending,{name:'AbortError'});});
 for(const phase of ['fetch','json'])test(`standalone exact-printing boundary settles stalled ${phase}`,async()=>{await assert.rejects(data.fetchPrinting({id:id(1)},{timeout:3,fetchImpl:async()=>phase==='fetch'?new Promise(()=>{}):{ok:true,json:()=>new Promise(()=>{})}}),/timed out/);});
-function featured(fetch){const c={fetch,AbortController,URL,Promise,setTimeout,clearTimeout,API:'https://api.scryfall.com',cache:new Map(),safeUrl:x=>{try{return new URL(x).href;}catch{return '';}}};vm.createContext(c);vm.runInContext(scout.slice(scout.indexOf('  async function getJson('),scout.indexOf('  function showState(')),c);return c;}
-for(const phase of ['fetch','json'])test(`featured cards: stalled ${phase} times out and removes its cached promise`,async()=>{const c=featured(async()=>phase==='fetch'?new Promise(()=>{}):{ok:true,json:()=>new Promise(()=>{})});await assert.rejects(c.getJson('https://api.scryfall.com/cards/test',3),/timed out/);assert.equal(c.cache.size,0);});
-test('featured request cache is bounded and rejects untrusted/credentialled destinations',async()=>{let calls=0;const c=featured(async()=>{calls++;return {ok:true,json:async()=>({})};});for(let i=0;i<70;i++)await c.getJson(`https://api.scryfall.com/cards/${i}`);assert.equal(c.cache.size,64);for(const url of ['https://evil.example/data','https://user:secret@api.scryfall.com/cards/1'])await assert.rejects(c.getJson(url),/Invalid Scryfall/);assert.equal(calls,70);});
+for (const phase of ['fetch', 'json']) test(`cached featured reads retry after a stalled ${phase} times out`, async () => {
+  const url = 'https://api.scryfall.com/cards/test';
+  let calls = 0;
+  const c = network(async () => {
+    if (calls++) return { ok: true, json: async () => ({ name: 'Recovered' }) };
+    const stalled = () => new Promise(() => {});
+    return phase === 'fetch' ? stalled() : { ok: true, json: stalled };
+  });
+  await assert.rejects(c.get(url, { cache: true, timeout: 3 }), { code: 'timeout' });
+  assert.deepEqual(await c.get(url, { cache: true, timeout: 3 }), { name: 'Recovered' });
+  assert.equal(calls, 2);
+});
+test('featured reads share bounded cache and reject untrusted or credentialled destinations', async () => {
+  let calls = 0;
+  const c = network(async () => ({ ok: true, json: async () => ({ number: ++calls }) }));
+  const options = { cache: true };
+  for (let i = 0; i < 70; i++) await c.get(`https://api.scryfall.com/cards/${i}`, options);
+  assert.equal((await c.get('https://api.scryfall.com/cards/69', options)).number, 70);
+  assert.equal((await c.get('https://api.scryfall.com/cards/0', options)).number, 71);
+  for (const url of ['https://evil.example/data', 'https://user:secret@api.scryfall.com/cards/1']) {
+    await assert.rejects(c.get(url, options), { code: 'invalid_url' });
+  }
+  assert.equal(calls, 71);
+});
 function archive(responder){const c={URL,URLSearchParams,API:'https://api.scryfall.com',generation:1,ui:{status:{}},sameName:(a,b)=>a===b,getScryfall:responder,printingSearchUrl:searchPageUrl,delay:async()=>{}};vm.createContext(c);vm.runInContext(app.slice(app.indexOf('  async function fetchPrintings('),app.indexOf('  function pickScore(')),c);return c;}
 const printing={id:'first',oracle_id:'oracle-1',name:'Synthetic card',layout:'normal',released_at:'2020-01-01'};
 test('shared archive rejects foreign identities and incomplete responses instead of claiming complete',async()=>{for(const response of [{data:[{...printing,id:'wrong',oracle_id:'wrong'}]},{data:{bad:true}}]){const c=archive(async()=>response),r=await c.fetchPrintings(printing,1);assert.equal(r.complete,false);assert.equal(r.cards.length,1);assert.equal(r.cards[0].id,printing.id);assert.match(r.notice,/incomplete|mismatched/);}});

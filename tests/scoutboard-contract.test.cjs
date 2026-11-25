@@ -99,7 +99,7 @@ function mount(answer, { features = true, active = false, archive = [], random }
     console: { warn: (...args) => warnings.push(args) }, setTimeout: timer, clearTimeout
   });
   return {
-    $, calls, warnings, enhanced, scrolls, feature, weeklyElement,
+    $, calls, warnings, enhanced, scrolls, feature, get,
     discover: $("discover-card-button"), rotate: document.querySelector(".scoutboard-heading-link"),
     link: () => feature.querySelector("a").href,
     art: () => feature.querySelector(".scoutboard-feature-art")
@@ -134,7 +134,9 @@ test("feature traversal stops at its page limit, cycles and unsafe origins", asy
     [url => searchPage(Number(url.searchParams.get("page") || 1) + 1), 24],
     [() => searchPage(2), 2],
     [() => "https://unrelated.example/cards/search?page=2", 1],
-    [() => "https://user@api.scryfall.com/cards/search?page=2", 1]
+    [() => "https://user@api.scryfall.com/cards/search?page=2", 1],
+    [() => "https://api.scryfall.com/cards/search?page=2#ignored", 1],
+    [() => "https://api.scryfall.com/cards/named?exact=Rhystic+Study", 1]
   ]) {
     const page = mount(url => list([card("good")], next(url)));
     await until(() => linkParams(page.link()).has("printing"));
@@ -193,6 +195,9 @@ test("weekly and archived exact lookups share a successful deterministic request
   assert.equal(page.$("card-week-image").src, weekly.image_uris.normal);
   assert.equal(linkParams(page.$("card-week-link").href).get("printing"), weekly.id);
   assert.equal(page.enhanced[0][2], weeklyData["data-weekly-finish"]);
+  const reused = await page.get(page.calls[0].href, { cache: true });
+  assert.equal(reused.id, weekly.id);
+  assert.equal(page.calls.length, 1);
 });
 
 test("weekly identity or incomplete artwork mismatches retain static COTW", async () => {
