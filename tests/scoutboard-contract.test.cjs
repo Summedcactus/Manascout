@@ -204,7 +204,7 @@ test("weekly identity or incomplete artwork mismatches retain static COTW", asyn
   for (const change of [
     { set: "dsk" }, { collector_number: "1" }, { name: "Other" },
     { id: "11111111-1111-4111-8111-111111111111" }, { artist: "Other" }, { lang: "ja" },
-    { games: ["arena"] }, { finishes: ["etched"] }, { finishes: ["foil"] },
+    { games: ["arena"] }, { finishes: ["etched"] }, { finishes: ["foil"] }, { promo_types: ["surgefoil"] },
     { frame_effects: [] }, { rarity: "rare" }, { image_uris: {} }, { set_name: "" }
   ]) {
     const page = mount(() => ({ ...weekly, ...change }), { features: false, active: true });
@@ -224,6 +224,14 @@ test("weekly 404, 429, hard timeout and connection failure retain static COTW", 
     assert.equal(page.$("card-week-image").src, "static.jpg");
     assert.equal(page.$("card-week-link").href, "/?printing=static&source=cotw");
   }
+});
+
+test("a weekly 429 cools down subsequent Search reads on the same client", async () => {
+  const page = mount(() => ({ status: 429 }), { features: false, active: true });
+  await until(() => page.warnings.length);
+  await assert.rejects(page.get(`${scryfall.origin}/cards/named?exact=Sol+Ring`), { status: 429 });
+  assert.equal(page.calls.length, 1);
+  assert.equal(page.$("card-week-image").src, "static.jpg");
 });
 
 test("archived identity mismatch or failure retains its normal card-search link", async () => {

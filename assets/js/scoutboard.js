@@ -1035,7 +1035,8 @@
       const isCosmic = set === "spm" && number === "271";
       const validCosmic = isCosmic && card.name === "Cosmic Spider-Man" && card.artist === "Zoltan Boros" &&
         card.lang === "en" && card.games?.includes("paper") && card.rarity === "mythic" &&
-        card.frame_effects?.includes("extendedart") && card.finishes?.includes("foil") && card.finishes.includes("nonfoil");
+        card.frame_effects?.includes("extendedart") && card.finishes?.includes("foil") && card.finishes.includes("nonfoil") &&
+        presentation.surface(card, "foil") === "foil";
       const validId = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(card.id || "");
       if (!validId || !(validCosmic || validCynette || validEldrazi)) {
         throw new Error("Featured artwork/treatment mismatch; retaining the exact static fallback.");

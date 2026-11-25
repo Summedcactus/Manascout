@@ -34,8 +34,9 @@ def featured_card(name, premium=False):
     return card
 
 
-def fixture(context, artwork, feature="success", weekly="success", random="success", hold=False):
-    PRODUCT["install"](context, artwork)
+def fixture(context, artwork, feature="success", weekly="success", random="success", hold=False,
+            extra_cards=()):
+    PRODUCT["install"](context, artwork, extra_cards)
     held, calls, weekly_warnings = {}, [], []
 
     def intercept(route):
@@ -50,7 +51,7 @@ def fixture(context, artwork, feature="success", weekly="success", random="succe
             elif weekly == "offline":
                 route.abort("connectionfailed")
             elif weekly == "mismatch":
-                route.fulfill(json={**WEEKLY, "frame_effects": []})
+                route.fulfill(json={**WEEKLY, "promo_types": ["surgefoil"]})
             elif weekly == "429":
                 route.fulfill(status=429, json={"object": "error"}, headers={"Retry-After": "1"})
             elif weekly == "404":
@@ -192,7 +193,7 @@ def flows(browser, base, artwork):
             button = page.locator("#discover-card-button")
             button.click()
             expect(button).to_have_text("Could not scout — try again")
-            expect(button).to_have_text("Discover a Card")
+            expect(button).to_have_accessible_name("Discover a Card")
             expect(button).to_be_enabled()
             assert sum(urlsplit(call).path == "/cards/random" for call in calls) == 1
         print(f"PASS first-page {mode} and Discover failure recovery", flush=True)
