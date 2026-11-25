@@ -376,6 +376,12 @@
     activeSuggestion = -1;
   }
 
+  function setSearchTitle(title) {
+    if (!guideName && /^\/(?:index\.html)?$/.test(window.location.pathname)) {
+      document.title = title;
+    }
+  }
+
   function setHome() {
     cancelActive();
 
@@ -396,10 +402,7 @@
 
     clearSuggestions();
 
-    if (!guideName) {
-      document.title =
-        "MTG Card Printings, Foils & Versions | ManaScout";
-    }
+    setSearchTitle("MTG Card Printings, Foils & Versions | ManaScout");
 
     announce("home");
   }
@@ -2701,10 +2704,7 @@
         token
       );
 
-      if (!guideName) {
-        document.title =
-          `${card.name} Printings, Foils & Art | ManaScout`;
-      }
+      setSearchTitle(`${card.name} Printings, Foils & Art | ManaScout`);
 
       if (opts.userSearch) trackSearch(opts.searchType || (exact ? "exact_printing" : "name"), exact, 1);
       if (opts.userSearch || opts.focusSelection) focusSelectedCard();
@@ -2864,7 +2864,7 @@
       replaceUrl(card);
       const selection = ui.details.closest("section");
       if (selection?.nextElementSibling !== searchResults) selection?.after(searchResults);
-      document.title = `${card.name} Printings, Foils & Art | ManaScout`;
+      setSearchTitle(`${card.name} Printings, Foils & Art | ManaScout`);
       trackExact(card, "search");
       trackTableSelection("search");
       drawPage();
@@ -3030,7 +3030,7 @@
         history.pushState({ search: { query, filters } }, "", url);
         trackSearch(intent.category, false, page.total);
       }
-      document.title = "MTG Card Search | ManaScout";
+      setSearchTitle("MTG Card Search | ManaScout");
       updateSearchRobots();
       resultController?.abort();
       resultController = new AbortController();

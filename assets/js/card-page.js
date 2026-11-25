@@ -37,12 +37,6 @@
   const printings =
     document.getElementById("printings-container");
 
-  const titleNode =
-    document.querySelector("head title");
-
-  const originalTitle =
-    titleNode?.textContent || document.title;
-
   const reducedMotion = () =>
     window.matchMedia(
       "(prefers-reduced-motion: reduce)"
@@ -393,47 +387,6 @@
 
 
   /* ========================================
-     GUIDE TITLE PROTECTION
-     ========================================
-
-     app.js updates the browser title when
-     searching. Permanent editorial guides
-     should retain their dedicated page title.
-  */
-
-  function preserveGuideTitle() {
-    if (
-      !titleNode ||
-      !originalTitle
-    ) {
-      return;
-    }
-
-    const observer =
-      new MutationObserver(
-        () => {
-          if (
-            titleNode.textContent !==
-            originalTitle
-          ) {
-            titleNode.textContent =
-              originalTitle;
-          }
-        }
-      );
-
-    observer.observe(
-      titleNode,
-      {
-        childList: true,
-        characterData: true,
-        subtree: true
-      }
-    );
-  }
-
-
-  /* ========================================
      INITIALISE CARD GUIDE
      ======================================== */
 
@@ -541,7 +494,6 @@
   function initialiseCardPage() {
     createToolbar();
     listenToExplorer();
-    preserveGuideTitle();
 
     if (!guideName) {
       showBootError(
