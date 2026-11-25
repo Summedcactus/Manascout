@@ -4,7 +4,7 @@
 
 The audit used `DEVELOPMENT` at `ba12866e98d89b87e9fbfb5d01fa6952ee9ba4ee` and fetched `main` at `fc779b94e8b4fd13d992f37a1c1448a7856cbead`. Both match the brief. The Phase 10.2 commit was unique to `DEVELOPMENT`, and four historical release merge commits were unique to `main`. The current branch model is recorded below. The static page and browser-local Deck Studio architecture is retained.
 
-## Dependency map after Prompt 2
+## Dependency map after Prompt 3
 
 ```mermaid
 flowchart LR
@@ -24,6 +24,9 @@ flowchart LR
     URLState["Pure URL and history state"]
     Transport["Shared Scryfall GET transport"]
     Compat["Exported exact helper · deck-data.js"]
+    Assets["Authored page and asset files"]
+    Stage["Python asset versioner · staging only"]
+    StagedSite["Versioned static copy and hash manifest"]
     FX["Frankfurter FX"]
     Scryfall["Scryfall API"]
     Tests["Contract, historical and browser checks"]
@@ -49,10 +52,10 @@ flowchart LR
     App --> URLState
     Guide --> URLState
     App --> Transport
+    Scout --> Transport
     Compat --> Transport
     Transport --> Scryfall
     App --> FX
-    Scout -->|"retained getJson"| Scryfall
     Deck -->|"retained deck-client"| Scryfall
     App --> Analytics
     Compare --> Analytics
@@ -64,6 +67,9 @@ flowchart LR
     Analytics --> Tests
     Pages --> Tests
     Deck --> Tests
+    Assets --> Stage
+    Stage --> StagedSite
+    StagedSite --> Tests
 ```
 
 ## Prompt 1 backlog audit
@@ -246,3 +252,89 @@ The full dependency-free runner passed 1,251 JavaScript cases plus syntax and st
 The current stabilisation and Phase 9, 10, 10.1 and 10.2 browser suites each passed ten widths between 320 and 1920px. The focused Search browser contract passed at 390 and 1440px, including named/autocomplete, exact and list state, back and forward, clear, Discover, both guide flows, archive filtering, Deck Studio handoff and mocked failure recovery. It used a short injected deadline only for the timeout case. The Phase 6.1 legacy foil selector failed at 320px on both the released baseline and the refactor.
 
 The selected-card homepage and guide visuals were compared against the released tree at 320, 390, 768, 1024, 1440 and 1920px. All 12 pairs matched the computed styles and had zero differences at the screenshot comparison threshold after visible images had decoded. No CSS changed. The archive and COTW browser suites also verified mist, motion, surface rendering and overflow. Browser data came from saved or mocked responses in local Chromium.
+
+## Prompt 3 release synchronisation
+
+The fetched `main` was `ed293df2b82a0ac5938b303d894cbc7ae472afdf` (PR #83), and `DEVELOPMENT` was `921940a54957f930b03398b43d443b490fbc4452`. The development head was an ancestor of main with 0 development-only and 1 main-only commit. Both had tree `482089187916a58941f153836fc6842b5258ecb9`. The worktree was clean, the guide generator checked all 68 guides, and the 40 existing catalogue, title, transport, URL and Search contracts passed. DEVELOPMENT fast-forwarded locally and remotely to the fetched release before implementation. The main ref was left at the release SHA.
+
+## Prompt 3 Scoutboard transport
+
+The released `scoutboard.js` contained a single direct fetch and a single `getJson` wrapper. It checked the API origin and credentials, imposed a 12-second fetch and body deadline, and used a 64-entry Promise map with rejection eviction and page-lifetime hits. Its four call sites in the release were:
+
+| Consumer | Released line | Endpoint | Behaviour retained |
+|---|---:|---|---|
+| Featured artwork | 643 | `/cards/search` (initial and continued pages) | Exact name, paper-card eligibility, artwork score, newer release for ties, visited URLs and 24-page cap |
+| Featured first-page fallback | 651 | `/cards/named?exact=…` | First-page failure attempts the named card. Later-page failure keeps the best candidate so far. |
+| Active COTW | 1071 | `/cards/{set}/{collector_number}` | Enrichment requires the active identity, verified profile and complete printing fields. Failures leave the authored card and exact URL. |
+| COTW archive | 1269 | `/cards/{set}/{collector_number}` | Exact links require matching set, collector number and name. Failed or mismatched records keep normal card search links. |
+
+The 120ms pagination sleep and two 125ms catalogue-loop delays were for request spacing. These have been removed. The 1-second Discover retry feedback still uses its UI pause. Discover calls `window.ManaScout.scoutRandom()` once per activation and restores the button after success or failure. Featured guides retain static titles, artwork placeholders and links while reads are pending or unavailable. A generation check guards each repaint when a user rotates the featured page.
+
+All four reads now use `window.ManaScoutScryfall.get(url, { cache: true })`. Search, comparison exact restore and Scoutboard share the same 105ms start scheduler, bounded 429 cooldown and 12-second hard deadline. Scoutboard opts into the existing 32-entry, five-minute response cache for deterministic reads. Compatible calls coalesce. Search's existing validated data caches and its transport cache options are unchanged. The shared pagination validator requires an HTTPS Scryfall search path without credentials or fragments. Scoutboard retains its artwork URL helper, which serves image presentation. The random Search endpoint keeps its separate freshness semantics.
+
+The COTW remains Cosmic Spider-Man, SPM #271, UUID `61b28030-6d05-429e-a4eb-fceead3f7b18`, by Zoltan Boros. The existing English, paper, mythic, extended-art and finish checks are retained. The shared surface resolver also verifies the selected foil is Traditional Foil. A conflicting special-foil tag retains the static card. The historical Cynette and Ulamog profile checks are retained. The active Deck client still owns its 130ms queue, collection POST, proof, eligibility and verification state. The exported Deck data helper continues to use the shared GET client.
+
+Permanent Scoutboard tests were added against the released code before migration. The migration extended those tests to cover the shared response cache and stricter pagination. The historical timeout cases now exercise the transport actually used by Scoutboard, and the historical COTW profile tests still cover their original identities. Their overlapping timeout and origin cases are candidates for consolidation once the permanent contracts replace that coverage in the historical runner.
+
+### Before and after
+
+| Measure | Released source | Prompt 3 |
+|---|---:|---:|
+| Scoutboard bytes / lines | 37,218 / 1,642 | 35,795 / 1,579 |
+| Scoutboard direct Scryfall fetch sites / wrappers / transport caches | 1 / 1 / 1 | 0 / 0 / 0 |
+| Scoutboard manual request-staggering waits | 3 | 0 |
+| Production Scryfall fetch sites / wrappers / transport caches | 3 / 3 / 3 | 2 / 2 / 2 |
+| Production rate schedulers | 2 | 2 |
+| Production Scryfall origin literals, including homepage preconnect | 4 | 3 |
+| Homepage linked first-party decoded JS | 202,161 B / 10 scripts | 200,738 B / 10 scripts |
+| Sol Ring linked first-party decoded JS | 167,879 B | 167,879 B |
+| Deterministic homepage browser requests, 1440px | 34 total / 15 local | 34 total / 15 local |
+| Initial Scryfall GETs / repeated identical Scryfall GETs | 14 / 0 | 14 / 0 |
+
+The browser counts were taken after the featured artwork and COTW images decoded and the last initial archive request was made. The scheduler count includes the shared client and the specialised Deck Studio client. Manual per-loop sleeps are counted separately. Request counts were identical in this fixture. The benefit is common scheduling and transport ownership.
+
+## Prompt 3 staging and asset versions
+
+The audit covers the homepage, card archive, all 68 guides, Deck Studio, contact, privacy, terms, the 404 and the verification HTML. It found 29 local JS and seven local CSS assets, with 75 pages referencing at least one asset. There were 48 distinct asset/query pairs, 46 pairs with a nonempty historical query and 34 unique nonempty query strings across all assets. Six assets had cross-page query variants.
+
+| Shared asset | Referencing pages | Historical variants |
+|---|---:|---:|
+| `assets/css/guide-editorial.css` | 68 | 5 |
+| `assets/js/app.js` | 69 | 4 |
+| `assets/css/printing-presentation.css` | 71 | 3 |
+| `assets/js/analytics.js` | 74 | 2 |
+| `assets/js/card-page.js` | 68 | 2 |
+| `assets/js/printing-presentation.js` | 71 | 2 |
+
+The audit emits each path, its full SHA-256, all query variants and the page list and count for each variant. An empty query key means the page used the bare asset path. A staged copy assigns the first 16 hexadecimal digits of SHA-256 in a single `?v=` parameter. The stage includes `asset-versions.json` mapping each asset to its full digest and short version. The source directory supplies the public root HTML and hosting metadata plus the asset, card, contact, Deck, privacy and terms directories. The staged output is written to a new directory outside the source. It excludes repository tooling, tests and authoring data.
+
+The tool parses tags to locate precise attribute spans and changes only local JS/CSS URLs. It preserves original paths, fragments, quoting, escapes, order and other bytes. External URLs, canonicals, images and editorial content are unchanged. A missing asset, escaping reference or symlink fails the operation. The check command verifies every staged file against the deterministic result. Authored HTML, production cache tokens and GitHub Pages configuration are unchanged. Existing cached source URLs follow their normal expiry policy.
+
+```sh
+python scripts/stage-asset-versions.py audit --output /tmp/manascout-asset-audit.json
+python scripts/stage-asset-versions.py build --output /tmp/manascout-stage
+python scripts/stage-asset-versions.py check --output /tmp/manascout-stage
+python scripts/stage-asset-versions.py build --output /tmp/manascout-stage-rebuild
+diff -qr /tmp/manascout-stage /tmp/manascout-stage-rebuild
+python tests/browser-asset-version-contract.py --stage /tmp/manascout-stage --artwork /path/to/catalogue-artwork
+```
+
+Two builds staged 117 files and 36 assets, with byte-identical results. Six asset contracts checked determinism, URL-only edits and order, changing a single asset, audit metadata, missing assets, and path/output boundaries. The staged site ran Search, feature enrichment, Cosmic Spider-Man, the archive, Sol Ring, Heroic Intervention, comparison exact restore and Deck exact handoff in Chromium at 390 and 1440px. Every inspected local JS/CSS response used its manifest version. The separate cache-enabled localhost probe fetched 35 unique JS/CSS URLs across five route visits, then fetched zero from the server on repeat. There were zero asset 404s. The server used a one-hour immutable asset header for this probe. It measures browser cache reuse under that policy, with deployment cache headers outside the test.
+
+## Prompt 3 validation and backlog
+
+Local Chromium reran stabilisation and Phase 9, 10, 10.1 and 10.2 at 320, 360, 390, 430, 768, 820, 1024, 1280, 1440 and 1920px. The Search browser contract passed normal and recovery flows at 390 and 1440px. The Scoutboard browser suite checked six widths, cold static fallback, paginated ranking with an exact finish link, first-page and complete failures, COTW treatment mismatch, 404, 429, offline, timeout, stale feature rotation and Discover recovery. Reduced-motion screenshots of the feature grid and COTW after image decode made 12 pairs over 320, 390, 768, 1024, 1440 and 1920px. The pairs matched pixel for pixel. Feature imagery uses deterministic fixture assignments for this comparison. The COTW uses its saved exact artwork. The Phase 6.1 retired `.weekly-foil-sheen` selector failed at 320px on both the released and revised trees.
+
+| Backlog | Position after Prompt 3 |
+|---|---|
+| D · App boundaries | Transport and pure URL state remain extracted. Future app changes can separate controller responsibilities behind the existing Search and explorer contracts. |
+| E · Runtime CSS | Completed in Prompt 1. |
+| F · Scryfall | Scoutboard, Search, comparison and the Deck compatibility helper use the shared GET boundary. The active Deck client remains the specialised GET/POST transport. |
+| G · Asset versioning | Audited and proved in deterministic staging. Publishing and production cache settings remain a separate release decision. |
+| H · Contracts | Scoutboard Node/browser and asset versioning Node/browser contracts added. Retain historical suites until equivalent contracts cover their user-facing assertions. |
+| I · Guide behaviour | Repeated header Search remains eligible for a focused migration with keyboard and no-JS checks. |
+| J · Performance | Payload and fixture requests recorded. Profile on real mobile and deployment cold/warm loads before attempting lazy initialisation. |
+| K · Analytics | Production remains disabled. Existing Plausible external setup still applies. |
+| L · Git workflow | Safe post-release fast-forward verified before changes. The release branch remains unchanged. |
+
+Prompt 4 should focus on the active Deck client's transport boundary. Establish independent parity contracts for collection POST, supported GETs, queue cancellation, downstream eligibility, proof TTL, partial collections and retry behaviour. Test that cached catalogue hints never become current verification evidence. Keep the existing Deck state and caller-side error semantics while migrating only the safe request boundary. In a subsequent release phase, build from the same clean ref twice, verify assets and canonical URLs in a private or local stage, then seek approval for Pages integration. Shared guide header behaviour and historical test consolidation can follow in separate changes.
