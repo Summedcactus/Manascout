@@ -61,8 +61,8 @@ test('upgraded guides retain their curated tables and clarify their most-confuse
 test('contextual cross-links connect new guides with related printing histories',()=>{
  const links={'sol-ring':['arcane-signet','dark-ritual'],'rhystic-study':['mystic-remora','brainstorm','mystical-tutor'],brainstorm:['counterspell','force-of-will'],thoughtseize:['demonic-tutor','vampiric-tutor'],'mystical-tutor':['enlightened-tutor','worldly-tutor'],'dark-ritual':['necropotence','demonic-tutor']};for(const [slug,targets]of Object.entries(links))for(const target of targets)assert.ok(read(`card/${slug}/index.html`).includes(`href="/card/${target}/"`),slug+' → '+target);
 });
-test('63 guide routes appear once in registry, directory and the 63-URL sitemap',()=>{
- const app=read('assets/js/app.js'),registered=[...app.match(/const GUIDE_SLUGS = new Set\(\[([^]*?)\]\)/)[1].matchAll(/"([a-z0-9-]+)"/g)].map(x=>x[1]),list=graph(read('card/index.html')).find(n=>n['@type']==='ItemList'),urls=[...read('sitemap.xml').matchAll(/<loc>([^<]+)<\/loc>/g)].map(m=>m[1]);assert.equal(registered.length,63);assert.equal(new Set(registered).size,63);assert.equal(list.numberOfItems,63);assert.equal(urls.length,66);assert.equal(new Set(urls).size,66);for(const slug of slugs){const url=host+'/card/'+slug+'/';assert.equal(registered.filter(s=>s===slug).length,1);assert.equal(list.itemListElement.filter(x=>x.url===url).length,1);assert.equal(urls.filter(x=>x===url).length,1);}assert.ok(!urls.includes(host+'/contact/'));assert.ok(!urls.some(u=>u.includes('?')));assert.ok(!urls.includes(host+'/privacy/'));assert.ok(!urls.includes(host+'/terms/'));
+test('63 guide routes appear once in registry, directory and the 71-URL sitemap',()=>{
+ const app=read('assets/js/app.js'),registered=[...app.match(/const GUIDE_SLUGS = new Set\(\[([^]*?)\]\)/)[1].matchAll(/"([a-z0-9-]+)"/g)].map(x=>x[1]),list=graph(read('card/index.html')).find(n=>n['@type']==='ItemList'),urls=[...read('sitemap.xml').matchAll(/<loc>([^<]+)<\/loc>/g)].map(m=>m[1]);assert.equal(registered.length,68);assert.equal(new Set(registered).size,68);assert.equal(list.numberOfItems,68);assert.equal(urls.length,71);assert.equal(new Set(urls).size,71);for(const slug of slugs){const url=host+'/card/'+slug+'/';assert.equal(registered.filter(s=>s===slug).length,1);assert.equal(list.itemListElement.filter(x=>x.url===url).length,1);assert.equal(urls.filter(x=>x===url).length,1);}assert.ok(!urls.includes(host+'/contact/'));assert.ok(!urls.some(u=>u.includes('?')));assert.ok(!urls.includes(host+'/privacy/'));assert.ok(!urls.includes(host+'/terms/'));
 });
 test('new sitemap dates are limited to the editorial batch and the directory',()=>{
  const expected=new Set([... [host+'/card/',...slugs.map(s=>host+'/card/'+s+'/')]].filter(url=>!phase6.sitemap[url])),entries=[...read('sitemap.xml').matchAll(/<loc>([^<]+)<\/loc>\s*<lastmod>([^<]+)<\/lastmod>/g)];assert.deepEqual(new Set(entries.filter(x=>x[2]===day).map(x=>x[1])),new Set([...expected].filter(url=>!Object.values(phase5).some(g=>g.sitemap.url===url))));assert.equal(entries.find(x=>x[1]===host+'/')[2],'2026-11-17');assert.equal(entries.find(x=>x[1]===host+'/deck/')[2],'2026-11-22');assert.ok(!entries.some(x=>x[1]===host+'/contact/'));
@@ -93,7 +93,7 @@ test('the two experiments give a card-specific answer within the first screen', 
   assert.match(sol, /First Printing[\s\S]*Limited Edition Alpha[\s\S]*1993 · Mark Tedin · Nonfoil[\s\S]*LEA #269 is the catalogue identity/);
 });
 
-test('the 63 guide sharing images are unique per metadata field and match exact featured artwork', () => {
+test('the 68 guide sharing images are unique per metadata field and match exact featured artwork', () => {
   for (const entry of fs.readdirSync('card', {withFileTypes:true}).filter(item => item.isDirectory())) {
     const html = read(`card/${entry.name}/index.html`);
     const src = html.match(/<img[^>]+src="([^"]+)"/)[1];

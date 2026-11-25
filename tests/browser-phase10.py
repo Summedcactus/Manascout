@@ -26,8 +26,8 @@ def shared_url(cards):
     return "/#compare=v1:" + ",".join(f"{card['id']}~{finish}" for card, finish in cards)
 
 
-def install(context, artwork):
-    cards = CARDS + [WEEKLY]
+def install(context, artwork, extra_cards=()):
+    cards = CARDS + [WEEKLY, *extra_cards]
     records = {card["id"]: card for card in cards}
     records.update({f"{card['set']}/{card['collector_number']}": card for card in cards})
 
@@ -87,7 +87,7 @@ def physical(locator, expected, check_art):
     assert (info["display"] == "none") == (expected == "nonfoil"), info
     if check_art:
         expect(locator.locator("img")).to_be_visible()
-        locator.locator("img").scroll_into_view_if_needed()
+        locator.evaluate("card => card.scrollIntoView({block: 'center', behavior: 'instant'})")
         expect(locator.locator("img")).to_have_js_property("complete", True)
         assert locator.locator("img").evaluate("img => img.naturalWidth") > 0
     return info["finish"]
