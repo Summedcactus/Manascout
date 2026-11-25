@@ -118,26 +118,30 @@ body.printing-guide > main.container:has(#ms-search-results:not([hidden]) .ms-pr
   width: min(100% - 2rem, 1320px);
   max-width: none;
 }
-:is(.ms-home, .printing-guide) { isolation: isolate; }
+:is(.ms-home, .printing-guide, .ms-card-archive) { isolation: isolate; }
+:is(.ms-home, .printing-guide, .ms-card-archive) > :is(main, footer) {
+  position: relative;
+  z-index: 1;
+}
 .ms-edge-atmosphere {
   --mist-strength: 1;
   --mist-travel: 1;
   position: fixed;
   inset: 0;
-  z-index: -1;
+  z-index: 0;
   overflow: hidden;
   pointer-events: none;
 }
 .ms-edge-atmosphere > span {
   position: absolute;
-  width: clamp(145px, 15vw, 275px);
+  width: clamp(170px, 20vw, 360px);
   height: 63vh;
   filter: blur(var(--mist-softness, 15px));
   background:
     radial-gradient(ellipse 58% 29% at 43% 23%, #44444d 6%, transparent 87%),
     radial-gradient(ellipse 48% 46% at 25% 60%, #36363d 11%, transparent 88%),
     radial-gradient(ellipse 54% 30% at 30% 78%, #4b4b54 0%, transparent 87%);
-  opacity: calc(.22 * var(--mist-strength));
+  opacity: calc(.27 * var(--mist-strength));
   animation: ms-edge-drift var(--mist-cycle) ease-in-out var(--mist-offset) infinite;
 }
 .ms-edge-atmosphere > :nth-child(1) {
@@ -157,16 +161,16 @@ body.printing-guide > main.container:has(#ms-search-results:not([hidden]) .ms-pr
   --mist-cycle: 49s; --mist-offset: -34s; --mist-x: -12px; --mist-y: -25px; --mist-softness: 19px;
 }
 @keyframes ms-edge-drift {
-  0%, 100% { transform: translate3d(0, 0, 0) scale(.97); opacity: calc(.14 * var(--mist-strength)); }
-  42% { transform: translate3d(calc(var(--mist-x) * var(--mist-travel)), var(--mist-y), 0) scale(1.07); opacity: calc(.32 * var(--mist-strength)); }
-  74% { transform: translate3d(0, calc(var(--mist-y) * .38), 0) scale(1.02); opacity: calc(.23 * var(--mist-strength)); }
+  0%, 100% { transform: translate3d(0, 0, 0) scale(.97); opacity: calc(.20 * var(--mist-strength)); }
+  42% { transform: translate3d(calc(var(--mist-x) * var(--mist-travel)), calc(var(--mist-y) * var(--mist-travel)), 0) scale(1.07); opacity: calc(.44 * var(--mist-strength)); }
+  74% { transform: translate3d(0, calc(var(--mist-y) * var(--mist-travel) * .38), 0) scale(1.02); opacity: calc(.30 * var(--mist-strength)); }
 }
 @media (max-width: 1024px) {
-  .ms-edge-atmosphere { --mist-strength: .53; --mist-travel: .42; }
+  .ms-edge-atmosphere { --mist-strength: .40; --mist-travel: .42; }
   .ms-edge-atmosphere > span { width: clamp(92px, 12vw, 125px); }
 }
 @media (max-width: 620px) {
-  .ms-edge-atmosphere { --mist-strength: .27; }
+  .ms-edge-atmosphere { --mist-strength: .25; }
   .ms-edge-atmosphere > span { width: 64px; animation: none; }
 }
 

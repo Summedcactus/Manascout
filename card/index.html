@@ -40,7 +40,7 @@
 
   <meta
     property="og:description"
-    content="Find your favourite Magic card printing. Browse 63 guides covering original releases, artwork, special frames and foil treatments."
+    content="Find your favourite Magic card printing. Browse 68 guides covering original releases, artwork, special frames and foil treatments."
   >
 
   <meta
@@ -61,6 +61,7 @@
   >
 
   <link rel="stylesheet" href="/assets/css/style.css">
+  <link rel="stylesheet" href="/assets/css/printing-presentation.css?v=phase102">
 
   <!-- Structured data -->
 
@@ -564,27 +565,61 @@
       font-size: .94rem;
     }
 
-    .hub-stats {
+    .hub-filters {
       display: flex;
-      flex-wrap: wrap;
       gap: .65rem;
       margin-top: 1.5rem;
+      padding: .3rem;
+      max-width: 100%;
+      overflow-x: auto;
+      scrollbar-width: thin;
+      scrollbar-color: #6d424c transparent;
     }
 
-    .hub-stat {
+    .hub-filter {
       display: inline-flex;
       align-items: center;
+      flex: 0 0 auto;
       gap: .5rem;
-      padding: .6rem .85rem;
+      min-height: 44px;
+      padding: .55rem .8rem;
       background: rgba(255,255,255,.025);
       border: 1px solid var(--hub-border);
       border-radius: 999px;
-      font-size: .7rem;
-      color: #b7aaae;
+      color: #ddd2d5;
+      font-size: .75rem;
+      font-weight: 700;
+      white-space: nowrap;
+      cursor: pointer;
     }
 
-    .hub-stat strong {
-      color: #f3e8eb;
+    .hub-filter:hover,
+    .hub-filter[aria-pressed="true"] {
+      background: #321b23;
+      border-color: #a45c6c;
+      color: #fff0f2;
+    }
+
+    .hub-filter [aria-hidden] {
+      visibility: hidden;
+    }
+
+    .hub-filter[aria-pressed="true"] [aria-hidden] {
+      visibility: visible;
+    }
+
+    .hub-filter-results {
+      display: inline-flex;
+      align-items: center;
+      min-height: 44px;
+      margin-inline: .3rem;
+      color: #e5aab4;
+      font-size: .82rem;
+      font-weight: 750;
+    }
+
+    #hub-directory {
+      scroll-margin-top: 5rem;
     }
 
     .hub-panel {
@@ -673,6 +708,7 @@
       color: #a99da1;
       font-size: .76rem;
       margin: .8rem 0 0;
+      overflow-wrap: anywhere;
     }
 
     .hub-jumps {
@@ -997,7 +1033,7 @@
 
 </head>
 
-<body>
+<body class="ms-card-archive">
 
   <!-- HEADER -->
 
@@ -1056,25 +1092,13 @@
           you want rather than stopping at the card name.
         </p>
 
-        <div class="hub-stats">
-
-          <span class="hub-stat">
-            ◇ <strong>68</strong> card guides
-          </span>
-
-          <span class="hub-stat">
-            ◇ Original printings
-          </span>
-
-          <span class="hub-stat">
-            ◇ Premium treatments
-          </span>
-
-          <span class="hub-stat">
-            ◇ Artwork & history
-          </span>
-
+        <div class="hub-filters" role="group" aria-label="Filter card guides" hidden>
+          <button type="button" class="hub-filter" data-guide-filter="all" aria-controls="hub-directory" aria-pressed="true"><span>All <span id="hub-total">68</span> Guides</span><span aria-hidden="true">✓</span></button>
+          <button type="button" class="hub-filter" data-guide-filter="original" aria-controls="hub-directory" aria-pressed="false">Original Printings<span aria-hidden="true">✓</span></button>
+          <button type="button" class="hub-filter" data-guide-filter="premium" aria-controls="hub-directory" aria-pressed="false">Premium Treatments<span aria-hidden="true">✓</span></button>
+          <button type="button" class="hub-filter" data-guide-filter="artwork" aria-controls="hub-directory" aria-pressed="false">Artwork &amp; History<span aria-hidden="true">✓</span></button>
         </div>
+        <a class="hub-filter-results" id="hub-filter-results" href="#hub-directory" hidden>View results</a>
 
       </section>
 
@@ -1177,6 +1201,7 @@
       <section
         class="hub-panel"
         style="margin-top:1.5rem"
+        id="hub-directory"
         aria-labelledby="hub-directory-heading"
       >
 
@@ -1224,7 +1249,7 @@
           role="status"
           aria-live="polite"
         >
-          Showing all 68 ManaScout card guides.
+          68 guides
         </p>
 
         <nav
@@ -1249,32 +1274,35 @@
         </nav>
 
 
+        <!-- Tags describe substantive guide content. Use original for debut identification and release
+             history, premium for meaningful collector treatments beyond ordinary foil, and artwork for
+             illustration, artist or historical frame comparisons. A guide can use several tags. -->
         <section class="hub-group" aria-labelledby="collector-editions-heading">
           <div class="hub-group-heading">
             <h2 id="collector-editions-heading">Originals, promos and Star Trek printings</h2>
           </div>
           <div class="hub-grid">
-            <a class="hub-guide" href="/card/deep-space-9/" data-search="Deep Space 9 Deep Space 9 MTG — Three Star Trek Printings Identify Deep Space 9’s three English paper printing records. Compare TRK #263, extended-art #479 and the Traditional Foil Beam Me Up Bundle promo #556.">
+            <a class="hub-guide" href="/card/deep-space-9/" data-guide-tags="premium artwork" data-search="Deep Space 9 Deep Space 9 MTG — Three Star Trek Printings Identify Deep Space 9’s three English paper printing records. Compare TRK #263, extended-art #479 and the Traditional Foil Beam Me Up Bundle promo #556.">
               <strong>Deep Space 9</strong>
               <p>Identify Deep Space 9’s three English paper printing records. Compare TRK #263, extended-art #479 and the Traditional Foil Beam Me Up Bundle promo #556.</p>
               <span>Identify and compare →</span>
             </a>
-            <a class="hub-guide" href="/card/heroic-intervention/" data-search="Heroic Intervention Heroic Intervention MTG — Aether Revolt to Etched Foil Identify the Aether Revolt original and compare James Ryman’s etched reprint, Fallout Surge Foil, Source Material art and Secret Lair versions.">
+            <a class="hub-guide" href="/card/heroic-intervention/" data-guide-tags="original premium artwork" data-search="Heroic Intervention Heroic Intervention MTG — Aether Revolt to Etched Foil Identify the Aether Revolt original and compare James Ryman’s etched reprint, Fallout Surge Foil, Source Material art and Secret Lair versions.">
               <strong>Heroic Intervention</strong>
               <p>Identify the Aether Revolt original and compare James Ryman’s etched reprint, Fallout Surge Foil, Source Material art and Secret Lair versions.</p>
               <span>Identify and compare →</span>
             </a>
-            <a class="hub-guide" href="/card/highly-illogical/" data-search="Highly Illogical Highly Illogical MTG — Commander Party Promo or TRK #62? Tell Joel Chaim Holtzman’s TRK #62 from Patricia Pria’s extended-art PW26 #17 and see how Wizards distributed Nonfoil and Traditional Foil promos.">
+            <a class="hub-guide" href="/card/highly-illogical/" data-guide-tags="premium artwork" data-search="Highly Illogical Highly Illogical MTG — Commander Party Promo or TRK #62? Tell Joel Chaim Holtzman’s TRK #62 from Patricia Pria’s extended-art PW26 #17 and see how Wizards distributed Nonfoil and Traditional Foil promos.">
               <strong>Highly Illogical</strong>
               <p>Tell Joel Chaim Holtzman’s TRK #62 from Patricia Pria’s extended-art PW26 #17 and see how Wizards distributed Nonfoil and Traditional Foil promos.</p>
               <span>Identify and compare →</span>
             </a>
-            <a class="hub-guide" href="/card/hit-it/" data-search="Hit It! Hit It! MTG — TRK #240 vs #476 and Oracle Text Identify Hit It! TRK #240 and extended-art #476. Both use Aaron J. Riley’s art, and Wizards updated the printed “look at” instruction to reveal the cards.">
+            <a class="hub-guide" href="/card/hit-it/" data-guide-tags="" data-search="Hit It! Hit It! MTG — TRK #240 vs #476 and Oracle Text Identify Hit It! TRK #240 and extended-art #476. Both use Aaron J. Riley’s art, and Wizards updated the printed “look at” instruction to reveal the cards.">
               <strong>Hit It!</strong>
               <p>Identify Hit It! TRK #240 and extended-art #476. Both use Aaron J. Riley’s art, and Wizards updated the printed “look at” instruction to reveal the cards.</p>
               <span>Identify and compare →</span>
             </a>
-            <a class="hub-guide" href="/card/reanimate/" data-search="Reanimate Reanimate MTG — Tempest Original and Alternate Art Trace Reanimate from Robert Bliss’s Tempest original to early foils, the Ultimate Box Topper, Breaking News and the Final Fantasy Surge Foil.">
+            <a class="hub-guide" href="/card/reanimate/" data-guide-tags="original premium artwork" data-search="Reanimate Reanimate MTG — Tempest Original and Alternate Art Trace Reanimate from Robert Bliss’s Tempest original to early foils, the Ultimate Box Topper, Breaking News and the Final Fantasy Surge Foil.">
               <strong>Reanimate</strong>
               <p>Trace Reanimate from Robert Bliss’s Tempest original to early foils, the Ultimate Box Topper, Breaking News and the Final Fantasy Surge Foil.</p>
               <span>Identify and compare →</span>
@@ -1284,7 +1312,7 @@
 
         <!-- GROUP 1 -->
 
-        <section class="hub-group" aria-labelledby="hub-latest-heading"><div class="hub-section-header"><h2 id="hub-latest-heading">Latest collector guides</h2><p>Signed portraits, gold and serialized headliners, and a Stardates reprint.</p></div><div class="hub-grid"><a class="hub-guide" href="/card/bloodline-recollector/" data-search="bloodline recollector identify bloodline recollector fra #49 and compare extended art, promos and mark poole’s #402 headliner. only the serialized treatment is limited to 500 copies."><small>New guide</small><strong>Bloodline Recollector</strong><p>Identify Bloodline Recollector FRA #49 and compare extended art, promos and Mark Poole’s #402 headliner. Only the serialized treatment is limited to 500 copies.</p><span>Identify and compare →</span></a><a class="hub-guide" href="/card/captain-james-t-kirk/" data-search="captain james t. kirk identify captain james t. kirk trk #142 and compare showcase art, surge foil and the hand-signed #1701 headliner. separate artist, autograph and finish."><small>New guide</small><strong>Captain James T. Kirk</strong><p>Identify Captain James T. Kirk TRK #142 and compare showcase art, surge foil and the hand-signed #1701 headliner. Separate artist, autograph and finish.</p><span>Identify and compare →</span></a><a class="hub-guide" href="/card/sheoldred-the-apocalypse/" data-search="sheoldred, the apocalypse compare sheoldred’s original dmu #107, showcase and textured foils, concept art and sds #11 stardates reprint. identify exact artists, numbers and finishes."><small>New guide</small><strong>Sheoldred, the Apocalypse</strong><p>Compare Sheoldred’s original DMU #107, showcase and textured foils, concept art and SDS #11 Stardates reprint. Identify exact artists, numbers and finishes.</p><span>Identify and compare →</span></a><a class="hub-guide" href="/card/smaug-the-magnificent/" data-search="smaug the magnificent compare smaug the magnificent hob #110, dragon hoard art and gleaming gold #249. identify the approximately 500-copy headliner separately from ordinary foils."><small>New guide</small><strong>Smaug the Magnificent</strong><p>Compare Smaug the Magnificent HOB #110, Dragon hoard art and gleaming gold #249. Identify the approximately 500-copy headliner separately from ordinary foils.</p><span>Identify and compare →</span></a></div></section><section
+        <section class="hub-group" aria-labelledby="hub-latest-heading"><div class="hub-section-header"><h2 id="hub-latest-heading">Latest collector guides</h2><p>Signed portraits, gold and serialized headliners, and a Stardates reprint.</p></div><div class="hub-grid"><a class="hub-guide" href="/card/bloodline-recollector/" data-guide-tags="premium artwork" data-search="bloodline recollector identify bloodline recollector fra #49 and compare extended art, promos and mark poole’s #402 headliner. only the serialized treatment is limited to 500 copies."><small>New guide</small><strong>Bloodline Recollector</strong><p>Identify Bloodline Recollector FRA #49 and compare extended art, promos and Mark Poole’s #402 headliner. Only the serialized treatment is limited to 500 copies.</p><span>Identify and compare →</span></a><a class="hub-guide" href="/card/captain-james-t-kirk/" data-guide-tags="premium artwork" data-search="captain james t. kirk identify captain james t. kirk trk #142 and compare showcase art, surge foil and the hand-signed #1701 headliner. separate artist, autograph and finish."><small>New guide</small><strong>Captain James T. Kirk</strong><p>Identify Captain James T. Kirk TRK #142 and compare showcase art, surge foil and the hand-signed #1701 headliner. Separate artist, autograph and finish.</p><span>Identify and compare →</span></a><a class="hub-guide" href="/card/sheoldred-the-apocalypse/" data-guide-tags="original premium artwork" data-search="sheoldred, the apocalypse compare sheoldred’s original dmu #107, showcase and textured foils, concept art and sds #11 stardates reprint. identify exact artists, numbers and finishes."><small>New guide</small><strong>Sheoldred, the Apocalypse</strong><p>Compare Sheoldred’s original DMU #107, showcase and textured foils, concept art and SDS #11 Stardates reprint. Identify exact artists, numbers and finishes.</p><span>Identify and compare →</span></a><a class="hub-guide" href="/card/smaug-the-magnificent/" data-guide-tags="premium artwork" data-search="smaug the magnificent compare smaug the magnificent hob #110, dragon hoard art and gleaming gold #249. identify the approximately 500-copy headliner separately from ordinary foils."><small>New guide</small><strong>Smaug the Magnificent</strong><p>Compare Smaug the Magnificent HOB #110, Dragon hoard art and gleaming gold #249. Identify the approximately 500-copy headliner separately from ordinary foils.</p><span>Identify and compare →</span></a></div></section><section
           class="hub-group"
           id="icons-originals"
           aria-labelledby="icons-heading"
@@ -1300,42 +1328,42 @@
           </div>
 
           <div class="hub-grid">
-<a class="hub-guide" href="/card/birds-of-paradise/"
+<a class="hub-guide" href="/card/birds-of-paradise/" data-guide-tags="original premium artwork"
                data-search="alpha green mana creature artwork">
               <small>Green classic</small>
               <strong>Birds of Paradise</strong>
               <p>Discover the visual history of the famous mana creature.</p>
               <span>Explore printings →</span>
             </a>
-<a class="hub-guide" href="/card/black-lotus/"
+<a class="hub-guide" href="/card/black-lotus/" data-guide-tags="original artwork"
                data-search="alpha beta unlimited power nine artifact">
               <small>Power Nine</small>
               <strong>Black Lotus</strong>
               <p>Compare early printings and later collectible versions.</p>
               <span>Explore printings →</span>
             </a>
-<a class="hub-guide" href="/card/counterspell/"
+<a class="hub-guide" href="/card/counterspell/" data-guide-tags="original premium artwork"
                data-search="alpha blue instant control counter">
               <small>Blue classic</small>
               <strong>Counterspell</strong>
               <p>Trace one of Magic's defining spells through its reprints.</p>
               <span>Explore printings →</span>
             </a>
-<a class="hub-guide" href="/card/lightning-bolt/"
+<a class="hub-guide" href="/card/lightning-bolt/" data-guide-tags="original premium artwork"
                data-search="alpha red burn damage instant">
               <small>Red classic</small>
               <strong>Lightning Bolt</strong>
               <p>Explore decades of releases and alternate illustrations.</p>
               <span>Explore printings →</span>
             </a>
-<a class="hub-guide" href="/card/sol-ring/"
+<a class="hub-guide" href="/card/sol-ring/" data-guide-tags="original premium artwork"
                data-search="alpha artifact commander mana ramp">
               <small>Artifact mana</small>
               <strong>Sol Ring</strong>
               <p>Explore its different artwork, frames and reprints.</p>
               <span>Explore printings →</span>
             </a>
-<a class="hub-guide" href="/card/swords-to-plowshares/"
+<a class="hub-guide" href="/card/swords-to-plowshares/" data-guide-tags="original premium artwork"
                data-search="alpha white removal exile instant">
               <small>White removal</small>
               <strong>Swords to Plowshares</strong>
@@ -1367,133 +1395,133 @@
           </div>
 
           <div class="hub-grid">
-<a class="hub-guide" href="/card/arcane-signet/"
+<a class="hub-guide" href="/card/arcane-signet/" data-guide-tags="original premium artwork"
                data-search="artifact mana rock commander ramp colour">
               <small>Commander mana</small>
               <strong>Arcane Signet</strong>
               <p>Browse different artwork and frames of the mana rock.</p>
               <span>Explore printings →</span>
             </a>
-<a class="hub-guide" href="/card/brainstorm/" data-search="brainstorm original printing artwork foil"><small>Source-reviewed printing guide</small><strong>Brainstorm</strong><p>Compare Brainstorm’s Ice Age original, Masques foil, Mark Poole art and Mystical Archive versions. Identify exact artists, collector numbers and finishes.</p><span>Explore printings →</span></a>
-<a class="hub-guide" href="/card/command-tower/" data-search="command tower artifact mana printing original foil borderless"><small>Source-reviewed printing guide</small><strong>Command Tower</strong><p>Compare Command Tower’s 2011 original with Arsenal foil, extended art, Commander Masters borderless art and later setting-specific reprints.</p><span>Explore printings →</span></a>
-<a class="hub-guide" href="/card/cyclonic-rift/"
+<a class="hub-guide" href="/card/brainstorm/" data-guide-tags="original premium artwork" data-search="brainstorm original printing artwork foil"><small>Source-reviewed printing guide</small><strong>Brainstorm</strong><p>Compare Brainstorm’s Ice Age original, Masques foil, Mark Poole art and Mystical Archive versions. Identify exact artists, collector numbers and finishes.</p><span>Explore printings →</span></a>
+<a class="hub-guide" href="/card/command-tower/" data-guide-tags="original premium artwork" data-search="command tower artifact mana printing original foil borderless"><small>Source-reviewed printing guide</small><strong>Command Tower</strong><p>Compare Command Tower’s 2011 original with Arsenal foil, extended art, Commander Masters borderless art and later setting-specific reprints.</p><span>Explore printings →</span></a>
+<a class="hub-guide" href="/card/cyclonic-rift/" data-guide-tags="original premium artwork"
                data-search="blue instant overload bounce removal">
               <small>Blue interaction</small>
               <strong>Cyclonic Rift</strong>
               <p>Explore its popular premium and alternate printings.</p>
               <span>Explore printings →</span>
             </a>
-<a class="hub-guide" href="/card/deflecting-swat/"
+<a class="hub-guide" href="/card/deflecting-swat/" data-guide-tags="original premium artwork"
                data-search="red instant free spell protection">
               <small>Red interaction</small>
               <strong>Deflecting Swat</strong>
               <p>See special versions of the Commander free spell.</p>
               <span>Explore printings →</span>
             </a>
-<a class="hub-guide" href="/card/dockside-extortionist/"
+<a class="hub-guide" href="/card/dockside-extortionist/" data-guide-tags="original premium artwork"
                data-search="goblin red creature treasure">
               <small>Treasure engine</small>
               <strong>Dockside Extortionist</strong>
               <p>Explore its distinctive printing and artwork history.</p>
               <span>Explore printings →</span>
             </a>
-<a class="hub-guide" href="/card/doubling-season/"
+<a class="hub-guide" href="/card/doubling-season/" data-guide-tags="original premium artwork"
                data-search="green enchantment token counters ravnica confetti">
               <small>Tokens & counters</small>
               <strong>Doubling Season</strong>
               <p>Compare classic artwork and premium treatments.</p>
               <span>Explore printings →</span>
             </a>
-<a class="hub-guide" href="/card/edgar-markov/" data-search="edgar markov commander vampire tribal eminence fang retro"><small>Source-reviewed printing guide</small><strong>Edgar Markov</strong><p>Compare Edgar Markov’s foil-only Commander 2017 debut, Judge art, Innistrad Remastered fang and retro frames, and serialized movie-poster edition.</p><span>Explore printings →</span></a>
-<a class="hub-guide" href="/card/esper-sentinel/"
+<a class="hub-guide" href="/card/edgar-markov/" data-guide-tags="original premium artwork" data-search="edgar markov commander vampire tribal eminence fang retro"><small>Source-reviewed printing guide</small><strong>Edgar Markov</strong><p>Compare Edgar Markov’s foil-only Commander 2017 debut, Judge art, Innistrad Remastered fang and retro frames, and serialized movie-poster edition.</p><span>Explore printings →</span></a>
+<a class="hub-guide" href="/card/esper-sentinel/" data-guide-tags="original premium artwork"
                data-search="white artifact creature draw tax modern horizons">
               <small>White card draw</small>
               <strong>Esper Sentinel</strong>
               <p>Explore retro, sketch and alternate-art versions.</p>
               <span>Explore printings →</span>
             </a>
-<a class="hub-guide" href="/card/fierce-guardianship/"
+<a class="hub-guide" href="/card/fierce-guardianship/" data-guide-tags="original premium artwork"
                data-search="blue counterspell noncreature commander etched pixel">
               <small>Commander interaction</small>
               <strong>Fierce Guardianship</strong>
               <p>Compare Commander originals, etched foil and alternative artists.</p>
               <span>Explore printings →</span>
             </a>
-<a class="hub-guide" href="/card/jeskas-will/"
+<a class="hub-guide" href="/card/jeskas-will/" data-guide-tags="original premium artwork"
                data-search="jeska red sorcery mana impulse draw">
               <small>Red mana</small>
               <strong>Jeska's Will</strong>
               <p>Compare available versions of this Commander spell.</p>
               <span>Explore printings →</span>
             </a>
-<a class="hub-guide" href="/card/lightning-greaves/"
+<a class="hub-guide" href="/card/lightning-greaves/" data-guide-tags="original premium artwork"
                data-search="artifact equipment haste shroud">
               <small>Equipment</small>
               <strong>Lightning Greaves</strong>
               <p>Discover different illustrations and frame treatments.</p>
               <span>Explore printings →</span>
             </a>
-<a class="hub-guide" href="/card/living-death/" data-search="living death living death trace living death from tempest #142 to masters 25 and warhammer surge foil. compare exact artworks, physical finishes and its symmetrical graveyard rules."><small>Source-reviewed printing guide</small><strong>Living Death</strong><p>Trace Living Death from Tempest #142 to Masters 25 and Warhammer surge foil. Compare exact artworks, physical finishes and its symmetrical graveyard rules.</p><span>Explore printings →</span></a>
-<a class="hub-guide" href="/card/mystic-remora/"
+<a class="hub-guide" href="/card/living-death/" data-guide-tags="original premium artwork" data-search="living death living death trace living death from tempest #142 to masters 25 and warhammer surge foil. compare exact artworks, physical finishes and its symmetrical graveyard rules."><small>Source-reviewed printing guide</small><strong>Living Death</strong><p>Trace Living Death from Tempest #142 to Masters 25 and Warhammer surge foil. Compare exact artworks, physical finishes and its symmetrical graveyard rules.</p><span>Explore printings →</span></a>
+<a class="hub-guide" href="/card/mystic-remora/" data-guide-tags="original premium artwork"
                data-search="blue enchantment draw ice age tax">
               <small>Card draw</small>
               <strong>Mystic Remora</strong>
               <p>Explore the Ice Age original and later printings.</p>
               <span>Explore printings →</span>
             </a>
-<a class="hub-guide" href="/card/mystic-sanctuary/"
+<a class="hub-guide" href="/card/mystic-sanctuary/" data-guide-tags="original premium artwork"
                data-search="island land throne eldraine secret lair dandan">
               <small>Land recursion</small>
               <strong>Mystic Sanctuary</strong>
               <p>See Eldraine, retro-frame and Secret Lair artwork.</p>
               <span>Explore printings →</span>
             </a>
-<a class="hub-guide" href="/card/orcish-bowmasters/"
+<a class="hub-guide" href="/card/orcish-bowmasters/" data-guide-tags="original premium artwork"
                data-search="lord rings hobbit flash draw amass">
               <small>Flash interaction</small>
               <strong>Orcish Bowmasters</strong>
               <p>Compare original, borderless, Scrolls and Hobbit artwork.</p>
               <span>Explore printings →</span>
             </a>
-<a class="hub-guide" href="/card/path-to-exile/"
+<a class="hub-guide" href="/card/path-to-exile/" data-guide-tags="original premium artwork"
                data-search="white instant removal exile conflux">
               <small>White interaction</small>
               <strong>Path to Exile</strong>
               <p>Explore alternative artwork and collector printings.</p>
               <span>Explore printings →</span>
             </a>
-<a class="hub-guide" href="/card/rhystic-study/"
+<a class="hub-guide" href="/card/rhystic-study/" data-guide-tags="original premium artwork"
                data-search="blue enchantment draw tax prophecy enchanting tales">
               <small>Card advantage</small>
               <strong>Rhystic Study</strong>
               <p>Compare Prophecy, Enchanting Tales and other releases.</p>
               <span>Explore printings →</span>
             </a>
-<a class="hub-guide" href="/card/senseis-divining-top/" data-search="sensei&#x27;s divining top artifact mana printing original foil borderless"><small>Source-reviewed printing guide</small><strong>Sensei&#x27;s Divining Top</strong><p>Trace Sensei’s Divining Top from Champions of Kamigawa uncommon to Eternal Masters art and Double Masters borderless and etched editions, with legality context.</p><span>Explore printings →</span></a>
-<a class="hub-guide" href="/card/skullclamp/" data-search="skullclamp skullclamp identify skullclamp’s darksteel debut, original foil, from the vault edition, warhammer surge foil and secret lair art, with exact collector records."><small>Source-reviewed printing guide</small><strong>Skullclamp</strong><p>Identify Skullclamp’s Darksteel debut, original foil, From the Vault edition, Warhammer surge foil and Secret Lair art, with exact collector records.</p><span>Explore printings →</span></a>
-<a class="hub-guide" href="/card/smothering-tithe/"
+<a class="hub-guide" href="/card/senseis-divining-top/" data-guide-tags="original premium artwork" data-search="sensei&#x27;s divining top artifact mana printing original foil borderless"><small>Source-reviewed printing guide</small><strong>Sensei&#x27;s Divining Top</strong><p>Trace Sensei’s Divining Top from Champions of Kamigawa uncommon to Eternal Masters art and Double Masters borderless and etched editions, with legality context.</p><span>Explore printings →</span></a>
+<a class="hub-guide" href="/card/skullclamp/" data-guide-tags="original premium artwork" data-search="skullclamp skullclamp identify skullclamp’s darksteel debut, original foil, from the vault edition, warhammer surge foil and secret lair art, with exact collector records."><small>Source-reviewed printing guide</small><strong>Skullclamp</strong><p>Identify Skullclamp’s Darksteel debut, original foil, From the Vault edition, Warhammer surge foil and Secret Lair art, with exact collector records.</p><span>Explore printings →</span></a>
+<a class="hub-guide" href="/card/smothering-tithe/" data-guide-tags="original premium artwork"
                data-search="white enchantment treasure tax mana">
               <small>Treasure generation</small>
               <strong>Smothering Tithe</strong>
               <p>Compare original, showcase and other collector versions.</p>
               <span>Explore printings →</span>
             </a>
-<a class="hub-guide" href="/card/swan-song/" data-search="swan song swan song compare swan song’s theros original with commander reprints and secret lair artwork. identify artists, collector numbers and legitimate foil choices."><small>Source-reviewed printing guide</small><strong>Swan Song</strong><p>Compare Swan Song’s Theros original with Commander reprints and Secret Lair artwork. Identify artists, collector numbers and legitimate foil choices.</p><span>Explore printings →</span></a>
-<a class="hub-guide" href="/card/teferis-protection/"
+<a class="hub-guide" href="/card/swan-song/" data-guide-tags="original artwork" data-search="swan song swan song compare swan song’s theros original with commander reprints and secret lair artwork. identify artists, collector numbers and legitimate foil choices."><small>Source-reviewed printing guide</small><strong>Swan Song</strong><p>Compare Swan Song’s Theros original with Commander reprints and Secret Lair artwork. Identify artists, collector numbers and legitimate foil choices.</p><span>Explore printings →</span></a>
+<a class="hub-guide" href="/card/teferis-protection/" data-guide-tags="original premium artwork"
                data-search="white instant protection phase out teferi">
               <small>Protection</small>
               <strong>Teferi's Protection</strong>
               <p>Compare the original and collector treatments.</p>
               <span>Explore printings →</span>
             </a>
-<a class="hub-guide" href="/card/the-great-henge/"
+<a class="hub-guide" href="/card/the-great-henge/" data-guide-tags="original premium artwork"
                data-search="eldraine green artifact henge party tree lord rings">
               <small>Green artifact engine</small>
               <strong>The Great Henge</strong>
               <p>Compare Eldraine originals with the Middle-earth Party Tree.</p>
               <span>Explore printings →</span>
             </a>
-<a class="hub-guide" href="/card/thoughtseize/" data-search="thoughtseize original printing artwork foil"><small>Source-reviewed printing guide</small><strong>Thoughtseize</strong><p>Identify Thoughtseize’s Lorwyn original, Theros art, Invocation, retro frame, borderless and Junji Ito editions, plus Breaking News textured foil.</p><span>Explore printings →</span></a>
+<a class="hub-guide" href="/card/thoughtseize/" data-guide-tags="original premium artwork" data-search="thoughtseize original printing artwork foil"><small>Source-reviewed printing guide</small><strong>Thoughtseize</strong><p>Identify Thoughtseize’s Lorwyn original, Theros art, Invocation, retro frame, borderless and Junji Ito editions, plus Breaking News textured foil.</p><span>Explore printings →</span></a>
 </div>
 
         </section>
@@ -1519,102 +1547,102 @@
           </div>
 
           <div class="hub-grid">
-<a class="hub-guide" href="/card/ancient-tomb/"
+<a class="hub-guide" href="/card/ancient-tomb/" data-guide-tags="original premium artwork"
                data-search="land colourless mana tempest">
               <small>Powerful land</small>
               <strong>Ancient Tomb</strong>
               <p>Compare the original and special land treatments.</p>
               <span>Explore printings →</span>
             </a>
-<a class="hub-guide" href="/card/cavern-of-souls/" data-search="cavern of souls avr mana land artifact printing foil borderless">
+<a class="hub-guide" href="/card/cavern-of-souls/" data-guide-tags="original premium artwork" data-search="cavern of souls avr mana land artifact printing foil borderless">
               <small>Creature-type land</small><strong>Cavern of Souls</strong><p>Explore Masters art, borderless versions and premium finishes.</p><span>Explore printings →</span>
             </a>
-<a class="hub-guide" href="/card/chrome-mox/"
+<a class="hub-guide" href="/card/chrome-mox/" data-guide-tags="original premium artwork"
                data-search="mirrodin artifact imprint mana masterpiece">
               <small>Imprint mana</small>
               <strong>Chrome Mox</strong>
               <p>Compare Mirrodin, promotional art and premium artifact frames.</p>
               <span>Explore printings →</span>
             </a>
-<a class="hub-guide" href="/card/dark-ritual/" data-search="dark ritual original printing artwork foil"><small>Source-reviewed printing guide</small><strong>Dark Ritual</strong><p>Trace Dark Ritual from Alpha through old-border art, Masques foil, Amonkhet Invocation and Mystical Archive editions. Compare exact artists and finishes.</p><span>Explore printings →</span></a>
-<a class="hub-guide" href="/card/demonic-consultation/"
+<a class="hub-guide" href="/card/dark-ritual/" data-guide-tags="original premium artwork" data-search="dark ritual original printing artwork foil"><small>Source-reviewed printing guide</small><strong>Dark Ritual</strong><p>Trace Dark Ritual from Alpha through old-border art, Masques foil, Amonkhet Invocation and Mystical Archive editions. Compare exact artists and finishes.</p><span>Explore printings →</span></a>
+<a class="hub-guide" href="/card/demonic-consultation/" data-guide-tags="original premium artwork"
                data-search="black instant combo ice age">
               <small>Combo staple</small>
               <strong>Demonic Consultation</strong>
               <p>Explore printings of this unusual black instant.</p>
               <span>Explore printings →</span>
             </a>
-<a class="hub-guide" href="/card/demonic-tutor/"
+<a class="hub-guide" href="/card/demonic-tutor/" data-guide-tags="original premium artwork"
                data-search="black sorcery tutor alpha">
               <small>Black tutor</small>
               <strong>Demonic Tutor</strong>
               <p>Trace its classic artwork and modern collector versions.</p>
               <span>Explore printings →</span>
             </a>
-<a class="hub-guide" href="/card/enlightened-tutor/" data-search="enlightened tutor enlightened tutor compare enlightened tutor’s mirage original, arena and judge foils, eternal masters art and dominaria remastered retro and borderless editions."><small>Source-reviewed printing guide</small><strong>Enlightened Tutor</strong><p>Compare Enlightened Tutor’s Mirage original, Arena and Judge foils, Eternal Masters art and Dominaria Remastered retro and borderless editions.</p><span>Explore printings →</span></a>
-<a class="hub-guide" href="/card/force-of-will/"
+<a class="hub-guide" href="/card/enlightened-tutor/" data-guide-tags="original premium artwork" data-search="enlightened tutor enlightened tutor compare enlightened tutor’s mirage original, arena and judge foils, eternal masters art and dominaria remastered retro and borderless editions."><small>Source-reviewed printing guide</small><strong>Enlightened Tutor</strong><p>Compare Enlightened Tutor’s Mirage original, Arena and Judge foils, Eternal Masters art and Dominaria Remastered retro and borderless editions.</p><span>Explore printings →</span></a>
+<a class="hub-guide" href="/card/force-of-will/" data-guide-tags="original premium artwork"
                data-search="blue counterspell alliances alternate cost">
               <small>Free counterspell</small>
               <strong>Force of Will</strong>
               <p>Compare Alliances with its premium reprints.</p>
               <span>Explore printings →</span>
             </a>
-<a class="hub-guide" href="/card/gaeas-cradle/" data-search="gaea&#x27;s cradle usg mana land artifact printing foil borderless">
+<a class="hub-guide" href="/card/gaeas-cradle/" data-guide-tags="original premium artwork" data-search="gaea&#x27;s cradle usg mana land artifact printing foil borderless">
               <small>Legendary green land</small><strong>Gaea&#x27;s Cradle</strong><p>Identify the original, Judge foil and collector reproductions.</p><span>Explore printings →</span>
             </a>
-<a class="hub-guide" href="/card/grim-monolith/" data-search="grim monolith ulg mana land artifact printing foil borderless">
+<a class="hub-guide" href="/card/grim-monolith/" data-guide-tags="original artwork" data-search="grim monolith ulg mana land artifact printing foil borderless">
               <small>Early booster foil</small><strong>Grim Monolith</strong><p>Compare Urza’s Legacy finishes and championship editions.</p><span>Explore printings →</span>
             </a>
-<a class="hub-guide" href="/card/jeweled-lotus/" data-search="jeweled lotus artifact mana printing original foil borderless"><small>Source-reviewed printing guide</small><strong>Jeweled Lotus</strong><p>Compare Jeweled Lotus’s Commander Legends debut, extended art and Commander Masters etched and textured versions, with its current Commander ban explained.</p><span>Explore printings →</span></a>
-<a class="hub-guide" href="/card/lotus-petal/" data-search="lotus petal artifact mana printing original foil borderless"><small>Source-reviewed printing guide</small><strong>Lotus Petal</strong><p>Explore Lotus Petal’s Tempest common, From the Vault foil, Kaladesh Invention, anniversary etched promo and Mystery Booster 2 reprint.</p><span>Explore printings →</span></a>
-<a class="hub-guide" href="/card/mana-crypt/"
+<a class="hub-guide" href="/card/jeweled-lotus/" data-guide-tags="original premium artwork" data-search="jeweled lotus artifact mana printing original foil borderless"><small>Source-reviewed printing guide</small><strong>Jeweled Lotus</strong><p>Compare Jeweled Lotus’s Commander Legends debut, extended art and Commander Masters etched and textured versions, with its current Commander ban explained.</p><span>Explore printings →</span></a>
+<a class="hub-guide" href="/card/lotus-petal/" data-guide-tags="original premium artwork" data-search="lotus petal artifact mana printing original foil borderless"><small>Source-reviewed printing guide</small><strong>Lotus Petal</strong><p>Explore Lotus Petal’s Tempest common, From the Vault foil, Kaladesh Invention, anniversary etched promo and Mystery Booster 2 reprint.</p><span>Explore printings →</span></a>
+<a class="hub-guide" href="/card/mana-crypt/" data-guide-tags="original premium artwork"
                data-search="artifact fast mana commander collectible">
               <small>Fast mana</small>
               <strong>Mana Crypt</strong>
               <p>Browse artwork and premium printing variations.</p>
               <span>Explore printings →</span>
             </a>
-<a class="hub-guide" href="/card/mana-drain/"
+<a class="hub-guide" href="/card/mana-drain/" data-guide-tags="original premium artwork"
                data-search="blue counterspell instant legends">
               <small>Blue interaction</small>
               <strong>Mana Drain</strong>
               <p>Explore reprints of the famous counterspell.</p>
               <span>Explore printings →</span>
             </a>
-<a class="hub-guide" href="/card/mana-vault/"
+<a class="hub-guide" href="/card/mana-vault/" data-guide-tags="original premium artwork"
                data-search="artifact mana alpha ramp">
               <small>Artifact mana</small>
               <strong>Mana Vault</strong>
               <p>Discover classic and modern artwork variations.</p>
               <span>Explore printings →</span>
             </a>
-<a class="hub-guide" href="/card/mox-diamond/" data-search="mox diamond sth mana land artifact printing foil borderless">
+<a class="hub-guide" href="/card/mox-diamond/" data-guide-tags="original premium artwork" data-search="mox diamond sth mana land artifact printing foil borderless">
               <small>Reserved artifact</small><strong>Mox Diamond</strong><p>Compare Stronghold art with the From the Vault foil.</p><span>Explore printings →</span>
             </a>
-<a class="hub-guide" href="/card/mox-opal/" data-search="mox opal artifact mana printing original foil borderless"><small>Source-reviewed printing guide</small><strong>Mox Opal</strong><p>Trace Mox Opal from Scars of Mirrodin #179 through Masters reprints, Judge foil and Kaladesh Invention. Compare artists, frames and real finishes.</p><span>Explore printings →</span></a>
-<a class="hub-guide" href="/card/mystical-tutor/" data-search="mystical tutor original printing artwork foil"><small>Source-reviewed printing guide</small><strong>Mystical Tutor</strong><p>Compare Mystical Tutor’s Mirage original with boxed foils, Jace art, Secret Lair, retro and borderless reprints. Check collector numbers and real finishes.</p><span>Explore printings →</span></a>
-<a class="hub-guide" href="/card/necropotence/"
+<a class="hub-guide" href="/card/mox-opal/" data-guide-tags="original premium artwork" data-search="mox opal artifact mana printing original foil borderless"><small>Source-reviewed printing guide</small><strong>Mox Opal</strong><p>Trace Mox Opal from Scars of Mirrodin #179 through Masters reprints, Judge foil and Kaladesh Invention. Compare artists, frames and real finishes.</p><span>Explore printings →</span></a>
+<a class="hub-guide" href="/card/mystical-tutor/" data-guide-tags="original premium artwork" data-search="mystical tutor original printing artwork foil"><small>Source-reviewed printing guide</small><strong>Mystical Tutor</strong><p>Compare Mystical Tutor’s Mirage original with boxed foils, Jace art, Secret Lair, retro and borderless reprints. Check collector numbers and real finishes.</p><span>Explore printings →</span></a>
+<a class="hub-guide" href="/card/necropotence/" data-guide-tags="original premium artwork"
                data-search="ice age black life cards anime confetti">
               <small>Life for cards</small>
               <strong>Necropotence</strong>
               <p>Explore Ice Age history, Masters art and Enchanting Tales foils.</p>
               <span>Explore printings →</span>
             </a>
-<a class="hub-guide" href="/card/urzas-saga/"
+<a class="hub-guide" href="/card/urzas-saga/" data-guide-tags="original premium artwork"
                data-search="urzas saga land enchantment construct artifact modern horizons">
               <small>Land and enchantment</small>
               <strong>Urza's Saga</strong>
               <p>Explore the original Saga land and its artwork and finish choices.</p>
               <span>Explore printings →</span>
             </a>
-<a class="hub-guide" href="/card/vampiric-tutor/"
+<a class="hub-guide" href="/card/vampiric-tutor/" data-guide-tags="original premium artwork"
                data-search="black instant tutor">
               <small>Instant-speed tutor</small>
               <strong>Vampiric Tutor</strong>
               <p>Compare editions and their distinctive illustrations.</p>
               <span>Explore printings →</span>
             </a>
-<a class="hub-guide" href="/card/worldly-tutor/" data-search="worldly tutor worldly tutor trace worldly tutor from mirage and sixth edition to commander collection: green and dominaria remastered, comparing art, retro frames and real foils."><small>Source-reviewed printing guide</small><strong>Worldly Tutor</strong><p>Trace Worldly Tutor from Mirage and Sixth Edition to Commander Collection: Green and Dominaria Remastered, comparing art, retro frames and real foils.</p><span>Explore printings →</span></a>
+<a class="hub-guide" href="/card/worldly-tutor/" data-guide-tags="original artwork" data-search="worldly tutor worldly tutor trace worldly tutor from mirage and sixth edition to commander collection: green and dominaria remastered, comparing art, retro frames and real foils."><small>Source-reviewed printing guide</small><strong>Worldly Tutor</strong><p>Trace Worldly Tutor from Mirage and Sixth Edition to Commander Collection: Green and Dominaria Remastered, comparing art, retro frames and real foils.</p><span>Explore printings →</span></a>
 </div>
 
         </section>
@@ -1640,34 +1668,34 @@
           </div>
 
           <div class="hub-grid">
-<a class="hub-guide" href="/card/captain-jean-luc-picard/" data-search="star trek trk captain jean luc picard lcars anna pavleeva erikas perl irvin rodriguez showcase surge foil signed headliner">
+<a class="hub-guide" href="/card/captain-jean-luc-picard/" data-guide-tags="premium artwork" data-search="star trek trk captain jean luc picard lcars anna pavleeva erikas perl irvin rodriguez showcase surge foil signed headliner">
               <small>Star Trek printing guide</small><strong>Captain Jean-Luc Picard</strong><p>Compare TRK #7, LCARS artwork, surge foil and the #1701D signed portrait.</p><span>Explore printings →</span>
             </a>
-<a class="hub-guide" href="/card/jace-the-mind-sculptor/"
+<a class="hub-guide" href="/card/jace-the-mind-sculptor/" data-guide-tags="original premium artwork"
                data-search="blue planeswalker jace worldwake">
               <small>Planeswalker icon</small>
               <strong>Jace, the Mind Sculptor</strong>
               <p>Explore one of Magic's most recognizable planeswalkers.</p>
               <span>Explore printings →</span>
             </a>
-<a class="hub-guide" href="/card/mr-spock-science-officer/" data-search="star trek trk mr spock science officer vulcan mirror scene classic enterprise colin boyer mark spears grant griffin gal or showcase surge foil signed headliner">
+<a class="hub-guide" href="/card/mr-spock-science-officer/" data-guide-tags="premium artwork" data-search="star trek trk mr spock science officer vulcan mirror scene classic enterprise colin boyer mark spears grant griffin gal or showcase surge foil signed headliner">
               <small>Star Trek printing guide</small><strong>Mr. Spock, Science Officer</strong><p>Explore the original art, Mirror, Mirror scene, Classic Enterprise frame and surge foil.</p><span>Explore printings →</span>
             </a>
-<a class="hub-guide" href="/card/smaug-wicked-worm/"
+<a class="hub-guide" href="/card/smaug-wicked-worm/" data-guide-tags="premium artwork"
                data-search="smaug wicked worm dragon lord rings hobbit">
               <small>Collector crossover</small>
               <strong>Smaug, Wicked Worm</strong>
               <p>Explore the dragon's distinctive Magic presentation.</p>
               <span>Explore printings →</span>
             </a>
-<a class="hub-guide" href="/card/the-one-ring/"
+<a class="hub-guide" href="/card/the-one-ring/" data-guide-tags="original premium artwork"
                data-search="lord rings artifact serialized borderless collector">
               <small>Lord of the Rings</small>
               <strong>The One Ring</strong>
               <p>Compare special editions, artwork and collector treatments.</p>
               <span>Explore printings →</span>
             </a>
-<a class="hub-guide" href="/card/the-theorist-jace-beleren/"
+<a class="hub-guide" href="/card/the-theorist-jace-beleren/" data-guide-tags="premium artwork"
                data-search="theorist jace beleren secret lair">
               <small>Special release</small>
               <strong>The Theorist, Jace Beleren</strong>
@@ -1684,7 +1712,7 @@
           class="hub-empty"
           hidden
         >
-          No guide matched your search.
+          No guides match these filters.
           Try another card name or a broader term.
         </p>
 
@@ -1880,7 +1908,7 @@
   </footer>
 
 
-  <!-- DIRECTORY SEARCH LOGIC -->
+  <!-- DIRECTORY FILTERS -->
 
   <script>
     (() => {
@@ -1905,6 +1933,12 @@
       const groups = [
         ...document.querySelectorAll(".hub-group")
       ];
+      const filters = document.querySelector(".hub-filters");
+      const buttons = [...filters.querySelectorAll("button")];
+      const filterResults = document.getElementById("hub-filter-results");
+      const jumpNav = document.querySelector(".hub-jumps");
+      const jumps = [...jumpNav.querySelectorAll("a")];
+      let category = "all";
 
       function normalise(value) {
         return String(value || "")
@@ -1914,20 +1948,21 @@
           .trim();
       }
 
+      const entries = cards.map(card => ({
+        card,
+        tags: new Set((card.dataset.guideTags || "").split(/\s+/)),
+        text: normalise(card.textContent + " " + (card.dataset.search || ""))
+      }));
+
       function filterGuides() {
-        const query = normalise(input.value);
+        const term = input.value.trim();
+        const query = normalise(term);
 
         let count = 0;
 
-        cards.forEach(card => {
-          const text = normalise(
-            card.textContent +
-            " " +
-            (card.dataset.search || "")
-          );
-
-          const matches =
-            !query || text.includes(query);
+        entries.forEach(({ card, tags, text }) => {
+          const matches = (category === "all" || tags.has(category)) &&
+            (!query || text.includes(query));
 
           card.hidden = !matches;
 
@@ -1944,12 +1979,23 @@
           group.hidden = !visible;
         });
 
-        empty.hidden = count !== 0;
+        jumps.forEach(link => {
+          link.hidden = document.getElementById(link.hash.slice(1)).hidden;
+        });
+        jumpNav.hidden = jumps.every(link => link.hidden);
 
-        status.textContent = !query
-          ? `Showing all ${cards.length} ManaScout card guides.`
-          : `Showing ${count} matching card guide${count === 1 ? "" : "s"}.`;
+        empty.hidden = count !== 0;
+        const countLabel = `${count} guide${count === 1 ? "" : "s"}`;
+        status.textContent = countLabel + (query ? ` matching “${term}”` : "");
+        filterResults.hidden = category === "all";
+        filterResults.textContent = count ? `View ${countLabel}` : "View results";
       }
+
+      buttons.forEach(button => button.addEventListener("click", () => {
+        category = button.dataset.guideFilter;
+        buttons.forEach(filter => filter.setAttribute("aria-pressed", String(filter === button)));
+        filterGuides();
+      }));
 
       input.addEventListener(
         "input",
@@ -1975,11 +2021,14 @@
         input.value = startingSearch;
       }
 
+      document.getElementById("hub-total").textContent = cards.length;
       filterGuides();
+      filters.hidden = false;
 
     })();
   </script>
 
+<script src="/assets/js/printing-presentation.js?v=phase102"></script>
 <script src="/assets/js/analytics-config.js?v=phase61"></script>
 <script src="/assets/js/analytics.js?v=phase61&amp;product=61"></script>
 </body>

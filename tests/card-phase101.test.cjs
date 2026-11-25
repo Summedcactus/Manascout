@@ -59,7 +59,7 @@ for (const slug of names) test(`${slug} presents its verified exact first printi
   assert.ok(html.includes(`property="og:image" content="${image}"`));
   assert.ok(html.includes(`name="twitter:image" content="${image}"`));
   assert.match(html, /og:image:alt[^\n]+illustrated by/);
-  assert.match(html, /printing-presentation\.js\?v=phase101/);
+  assert.match(html, /src="\/assets\/js\/printing-presentation\.js\?v=[^"]+"/);
   assert.ok(html.match(/<tbody>([\s\S]*?)<\/tbody>/)[1].match(/<tr>/g).length === guide.curated.length);
   assert.ok([...html.matchAll(/href="\/card\/([a-z0-9-]+)\/"/g)].length >= 2);
   assert.doesNotMatch(html, /AggregateRating|hreflang|application\/ld\+json[^<]+Offer/);
@@ -94,6 +94,6 @@ test("charcoal layers are independent and reduced-motion keeps static paint", ()
   const css = read("assets/css/printing-presentation.css");
   for (const time of [37, 46, 41, 49]) assert.match(css, new RegExp(`--mist-cycle: ${time}s`));
   assert.match(css, /@keyframes ms-edge-drift[\s\S]+translate3d[\s\S]+opacity:/);
-  assert.match(css, /max-width: 620px[\s\S]+--mist-strength: \.27[\s\S]+animation: none/);
+  assert.match(css, /max-width: 620px[^\n]*\n[^\n]+--mist-strength:[^\n]+\n[^\n]+ms-edge-atmosphere > span[^\n]+animation: none/);
   assert.match(css, /prefers-reduced-motion: reduce[\s\S]+ms-edge-atmosphere > span[^\n]+animation: none/);
 });

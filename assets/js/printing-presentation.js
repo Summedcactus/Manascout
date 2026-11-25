@@ -165,7 +165,7 @@
   if (typeof module === "object" && module.exports) { module.exports = api; return; }
   root.ManaScoutPrinting = Object.freeze(api);
 
-  if (document.body.matches(".ms-home, .printing-guide")) {
+  if (document.body.matches(".ms-home, .printing-guide, .ms-card-archive")) {
     const atmosphere = document.createElement("div");
     atmosphere.className = "ms-edge-atmosphere";
     atmosphere.setAttribute("aria-hidden", "true");

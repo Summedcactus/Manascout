@@ -118,7 +118,8 @@ def audit():
     archive = [a['href'] for tag, a in Page(directory).tags if tag == 'a' and 'hub-guide' in a.get('class', '').split()]
     assert len(archive) == len(set(archive)) == count
     assert sorted(archive) == ['/card/' + s + '/' for s in slugs]
-    assert f'Showing all {count} ManaScout card guides' in directory and f'<strong>{count}</strong> card guides' in directory
+    assert re.search(fr'id="hub-status"[^>]*>\s*{count} guides', directory)
+    assert f'All <span id="hub-total">{count}</span> Guides' in directory
     expected = set(urls + [ORIGIN + '/', ORIGIN + '/card/', ORIGIN + '/deck/'])
     dates = check_sitemap((ROOT / 'sitemap.xml').read_text(), expected, datetime.now(timezone.utc).date())
     evidence = json.loads((ROOT / 'docs/card-guide-research-3b.json').read_text())['sitemap_lastmod']['entries']
