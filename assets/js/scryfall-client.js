@@ -65,6 +65,7 @@
     fetchImpl = root.fetch?.bind(root), now = Date.now, interval = defaults.interval,
     timeout = defaults.timeout, cacheTtl = defaults.cacheTtl, cacheLimit = defaults.cacheLimit
   } = {}) {
+    const paceNow = root.performance?.now.bind(root.performance) ?? now;
     let queue = Promise.resolve();
     let lastStart = -Infinity;
     let cooldownUntil = 0;
@@ -79,15 +80,16 @@
       const slot = queue.then(async () => {
         checkAbort(signal);
         if (now() < cooldownUntil) throw limited();
-        let remaining = interval - (now() - lastStart);
+        let remaining = interval - (paceNow() - lastStart);
         while (remaining > 0) {
           await pause(remaining, signal);
-          remaining = interval - (now() - lastStart);
+          remaining = interval - (paceNow() - lastStart);
         }
         checkAbort(signal);
         if (now() < cooldownUntil) throw limited();
-        lastStart = now();
         request = begin();
+        // begin() calls fetchImpl synchronously before yielding its response promise.
+        lastStart = paceNow();
       });
       queue = slot.catch(() => {});
       return slot.then(() => request);

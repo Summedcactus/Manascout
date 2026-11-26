@@ -1,8 +1,8 @@
-name: Deck Studio checks
+name: ManaScout checks
 
 on:
   push:
-    branches: [DEVELOPMENT]
+    branches: [DEVELOPMENT, main]
   pull_request:
     branches: [main]
 
@@ -10,20 +10,20 @@ permissions:
   contents: read
 
 concurrency:
-  group: deck-studio-${{ github.workflow }}-${{ github.ref }}
+  group: manascout-checks-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
-  focused-tests:
+  core-tests:
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
         with:
           node-version: '22'
-      - uses: actions/setup-python@v5
+      - uses: actions/setup-python@v7
         with:
           python-version: '3.12'
-      - name: Run dependency-free Deck Studio checks
+      - name: Run dependency-free site checks
         run: python tests/run-deck-studio.py
