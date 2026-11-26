@@ -67,9 +67,9 @@ test("Week 009 refresh checks the exact catalogue profile and keeps the static f
     weekly, URLSearchParams, API: "https://api.scryfall.com", weeklyImage: image,
     weeklyPrinting: new Element("p"), weeklyLink: new Element("a"),
     console: { warn() {} }, norm: value => value.toLowerCase(), cardImage: card => card.image_uris.normal,
-    response: cosmic, getJson: async () => context.response
+    response: cosmic, getScryfall: async () => context.response
   });
-  vm.runInContext(source.slice(source.indexOf("  function linkToCard("), source.indexOf("  /* ========================================\n     SCRYFALL NETWORK")), context);
+  vm.runInContext(source.slice(source.indexOf("  function linkToCard("), source.indexOf("  /* ========================================\n     HOMEPAGE / RESULT STATES")), context);
   vm.runInContext(source.slice(source.indexOf("  async function loadWeekly()"), source.indexOf("  void loadWeekly();")), context);
   await context.loadWeekly();
   assert.equal(image.src, cosmic.image_uris.normal);

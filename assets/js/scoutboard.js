@@ -21,7 +21,7 @@
 (() => {
   "use strict";
 
-  const API = "https://api.scryfall.com";
+  const { origin: API, get: getScryfall, searchPageUrl } = window.ManaScoutScryfall;
 
   const $ = id =>
     document.getElementById(id);
@@ -70,9 +70,6 @@
     window.matchMedia(
       "(prefers-reduced-motion: reduce)"
     );
-
-
-  const cache = new Map();
 
 
   /* ========================================
@@ -180,57 +177,6 @@
           ? `?${query.toString()}`
           : ""
       );
-  }
-
-
-  /* ========================================
-     SCRYFALL NETWORK + CACHE
-     ======================================== */
-
-  async function getJson(url, timeout = 12000) {
-    const key =
-      safeUrl(url);
-
-    const endpoint=key ? new URL(key) : null;
-    if (!endpoint || endpoint.username || endpoint.password || endpoint.origin !== API) {
-      throw new Error(
-        "Invalid Scryfall URL"
-      );
-    }
-
-    if (
-      cache.has(key)
-    ) {
-      return cache.get(key);
-    }
-
-    const request = (async () => {
-      const controller = new AbortController();
-      let timer;
-      const boundary = new Promise((_,reject) => { timer=setTimeout(() => { controller.abort(); reject(new Error("Featured card request timed out.")); },timeout); });
-      try {
-        const work=(async()=>{
-          const response=await fetch(key,{signal:controller.signal,headers:{Accept:"application/json"}});
-          if(!response.ok)throw Object.assign(new Error(`Scryfall request failed (${response.status})`),{status:response.status});
-          return response.json();
-        })();
-        return await Promise.race([work,boundary]);
-      } finally { clearTimeout(timer); }
-    })();
-
-    cache.set(
-      key,
-      request
-    );
-
-    while (cache.size > 64) cache.delete(cache.keys().next().value);
-    try {
-      return await request;
-
-    } catch (error) {
-      cache.delete(key);
-      throw error;
-    }
   }
 
 
@@ -640,7 +586,7 @@
 
       try {
         data =
-          await getJson(next);
+          await getScryfall(next, { cache: true });
 
       } catch (error) {
         if (
@@ -648,8 +594,9 @@
         ) {
           try {
             const fallback =
-              await getJson(
-                `${API}/cards/named?exact=${encodeURIComponent(name)}`
+              await getScryfall(
+                `${API}/cards/named?exact=${encodeURIComponent(name)}`,
+                { cache: true }
               );
 
             data = {
@@ -702,14 +649,10 @@
 
       next =
         data.has_more
-          ? safeUrl(data.next_page)
+          ? searchPageUrl(data.next_page)
           : "";
 
       pageCount++;
-
-      if (next) {
-        await pause(120);
-      }
     }
 
     return best;
@@ -953,8 +896,6 @@
           error
         );
       }
-
-      await pause(125);
     }
   }
 
@@ -1068,10 +1009,11 @@
     if (!set || !number) return;
     try {
       const card =
-        await getJson(
+        await getScryfall(
           `${API}/cards/` +
           `${encodeURIComponent(set)}/` +
-          `${encodeURIComponent(number)}`
+          `${encodeURIComponent(number)}`,
+          { cache: true }
         );
 
       if (
@@ -1093,7 +1035,8 @@
       const isCosmic = set === "spm" && number === "271";
       const validCosmic = isCosmic && card.name === "Cosmic Spider-Man" && card.artist === "Zoltan Boros" &&
         card.lang === "en" && card.games?.includes("paper") && card.rarity === "mythic" &&
-        card.frame_effects?.includes("extendedart") && card.finishes?.includes("foil") && card.finishes.includes("nonfoil");
+        card.frame_effects?.includes("extendedart") && card.finishes?.includes("foil") && card.finishes.includes("nonfoil") &&
+        presentation.surface(card, "foil") === "foil";
       const validId = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(card.id || "");
       if (!validId || !(validCosmic || validCynette || validEldrazi)) {
         throw new Error("Featured artwork/treatment mismatch; retaining the exact static fallback.");
@@ -1266,10 +1209,11 @@
 
     try {
       const card =
-        await getJson(
+        await getScryfall(
           `${API}/cards/` +
           `${encodeURIComponent(key.code)}/` +
-          `${encodeURIComponent(key.number)}`
+          `${encodeURIComponent(key.number)}`,
+          { cache: true }
         );
 
       if (
@@ -1469,11 +1413,6 @@
       wrap
     );
 
-    /*
-     * Stagger independent Scryfall
-     * requests to avoid burst traffic.
-     */
-
     for (
       const job of jobs
     ) {
@@ -1481,8 +1420,6 @@
         job.link,
         job.entry
       );
-
-      await pause(125);
     }
   }
 
