@@ -1,5 +1,6 @@
 const { test } = require("node:test");
 const assert = require("node:assert/strict");
+const { performance } = require("node:perf_hooks");
 const { createClient, origin, searchPageUrl } = require("../assets/js/scryfall-client.js");
 
 const url = resource => origin + "/cards/" + resource;
@@ -42,24 +43,36 @@ test("redirects are never followed and unsafe or redirected response URLs are re
 
 test("concurrent requests start in FIFO order at a shared pace, even while a previous body is pending", async () => {
   const body = deferred();
-  const launched = deferred();
+  const controller = new AbortController();
+  const addresses = ["one", "two", "three"].map(url);
   const starts = [];
   const interval = 15;
+  let readingFirstBody = false;
   const client = createClient({ interval, fetchImpl: async address => {
-    starts.push([address, Date.now()]);
-    if (address === url("one")) return { ...success({}), json: () => body.promise };
-    if (address === url("three")) launched.resolve();
+    starts.push([address, performance.now()]);
+    if (address === addresses[0]) return { ...success({}), json: () => {
+      readingFirstBody = true;
+      return body.promise;
+    } };
     return success({ address });
   } });
-  const first = client.get(url("one"));
-  const second = client.get(url("two"));
-  const third = client.get(url("three"));
-  await launched.promise;
-  assert.deepEqual(starts.map(([address]) => address), ["one", "two", "three"].map(url));
-  assert.ok(starts[1][1] - starts[0][1] >= interval);
-  assert.ok(starts[2][1] - starts[1][1] >= interval);
-  body.resolve({ address: url("one") });
-  await Promise.all([first, second, third]);
+  const requests = addresses.map(address => client.get(address, { signal: controller.signal }));
+  const settled = Promise.allSettled(requests);
+  try {
+    assert.deepEqual(await Promise.race([requests[0], requests[2]]), { address: addresses[2] });
+    assert.ok(readingFirstBody);
+    assert.deepEqual(starts.map(([address]) => address), addresses);
+    for (let i = 1; i < starts.length; i++) {
+      const gap = starts[i][1] - starts[i - 1][1];
+      assert.ok(gap >= interval, `Request ${i + 1} started after ${gap} ms (minimum ${interval} ms)`);
+    }
+    body.resolve({ address: addresses[0] });
+    await Promise.all(requests);
+  } finally {
+    body.resolve();
+    controller.abort();
+    await settled;
+  }
 });
 
 test("a failed start and a cancelled queued request leave the next slot usable", async () => {
