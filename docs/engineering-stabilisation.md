@@ -340,3 +340,33 @@ The complete dependency-free runner passed 1,269 JavaScript cases and all static
 | L · Git workflow | Safe post-release fast-forward verified before changes. The release branch remains unchanged. |
 
 Prompt 4 should focus on the active Deck client's transport boundary. Establish independent parity contracts for collection POST, supported GETs, queue cancellation, downstream eligibility, proof TTL, partial collections and retry behaviour. Test that cached catalogue hints never become current verification evidence. Keep the existing Deck state and caller-side error semantics while migrating only the safe request boundary. In a subsequent release phase, build from the same clean ref twice, verify assets and canonical URLs in a private or local stage, then seek approval for Pages integration. Shared guide header behaviour and historical test consolidation can follow in separate changes.
+
+## Prompt 3.1 pacing and release gate
+
+For PR #84, the DEVELOPMENT push [45724518877](https://github.com/Summedcactus/Manascout/actions/runs/45724518877) passed and the PR check [45728725409](https://github.com/Summedcactus/Manascout/actions/runs/45728725409) failed. The assertion was `starts[2][1] - starts[1][1] >= interval` in the FIFO pacing contract. Git trees for the push head `8e5bd93ef8d881273f4f9e86027ef4efaa69d486`, the synthetic PR merge `c1c88aef47bf0e1089e765988500c23207dcbd65` and released main `b3b60cf7b2d08b6164156e392a7eef6a5df95aae` all resolved to `8a73fe3367705bc7a7b860b4878534121f85edac`. The Pages build and deployment [45741053331](https://github.com/Summedcactus/Manascout/actions/runs/45741053331) were green. Pages and application checks are separate release signals.
+
+The clean DEVELOPMENT head had zero unique commits and was one commit behind main. DEVELOPMENT was fast-forwarded locally and remotely to the release before editing. The released suite passed 1,269 cases on a full run. Repeating the pacing suite with Node 24 exposed six failures in 30 runs (630 cases, 39.443 seconds). Four failed at the same second-gap assertion and two at the first gap. All six then reported asynchronous activity when the unresolved first body timed out.
+
+The scheduler previously sampled `Date.now()` before `fetchJson` constructed its controller, deadline and listener. Those operations precede the synchronous `fetchImpl` invocation. Variations in setup time therefore consumed part of the next request's interval, and millisecond wall-clock sampling could hide sub-millisecond differences. Instrumentation with 8ms of additional setup on the second request reproduced a 7.806ms second-to-third gap against the 15ms minimum. With the fix, both measured gaps met the full interval in that experiment.
+
+Pacing now uses a monotonic clock and samples immediately after the synchronous transport invocation returns. The next queue slot checks the full interval from that sample. The 105ms default is unchanged. The queue releases starts independently of response bodies. Cache expiry and HTTP-date cooldown still use wall-clock time. FIFO starts, cancellation, deadlines, bounded caching, coalescing and the absence of automatic retries remain covered.
+
+The pacing test measures actual invocations on the monotonic clock and proves that the third request completes while the first body is held. Its cleanup releases that body, aborts remaining subscriptions and drains all promises even after an assertion fails. In an intentionally failing copy run with strict rejection handling, only the forced assertion failed. Zero request deadline timers remained and there was no late rejection. On Node 22.23.5, 60 repeated focused runs executed 1,260 cases with zero failures in 10.364 seconds. The full runner passed 1,269 JavaScript cases and all static validators. All 58 permanent contracts passed, and the catalogue check verified 68 guides. The separate Search and Scoutboard Chromium contracts passed four and 15 checks respectively.
+
+The application workflow display name is **ManaScout checks** and its stable job name is **core-tests**. It runs on DEVELOPMENT and main pushes and on pull requests targeting main. The workflow uses `actions/checkout@v7`, `actions/setup-node@v7` and `actions/setup-python@v7`. The verified tags were v7.0.1, v7.1.0 and v7.1.0 respectively, each using the Node 24 action runtime. The project still tests on Node 22 and Python 3.12. The dependency-free runner remains the only application CI step. Pages publishing is unchanged.
+
+The owner should require pull requests and successful status checks for `main` under branch protection or a ruleset. Select the GitHub Actions check **`core-tests`** from **ManaScout checks**. Require the result for the current PR revision. Repository rules could not be inspected through the available permissions, and this phase made no administration changes. A repository rule is required to enforce the gate.
+
+### Release sequence
+
+1. Make and validate changes on DEVELOPMENT.
+2. Confirm DEVELOPMENT application CI is green.
+3. Open the DEVELOPMENT → main PR manually.
+4. Confirm PR application CI is green on the current revision.
+5. Hold the release while the PR check is red.
+6. Merge the PR manually.
+7. Confirm application CI on the released main commit is green.
+8. Confirm the separate Pages deployment is green.
+9. Fast-forward DEVELOPMENT to the released main ancestry before starting more work.
+
+Steps 4 and 5 require branch protection or a ruleset for GitHub to enforce them. Until then, the owner applies the release rule manually. Prompt 4 remains a dedicated Deck transport phase after this gate, starting with its proof and freshness contracts.
