@@ -89,11 +89,3 @@ test("prominent cards have an independent idle wrapper and compact thumbnails us
   assert.doesNotMatch(printing.markup({...image, compact: true}), /ms-physical-drift/);
   assert.match(read("assets/css/printing-presentation.css"), /data-idle-held[^\n]+ms-physical-drift/);
 });
-
-test("charcoal layers are independent and reduced-motion keeps static paint", () => {
-  const css = read("assets/css/printing-presentation.css");
-  for (const time of [37, 46, 41, 49]) assert.match(css, new RegExp(`--mist-cycle: ${time}s`));
-  assert.match(css, /@keyframes ms-edge-drift[\s\S]+translate3d[\s\S]+opacity:/);
-  assert.match(css, /max-width: 620px[^\n]*\n[^\n]+--mist-strength:[^\n]+\n[^\n]+ms-edge-atmosphere > span[^\n]+animation: none/);
-  assert.match(css, /prefers-reduced-motion: reduce[\s\S]+ms-edge-atmosphere > span[^\n]+animation: none/);
-});

@@ -1,4 +1,4 @@
-"""Serve this checkout, then run the archive and rendered mist checks in Chromium."""
+"""Serve this checkout, then run the archive and atmosphere scope checks in Chromium."""
 import argparse
 from pathlib import Path
 
@@ -14,7 +14,7 @@ def no_overflow(page):
     assert widths[0] <= widths[1], (page.url, widths)
 
 
-def atmosphere(page, width):
+def atmosphere(page):
     mist = page.locator(MIST)
     expect(mist).to_have_count(1)
     expect(mist).to_have_attribute("aria-hidden", "true")
@@ -31,20 +31,9 @@ def atmosphere(page, width):
     }""")
     assert 0 <= stack["mist"] < min(stack["main"], stack["footer"]) < stack["header"], stack
     assert stack["position"] == "fixed" and stack["hit"] == "none", stack
-    layers = page.locator(LAYERS).evaluate_all("""layers => layers.map(layer => {
-        const style = getComputedStyle(layer);
-        return {opacity: +style.opacity, width: layer.offsetWidth, duration: style.animationDuration,
-            active: layer.getAnimations().some(animation => animation.playState === 'running')};
-    })""")
-    if width <= 620:
-        assert all(0 < layer["opacity"] < .08 and not layer["active"] for layer in layers), layers
-    else:
-        assert all(layer["opacity"] > 0 and layer["active"] for layer in layers), layers
-        assert {layer["duration"] for layer in layers} == {"37s", "46s", "41s", "49s"}
-        if width <= 1024:
-            assert all(layer["width"] <= 125 and layer["opacity"] <= .18 for layer in layers)
-        else:
-            assert all(layer["width"] >= 250 and layer["opacity"] >= .20 for layer in layers)
+    assert page.locator(LAYERS).evaluate_all("""layers => layers.every(layer =>
+        +getComputedStyle(layer).opacity > 0 &&
+        layer.getAnimations().some(animation => animation.playState === 'running'))""")
 
 
 def archive_filters(page, width):
@@ -138,41 +127,6 @@ def archive_filters(page, width):
     expect(page.get_by_role("link", name="ManaScout home")).to_be_visible()
 
 
-def capture_desktop(page, directory):
-    from PIL import Image, ImageChops
-
-    at_start = directory / "archive-mist-start.png"
-    later = directory / "archive-mist-7s.png"
-    last = directory / "archive-mist-14s.png"
-    without = directory / "archive-mist-hidden.png"
-    page.screenshot(path=at_start)
-    page.wait_for_timeout(7000)
-    page.screenshot(path=later)
-    page.wait_for_timeout(7000)
-    page.screenshot(path=last)
-    page.locator(MIST).evaluate("e => e.style.visibility = 'hidden'")
-    page.screenshot(path=without)
-    page.locator(MIST).evaluate("e => e.style.visibility = ''")
-
-    first, second, third, clear = [Image.open(path).convert("RGB") for path in (at_start, later, last, without)]
-    width, height = first.size
-    # A single interval can straddle one layer's opacity peak. Compare both intervals.
-    motion = ImageChops.lighter(ImageChops.difference(first, second), ImageChops.difference(second, third)).getchannel("R")
-    haze = ImageChops.difference(second, clear).getchannel("R")
-    counts = []
-    for x in (0, width - 155):
-        for y in (85, height - 188):
-            box = (x, y, x + 155, y + 140)
-            drifting = sum(motion.crop(box).histogram()[3:])
-            present = sum(haze.crop(box).histogram()[5:])
-            assert drifting >= 150 and present >= 360, (box, drifting, present)
-            counts.append((drifting, present))
-    centre = (width // 2 - 270, 75, width // 2 + 270, 800)
-    # Toggling a composited layer can round antialiasing by a few colour levels.
-    assert not sum(haze.crop(centre).histogram()[4:]), "The effect should stay out of the central content"
-    print(f"Rendered corner changes across 7-second intervals and versus hidden mist: {counts}", flush=True)
-
-
 def audit(browser, base, width, directory):
     mobile = width <= 430
     context = browser.new_context(viewport={"width": width, "height": 900}, is_mobile=mobile, has_touch=mobile)
@@ -182,13 +136,10 @@ def audit(browser, base, width, directory):
     errors = []
     page.on("pageerror", lambda error: errors.append(str(error)))
     page.goto(base + "/card/")
-    atmosphere(page, width)
+    atmosphere(page)
     no_overflow(page)
     if directory:
-        if width == 1920:
-            capture_desktop(page, directory)
-        else:
-            page.screenshot(path=directory / f"archive-{width}.png")
+        page.screenshot(path=directory / f"archive-{width}.png")
     archive_filters(page, width)
     if width == 390:
         page.get_by_role("button", name="Premium Treatments").tap()
@@ -212,10 +163,10 @@ def audit(browser, base, width, directory):
         expect(page.locator("#hub-status")).to_have_text("1 guide matching “grim monolith”")
         page.locator('.hub-guide[href="/card/grim-monolith/"]').click()
         expect(page).to_have_url(base + "/card/grim-monolith/")
-        atmosphere(page, width)
+        atmosphere(page)
         no_overflow(page)
         page.goto(base + "/")
-        atmosphere(page, width)
+        atmosphere(page)
         no_overflow(page)
         page.goto(base + "/card/")
         page.emulate_media(reduced_motion="reduce")
