@@ -39,6 +39,8 @@ for path,page in pages.items():
         if consumer in scripts:assert scripts.index('scryfall-client.js')<scripts.index(consumer),path
     for consumer in ('app.js', 'card-page.js'):
         if consumer in scripts:assert scripts.index('url-state.js')<scripts.index(consumer),path
+    if 'app.js' in scripts:
+        assert scripts.index('retailers.js') < scripts.index('analytics.js') < scripts.index('app.js'), path
     if 'card-page.js' in scripts:assert scripts.index('app.js')<scripts.index('card-page.js'),path
     if 'deck-studio.js' in scripts:
         deps=['deck-formats.js','deck-data.js','deck-model.js','deck-client.js','deck-rules.js','deck-view.js','deck-store.js','deck-identity.js','deck-health.js','deck-generator.js','deck-printings.js','deck-printing-selector.js','deck-appearance.js','deck-appearance-controls.js','deck-studio.js']

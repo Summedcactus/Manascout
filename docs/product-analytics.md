@@ -1,5 +1,7 @@
 # Product analytics and the COTW funnel — Phase 6.1
 
+The sections below document Phase 6.1. Growth Prompt 1 extended the same boundary with configured merchant exits and a consent-gated GA4 adapter, with production collection disabled. See the current [activation and consent notes](monetisation-setup.md#analytics-activation).
+
 Implemented 17 November 2026 on DEVELOPMENT, based on `ac2c8afa9ef195f7b46ba5f2a0de1ae1f903d5f4`.
 
 **Status: PREPARED-BUT-DISABLED.** No Plausible account/site registration or live collection is assumed. The committed public configuration has `enabled: false`, `provider: null`, `debug: false`. Loading pages and using the product currently sends no requests to Plausible. This release prepares a real transport and bounded product hooks; it does not claim that behavioural data is already available, that traffic increased or that a merchant conversion occurred.

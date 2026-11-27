@@ -142,3 +142,15 @@
 @media (max-width: 600px) {
   .printing-guide[data-guide-initial-printing]:not([data-guide-intent="version-count"]) .guide-overview > .guide-static-art { grid-row: 3; }
 }
+
+.printing-guide .guide-overview-copy .guide-byline {
+  margin-block: .75rem 0;
+  color: var(--muted);
+  font-size: .85rem;
+}
+
+.printing-guide .guide-byline a {
+  color: inherit;
+  text-decoration: underline;
+  text-underline-offset: .2em;
+}

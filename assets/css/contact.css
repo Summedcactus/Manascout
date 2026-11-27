@@ -22,3 +22,13 @@
   .contact-page .header-inner { flex-wrap: wrap; justify-content: center; gap: 12px; }
   .contact-page .nav { flex-wrap: wrap; justify-content: center; }
 }
+
+.about-page #about-heading {
+  scroll-margin-top: 6rem;
+}
+
+.about-page .contact-panel p a {
+  color: var(--text);
+  text-decoration: underline;
+  text-underline-offset: .2em;
+}

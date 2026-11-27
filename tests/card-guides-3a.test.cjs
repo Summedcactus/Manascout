@@ -1,3 +1,4 @@
+const currentSnippet = require("./helpers/current-guide-snippet.cjs");
 const guideCount = require("../data/guides.json").length;
 const phase6=JSON.parse(require('node:fs').readFileSync('docs/phase6-search-growth.json','utf8'));
 const phase5={...JSON.parse(require('node:fs').readFileSync('docs/us-search-baseline.json','utf8')).guides,...phase6.upgrades,...phase6.metadata_only};
@@ -25,7 +26,7 @@ const expected={
 };
 const slugs=Object.keys(expected),app=read('assets/js/app.js');
 for(const slug of slugs){
- const html=read(`card/${slug}/index.html`),g=ledger.cards.find(x=>x.slug===slug),revision={...(revisions[slug]||g),...(phase5[slug]||{})},[name,code,num,artist,count]=expected[slug],url=`https://manascout.co.uk/card/${slug}/`;
+ const html=read(`card/${slug}/index.html`),g=ledger.cards.find(x=>x.slug===slug),revision=currentSnippet(slug,{...(revisions[slug]||g),...(phase5[slug]||{})}),[name,code,num,artist,count]=expected[slug],url=`https://manascout.co.uk/card/${slug}/`;
  test(`${name}: researched original, precise card identity, metadata and linked Article graph`,()=>{
   assert.equal(g.name,name);assert.deepEqual(g.first.slice(1,3),[code,num]);assert.equal(g.first[5],artist);
   assert.ok(plain(html).includes(`${code} #${num}`));assert.ok(plain(html).includes(artist));
@@ -85,7 +86,7 @@ test('Guide catalogue, directory ItemList, registry, canonical URLs and sitemap 
  const dirs=fs.readdirSync('card',{withFileTypes:true}).filter(x=>x.isDirectory()&&fs.existsSync(`card/${x.name}/index.html`)&&/data-card-name=/.test(read(`card/${x.name}/index.html`))).map(x=>x.name).sort();assert.equal(dirs.length, guideCount);
  const registry=require("../assets/js/guide-catalogue.js").slugs;assert.equal(registry.length, guideCount);assert.deepEqual(registry,dirs);
  const dir=read('card/index.html'),list=graph(dir).find(x=>x['@type']==='ItemList');assert.equal(list.numberOfItems, guideCount);assert.equal(list.itemListElement.length, guideCount);assert.deepEqual(list.itemListElement.map(x=>x.position),Array.from({length:dirs.length},(_,i)=>i+1));assert.deepEqual(list.itemListElement.map(x=>new URL(x.url).pathname.split('/')[2]).sort(),dirs);
- const urls=[...read('sitemap.xml').matchAll(/<loc>([^<]+)<\/loc>/g)].map(x=>x[1]);assert.equal(new Set(urls).size, guideCount + 3);assert.equal(urls.length, guideCount + 3);
+ const urls=[...read('sitemap.xml').matchAll(/<loc>([^<]+)<\/loc>/g)].map(x=>x[1]);assert.equal(new Set(urls).size, guideCount + 4);assert.equal(urls.length, guideCount + 4);
  const canonical=[];for(const slug of dirs){const html=read(`card/${slug}/index.html`),url=`https://manascout.co.uk/card/${slug}/`;assert.equal(html.match(/<link\s+rel="canonical"\s+href="([^"]+)"/)[1],url);canonical.push(url);assert.equal(urls.filter(x=>x===url).length,1);}assert.equal(new Set(canonical).size, guideCount);
  for(const slug of slugs.slice(0,4)){const group=dir.slice(dir.indexOf('id="tutors-power"'),dir.indexOf('id="showcase-releases"'));assert.ok(group.includes(`href="/card/${slug}/"`));}
  assert.doesNotMatch(dir,/\b40 (?:Magic|ManaScout|guides)|<strong>40<\/strong>/);assert.match(read('deck/index.html'),new RegExp(`Explore ${guideCount} card guides`));

@@ -1,3 +1,4 @@
+const currentSnippet = require("./helpers/current-guide-snippet.cjs");
 const {assertPreserved}=require("./helpers/preserved-hash.cjs");
 const {test}=require('node:test'),assert=require('node:assert/strict'),fs=require('node:fs'),vm=require('node:vm');
 const api=require('../assets/js/analytics.js'),{createTracker,createPlausibleAdapter,createDebugAdapter,canonicalPath}=api;
@@ -31,7 +32,7 @@ for(const [url,date] of sitemapDates(expected)) {
   if(url==='https://manascout.co.uk/card/')assert.ok(currentDates.get(url)>=date,url);
   else assert.equal(currentDates.get(url),date,url);
 }
-for(const [slug,g]of Object.entries(b.guides)){const s=fs.readFileSync(`card/${slug}/index.html`,'utf8');if (!["mr-spock-science-officer","sol-ring"].includes(slug)) { assert.equal(s.match(/<title>([^]*?)<\/title>/)[1],g.title);assert.equal(s.match(/name="description" content="([^"]+)"/)[1],g.description); }assert.equal(s.match(/class="hero-copy">([^]*?)<\/p>/)[1],g.opening);}for(const [p,hash]of Object.entries(b.preserved))assertPreserved(p,hash);});
+for(const [slug,g]of Object.entries(b.guides)){const s=fs.readFileSync(`card/${slug}/index.html`,'utf8');const decode=value=>value.replaceAll("&amp;","&").replaceAll("&#x27;","'");const expected=currentSnippet(slug,{title:decode(g.title),description:decode(g.description)});assert.equal(decode(s.match(/<title>([^]*?)<\/title>/)[1]),expected.title);assert.equal(decode(s.match(/name="description" content="([^"]+)"/)[1]),expected.description);assert.equal(s.match(/class="hero-copy">([^]*?)<\/p>/)[1],g.opening);}for(const [p,hash]of Object.entries(b.preserved))assertPreserved(p,hash);});
 test('current COTW has exact copy, primary/secondary hierarchy and bounded handoff', () => {
   const card = require('./fixtures/cosmic-spider-man.json');
   const html = fs.readFileSync('index.html', 'utf8');

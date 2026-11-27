@@ -1,3 +1,4 @@
+const currentSnippet = require("./helpers/current-guide-snippet.cjs");
 const { test } = require("node:test");
 const assert = require("node:assert/strict");
 const { readFileSync } = require("node:fs");
@@ -23,7 +24,7 @@ test("homepage search can set and reset the browser title", () => {
 
 test("permanent guides and Deck Studio retain their own titles", () => {
   for (const [url, title, guide] of [
-    ["/card/sol-ring/", "Sol Ring First Printing — Alpha 1993", "Sol Ring"],
+    ["/card/sol-ring/", currentSnippet("sol-ring", {}).title, "Sol Ring"],
     ["/deck/", "Deck Studio | ManaScout", ""]
   ]) {
     const page = titleState(url, title, guide);

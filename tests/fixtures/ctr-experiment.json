@@ -1,0 +1,143 @@
+{
+  "implemented": "2026-11-27",
+  "controls": {
+    "home": {
+      "title": "MTG Card Printings, Foils & Versions | ManaScout",
+      "description": "Find every Magic: The Gathering card printing with ManaScout. Explore MTG artwork, foil versions, collector numbers, special treatments and available Scryfall prices.",
+      "og:title": "MTG Card Printings, Foils & Versions | ManaScout",
+      "og:description": "Find the card. Compare the printings. Discover artwork, collector treatments, foil versions and prices with ManaScout.",
+      "twitter:title": "MTG Card Printings, Foils & Versions | ManaScout",
+      "twitter:description": "Explore Magic card printings, artwork, foil treatments and collector versions."
+    },
+    "rhystic-study": {
+      "title": "Rhystic Study MTG Printings, Art & Foils | ManaScout",
+      "description": "Find Rhystic Study's first printing, Prophecy PCY #45 from 2000. Compare original art, later versions and foil finishes by exact set and collector number.",
+      "og:title": "Rhystic Study MTG Printings, Art & Foils | ManaScout",
+      "og:description": "Find Rhystic Study's first printing, Prophecy PCY #45 from 2000. Compare original art, later versions and foil finishes by exact set and collector number.",
+      "twitter:title": "Rhystic Study MTG Printings, Art & Foils | ManaScout",
+      "twitter:description": "Find Rhystic Study's first printing, Prophecy PCY #45 from 2000. Compare original art, later versions and foil finishes by exact set and collector number."
+    }
+  },
+  "cohort": {
+    "the-one-ring": {
+      "old": {
+        "title": "The One Ring MTG — Versions, Foils & Unique 001/001 | ManaScout",
+        "description": "Identify The One Ring’s standard, scene and scroll versions; distinguish surge foil, serialized Sol Ring cards and the unique 001/001 One Ring headliner."
+      },
+      "new": {
+        "title": "The One Ring MTG — Identify Printings & Foils",
+        "description": "Compare standard, scene and scroll artwork. Use set codes and collector numbers to distinguish surge foil and the serialized One Ring headliner."
+      },
+      "impressions": 383,
+      "clicks": 5,
+      "ctr": "1.31%",
+      "position": "8.16",
+      "reason": "Lead with identifying the card in hand and distinguishing variants."
+    },
+    "mr-spock-science-officer": {
+      "old": {
+        "title": "Mr. Spock, Science Officer MTG — Versions & Foils",
+        "description": "Compare Mr. Spock, Science Officer MTG printings by artwork and collector number. Identify the Traditional Foils, Surge Foil #535 and signed headliner #1702."
+      },
+      "new": {
+        "title": "Mr. Spock, Science Officer MTG — Compare Printings",
+        "description": "Match your Mr. Spock card by artwork and collector number. Compare Traditional Foil, Surge Foil and the signed headliner before checking an exact printing."
+      },
+      "impressions": 245,
+      "clicks": 1,
+      "ctr": "0.41%",
+      "position": "5.87",
+      "reason": "Match the named card query and show a concrete comparison task."
+    },
+    "sol-ring": {
+      "old": {
+        "title": "Sol Ring First Printing — Limited Edition Alpha (1993)",
+        "description": "Sol Ring first appeared in Alpha in 1993. Identify the original, compare later artwork and foil versions, then inspect exact editions by set and number."
+      },
+      "new": {
+        "title": "Sol Ring First Printing Guide — Identify Your Edition",
+        "description": "Identify the original Alpha Sol Ring by artwork and catalogue record, then compare reprints and verify sets, collector numbers and foil treatments."
+      },
+      "impressions": 230,
+      "clicks": 1,
+      "ctr": "0.43%",
+      "position": "6.36",
+      "reason": "Retain first-print intent and give a reason to inspect the edition."
+    },
+    "arcane-signet": {
+      "old": {
+        "title": "Arcane Signet First Printing & MTG Versions | ManaScout",
+        "description": "Arcane Signet debuted in 2019's Throne of Eldraine Brawl decks. Identify ELD #331 and compare later artwork, editions and foil finishes."
+      },
+      "new": {
+        "title": "Arcane Signet — Identify the First Printing & Reprints",
+        "description": "Use artwork, set codes and collector numbers to identify the original Arcane Signet, then compare borderless reprints and foil finishes."
+      },
+      "impressions": 131,
+      "clicks": 1,
+      "ctr": "0.76%",
+      "position": "7.29",
+      "reason": "Offer a first-print identification task and useful reprint comparisons."
+    },
+    "deflecting-swat": {
+      "old": {
+        "title": "Deflecting Swat MTG — Board Wipes & Printings | ManaScout",
+        "description": "Deflecting Swat redirects targets; it does not counter spells. Learn when a board wipe can be redirected, then compare MTG artwork, printings and finishes."
+      },
+      "new": {
+        "title": "Deflecting Swat vs. Board Wipes — MTG Targeting Guide",
+        "description": "Check which targeted effects Deflecting Swat can redirect with board-wipe examples. Then distinguish the original printing from later artwork and finishes."
+      },
+      "impressions": 93,
+      "clicks": 1,
+      "ctr": "1.08%",
+      "position": "5.70",
+      "reason": "Lead with the observed board-wipe question and the examples the guide explains."
+    },
+    "mana-crypt": {
+      "old": {
+        "title": "Mana Crypt MTG — First Printing, Art & Neon Foils | ManaScout",
+        "description": "Identify Mana Crypt’s book-promo first printing and compare later artwork, Invention and neon foil records. Keep edition, suffix and current legality distinct."
+      },
+      "new": {
+        "title": "Mana Crypt — Identify the Book Promo & Neon Foils",
+        "description": "Compare the original book promo, Invention and neon foils by artwork, set and collector-number suffix. Check format legality separately from the printing."
+      },
+      "impressions": 79,
+      "clicks": 0,
+      "ctr": "0.00%",
+      "position": "8.32",
+      "reason": "Bring the two collector identification decisions into focus."
+    },
+    "demonic-tutor": {
+      "old": {
+        "title": "Demonic Tutor MTG — Alpha Original & Alternate Art | ManaScout",
+        "description": "Identify Demonic Tutor’s Alpha #104 original and compare later artwork, borderless and etched editions. Match the set before relying on a collector number."
+      },
+      "new": {
+        "title": "Demonic Tutor — Compare Early Printings & Alternate Art",
+        "description": "Tell early Demonic Tutor editions apart by set and collector number. Compare the original artwork with later borderless and etched versions."
+      },
+      "impressions": 61,
+      "clicks": 0,
+      "ctr": "0.00%",
+      "position": "7.74",
+      "reason": "Explain why a reference that distinguishes similar early editions is useful."
+    },
+    "dockside-extortionist": {
+      "old": {
+        "title": "Dockside Extortionist Printings, Commander Ban & Art | ManaScout",
+        "description": "Trace Dockside Extortionist from Commander 2019 #24 through Double Masters borderless and etched versions, The List and Avatar art, with dated ban status."
+      },
+      "new": {
+        "title": "Dockside Extortionist — Compare Printings & Finishes",
+        "description": "Match original, borderless, etched and Avatar-art Dockside Extortionist cards by set and number, and check the dated Commander legality notes."
+      },
+      "impressions": 20,
+      "clicks": 0,
+      "ctr": "0.00%",
+      "position": "4.35",
+      "reason": "Offer printing identification and make the dated legality context secondary."
+    }
+  }
+}

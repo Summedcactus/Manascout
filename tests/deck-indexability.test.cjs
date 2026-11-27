@@ -55,7 +55,7 @@ test("Contact is crawlable with noindex and all sitemap targets are clean", () =
   assert.ok(contact.includes(`<link rel="canonical" href="${origin}/contact/">`));
   const targets = [...read("sitemap.xml").matchAll(/<loc>([^<]+)<\/loc>/g)].map(match => match[1]);
   assert.equal(new Set(targets).size, targets.length);
-  assert.equal(targets.length, guideCount + 3);
+  assert.equal(targets.length, guideCount + 4);
   assert.deepEqual(targets.filter(url => url.startsWith(origin + "/deck/")), [origin + "/deck/"]);
   assert.ok(targets.every(url => url.startsWith(origin + "/") && !/[?#]/.test(url)));
   assert.ok(!targets.includes(origin + "/contact/"));

@@ -1,3 +1,4 @@
+const currentSnippet = require("./helpers/current-guide-snippet.cjs");
 const guideCount = require("../data/guides.json").length;
 const phase6=JSON.parse(require('node:fs').readFileSync('docs/phase6-search-growth.json','utf8'));
 const phase5={...JSON.parse(require('node:fs').readFileSync('docs/us-search-baseline.json','utf8')).guides,...phase6.upgrades,...phase6.metadata_only};
@@ -22,9 +23,9 @@ test('root ads.txt is the sole authorised inventory file and robots allows its r
 });
 test('no ad units or advertising scripts were added to the eight guides',()=>{for(const slug of slugs){const html=read(`card/${slug}/index.html`);assert.match(html,/name="google-adsense-account" content="ca-pub-2249291081711812"/);assert.doesNotMatch(html,/adsbygoogle|pagead2|googlesyndication|<ins\b/i);}});
 for(const slug of slugs){
- const html=read(`card/${slug}/index.html`),c={...(ledger.new_guides[slug]||ledger.upgrades[slug]),...(phase5[slug]||{})},url=host+'/card/'+slug+'/',ld=graph(html);
+ const html=read(`card/${slug}/index.html`),c=currentSnippet(slug,{...(ledger.new_guides[slug]||ledger.upgrades[slug]),...(phase5[slug]||{})}),url=host+'/card/'+slug+'/',ld=graph(html);
  test(`${c.name}: search-intent title, social snippets, canonical and linked graph agree`,()=>{
-  const title=plain(html.match(/<title>([^]*?)<\/title>/)[1]);assert.ok(title.includes(c.name));if(slug!=="sol-ring")assert.equal(title,c.title);const description=html.match(/name="description" content="([^"]+)"/)[1];assert.equal(plain(description),c.description);assert.ok(c.description.length>=110&&c.description.length<=180);
+  const title=plain(html.match(/<title>([^]*?)<\/title>/)[1]);assert.ok(title.includes(c.name));assert.equal(title,c.title);const description=html.match(/name="description" content="([^"]+)"/)[1];assert.equal(plain(description),c.description);assert.ok(c.description.length>=110&&c.description.length<=180);
   assert.equal((html.match(/rel="canonical"/g)||[]).length,1);assert.ok(html.includes(`rel="canonical" href="${url}"`));assert.ok(html.includes(`property="og:url" content="${url}"`));assert.ok(html.includes(`property="og:title" content="${title.replace(/&/g,'&amp;')}"`));assert.doesNotMatch(html,/noindex/i);
   const page=ld.find(n=>n['@type']==='WebPage'),article=ld.find(n=>n['@type']==='Article');assert.equal(page.url,url);assert.equal(article.description,c.description);assert.equal(article.dateModified,phase5[slug]?.reviewed||day);assert.equal(page.mainEntity['@id'],article['@id']);assert.equal(article.mainEntityOfPage['@id'],page['@id']);assert.equal(ld.find(n=>n['@type']==='BreadcrumbList').itemListElement.at(-1).item,url);assert.doesNotMatch(JSON.stringify(ld),/"(?:Offer|AggregateRating|price|ratingValue)"/);
  });
@@ -63,7 +64,7 @@ test('contextual cross-links connect new guides with related printing histories'
  const links={'sol-ring':['arcane-signet','dark-ritual'],'rhystic-study':['mystic-remora','brainstorm','mystical-tutor'],brainstorm:['counterspell','force-of-will'],thoughtseize:['demonic-tutor','vampiric-tutor'],'mystical-tutor':['enlightened-tutor','worldly-tutor'],'dark-ritual':['necropotence','demonic-tutor']};for(const [slug,targets]of Object.entries(links))for(const target of targets)assert.ok(read(`card/${slug}/index.html`).includes(`href="/card/${target}/"`),slug+' → '+target);
 });
 test('Guide routes appear once in registry, directory and sitemap',()=>{
- const registered=require("../assets/js/guide-catalogue.js").slugs,list=graph(read('card/index.html')).find(n=>n['@type']==='ItemList'),urls=[...read('sitemap.xml').matchAll(/<loc>([^<]+)<\/loc>/g)].map(m=>m[1]);assert.equal(registered.length, guideCount);assert.equal(new Set(registered).size, guideCount);assert.equal(list.numberOfItems, guideCount);assert.equal(urls.length, guideCount + 3);assert.equal(new Set(urls).size, guideCount + 3);for(const slug of slugs){const url=host+'/card/'+slug+'/';assert.equal(registered.filter(s=>s===slug).length,1);assert.equal(list.itemListElement.filter(x=>x.url===url).length,1);assert.equal(urls.filter(x=>x===url).length,1);}assert.ok(!urls.includes(host+'/contact/'));assert.ok(!urls.some(u=>u.includes('?')));assert.ok(!urls.includes(host+'/privacy/'));assert.ok(!urls.includes(host+'/terms/'));
+ const registered=require("../assets/js/guide-catalogue.js").slugs,list=graph(read('card/index.html')).find(n=>n['@type']==='ItemList'),urls=[...read('sitemap.xml').matchAll(/<loc>([^<]+)<\/loc>/g)].map(m=>m[1]);assert.equal(registered.length, guideCount);assert.equal(new Set(registered).size, guideCount);assert.equal(list.numberOfItems, guideCount);assert.equal(urls.length, guideCount + 4);assert.equal(new Set(urls).size, guideCount + 4);for(const slug of slugs){const url=host+'/card/'+slug+'/';assert.equal(registered.filter(s=>s===slug).length,1);assert.equal(list.itemListElement.filter(x=>x.url===url).length,1);assert.equal(urls.filter(x=>x===url).length,1);}assert.ok(!urls.includes(host+'/contact/'));assert.ok(!urls.some(u=>u.includes('?')));assert.ok(!urls.includes(host+'/privacy/'));assert.ok(!urls.includes(host+'/terms/'));
 });
 test('new sitemap dates are limited to the editorial batch and the directory',()=>{
  const expected=new Set([... [host+'/card/',...slugs.map(s=>host+'/card/'+s+'/')]].filter(url=>!phase6.sitemap[url])),entries=[...read('sitemap.xml').matchAll(/<loc>([^<]+)<\/loc>\s*<lastmod>([^<]+)<\/lastmod>/g)];assert.deepEqual(new Set(entries.filter(x=>x[2]===day).map(x=>x[1])),new Set([...expected].filter(url=>!Object.values(phase5).some(g=>g.sitemap.url===url))));assert.equal(entries.find(x=>x[1]===host+'/')[2],'2026-11-17');assert.equal(entries.find(x=>x[1]===host+'/deck/')[2],'2026-11-22');assert.ok(!entries.some(x=>x[1]===host+'/contact/'));
@@ -80,8 +81,8 @@ test('the two experiments give a card-specific answer within the first screen', 
   const spock = read('card/mr-spock-science-officer/index.html');
   const sol = read('card/sol-ring/index.html');
   const title = html => plain(html.match(/<title>([^<]+)<\/title>/)[1]);
-  assert.equal(title(spock), 'Mr. Spock, Science Officer MTG — Versions & Foils');
-  assert.equal(title(sol), 'Sol Ring First Printing — Limited Edition Alpha (1993)');
+  assert.equal(title(spock), currentSnippet('mr-spock-science-officer', {}).title);
+  assert.equal(title(sol), currentSnippet('sol-ring', {}).title);
   for (const html of [spock, sol]) {
     const name = plain(html.match(/<h1>([^<]+)<\/h1>/)[1]);
     assert.ok(title(html).startsWith(name));
@@ -90,7 +91,7 @@ test('the two experiments give a card-specific answer within the first screen', 
     assert.ok(html.indexOf('data-intent-module') < html.indexOf('id="card-details"'));
   }
   assert.match(spock, /5 English paper printing records[\s\S]*TRK #74–#1702[\s\S]*Surge Foil[\s\S]*Signed headliner/);
-  assert.match(spock, /<meta name="description" content="[^"]+collector number[^"]+Surge Foil #535[^"]+signed headliner #1702/);
+  assert.match(spock, /<meta name="description" content="[^"]+collector number[^"]+Surge Foil[^"]+signed headliner/);
   assert.match(sol, /First Printing[\s\S]*Limited Edition Alpha[\s\S]*1993 · Mark Tedin · Nonfoil[\s\S]*LEA #269 is the catalogue identity/);
 });
 

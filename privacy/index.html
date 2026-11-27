@@ -196,7 +196,7 @@
           set first-party analytics cookies.
         </p>
 
-        <p>ManaScout has a prepared integration for Plausible Analytics, currently disabled in the site configuration. It does not currently send pageviews or product events to Plausible. If enabled, the integration is designed to measure aggregate visits, broad traffic sources, countries and devices, and bounded actions such as searches, printing comparisons and Deck Studio use to improve usability. Raw search strings, deck contents, imported files, printing identifiers and URL query or shared-comparison state are excluded from those analytics requests. ManaScout does not add account profiles or persistent visitor identifiers through this event layer. Enabling collection requires an appropriate configuration and privacy-notice update; the provider receives ordinary network request information under its own privacy model.</p>
+        <p>ManaScout has prepared integrations for Plausible Analytics and Google Analytics 4. Both are disabled, and ManaScout currently sends neither provider pageviews nor product events. If enabled, the integrations would measure visits, broad traffic sources, countries and devices, and limited actions such as printing comparisons and retailer exits. The event layer uses canonical page paths and excludes search text, deck contents, imported files, printing identifiers and URL query or shared-comparison state. Google Analytics activation requires a consent integration and an updated notice covering its cookies and data handling.</p>
 
         <p style="margin-top:10px;">
           If analytics, advertising or other technologies that
@@ -309,6 +309,7 @@
         <a href="/terms/">
           Terms
         </a>
+      <a href="/about/">About</a>
       <a href="/contact/">Contact</a>
 </div>
 
@@ -316,8 +317,8 @@
 
   </footer>
 
-<script src="/assets/js/analytics-config.js?v=phase61"></script>
-<script src="/assets/js/analytics.js?v=phase61&amp;product=61"></script>
+<script src="/assets/js/analytics-config.js?v=phase61&amp;growth1=1"></script>
+<script src="/assets/js/analytics.js?v=phase61&amp;product=61&amp;growth1=1"></script>
 </body>
 
 </html>
