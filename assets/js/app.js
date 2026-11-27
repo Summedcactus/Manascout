@@ -559,13 +559,25 @@
   }
 
   function marketplace(card) {
-    const trusted = (value, hosts) => {
-      try { const u=new URL(value); return u.protocol==="https:"&&!u.username&&!u.password&&hosts.includes(u.hostname)?u.href:""; } catch { return ""; }
-    };
-    const direct=trusted(card?.purchase_uris?.cardmarket,["www.cardmarket.com","cardmarket.com"]);
-    const market=direct||`https://www.cardmarket.com/en/Magic/Products/Search?searchString=${encodeURIComponent(card?.name||"")}`;
-    const source=trusted(card?.scryfall_uri,["scryfall.com","www.scryfall.com"]);
-    return `<div class="marketplace-links"><a href="${esc(market)}" target="_blank" rel="noopener noreferrer">${direct?"View this printing on Cardmarket":"Search Cardmarket"}</a>${source?`<a href="${esc(source)}" target="_blank" rel="noopener noreferrer">Verify on Scryfall</a>`:""}</div>`;
+    const retailers = window.ManaScoutRetailers;
+    const links = retailers?.linksFor(card) || [];
+    const source = retailers?.verificationLink(card);
+    if (source) links.push(source);
+    if (!links.length) return "";
+    const anchors = links.map(({ href, label, merchant, affiliate }) =>
+      `<a href="${esc(href)}" target="_blank" rel="noopener noreferrer${affiliate ? " sponsored" : ""}"${merchant ? ` data-ms-merchant="${esc(merchant)}"` : ""}>${esc(label)}${affiliate ? " (affiliate)" : ""}</a>`);
+    if (links.some(link => link.affiliate)) anchors.push('<a href="/about/#affiliate-disclosure">Affiliate disclosure</a>');
+    return `<div class="marketplace-links">${anchors.join("")}</div>`;
+  }
+
+  function trackMerchantLink(event) {
+    const link = event.target.closest?.("a[data-ms-merchant]");
+    if (!link || !currentCard || !$("ms-card-information")?.contains(link)) return;
+    const analytics = window.ManaScoutAnalytics;
+    analytics?.trackMerchantExit({
+      merchant: link.dataset.msMerchant, guide: analytics.guide(),
+      printingId: currentCard.id, finish: selectedFinish(currentCard) || "unknown"
+    });
   }
 
   function stat(label, value) {
@@ -3390,6 +3402,10 @@
     });
 
 
+  document.addEventListener("click", trackMerchantLink);
+  document.addEventListener("auxclick", event => {
+    if (event.button === 1) trackMerchantLink(event);
+  });
   installGuideImages();
   updateSearchRobots();
 

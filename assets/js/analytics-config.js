@@ -1,8 +1,8 @@
-/* Public configuration only. Prepared but disabled: no Plausible account is
- * assumed. See docs/product-analytics.md before enabling on the production host. */
+/* Public configuration only. See docs/monetisation-setup.md before activation. */
 window.ManaScoutAnalyticsConfig = Object.freeze({
   enabled: false,
-  provider: null, // 'plausible' on production; 'debug' on localhost only.
+  provider: null, // 'plausible' or 'ga4' on production. 'debug' on localhost.
   domain: 'manascout.co.uk',
+  ga4MeasurementId: null,
   debug: false
 });
