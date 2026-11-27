@@ -134,44 +134,82 @@ body.printing-guide > main.container:has(#ms-search-results:not([hidden]) .ms-pr
 }
 .ms-edge-atmosphere > span {
   position: absolute;
-  width: clamp(170px, 20vw, 360px);
-  height: 63vh;
+  width: clamp(195px, 20vw, 360px);
+  height: 64vh;
   filter: blur(var(--mist-softness, 15px));
   background:
-    radial-gradient(ellipse 58% 29% at 43% 23%, #44444d 6%, transparent 87%),
-    radial-gradient(ellipse 48% 46% at 25% 60%, #36363d 11%, transparent 88%),
-    radial-gradient(ellipse 54% 30% at 30% 78%, #4b4b54 0%, transparent 87%);
-  opacity: calc(.27 * var(--mist-strength));
-  animation: ms-edge-drift var(--mist-cycle) ease-in-out var(--mist-offset) infinite;
+    radial-gradient(ellipse 62% 27% at 27% 29%, #5b525d 0%, #45404a 38%, transparent 87%),
+    radial-gradient(ellipse 49% 31% at 48% 61%, #49444e 0%, transparent 87%),
+    radial-gradient(ellipse 56% 27% at 22% 77%, #514957 0%, transparent 86%);
+  opacity: calc(var(--mist-rest) * var(--mist-strength));
+  animation: ms-edge-flow var(--mist-cycle) cubic-bezier(.4, .28, .6, .72) var(--mist-offset) infinite;
 }
 .ms-edge-atmosphere > :nth-child(1) {
-  left: -3%; top: -20%;
-  --mist-cycle: 37s; --mist-offset: -7s; --mist-x: 15px; --mist-y: 28px;
+  left: -5.5%; top: -20%;
+  --mist-cycle: 16s; --mist-offset: -1.2s;
+  --mist-x1: 82px; --mist-y1: 40px; --mist-scale1: 1.09, 1.04;
+  --mist-x2: 58px; --mist-y2: 76px; --mist-scale2: 1.16, .96;
+  --mist-x3: -25px; --mist-y3: 29px; --mist-scale3: 1.02, 1.04;
+  --mist-rest: .32; --mist-alpha1: .52; --mist-alpha2: .43; --mist-alpha3: .36;
 }
 .ms-edge-atmosphere > :nth-child(2) {
-  left: -5%; bottom: -22%; height: 57vh;
-  --mist-cycle: 46s; --mist-offset: -28s; --mist-x: 19px; --mist-y: -32px; --mist-softness: 21px;
+  left: -1.5%; bottom: -21%; height: 57vh;
+  --mist-softness: 19px; --mist-cycle: 19s; --mist-offset: -10.5s;
+  --mist-x1: -59px; --mist-y1: -56px; --mist-scale1: .9, 1.12;
+  --mist-x2: -88px; --mist-y2: -21px; --mist-scale2: 1.08, 1.05;
+  --mist-x3: 24px; --mist-y3: 31px; --mist-scale3: 1.14, .94;
+  --mist-rest: .38; --mist-alpha1: .42; --mist-alpha2: .47; --mist-alpha3: .32;
 }
 .ms-edge-atmosphere > :nth-child(3) {
-  right: -4%; top: -15%; scale: -1 1;
-  --mist-cycle: 41s; --mist-offset: -19s; --mist-x: -17px; --mist-y: 21px;
+  right: -5%; top: -18%; height: 60vh;
+  --mist-cycle: 17.5s; --mist-offset: -11.4s;
+  --mist-x1: 72px; --mist-y1: 29px; --mist-scale1: 1.06, .96;
+  --mist-x2: 46px; --mist-y2: -44px; --mist-scale2: 1.15, 1.13;
+  --mist-x3: -26px; --mist-y3: -19px; --mist-scale3: .96, 1.08;
+  --mist-rest: .33; --mist-alpha1: .46; --mist-alpha2: .38; --mist-alpha3: .52;
 }
 .ms-edge-atmosphere > :nth-child(4) {
-  right: -4%; bottom: -23%; height: 56vh; scale: -1 1;
-  --mist-cycle: 49s; --mist-offset: -34s; --mist-x: -12px; --mist-y: -25px; --mist-softness: 19px;
+  right: -4%; bottom: -19%; height: 56vh;
+  --mist-softness: 21px; --mist-cycle: 21s; --mist-offset: -.7s;
+  --mist-x1: 91px; --mist-y1: -24px; --mist-scale1: 1.16, .99;
+  --mist-x2: 52px; --mist-y2: -72px; --mist-scale2: .96, 1.14;
+  --mist-x3: -28px; --mist-y3: -30px; --mist-scale3: 1.07, 1.02;
+  --mist-rest: .42; --mist-alpha1: .48; --mist-alpha2: .36; --mist-alpha3: .29;
 }
-@keyframes ms-edge-drift {
-  0%, 100% { transform: translate3d(0, 0, 0) scale(.97); opacity: calc(.20 * var(--mist-strength)); }
-  42% { transform: translate3d(calc(var(--mist-x) * var(--mist-travel)), calc(var(--mist-y) * var(--mist-travel)), 0) scale(1.07); opacity: calc(.44 * var(--mist-strength)); }
-  74% { transform: translate3d(0, calc(var(--mist-y) * var(--mist-travel) * .38), 0) scale(1.02); opacity: calc(.30 * var(--mist-strength)); }
+.ms-edge-atmosphere > :nth-child(even) {
+  background:
+    radial-gradient(ellipse 58% 31% at 35% 38%, #554f59 0%, #47414b 36%, transparent 85%),
+    radial-gradient(ellipse 68% 27% at 49% 63%, #57515b 0%, transparent 88%);
+}
+.ms-edge-atmosphere > :nth-child(n + 3) {
+  /* Mirror the right-hand paint and its local horizontal path. */
+  scale: -1 1;
+}
+@keyframes ms-edge-flow {
+  0%, 100% {
+    transform: translate3d(0, 0, 0) scale(1);
+    opacity: calc(var(--mist-rest) * var(--mist-strength));
+  }
+  24% {
+    transform: translate3d(calc(var(--mist-x1) * var(--mist-travel)), calc(var(--mist-y1) * var(--mist-travel)), 0) scale(var(--mist-scale1));
+    opacity: calc(var(--mist-alpha1) * var(--mist-strength));
+  }
+  51% {
+    transform: translate3d(calc(var(--mist-x2) * var(--mist-travel)), calc(var(--mist-y2) * var(--mist-travel)), 0) scale(var(--mist-scale2));
+    opacity: calc(var(--mist-alpha2) * var(--mist-strength));
+  }
+  76% {
+    transform: translate3d(calc(var(--mist-x3) * var(--mist-travel)), calc(var(--mist-y3) * var(--mist-travel)), 0) scale(var(--mist-scale3));
+    opacity: calc(var(--mist-alpha3) * var(--mist-strength));
+  }
 }
 @media (max-width: 1024px) {
-  .ms-edge-atmosphere { --mist-strength: .40; --mist-travel: .42; }
-  .ms-edge-atmosphere > span { width: clamp(92px, 12vw, 125px); }
+  .ms-edge-atmosphere { --mist-strength: .68; --mist-travel: .65; }
+  .ms-edge-atmosphere > span { width: clamp(118px, 16vw, 188px); }
 }
 @media (max-width: 620px) {
-  .ms-edge-atmosphere { --mist-strength: .25; }
-  .ms-edge-atmosphere > span { width: 64px; animation: none; }
+  .ms-edge-atmosphere { --mist-strength: .48; --mist-travel: .37; }
+  .ms-edge-atmosphere > span { width: clamp(72px, 19vw, 110px); filter: blur(10px); }
 }
 
 .ms-physical-drift {
