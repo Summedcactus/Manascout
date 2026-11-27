@@ -13,7 +13,7 @@ import tempfile
 from urllib.parse import unquote, urlsplit
 
 ROOT = Path(__file__).resolve().parents[1]
-PUBLIC_DIRECTORIES = ("assets", "card", "contact", "deck", "privacy", "terms")
+PUBLIC_DIRECTORIES = ("about", "assets", "card", "contact", "deck", "privacy", "terms")
 PUBLIC_ROOT_FILES = ("CNAME", "ads.txt", "robots.txt", "sitemap.xml")
 MANIFEST = "asset-versions.json"
 HASH_LENGTH = 16

@@ -34,7 +34,7 @@ test("the five researched additions and the previous guide routes remain registe
   const registry = require("../assets/js/guide-catalogue.js").slugs;
   assert.deepEqual(registry, actual);
   assert.equal(list.numberOfItems, guideCount);
-  assert.equal(new Set(sitemap.map(([, url]) => url)).size, guideCount + 3);
+  assert.equal(new Set(sitemap.map(([, url]) => url)).size, guideCount + 4);
   for (const slug of names) {
     const url = `${origin}/card/${slug}/`;
     assert.equal(list.itemListElement.filter(item => item.url === url).length, 1);

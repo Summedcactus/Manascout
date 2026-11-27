@@ -119,7 +119,7 @@ def audit():
     assert sorted(archive) == ['/card/' + s + '/' for s in slugs]
     assert re.search(fr'id="hub-status"[^>]*>\s*{count} guides', directory)
     assert f'All <span id="hub-total">{count}</span> Guides' in directory
-    expected = set(urls + [ORIGIN + '/', ORIGIN + '/card/', ORIGIN + '/deck/'])
+    expected = set(urls + [ORIGIN + '/', ORIGIN + '/about/', ORIGIN + '/card/', ORIGIN + '/deck/'])
     dates = check_sitemap((ROOT / 'sitemap.xml').read_text(), expected, datetime.now(timezone.utc).date())
     evidence = json.loads((ROOT / 'docs/card-guide-research-3b.json').read_text())['sitemap_lastmod']['entries']
     # Preserve historical evidence; overlay only the five documented Phase 5 editorial changes.
@@ -129,6 +129,7 @@ def audit():
     evidence.update(json.loads((ROOT / 'docs/phase6-search-growth.json').read_text())['sitemap'])
     evidence.pop(ORIGIN + '/contact/')
     evidence[ORIGIN + '/deck/'] = {'lastmod': '2026-11-22', 'basis': 'Deck Studio gained visible landing content.'}
+    evidence[ORIGIN + '/about/'] = {'lastmod': '2026-11-27', 'basis': 'Publisher methodology and corrections page added.'}
     for slug in phase101['guides']:
         evidence[ORIGIN + '/card/' + slug + '/'] = {'lastmod': phase101['reviewed'], 'basis': 'New researched collector guide.'}
     evidence[ORIGIN + '/card/'] = {'lastmod': phase101['reviewed'], 'basis': 'The directory gained five guide entries.'}

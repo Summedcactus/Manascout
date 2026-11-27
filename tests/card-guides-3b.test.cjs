@@ -1,3 +1,4 @@
+const currentSnippet = require("./helpers/current-guide-snippet.cjs");
 const guideCount = require("../data/guides.json").length;
 const phase6=JSON.parse(require('node:fs').readFileSync('docs/phase6-search-growth.json','utf8'));
 const phase5={...JSON.parse(require('node:fs').readFileSync('docs/us-search-baseline.json','utf8')).guides,...phase6.upgrades,...phase6.metadata_only};
@@ -29,7 +30,7 @@ const row=(slug,code,number)=>card(slug).records.find(x=>x.code===code&&x.number
 const copy=slug=>plain(read(`card/${slug}/index.html`).split('<main')[1].split('</main>')[0]);
 function exact(slug,code,number,artist,finish){const r=row(slug,code,number);assert.ok(r,`${slug} ${code} ${number}`);assert.equal(r.artist,artist);assert.equal(r.finish,finish);const i=card(slug).records.indexOf(r);assert.ok(rows(slug)[i].includes(artist));assert.ok(rows(slug)[i].includes(finish));}
 for(const slug of slugs){
- const g={...card(slug),...(phase5[slug]||{})},html=read(`card/${slug}/index.html`),url=`https://manascout.co.uk/card/${slug}/`,[name,code,number,date,rarity,artist,finish,count]=originals[slug];
+ const g=currentSnippet(slug,{...card(slug),...(phase5[slug]||{})}),html=read(`card/${slug}/index.html`),url=`https://manascout.co.uk/card/${slug}/`,[name,code,number,date,rarity,artist,finish,count]=originals[slug];
  test(`${name}: original set/number/rarity/artist/finishes and exact identity agree with verified fixtures`,()=>{
   assert.equal(g.name,name);assert.equal(g.first[1],code);assert.equal(g.first[2],number);assert.equal(g.first_release_date,date);assert.equal(g.first[4],rarity);assert.equal(g.first[5],artist);assert.equal(g.first[6],finish);
   assert.ok(html.includes(`class="printing-guide" data-card-name="${name.replace(/'/g,'&#x27;')}"`));const quick=copy(slug).split('QUICK ANSWER')[1].split('Loading current')[0];assert.ok(quick.includes(`${code} #${number}`));assert.ok(quick.includes(artist));assert.ok(quick.includes(rarity));assert.ok(quick.includes(finish.toLowerCase()));
