@@ -1,7 +1,7 @@
 """Render the Phase 10.1 motion and exact-guide flows in Chromium.
 
 The optional artwork directory holds original Scryfall JPEGs named by printing UUID.
-Screenshots include two live desktop atmosphere frames for visual review.
+The dedicated edge mist contract covers rendered atmosphere displacement.
 """
 import argparse
 import json
@@ -17,11 +17,6 @@ RESEARCH = json.loads((ROOT / "docs/phase10-1-guides.json").read_text())["guides
 CARDS = [card for guide in RESEARCH.values() for card in guide["curated"]]
 WIDTHS = (320, 360, 390, 430, 768, 820, 1024, 1280, 1440, 1920)
 MIST = ".ms-edge-atmosphere > span"
-LAYER_STYLES = """layers => layers.map(layer => {
-  const s = getComputedStyle(layer);
-  return {name: s.animationName, duration: s.animationDuration, transform: s.transform,
-    opacity: +s.opacity, width: layer.offsetWidth, pointerEvents: s.pointerEvents};
-})"""
 
 
 def capture(page, directory, name):
@@ -29,46 +24,13 @@ def capture(page, directory, name):
         page.screenshot(path=directory / f"{name}.png")
 
 
-def assert_pixel_drift(first, second):
-    from PIL import Image, ImageChops
-
-    a, b = Image.open(first).convert("RGB"), Image.open(second).convert("RGB")
-    w, h = a.size
-    delta = ImageChops.difference(a, b).getchannel("R")
-    # Require mist movement in all four corners. Restrict the comparison to margins
-    # outside the content column, away from card animations and interactive controls.
-    for side in (0, w - 85):
-        for top in (100, h - 210):
-            pixels = delta.crop((side, top, side + 85, top + 180)).histogram()
-            assert sum(pixels[2:]) > 120, (side, top, sum(pixels[2:]))
-
-
 def verify_mist(page, width, directory):
-    layers = page.locator(MIST)
-    expect(layers).to_have_count(4)
-    assert page.locator(".ms-edge-atmosphere").get_attribute("aria-hidden") == "true"
-    before = layers.evaluate_all(LAYER_STYLES)
-    assert all(layer["pointerEvents"] == "none" for layer in before)
-    if width <= 430:
-        assert all(layer["opacity"] < .08 and layer["name"] == "none" for layer in before)
-    else:
-        assert {layer["duration"] for layer in before} == {"37s", "46s", "41s", "49s"}
-        assert all(layer["name"] == "ms-edge-drift" and layer["opacity"] > 0 for layer in before)
-        if width <= 1024:
-            assert all(layer["width"] <= 125 and layer["opacity"] < .18 for layer in before)
-        page.wait_for_function(
-            """before => [...document.querySelectorAll('.ms-edge-atmosphere > span')].every(
-                (el, i) => { const s = getComputedStyle(el); return s.transform !== before[i].transform; })""",
-            arg=before,
-        )
+    expect(page.locator(MIST)).to_have_count(4)
+    expect(page.locator(".ms-edge-atmosphere")).to_have_attribute("aria-hidden", "true")
+    assert page.locator(MIST).evaluate_all("""layers =>
+        layers.every(layer => getComputedStyle(layer).pointerEvents === 'none')""")
     PHASE10["no_overflow"](page, width)
-    if width == 1920 and directory:
-        capture(page, directory, "desktop-drift-start")
-        page.wait_for_timeout(6500)
-        capture(page, directory, "desktop-drift-6.5s")
-        assert_pixel_drift(directory / "desktop-drift-start.png", directory / "desktop-drift-6.5s.png")
-    else:
-        capture(page, directory, f"workspace-{width}")
+    capture(page, directory, f"workspace-{width}")
 
 
 def verify_card_motion(context, page, surface, mobile):
@@ -210,8 +172,8 @@ def audit(browser, base, width, artwork, directory):
     page.emulate_media(reduced_motion="reduce")
     assert reflection.evaluate("e => e.getAnimations().length") == 0
     assert surface.locator(".ms-physical-drift").evaluate("e => e.getAnimations().length") == 0
-    still = page.locator(MIST).evaluate_all(LAYER_STYLES)
-    assert all(layer["name"] == "none" and layer["opacity"] > 0 for layer in still)
+    assert page.locator(MIST).evaluate_all("""layers => layers.every(layer =>
+        !layer.getAnimations().length && Number(getComputedStyle(layer).opacity) > 0)""")
     expect(surface).to_have_attribute("data-surface", "surgefoil")
     expect(page.locator("#card-details")).to_contain_text("Surge Foil")
     if width == 1440:
